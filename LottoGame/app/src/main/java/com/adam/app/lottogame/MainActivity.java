@@ -1,0 +1,114 @@
+package com.adam.app.lottogame;
+
+import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.adam.app.lottogame.R;
+import com.adam.app.lottogame.databinding.ActivityMainBinding;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+
+
+public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding mBinding;
+    // Select numbers list
+    private List<Integer> mSelectedNumbers = new ArrayList<>();
+    // Lottery numbers list
+    private List<Integer> mDrawnNumbers = new ArrayList<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
+
+        // set button click listener
+        mBinding.btnGenerate.setOnClickListener(v -> {
+            mSelectedNumbers.clear();
+            mSelectedNumbers.addAll(generateRandomNumbers());
+            mBinding.tvSelectedNumbers.setText(getStringById(R.string.tv_select_your_number) + mSelectedNumbers.toString());
+        });
+        mBinding.btnDraw.setOnClickListener(v -> {
+            // check mSelectedNumbers is empty
+            if (mSelectedNumbers.isEmpty()) {
+                // show please select number first in result text view
+                mBinding.tvResult.setText(getStringById(R.string.info_please_select_number_first));
+                return;
+            }
+
+            mDrawnNumbers.clear();
+            mDrawnNumbers.addAll(generateRandomNumbers());
+            mBinding.tvDrawnNumbers.setText(getStringById(R.string.tv_show_lottery_number) + mDrawnNumbers.toString());
+
+            // count match
+            int matchCount = countMatch(mSelectedNumbers, mDrawnNumbers);
+            // show result
+            switch (matchCount) {
+                case 6:
+                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_big_prize));
+                    break;
+                case 5:
+                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_300000_prize));
+                    break;
+                case 4:
+                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_100000_prize));
+                    break;
+                case 3:
+                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_50000_prize));
+                    break;
+                default:
+                    mBinding.tvResult.setText(getStringById(R.string.info_you_lose));
+                    break;
+            }
+        });
+
+        mBinding.btnExit.setOnClickListener(v -> {
+            finish();
+        });
+    }
+
+    /**
+     * Generate random int numbers to list, there are six numbers in the list
+     * which are generated randomly from 1 to 49.
+     */
+    private List<Integer> generateRandomNumbers() {
+        List<Integer> numbers = new ArrayList<>();
+        Random random = new Random();
+
+        while (numbers.size() < 6) {
+            int number = random.nextInt(49) + 1;
+            if (!numbers.contains(number)) {
+                numbers.add(number);
+            }
+        }
+
+        // sort
+        Collections.sort(numbers);
+        return numbers;
+    }
+
+    /**
+     * Count match from list 1 and list 2
+     */
+    private int countMatch(List<Integer> list1, List<Integer> list2) {
+        int count = 0;
+        for (int i = 0; i < list1.size(); i++) {
+            if (list2.contains(list1.get(i))) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * get string by resource string id
+     */
+    private String getStringById(int id) {
+        return getResources().getString(id);
+    }
+}

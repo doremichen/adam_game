@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">LottoGame</string>
+    <string name="tv_title_loto_game">loto game</string>
+    <string name="tv_select_your_number">Your number：-</string>
+    <string name="tv_show_lottery_number">lottery number：-</string>
+    <string name="tv_prize_result">Result：-</string>
+    <string name="btn_machine_select_number">Machine number</string>
+    <string name="btn_lottary_draw">Lottary draw</string>
+    <string name="info_please_select_number_first">Please select number first</string>
+    <string name="info_you_win_big_prize">You win $1,000,000</string>
+    <string name="info_you_win_300000_prize">You win $300,000</string>
+    <string name="info_you_win_100000_prize">You win $100,000</string>
+    <string name="info_you_win_50000_prize">You win $50,000</string>
+    <string name="info_you_lose">You lose</string>
+    <string name="btn_exit">Exit</string>
+</resources>

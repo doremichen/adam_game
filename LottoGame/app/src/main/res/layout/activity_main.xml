@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:padding="24dp"
+        tools:context=".MainActivity">
+
+        <!-- title -->
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_title_loto_game"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="24dp" />
+
+        <!-- select number -->
+        <TextView
+            android:id="@+id/tv_selected_numbers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_select_your_number"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Lottery numbers -->
+        <TextView
+            android:id="@+id/tv_drawn_numbers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_show_lottery_number"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_selected_numbers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="12dp" />
+
+        <!-- Prize result -->
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tv_prize_result"
+            android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@id/tv_drawn_numbers"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Machine select button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_generate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_machine_select_number"
+            style="@style/LottoButtonStyle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_draw"
+            app:layout_constraintTop_toBottomOf="@id/tv_result"
+            app:layout_constraintWidth_percent="0.48"
+            android:layout_marginEnd="8dp" />
+
+        <!-- lottery button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_draw"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_lottary_draw"
+            style="@style/LottoButtonStyle"
+            app:layout_constraintStart_toEndOf="@id/btn_generate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btn_generate"
+            app:layout_constraintBottom_toBottomOf="@id/btn_generate"
+            app:layout_constraintWidth_percent="0.48"
+            android:layout_marginStart="8dp" />
+        <!-- Exit  button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_exit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_exit"
+            style="@style/LottoButtonStyle"
+            app:layout_constraintTop_toBottomOf="@id/btn_draw"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+        </com.google.android.material.button.MaterialButton>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+
