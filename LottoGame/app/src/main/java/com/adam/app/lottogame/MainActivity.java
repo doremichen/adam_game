@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.adam.app.lottogame.R;
 import com.adam.app.lottogame.databinding.ActivityMainBinding;
+import com.adam.app.lottogame.strategy.IResultStrategy;
+import com.adam.app.lottogame.strategy.ResultStrategyFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -48,23 +50,10 @@ public class MainActivity extends AppCompatActivity {
             // count match
             int matchCount = countMatch(mSelectedNumbers, mDrawnNumbers);
             // show result
-            switch (matchCount) {
-                case 6:
-                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_big_prize));
-                    break;
-                case 5:
-                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_300000_prize));
-                    break;
-                case 4:
-                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_100000_prize));
-                    break;
-                case 3:
-                    mBinding.tvResult.setText(getStringById(R.string.info_you_win_50000_prize));
-                    break;
-                default:
-                    mBinding.tvResult.setText(getStringById(R.string.info_you_lose));
-                    break;
-            }
+            ResultStrategyFactory.MatchNumber matchNumber = ResultStrategyFactory.MatchNumber.values()[matchCount];
+            IResultStrategy strategy = ResultStrategyFactory.getStrategy(matchNumber);
+            mBinding.tvResult.setText(strategy.getResultText(this));
+
         });
 
         mBinding.btnExit.setOnClickListener(v -> {
