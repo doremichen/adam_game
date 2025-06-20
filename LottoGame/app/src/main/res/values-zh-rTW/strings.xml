@@ -1,16 +1,18 @@
 <resources>
     <string name="app_name">樂透遊戲</string>
     <string name="tv_title_loto_game">樂透遊戲</string>
-    <string name="tv_select_your_number">你的號碼：-</string>
-    <string name="tv_show_lottery_number">開獎號碼：-</string>
-    <string name="tv_prize_result">結果：-</string>
+    <string name="tv_select_your_number">你的號碼：%1$s</string>
+    <string name="tv_show_lottery_number">開獎號碼：%1$s</string>
+    <string name="tv_prize_result">結果：%1$s</string>
     <string name="btn_machine_select_number">機選號碼</string>
     <string name="btn_lottary_draw">開始開獎</string>
     <string name="info_please_select_number_first">請先選取號碼</string>
     <string name="info_you_win_big_prize">你中了 1,000,000 元大獎！</string>
-    <string name="info_you_win_300000_prize">你中了 300,000 元！</string>
     <string name="info_you_win_100000_prize">你中了 100,000 元！</string>
-    <string name="info_you_win_50000_prize">你中了 50,000 元！</string>
+    <string name="info_you_win_200000_prize">你中了 200,000 元！</string>
+    <string name="info_you_win_300000_prize">你中了 300,000 元！</string>
+    <string name="info_you_win_400000_prize">你中了 400,000 元！</string>
+    <string name="info_you_win_500000_prize">你中了 500,000 元！</string>
     <string name="info_you_lose">未中獎</string>
     <string name="btn_exit">離開</string>
 </resources>

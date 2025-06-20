@@ -8,27 +8,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResultStrategyFactory {
+
     /**
-     * enum match number: 6,5,4,3
+     * interface mach number containt: 3, 4, 5, 6
      */
-    public enum MatchNumber {
-        BIG_PRIZE, SECOND_PRIZE, THIRD_PRIZE, FOURTH_PRIZE, LOSE
+    interface IMachNUmber {
+        int SECOND_PRIZE = 2;
+        int THIRD_PRIZE = 3;
+        int FOURTH_PRIZE = 4;
+        int FIFTH_PRIZE = 5;
+        int BIG_PRIZE = 6;
     }
+
+    /**
+     * STRATEGY_MAP: IMachNumber -> IResultStrategy
+     */
+    private static final Map<Integer, IResultStrategy> STRATEGY_MAP = new HashMap<>() {
+        {
+            put(IMachNUmber.SECOND_PRIZE, new SecondPrizeStrategy());
+            put(IMachNUmber.THIRD_PRIZE, new ThirdPrizeStrategy());
+            put(IMachNUmber.FOURTH_PRIZE, new FourthPrizeStrategy());
+            put(IMachNUmber.FIFTH_PRIZE, new FifthPrizeStrategy());
+            put(IMachNUmber.BIG_PRIZE, new BigPrizeStrategy());
+
+        }
+    };
+
 
     // Default strategy
     private static final IResultStrategy DEFAULT_STRATEGY = new LoseStrategy();
 
-    // STRATEGY_MAP: MatchNumber -> IResultStrategy
-    private static final Map<MatchNumber, IResultStrategy> STRATEGY_MAP = new HashMap<>() {
-        {
-            put(MatchNumber.BIG_PRIZE, new BigPrizeStrategy());
-            put(MatchNumber.SECOND_PRIZE, new SecondPrizeStrategy());
-            put(MatchNumber.THIRD_PRIZE, new ThirdPrizeStrategy());
-        }
-    };
 
     // getStrategy
-    public static IResultStrategy getStrategy(MatchNumber matchNumber) {
+    public static IResultStrategy getStrategy(Integer matchNumber) {
         return STRATEGY_MAP.getOrDefault(matchNumber, DEFAULT_STRATEGY);
     }
 }

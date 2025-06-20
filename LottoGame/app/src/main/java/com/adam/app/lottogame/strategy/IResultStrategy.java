@@ -25,7 +25,7 @@ class BigPrizeStrategy implements IResultStrategy {
 class SecondPrizeStrategy implements IResultStrategy {
     @Override
     public String getResultText(Context context) {
-        return context.getString(R.string.info_you_win_300000_prize);
+        return context.getString(R.string.info_you_win_200000_prize);
     }
 }
 
@@ -33,7 +33,7 @@ class SecondPrizeStrategy implements IResultStrategy {
 class ThirdPrizeStrategy implements IResultStrategy {
     @Override
     public String getResultText(Context context) {
-        return context.getString(R.string.info_you_win_100000_prize);
+        return context.getString(R.string.info_you_win_300000_prize);
     }
 
 }
@@ -42,9 +42,18 @@ class ThirdPrizeStrategy implements IResultStrategy {
 class FourthPrizeStrategy implements IResultStrategy {
     @Override
     public String getResultText(Context context) {
-        return context.getString(R.string.info_you_win_50000_prize);
+        return context.getString(R.string.info_you_win_400000_prize);
     }
 }
+
+// FifthPrizeStrategy
+class FifthPrizeStrategy implements IResultStrategy {
+    @Override
+    public String getResultText(Context context) {
+        return context.getString(R.string.info_you_win_500000_prize);
+    }
+}
+
 
 // LoseStrategy
 class LoseStrategy implements IResultStrategy {

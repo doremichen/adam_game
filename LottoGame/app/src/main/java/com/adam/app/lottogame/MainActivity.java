@@ -1,6 +1,7 @@
 package com.adam.app.lottogame;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -33,7 +34,9 @@ public class MainActivity extends AppCompatActivity {
         mBinding.btnGenerate.setOnClickListener(v -> {
             mSelectedNumbers.clear();
             mSelectedNumbers.addAll(generateRandomNumbers());
-            mBinding.tvSelectedNumbers.setText(getStringById(R.string.tv_select_your_number) + mSelectedNumbers.toString());
+            String selectedNumbers = formateNumbers(mSelectedNumbers);
+            String selectedText = getString(R.string.tv_select_your_number, selectedNumbers);
+            mBinding.tvSelectedNumbers.setText(selectedText);
         });
         mBinding.btnDraw.setOnClickListener(v -> {
             // check mSelectedNumbers is empty
@@ -45,14 +48,17 @@ public class MainActivity extends AppCompatActivity {
 
             mDrawnNumbers.clear();
             mDrawnNumbers.addAll(generateRandomNumbers());
-            mBinding.tvDrawnNumbers.setText(getStringById(R.string.tv_show_lottery_number) + mDrawnNumbers.toString());
+            String drawnNumbers = formateNumbers(mDrawnNumbers);
+            mBinding.tvDrawnNumbers.setText(getString(R.string.tv_show_lottery_number, drawnNumbers));
 
             // count match
             int matchCount = countMatch(mSelectedNumbers, mDrawnNumbers);
+            Utils.log("matchCount: " + matchCount);
             // show result
-            ResultStrategyFactory.MatchNumber matchNumber = ResultStrategyFactory.MatchNumber.values()[matchCount];
-            IResultStrategy strategy = ResultStrategyFactory.getStrategy(matchNumber);
-            mBinding.tvResult.setText(strategy.getResultText(this));
+            IResultStrategy strategy = ResultStrategyFactory.getStrategy(matchCount);
+            Utils.log("strategy: " + strategy.getClass().getSimpleName());
+            String resultText = strategy.getResultText(this);
+            mBinding.tvResult.setText(getString(R.string.tv_prize_result, resultText));
 
         });
 
@@ -99,5 +105,12 @@ public class MainActivity extends AppCompatActivity {
      */
     private String getStringById(int id) {
         return getResources().getString(id);
+    }
+
+    /**
+     * format number as string
+     */
+    private String formateNumbers(List<Integer> numbers) {
+        return TextUtils.join(", ", numbers);
     }
 }
