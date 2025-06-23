@@ -20,6 +20,19 @@ public final class Utils {
         Log.d(TAG, message, e);
     }
 
+    // log call stack
+    public static void callStack() {
+        StackTraceElement[] list = Thread.currentThread().getStackTrace();
+        for (StackTraceElement e : list) {
+            String info = String.format("Class: %s, Method: %s, Line: %d",
+                    e.getClassName(),
+                    e.getMethodName(),
+                    e.getLineNumber());
+            Log.d("CallStack", info);
+        }
+    }
+
+
     // Numbers of columns and rows
     public static interface NUM {
         int COLUMNS = 10;

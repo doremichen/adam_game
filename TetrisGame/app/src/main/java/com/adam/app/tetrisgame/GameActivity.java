@@ -11,10 +11,12 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.tetrisgame.databinding.ActivityGameBinding;
 import com.adam.app.tetrisgame.model.TetrisBoard;
 import com.adam.app.tetrisgame.view.TetrisView;
+import com.adam.app.tetrisgame.viewmodel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -23,8 +25,10 @@ public class GameActivity extends AppCompatActivity {
 
     // Tetris view
     private TetrisView mTetrisView;
-    // Tetris board
-    private TetrisBoard mTetrisBoard;
+
+    // Game View model
+    GameViewModel mViewModel;
+
 
     // Hanlder
     private Handler mHandler = new Handler(Looper.getMainLooper());;
@@ -43,26 +47,29 @@ public class GameActivity extends AppCompatActivity {
 
         mTetrisView = mBinding.tetrisView;
 
-        this.mTetrisBoard = new TetrisBoard(new TetrisBoard.GameOverListener() {
+        // get view model and initial tetrisbord
+        mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+        mViewModel.initTetrisBoard(new TetrisBoard.GameOverListener() {
             @Override
             public void onGameOver() {
                 // stop game
-                mRunning = false;
+                mViewModel.setRunning(false);
                 // show game over dialog
                 showGameOverDlg();
             }
         });
 
+
         this.mUpdateRunnable = new Runnable() {
             @Override
             public void run() {
-                if (!mRunning) {
+                if (!mViewModel.isRunning()) {
                     return;
                 }
 
-                mTetrisBoard.update();
-                mTetrisBoard.applyToView(mTetrisView);
-                mHandler.postDelayed(this, 1000);
+                mViewModel.updateTetrisBoard();
+                mViewModel.applyToView(mTetrisView);
+                mHandler.postDelayed(this, 1000L);
             }
         };
 
@@ -79,8 +86,8 @@ public class GameActivity extends AppCompatActivity {
         // Ok Button
         Utils.DialogButton restartButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_restart), (dialog, which) -> {
             // Restart game
-            mRunning = true;
-            mTetrisBoard.reset();
+            mViewModel.setRunning(true);
+            mViewModel.reset();
             mHandler.post(mUpdateRunnable);
         });
         // Cancel Button
@@ -107,10 +114,10 @@ public class GameActivity extends AppCompatActivity {
 
     private void setupControls() {
         // set control listener
-        mBinding.btnLeft.setOnClickListener(v -> mTetrisBoard.moveLeft());
-        mBinding.btnRight.setOnClickListener(v -> mTetrisBoard.moveRight());
-        mBinding.btnDown.setOnClickListener(v -> mTetrisBoard.moveDown());
-        mBinding.btnRotate.setOnClickListener(v -> mTetrisBoard.rotate());
+        mBinding.btnLeft.setOnClickListener(v -> mViewModel.getTetrisBoard().moveLeft());
+        mBinding.btnRight.setOnClickListener(v -> mViewModel.getTetrisBoard().moveRight());
+        mBinding.btnDown.setOnClickListener(v -> mViewModel.getTetrisBoard().moveDown());
+        mBinding.btnRotate.setOnClickListener(v -> mViewModel.getTetrisBoard().rotate());
 
     }
 }
