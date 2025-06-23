@@ -7,7 +7,7 @@ Each subfolder represents an independent game project built with **Java** or **K
 
 game/
 ├── loto-game/ # Lotto number draw game (Java)
-├── snake-game/ # (Future) Classic Snake Game (Kotlin)
+├── Tetris-game/ # Classic Tetris Game (Java)
 ├── ...
 
 
@@ -25,11 +25,6 @@ game/
 - Explore and demonstrate design patterns (e.g., MVVM, Factory, Observer)
 - Build modular, maintainable, and reusable game components
 
-## Completed Projects
-
-| Project Name | Language | Description                        |
-|--------------|----------|------------------------------------|
-| `loto-game`  | Java     | Lotto number picker & draw logic   |
 
 ## How to Run
 

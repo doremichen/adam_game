@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">TetrisGame</string>
+    <string name="tv_title_tetris">Tetris</string>
+    <string name="btn_start">Start</string>
+    <string name="btn_instruction">Instruction</string>
+    <string name="btn_exit">Exit</string>
+    <string name="dialog_message_instruction">This is a simple Tetris game developed in Java with Android Studio.</string>
+    <string name="dialog_title_instruction">About</string>
+    <string name="dialog_button_restart">Restart</string>
+    <string name="btn_control_left">Left</string>
+    <string name="btn_control_right">right</string>
+    <string name="btn_control_down">down</string>
+    <string name="btn_control_rotate">rotate</string>
+    <string name="dialog_button_exit">Exit</string>
+    <string name="dialog_title_gameover">GameOver</string>
+    <string name="dialog_message_gameover">You lost! Try again?</string>
+    <string name="dialog_button_ok">Ok</string>
+</resources>
