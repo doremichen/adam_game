@@ -32,19 +32,20 @@ public class TetrisBoard {
     }
 
     /**
-     * GameOverListener
+     * GameListener
      * onGameOver: void
      */
-    public interface GameOverListener {
+    public interface GameListener {
+        void onClearLines();
         void onGameOver();
     }
 
-    private GameOverListener mGameOverListener;
+    private GameListener mGameListener;
 
     // construct
-    public TetrisBoard(GameOverListener listener) {
+    public TetrisBoard(GameListener listener) {
         mGrid = new int[Utils.NUM.ROWS][Utils.NUM.COLUMNS];
-        this.mGameOverListener = listener;
+        this.mGameListener = listener;
         // spawn block
         spawnBlock();
     }
@@ -82,11 +83,11 @@ public class TetrisBoard {
             // check if game over
             if (isGameOver()) {
                 // tell activity by listener
-                if (mGameOverListener == null) {
+                if (mGameListener == null) {
                     throw new NullPointerException("mGameOverListener is null");
                 }
 
-                mGameOverListener.onGameOver();
+                mGameListener.onGameOver();
             }
         }
     }
@@ -189,6 +190,11 @@ public class TetrisBoard {
                     System.arraycopy(mGrid[k - 1], 0, mGrid[k], 0, Utils.NUM.COLUMNS);
                 }
                 mGrid[0] = new int[Utils.NUM.COLUMNS];
+                // tell activity by listener
+                if (mGameListener == null) {
+                    throw new NullPointerException("mGameListener is null");
+                }
+                mGameListener.onClearLines();
             }
         }
     }

@@ -49,14 +49,34 @@ public class GameActivity extends AppCompatActivity {
 
         // get view model and initial tetrisbord
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
-        mViewModel.initTetrisBoard(new TetrisBoard.GameOverListener() {
+        // load high score
+        mViewModel.loadHighScore(GameActivity.this);
+
+        mViewModel.initTetrisBoard(new TetrisBoard.GameListener() {
+            @Override
+            public void onClearLines() {
+                mViewModel.increaseScore(100);
+            }
+
             @Override
             public void onGameOver() {
                 // stop game
                 mViewModel.setRunning(false);
+                // save score
+                mViewModel.saveHighScore(GameActivity.this);
+
                 // show game over dialog
                 showGameOverDlg();
             }
+        });
+
+        // observe and update score UI
+        mViewModel.getCurrentScore().observe(this, score -> {
+            mBinding.tvScoreValue.setText(String.valueOf(score));
+        });
+        // observe and update high score UI
+        mViewModel.getHighScore().observe(this, score -> {
+            mBinding.tvHighScoreValue.setText(String.valueOf(score));
         });
 
 
@@ -85,6 +105,8 @@ public class GameActivity extends AppCompatActivity {
 
         // Ok Button
         Utils.DialogButton restartButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_restart), (dialog, which) -> {
+            // reset score
+            mViewModel.resetScore();
             // Restart game
             mViewModel.setRunning(true);
             mViewModel.reset();

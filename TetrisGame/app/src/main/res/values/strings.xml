@@ -15,4 +15,7 @@
     <string name="dialog_title_gameover">GameOver</string>
     <string name="dialog_message_gameover">You lost! Try again?</string>
     <string name="dialog_button_ok">Ok</string>
+    <string name="btn_settings">Setting</string>
+    <string name="tv_score">Score:</string>
+    <string name="tv_high">High:</string>
 </resources>
