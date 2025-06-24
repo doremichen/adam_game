@@ -2,6 +2,7 @@ package com.adam.app.tetrisgame;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
@@ -30,6 +31,16 @@ public final class Utils {
                     e.getLineNumber());
             Log.d("CallStack", info);
         }
+    }
+
+    /**
+     * Create Intent with context and class
+     * @param context Context
+     * @param classRef class reference
+     * @return Intent
+     */
+    public static Intent createIntent(Context context, Class<?> classRef) {
+        return new Intent(context, classRef);
     }
 
 

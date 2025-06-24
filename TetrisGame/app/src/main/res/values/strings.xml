@@ -18,4 +18,18 @@
     <string name="btn_settings">Setting</string>
     <string name="tv_score">Score:</string>
     <string name="tv_high">High:</string>
+    <string name="tv_setting_select_game_speed">Select game speed</string>
+    <string name="switch_setting_enable_sound">Enable sound</string>
+    <string name="btn_setting_save">Save</string>
+
+    <!-- speed option -->
+    <string name="speed_slow">Slow</string>
+    <string name="speed_medium">Medium</string>
+    <string name="speed_fast">Fast</string>
+
+    <string-array name="speed_array">
+        <item>@string/speed_slow</item>
+        <item>@string/speed_medium</item>
+        <item>@string/speed_fast</item>
+    </string-array>
 </resources>

@@ -89,7 +89,9 @@ public class GameActivity extends AppCompatActivity {
 
                 mViewModel.updateTetrisBoard();
                 mViewModel.applyToView(mTetrisView);
-                mHandler.postDelayed(this, 1000L);
+                int speed = mViewModel.getSpeedInt(GameActivity.this); // 0=slow, 1=normal, 2=fast
+                long interval = (speed == 0 ? 1000L : speed == 1 ? 700L : 400L);
+                mHandler.postDelayed(this, interval);
             }
         };
 
@@ -140,6 +142,11 @@ public class GameActivity extends AppCompatActivity {
         mBinding.btnRight.setOnClickListener(v -> mViewModel.getTetrisBoard().moveRight());
         mBinding.btnDown.setOnClickListener(v -> mViewModel.getTetrisBoard().moveDown());
         mBinding.btnRotate.setOnClickListener(v -> mViewModel.getTetrisBoard().rotate());
+        // setting button
+        mBinding.btnSettings.setOnClickListener(v -> {
+            startActivity(Utils.createIntent(this, SettingsActivity.class));
+        });
+
 
     }
 }
