@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">俄羅斯方塊</string>
+    <string name="tv_title_tetris">俄羅斯方塊</string>
+    <string name="btn_start">開始遊戲</string>
+    <string name="btn_instruction">遊戲說明</string>
+    <string name="btn_exit">離開遊戲</string>
+    <string name="dialog_message_instruction">這是一款使用 Java 和 Android Studio 開發的簡單俄羅斯方塊遊戲。</string>
+    <string name="dialog_title_instruction">關於本遊戲</string>
+    <string name="dialog_button_restart">重新開始</string>
+    <string name="btn_control_left">左</string>
+    <string name="btn_control_right">右</string>
+    <string name="btn_control_down">下</string>
+    <string name="btn_control_rotate">旋轉</string>
+    <string name="dialog_button_exit">結束</string>
+    <string name="dialog_title_gameover">遊戲結束</string>
+    <string name="dialog_message_gameover">你輸了！要再試一次嗎？</string>
+    <string name="dialog_button_ok">確定</string>
+    <string name="btn_settings">設定</string>
+    <string name="tv_score">分數：</string>
+    <string name="tv_high">最高分：</string>
+    <string name="tv_setting_select_game_speed">選擇遊戲速度</string>
+    <string name="switch_setting_enable_sound">啟用音效</string>
+    <string name="btn_setting_save">儲存設定</string>
+
+    <!-- speed option -->
+    <string name="speed_slow">慢速</string>
+    <string name="speed_medium">中速</string>
+    <string name="speed_fast">快速</string>
+
+    <string-array name="speed_array">
+        <item>@string/speed_slow</item>
+        <item>@string/speed_medium</item>
+        <item>@string/speed_fast</item>
+    </string-array>
+</resources>
