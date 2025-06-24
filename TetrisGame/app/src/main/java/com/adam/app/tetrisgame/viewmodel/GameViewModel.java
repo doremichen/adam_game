@@ -152,8 +152,8 @@ public class GameViewModel extends ViewModel{
         return mSoundLiveData;
     }
 
-    // get integer sound from sharedeferences
-    public boolean getSoundInt(Context context) {
+    // get sound switch setting from sharedeferences
+    public boolean isSoundEffectEnabled(Context context) {
         // get speed from shared preferences
         SharedPreferences prefs = context.getSharedPreferences(GAME_SETTINGS.fileName, Context.MODE_PRIVATE);
         return prefs.getBoolean(GAME_SETTINGS.soundKey, true);

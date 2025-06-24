@@ -44,7 +44,7 @@ public class TetrisView extends View {
         }
 
         private void drawGrid(Canvas canvas) {
-            Utils.log("drawGrid");
+            //Utils.log("drawGrid");
             // set width and height
             int width = getWidth();
             int height = getHeight();
@@ -56,7 +56,7 @@ public class TetrisView extends View {
             // draw
             for (int i = 0; i < Utils.NUM.ROWS; i++) {
                 for (int j = 0; j < Utils.NUM.COLUMNS; j++) {
-                    Utils.log("i: " +i + " "+ "j: " + j);
+//                    Utils.log("i: " +i + " "+ "j: " + j);
                     // get color of cell
                     int color = mGrid[i][j];
                     if (color != 0) {

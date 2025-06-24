@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.tetrisgame.databinding.ActivityGameBinding;
 import com.adam.app.tetrisgame.model.TetrisBoard;
+import com.adam.app.tetrisgame.sound.GameSoundManager;
 import com.adam.app.tetrisgame.view.TetrisView;
 import com.adam.app.tetrisgame.viewmodel.GameViewModel;
 
@@ -37,6 +38,10 @@ public class GameActivity extends AppCompatActivity {
     // Runnig flag
     private boolean mRunning = true;
 
+    // sound manager
+    private GameSoundManager mSoundManager;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +49,8 @@ public class GameActivity extends AppCompatActivity {
         // view binding
         mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+
+        mSoundManager = GameSoundManager.getInstance();
 
         mTetrisView = mBinding.tetrisView;
 
@@ -67,6 +74,9 @@ public class GameActivity extends AppCompatActivity {
 
                 // show game over dialog
                 showGameOverDlg();
+
+                // play game over sound
+                playSound(R.raw.game_over);
             }
         });
 
@@ -130,6 +140,11 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // release sound manager
+        if (mSoundManager != null) {
+            mSoundManager.stopMusic();
+            mSoundManager.release();
+        }
         // view binding
         mBinding = null;
         // stop game
@@ -138,15 +153,56 @@ public class GameActivity extends AppCompatActivity {
 
     private void setupControls() {
         // set control listener
-        mBinding.btnLeft.setOnClickListener(v -> mViewModel.getTetrisBoard().moveLeft());
-        mBinding.btnRight.setOnClickListener(v -> mViewModel.getTetrisBoard().moveRight());
-        mBinding.btnDown.setOnClickListener(v -> mViewModel.getTetrisBoard().moveDown());
-        mBinding.btnRotate.setOnClickListener(v -> mViewModel.getTetrisBoard().rotate());
+        mBinding.btnLeft.setOnClickListener(v -> {
+            mViewModel.getTetrisBoard().moveLeft();
+            // play move sound
+            playSound(R.raw.move);
+        });
+        mBinding.btnRight.setOnClickListener(v -> {
+            mViewModel.getTetrisBoard().moveRight();
+            // play move sound
+            playSound(R.raw.move);
+        });
+        mBinding.btnDown.setOnClickListener(v -> {
+            mViewModel.getTetrisBoard().moveDown();
+            // play move sound
+            playSound(R.raw.move);
+        });
+        mBinding.btnRotate.setOnClickListener(v -> {
+            mViewModel.getTetrisBoard().rotate();
+            // play rotate sound
+            playSound(R.raw.rotate);
+        });
         // setting button
         mBinding.btnSettings.setOnClickListener(v -> {
             startActivity(Utils.createIntent(this, SettingsActivity.class));
         });
+    }
 
+    /**
+     * playSound
+     * @param rawId raw id
+     */
+    public void playSound(int rawId) {
+        Utils.log("playSound");
+        // check sound setting is enable?
+        boolean sound = mViewModel.isSoundEffectEnabled(this);
+        if (!sound) {
+            Utils.log("sound is disabled");
+            return;
+        }
 
+        // check sound manager has sound
+        if (mSoundManager == null) {
+            throw new ExceptionInInitializerError("mSoundManager is null");
+        }
+
+        if (!mSoundManager.hasRawResource(this, rawId)) {
+            Utils.log("mSoundManager has no sound");
+            return;
+        }
+
+        Utils.log("play sound");
+        mSoundManager.playShortSound(this, rawId);
     }
 }

@@ -11,18 +11,30 @@ public final class Utils {
     // TAG string: TerisGame
     private static final String TAG = "TetrisGame";
 
+    // log flag
+    private static final boolean LOG_FLAG = true;
+
     // Logcat with string message
     public static void log(String message) {
+        if (!LOG_FLAG) {
+            return;
+        }
         Log.d(TAG, message);
     }
 
     // Logcat with string message and exception
     public static void log(String message, Exception e) {
-        Log.d(TAG, message, e);
+        if (!LOG_FLAG) {
+            return;
+        }
+        Log.e(TAG, message, e);
     }
 
     // log call stack
     public static void callStack() {
+        if (!LOG_FLAG) {
+            return;
+        }
         StackTraceElement[] list = Thread.currentThread().getStackTrace();
         for (StackTraceElement e : list) {
             String info = String.format("Class: %s, Method: %s, Line: %d",
@@ -41,6 +53,16 @@ public final class Utils {
      */
     public static Intent createIntent(Context context, Class<?> classRef) {
         return new Intent(context, classRef);
+    }
+
+    public static void log(String Msg, String subMsg, Exception e) {
+        if (!LOG_FLAG) {
+            return;
+        }
+
+        String message = String.format("%s: %s", Msg, subMsg);
+
+        Log.e(TAG, message, e);
     }
 
 
