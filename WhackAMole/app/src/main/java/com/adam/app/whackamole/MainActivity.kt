@@ -134,12 +134,19 @@ class MainActivity : AppCompatActivity() {
                         DialogInterface.OnClickListener { dialog, _ ->
                             // get input text
                             val interval = input.text.toString().toLongOrNull()
-                            if (interval != null && interval > 0) {
+
+                            // maxValue
+                            val maxInterval = 5000L
+                            // minValue
+                            val minInterval = 100L
+
+
+                            if (interval != null && interval  in minInterval..maxInterval) {
                                 mInterval = interval
                                 // show toast to user: interval is set to $interval seconds
                                 Utils.showToast(this, getString(R.string.interval_is_set, interval))
                             } else {
-                                Utils.showToast(this, getString(R.string.invalid_interval))
+                                Utils.showToast(this, getString(R.string.invalid_interval_range, minInterval, maxInterval))
                             }
 
                         }

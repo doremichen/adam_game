@@ -14,4 +14,5 @@
     <string name="interval_is_set">interval is set to $1%d interval seconds</string>
     <string name="invalid_interval">Invalid interval</string>
     <string name="input_hint_enter_interval">Enter interval</string>
+    <string name="invalid_interval_range">Please enter an interval between %1$d and %2$d milliseconds</string>
 </resources>

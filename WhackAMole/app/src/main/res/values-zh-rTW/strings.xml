@@ -14,4 +14,5 @@
     <string name="interval_is_set">已設定間隔為 %1$d 秒</string>
     <string name="invalid_interval">請輸入有效的間隔</string>
     <string name="input_hint_enter_interval">輸入間隔時間</string>
+    <string name="invalid_interval_range">請輸入介於 %1$d 到 %2$d 的毫秒間隔</string>
 </resources>
