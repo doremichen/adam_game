@@ -63,6 +63,8 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onClearLines() {
                 mViewModel.increaseScore(100);
+                // play sound
+                playSound(R.raw.line_clear);
             }
 
             @Override
