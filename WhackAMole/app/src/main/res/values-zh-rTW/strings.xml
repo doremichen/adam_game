@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">打地鼠</string>
+    <string name="tv_score">分數：</string>
+    <string name="tv_score_value">0</string>
+    <string name="btn_exit">離開</string>
+    <string name="dialog_title">打地鼠遊戲</string>
+    <string name="dialog_message">你確定要離開嗎？</string>
+    <string name="dialog_positive_button">確定</string>
+    <string name="dialog_negative_button">取消</string>
+    <string name="menu_item_set_time">設定地鼠出現時間</string>
+    <string name="set_interval_title">設定地鼠出現時間</string>
+    <string name="set_interval_message">請輸入地鼠出現的間隔時間（毫秒）</string>
+    <string name="dialog_comfirm_button">確認</string>
+    <string name="interval_is_set">已設定間隔為 %1$d 秒</string>
+    <string name="invalid_interval">請輸入有效的間隔</string>
+    <string name="input_hint_enter_interval">輸入間隔時間</string>
+</resources>
