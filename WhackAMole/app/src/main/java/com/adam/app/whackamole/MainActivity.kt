@@ -8,6 +8,7 @@ package com.adam.app.whackamole
 
 import android.content.DialogInterface
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.os.Handler
 import android.os.Looper
 import android.text.InputType
@@ -33,6 +34,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mMoleButtons: List<ImageButton>
     // interval milliseconds
     private var mInterval = 1000L
+    // game duration time: milliseconds
+    private val mGameDurationMillis = 30000L
+    // CountDownTimer
+    private var mCountDownTimer: CountDownTimer? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         mMoleButtons.forEachIndexed { index, imageButton ->
             imageButton.setOnClickListener {
                 // log message: index and mCurrentMoleIndex
-                Utils.log("index: $index, mCurrentMoleIndex: $mCurrentMoleIndex")
+                //Utils.log("index: $index, mCurrentMoleIndex: $mCurrentMoleIndex")
 
                 if (index == mCurrentMoleIndex) {
                     mScore++
@@ -105,6 +110,51 @@ class MainActivity : AppCompatActivity() {
 
         updateScore()
         startGameLoop()
+        // startCountdownTimer
+        startCountdownTimer()
+    }
+
+    private fun startCountdownTimer() {
+        Utils.log("startCountdownTimer")
+        mCountDownTimer = object : CountDownTimer(mGameDurationMillis, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                Utils.log("onTick: $millisUntilFinished")
+                mBinding.timeValue.text = (millisUntilFinished / 1000).toString()
+            }
+            override fun onFinish() {
+                // stop game
+                stopGame()
+                // showGameOverDialog
+                showGameOverDialog()
+            }
+        }.start()
+    }
+
+    // stop countdown timer
+    override fun onDestroy() {
+        super.onDestroy()
+        mCountDownTimer?.cancel()
+    }
+
+    private fun showGameOverDialog() {
+        // show game over dialog
+        Utils.showDialog(
+            this,
+            getString(R.string.dialog_title),
+            getString(R.string.game_over_message),
+            Utils.DialogButton(
+                getString(R.string.dialog_positive_button),
+                DialogInterface.OnClickListener { dialog, _ ->
+                    // dialog dismiss
+                    dialog.dismiss()
+                    // restart game
+                    mScore = 0
+                    updateScore()
+                    startGameLoop()
+                    startCountdownTimer()
+                }),
+            null
+        )
     }
 
     // override onCreateOptionsMenu
@@ -167,6 +217,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun stopGame() {
+
         // remove all callbacks
         mHandler.removeCallbacksAndMessages(null)
         // hide all moles

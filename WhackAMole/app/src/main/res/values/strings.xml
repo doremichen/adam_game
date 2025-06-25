@@ -15,4 +15,7 @@
     <string name="invalid_interval">Invalid interval</string>
     <string name="input_hint_enter_interval">Enter interval</string>
     <string name="invalid_interval_range">Please enter an interval between %1$d and %2$d milliseconds</string>
+    <string name="tv_time">Time</string>
+    <string name="tv_time_value">30</string>
+    <string name="game_over_message">Time is up! You can press OK to play again!</string>
 </resources>

@@ -41,13 +41,18 @@ object Utils {
                    title: String,
                    message: String,
                    positiveButton: DialogButton,
-                   negativeButton: DialogButton) {
-        AlertDialog.Builder(context)
+                   negativeButton: DialogButton?) {
+
+        val builder = AlertDialog.Builder(context)
             .setTitle(title)
             .setMessage(message)
             .setPositiveButton(positiveButton.text, positiveButton.listener)
-            .setNegativeButton(negativeButton.text, negativeButton.listener)
-            .show()
+
+        negativeButton?.let {
+            builder.setNegativeButton(negativeButton.text, negativeButton.listener)
+        }
+
+        builder.show()
     }
 
     /**
