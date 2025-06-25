@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Whack-A-Mole</string>
+    <string name="tv_score">Score:</string>
+    <string name="tv_score_value">0</string>
+    <string name="btn_exit">Exit</string>
+    <string name="dialog_title">Whack-A-Mole Game</string>
+    <string name="dialog_message">Are you sure to exit?</string>
+    <string name="dialog_positive_button">Ok</string>
+    <string name="dialog_negative_button">Cancel</string>
+    <string name="menu_item_set_time">Set the time for the mole to appear</string>
+    <string name="set_interval_title">Set the time for the mole to appear</string>
+    <string name="set_interval_message">Please enter the interval ms between mouse appearances</string>
+    <string name="dialog_comfirm_button">Confirm</string>
+    <string name="interval_is_set">interval is set to $1%d interval seconds</string>
+    <string name="invalid_interval">Invalid interval</string>
+    <string name="input_hint_enter_interval">Enter interval</string>
+</resources>

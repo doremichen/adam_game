@@ -8,7 +8,7 @@ Each subfolder represents an independent game project built with **Java** or **K
 game/
 ├── loto-game/ # Lotto number draw game (Java)
 ├── Tetris-game/ # Classic Tetris Game (Java)
-├── ...
+├── WhackAMole / # Simple whack a mole Game (Kotlin)
 
 
 ## Development Environment
