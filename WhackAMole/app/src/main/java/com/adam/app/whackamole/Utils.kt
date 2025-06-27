@@ -2,10 +2,8 @@ package com.adam.app.whackamole
 
 import android.content.Context
 import android.content.DialogInterface
-import android.text.InputType
 import android.util.Log
 import android.view.View
-import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 
 object Utils {
@@ -64,7 +62,7 @@ object Utils {
      * positiveButton: DialogButton Positive button
      * negativeButton: DialogButton Negative button
      */
-    fun showEditDialog(
+    fun showViewDialog(
         context: Context,
         title: String,
         message: String,
@@ -91,6 +89,22 @@ object Utils {
         android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Vibrator with duration function
+     * context: Context Context of the activity
+     * duration: Long Vibrator duration, default is 500ms
+     */
+    fun vibrate(context: Context, duration: Long = 500) {
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as android.os.Vibrator
+        vibrator?.let {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                it.vibrate(android.os.VibrationEffect.createOneShot(duration, android.os.VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                @Suppress("DEPRECATION")
+                it.vibrate(duration)
+            }
+        }
+    }
 
 
 

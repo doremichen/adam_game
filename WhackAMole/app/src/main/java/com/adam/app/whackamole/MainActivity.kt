@@ -74,6 +74,8 @@ class MainActivity : AppCompatActivity() {
                     updateScore()
                     hideMode(index)
                     mCurrentMoleIndex = -1
+                    // vibrate
+                    Utils.vibrate(this)
                 }
             }
 
@@ -174,7 +176,7 @@ class MainActivity : AppCompatActivity() {
                     inputType = InputType.TYPE_CLASS_NUMBER
                 }
 
-                Utils.showEditDialog(
+                Utils.showViewDialog(
                     this,
                     getString(R.string.set_interval_title),
                     getString(R.string.set_interval_message),
