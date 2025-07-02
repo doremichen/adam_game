@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Device Info</string>
+    <string name="btn_query_system_information">Query system information</string>
+    <string name="tv_cpu_info">CPU Info</string>
+    <string name="tv_memory_info">Memory Info</string>
+    <string name="btn_export_to_file">Export to file</string>
+    <string name="error_failed_to_fetch_cpu_info">Failed to fetch cpu info</string>
+    <string name="error_failed_to_fetch_memory_info">Failed to fetch memory info</string>
+    <string name="toast_can_not_create_uri">Can not create URI</string>
+    <string name="toast_has_been_saved_to_download_folder">Has been saved to Download folder</string>
+    <string name="toast_save_fail">Save fail：</string>
+    <string name="info_total_available">Total: %.2f MB\nAvailable: %.2f MB</string>
+</resources>
