@@ -39,8 +39,8 @@ public class SettingsActivity extends AppCompatActivity {
         // setup speed option
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.speed_array,
-                android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                R.layout.spinner_item_left);
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_left);
         mBinding.spinnerSpeed.setAdapter(adapter);
 
         // observer and update speed
