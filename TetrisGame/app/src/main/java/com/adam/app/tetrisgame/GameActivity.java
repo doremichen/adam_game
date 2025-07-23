@@ -107,11 +107,25 @@ public class GameActivity extends AppCompatActivity {
             }
         };
 
-        // start game
-        mHandler.post(mUpdateRunnable);
-
         // setupControls
         setupControls();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // start game
+        mViewModel.setRunning(true);
+        mHandler.post(mUpdateRunnable);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // stop game
+        mViewModel.setRunning(false);
+        mHandler.removeCallbacks(mUpdateRunnable);
     }
 
     private void showGameOverDlg() {
