@@ -79,7 +79,8 @@ public class GameActivity extends AppCompatActivity {
                 mViewModel.setRunning(false);
                 // save score
                 mViewModel.saveHighScore(GameActivity.this);
-
+                // save score to database
+                mViewModel.saveScore(GameActivity.this);
                 // show game over dialog
                 showGameOverDlg();
 

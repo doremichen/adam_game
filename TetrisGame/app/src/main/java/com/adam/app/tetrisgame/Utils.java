@@ -8,6 +8,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import java.util.List;
+
 public final class Utils {
     // TAG string: TerisGame
     private static final String TAG = "TetrisGame";
@@ -119,4 +121,19 @@ public final class Utils {
     public static void showToast(Context context, String message) {
         Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show();
     }
+
+    /**
+     * Dump list
+     */
+    public static void dumpList(List<?> list) {
+        log("===============================================");
+        if (list == null) {
+            return;
+        }
+        for (Object o : list) {
+            Log.d(TAG, o.toString());
+        }
+        log("===============================================");
+    }
+
 }

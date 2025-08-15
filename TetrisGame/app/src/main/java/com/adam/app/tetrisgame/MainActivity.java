@@ -49,6 +49,13 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, GameActivity.class);
             startActivity(intent);
         });
+        // set listener for leaderboard button
+        mBinding.buttonLeaderboard.setOnClickListener(v -> {
+            // start leaderboard activity
+            Intent intent = new Intent(MainActivity.this, LeaderboardActivity.class);
+            startActivity(intent);
+        });
+
         // set listener for about button
         mBinding.buttonAbout.setOnClickListener(v -> {
             // start instruction dialog

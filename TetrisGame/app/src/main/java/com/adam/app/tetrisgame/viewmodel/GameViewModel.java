@@ -7,11 +7,16 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.tetrisgame.Utils;
+import com.adam.app.tetrisgame.data.ScoreDatabase;
+import com.adam.app.tetrisgame.model.ScoreDao;
+import com.adam.app.tetrisgame.model.ScoreRecord;
 import com.adam.app.tetrisgame.model.TetrisBoard;
 import com.adam.app.tetrisgame.view.TetrisView;
 
 public class GameViewModel extends ViewModel{
-//    public static final String GAME_PREFS = "game_prefs";
+    public static final int MAX_NUM = 100;
+    public static final int RESERVE_NUM = 99;
+    //    public static final String GAME_PREFS = "game_prefs";
 //    public static final String HIGH_SCORE_KEY = "high_score";
 //    public static final String GAME_SETTINGS = "game_settings";
 //    public static final String SPEED_KEY = "speed";
@@ -181,6 +186,25 @@ public class GameViewModel extends ViewModel{
         int savedHigh = prefs.getInt(GAME_PREFS.highScorekey, 0);
         mHighScore.setValue(savedHigh);
     }
+
+    /**
+     * Save score in database: score_database
+     *
+     */
+    public void saveScore(Context context) {
+        // get database dao
+        ScoreDao dao = ScoreDatabase.getDatabase(context).scoreDao();
+        // delete lowest scores when the count is large than 100
+        int count = dao.getCount();
+        if (count > MAX_NUM) {
+            dao.deleteLowestScores(count - RESERVE_NUM);
+        }
+        // insert score to database
+        int score = mCurrentScore.getValue() != null ? mCurrentScore.getValue() : 0;
+        ScoreRecord record = new ScoreRecord(System.currentTimeMillis(), score);
+        dao.insert(record);
+    }
+
 
 
     public void saveHighScore(Context context) {

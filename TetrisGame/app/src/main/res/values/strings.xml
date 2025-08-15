@@ -29,6 +29,9 @@
     <string name="dialog_title_exit">Exit</string>
     <string name="dialog_message_exit">Are you sure you want to exit?</string>
     <string name="dialog_button_cancel">Cancel</string>
+    <string name="ranking_list">Ranking list</string>
+    <string name="no_record">No record</string>
+    <string name="title_ranking_list">Ranking list</string>
 
     <string-array name="speed_array">
         <item>@string/speed_slow</item>
