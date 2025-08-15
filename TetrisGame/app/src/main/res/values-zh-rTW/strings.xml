@@ -26,6 +26,9 @@
     <string name="speed_slow">慢速</string>
     <string name="speed_medium">中速</string>
     <string name="speed_fast">快速</string>
+    <string name="dialog_title_exit">離開</string>
+    <string name="dialog_message_exit">你確定要離開嗎?</string>
+    <string name="dialog_button_cancel">取消</string>
 
     <string-array name="speed_array">
         <item>@string/speed_slow</item>

@@ -1,0 +1,198 @@
+@startuml
+class com.adam.app.tetrisgame.MainActivity {
+- ActivityMainBinding mBinding
+# void onCreate(Bundle)
+# void onDestroy()
+- void setListener()
+}
+
+
+enum com.adam.app.tetrisgame.model.TetrominoType {
++  I
++  O
++  T
++  S
++  Z
++  J
++  L
+- int[][] mShape
+- int mColor
++ int[][] getShape()
++ int getColor()
+}
+
+
+class com.adam.app.tetrisgame.GameActivity {
+- ActivityGameBinding mBinding
+- TetrisView mTetrisView
+~ GameViewModel mViewModel
+- Handler mHandler
+- Runnable mUpdateRunnable
+- boolean mRunning
+- GameSoundManager mSoundManager
+# void onCreate(Bundle)
+# void onResume()
+# void onPause()
+- void showGameOverDlg()
+# void onDestroy()
+- void setupControls()
++ void playSound(int)
+}
+
+
+class com.adam.app.tetrisgame.model.TetrisBoard {
+- int[][] mGrid
+- Tetromino mCurrentBlock
+- int mCurrentRow
+- int mCurrentCol
+- Random mRandom
+- GameListener mGameListener
++ int[][] getGrid()
++ void reset()
++ void spawnBlock()
++ void update()
++ boolean moveDown()
++ boolean moveLeft()
++ boolean moveRight()
++ void rotate()
++ boolean isGameOver()
+- boolean canMove(int,int)
+- void clearLines()
+- void mergeBlockToGrid()
++ void applyToView(TetrisView)
+}
+
+
+interface com.adam.app.tetrisgame.model.TetrisBoard$GameListener {
+~ void onClearLines()
+~ void onGameOver()
+}
+
+class com.adam.app.tetrisgame.view.TetrisView {
+- Paint mPaint
+- int[][] mGrid
+- void init()
++ void setGrid(int[][])
+# void onDraw(Canvas)
+- void drawGrid(Canvas)
+}
+
+
+class com.adam.app.tetrisgame.sound.GameSoundManager {
+- SoundPool mSoundPool
+- Map<Integer,Integer> mSoundMap
+- MediaPlayer mMediaPlayer
++ boolean hasRawResource(Context,int)
++ boolean hasSound(int)
++ {static} GameSoundManager getInstance()
++ void playShortSound(Context,int)
++ void playMusic(Context,int,boolean)
++ void stopMusic()
++ void release()
+}
+
+
+class com.adam.app.tetrisgame.sound.GameSoundManager$Helper {
+- {static} GameSoundManager INSTANCE
+}
+
+class com.adam.app.tetrisgame.SettingsActivity {
+- GameViewModel mGameViewModel
+- ActivitySettingsBinding mBinding
+# void onCreate(Bundle)
+}
+
+
+class com.adam.app.tetrisgame.model.Tetromino {
+- TetrominoType mType
+- int[][] mShape
+- int mColor
++ void setShape(int[][])
++ int[][] getShape()
++ int getColor()
++ TetrominoType getType()
++ void rotate()
+}
+
+
+class com.adam.app.tetrisgame.Utils {
+- {static} String TAG
+- {static} boolean LOG_FLAG
++ {static} void log(String)
++ {static} void log(String,Exception)
++ {static} void callStack()
++ {static} Intent createIntent(Context,Class<?>)
++ {static} void log(String,String,Exception)
++ {static} void showAlertDialog(Context,String,String,DialogButton,DialogButton)
+}
+
+
+interface com.adam.app.tetrisgame.Utils$NUM {
+~ {static} int COLUMNS
+~ {static} int ROWS
+}
+
+class com.adam.app.tetrisgame.Utils$DialogButton {
+- String mInfo
+- DialogInterface.OnClickListener mListener
++ String getInfo()
++ DialogInterface.OnClickListener getListener()
+}
+
+
+class com.adam.app.tetrisgame.viewmodel.GameViewModel {
+- TetrisBoard mTetrisBoard
+- boolean mRunning
+- MutableLiveData<Integer> mCurrentScore
+- MutableLiveData<Integer> mHighScore
+- MutableLiveData<Integer> mSpeedLiveData
+- MutableLiveData<Boolean> mSoundLiveData
++ void initTetrisBoard(TetrisBoard.GameListener)
++ TetrisBoard getTetrisBoard()
++ void updateTetrisBoard()
++ void applyToView(TetrisView)
++ void reset()
++ void setRunning(boolean)
++ boolean isRunning()
++ MutableLiveData<Integer> getCurrentScore()
++ MutableLiveData<Integer> getHighScore()
++ MutableLiveData<Integer> getSpeed()
++ void setSpeed(int)
++ int getSpeedInt(Context)
++ void setSound(boolean)
++ MutableLiveData<Boolean> getSound()
++ boolean isSoundEffectEnabled(Context)
++ void increaseScore(int)
++ void resetScore()
++ void loadHighScore(Context)
++ void saveHighScore(Context)
++ void loadSettings(Context)
++ void saveSettings(Context)
+}
+
+
+interface com.adam.app.tetrisgame.viewmodel.GameViewModel$GAME_PREFS {
+~ {static} String fileName
+~ {static} String highScorekey
+}
+
+interface com.adam.app.tetrisgame.viewmodel.GameViewModel$GAME_SETTINGS {
+~ {static} String fileName
+~ {static} String speedKey
+~ {static} String soundKey
+}
+
+
+
+androidx.appcompat.app.AppCompatActivity <|-- com.adam.app.tetrisgame.MainActivity
+androidx.appcompat.app.AppCompatActivity <|-- com.adam.app.tetrisgame.GameActivity
+com.adam.app.tetrisgame.model.TetrisBoard +.. com.adam.app.tetrisgame.model.TetrisBoard$GameListener
+android.view.View <|-- com.adam.app.tetrisgame.view.TetrisView
+com.adam.app.tetrisgame.sound.GameSoundManager +.. com.adam.app.tetrisgame.sound.GameSoundManager$Helper
+androidx.appcompat.app.AppCompatActivity <|-- com.adam.app.tetrisgame.SettingsActivity
+com.adam.app.tetrisgame.Utils +.. com.adam.app.tetrisgame.Utils$NUM
+com.adam.app.tetrisgame.Utils +.. com.adam.app.tetrisgame.Utils$DialogButton
+androidx.lifecycle.ViewModel <|-- com.adam.app.tetrisgame.viewmodel.GameViewModel
+com.adam.app.tetrisgame.viewmodel.GameViewModel +.. com.adam.app.tetrisgame.viewmodel.GameViewModel$GAME_PREFS
+com.adam.app.tetrisgame.viewmodel.GameViewModel +.. com.adam.app.tetrisgame.viewmodel.GameViewModel$GAME_SETTINGS
+@enduml

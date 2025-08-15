@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -110,5 +111,12 @@ public final class Utils {
             builder.setNegativeButton(negativeButton.getInfo(), negativeButton.getListener());
         }
         builder.show();
+    }
+
+    /**
+     * Show toast message
+     */
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show();
     }
 }

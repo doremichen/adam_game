@@ -6,10 +6,14 @@
  */
 package com.adam.app.tetrisgame;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -46,6 +50,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Utils.log("GameActivity onCreate");
+        Utils.log("API Level: " + Build.VERSION.SDK_INT);
+        Utils.log("targetSdkVersion: " + getApplicationInfo().targetSdkVersion);
         // view binding
         mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
@@ -109,6 +115,20 @@ public class GameActivity extends AppCompatActivity {
 
         // setupControls
         setupControls();
+
+        // add back button callback
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // log back button action
+                Utils.log("back button action");
+                // stop game
+                mViewModel.setRunning(false);
+
+                // show game exit dialog
+                showGameExitDlg();
+            }
+        });
     }
 
 
@@ -127,6 +147,31 @@ public class GameActivity extends AppCompatActivity {
         mViewModel.setRunning(false);
         mHandler.removeCallbacks(mUpdateRunnable);
     }
+
+    /**
+     * show game exit dialog
+     */
+    private void showGameExitDlg() {
+        // Ok Button
+        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok), (dialog, which) -> {
+            // Exit game
+            finish();
+        });
+        // Cancel Button
+        Utils.DialogButton cancelButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_cancel), (dialog, which) -> {
+            // restart game
+            mViewModel.setRunning(true);
+            mHandler.post(mUpdateRunnable);
+        });
+        // title
+        String title = getResources().getString(R.string.dialog_title_exit);
+        // message
+        String message = getResources().getString(R.string.dialog_message_exit);
+        // show dialog
+        Utils.showAlertDialog(this, title, message, okButton, cancelButton);
+
+    }
+
 
     private void showGameOverDlg() {
         Utils.log("showGameOverDlg");
@@ -156,6 +201,10 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Log on destroy
+        Utils.log("GameActivity onDestroy");
+
+
         // release sound manager
         if (mSoundManager != null) {
             mSoundManager.stopMusic();
