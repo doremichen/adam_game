@@ -32,6 +32,7 @@
     <string name="ranking_list">排行榜</string>
     <string name="no_record">尚無成績資料</string>
     <string name="title_ranking_list">排行榜</string>
+    <string name="progress_loading">載入中</string>
 
     <string-array name="speed_array">
         <item>@string/speed_slow</item>
