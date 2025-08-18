@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ScoreRepository {
+    public static final long DELAY_DEAFULT_TIME = 1000L;
     // score dao
     private final ScoreDao mScoreDao;
     // Executor service
@@ -39,12 +40,23 @@ public class ScoreRepository {
      * getTopScores
      */
     public void getTopScores(RepositoryCallback<List<ScoreRecord>> callback) {
+        getTopScores(DELAY_DEAFULT_TIME, callback);
+    }
+
+    /**
+     * getTopScores
+     * @param delayTime delay time
+     * @param callback callback
+     */
+    public void getTopScores(long delayTime, RepositoryCallback<List<ScoreRecord>> callback) {
         mExecutorService.execute(() -> {
             final List<ScoreRecord> scoreList = mScoreDao.getTopScores();
-            mHandler.post(() -> callback.onComplete(scoreList));
+            mHandler.postDelayed(() -> callback.onComplete(scoreList), delayTime);
         });
-
     }
+
+
+
 
     /**
      * insert score
