@@ -108,6 +108,7 @@ public final class Utils {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message);
+        builder.setCancelable(false);
         builder.setPositiveButton(positiveButton.getInfo(), positiveButton.getListener());
         if (negativeButton != null) {
             builder.setNegativeButton(negativeButton.getInfo(), negativeButton.getListener());
