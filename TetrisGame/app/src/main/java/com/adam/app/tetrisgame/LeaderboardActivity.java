@@ -57,7 +57,5 @@ public class LeaderboardActivity extends AppCompatActivity {
                     mBinding.recyclerViewScores.setVisibility(scoreList.isEmpty() ? View.GONE : View.VISIBLE);
         });
 
-
-
     }
 }

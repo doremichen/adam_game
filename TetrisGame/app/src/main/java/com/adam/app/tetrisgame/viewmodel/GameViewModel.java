@@ -194,9 +194,9 @@ public class GameViewModel extends ViewModel{
     public void saveScore(Context context) {
         // get database dao
         ScoreDao dao = ScoreDatabase.getDatabase(context).scoreDao();
-        // delete lowest scores when the count is large than 100
+        // delete lowest scores when the count is equal to 100
         int count = dao.getCount();
-        if (count > MAX_NUM) {
+        if (count == MAX_NUM) {
             dao.deleteLowestScores(count - RESERVE_NUM);
         }
         // insert score to database
