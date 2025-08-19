@@ -1,3 +1,9 @@
+/**
+ * Description: This class is the utils class.
+ *
+ * Author: Adam Chen
+ * Date: 2025/08/15
+ */
 package com.adam.app.tetrisgame;
 
 import android.content.Context;

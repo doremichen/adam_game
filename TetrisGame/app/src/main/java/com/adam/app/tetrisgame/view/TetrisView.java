@@ -1,3 +1,11 @@
+/**
+ * Copyright 2025 Adam
+ *
+ * Description: TetrisView is the view of the game.
+ *
+ * Author: Adam Chen
+ * Date: 2025/08/15
+ */
 package com.adam.app.tetrisgame.view;
 
 import android.content.Context;

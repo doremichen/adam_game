@@ -1,3 +1,11 @@
+/**
+ * Copyright 2025 Adam
+ *
+ * Description: GameViewModel is the viewmodel of the game.
+ *
+ * Author: Adam Chen
+ * Date: 2025/08/15
+ */
 package com.adam.app.tetrisgame.viewmodel;
 
 import android.content.Context;
