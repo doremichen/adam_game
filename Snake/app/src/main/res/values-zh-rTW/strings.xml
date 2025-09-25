@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">貪食蛇</string>
+    <string name="snake_game_core">分數：%1$d</string>
+    <string name="snake_game_up_array">↑</string>
+    <string name="snake_game_left_array">←</string>
+    <string name="snake_game_down_array">↓</string>
+    <string name="snake_game_right_array">→</string>
+    <string name="snake_game_ok">確定</string>
+    <string name="snake_game_over_title">遊戲結束</string>
+    <string name="snake_game_dialog_message">你想再玩一次還是離開遊戲？</string>
+    <string name="snake_game_restart">再玩一次</string>
+    <string name="snake_game_exit">離開</string>
+    <string name="snake_game_exit_title">離開</string>
+</resources>
