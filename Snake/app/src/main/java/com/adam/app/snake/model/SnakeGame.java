@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 the Adam Game
- *
+ * <p>
  * Description: This class is the snake game model
- *
+ * <p>
  * Author: Adam Chen
  * Date: 2025/09/24
  */
@@ -12,50 +12,26 @@ import com.adam.app.snake.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 
 public class SnakeGame {
 
     // TAG SnakeGame
     private static final String TAG = "SnakeGame";
-
-    /**
-     * enum Direction
-     */
-    public enum Direction {
-        UP, DOWN, LEFT, RIGHT;
-        public boolean isOpposite(Direction other) {
-            return (this == UP && other == DOWN) ||
-                    (this == DOWN && other == UP) ||
-                    (this == LEFT && other == RIGHT) ||
-                    (this == RIGHT && other == LEFT);
-        }
-    }
-
-    /**
-     * enum GameState
-     */
-    public enum GameState {
-        RUNNING, GAME_OVER
-    }
-
     // mNumColums: int
     private final int mNumColumns;
     // mNumRows: int
     private final int mNumRows;
-
     // mFood[][]: int[1][2]
     private final int[][] mFood = new int[1][2];
     // mSnake: List<int[]>
     private final List<int[]> mSnake = new ArrayList<>();
-
     // initial Direction is RIGHT
     private Direction mDirection = Direction.RIGHT;
     // initial GameState is RUNNING
     private GameState mGameState = GameState.RUNNING;
     // initial Score is 0
     private int mScore = 0;
-
     /**
      * Constructor with rows and columns
      *
@@ -143,7 +119,7 @@ public class SnakeGame {
             // remove tail of snake
             mSnake.remove(mSnake.size() - 1);
         }
-        
+
     }
 
     /**
@@ -151,14 +127,41 @@ public class SnakeGame {
      */
     private void generateFood() {
         Utils.logDebug(TAG, "generateFood");
-        // generate random x and y
-        int x = (int) (Math.random() * mNumColumns);
-        int y = (int) (Math.random() * mNumRows);
-        mFood[0][0] = x;
-        mFood[0][1] = y;
+
+        if (mNumColumns <= 0 || mNumRows <= 0) {
+            // avoid to uninitialize snake view
+            return;
+        }
+        // log mNumColumns mNumRows
+        Utils.logDebug(TAG, "generateFood: mNumColumns: " + mNumColumns + ", mNumRows: " + mNumRows);
+
+        Random random = new Random();
+        int x, y;
+        do {
+            x = random.nextInt(mNumColumns); // 0 ~ mNumColumns-1
+            y = random.nextInt(mNumRows);    // 0 ~ mNumRows-1
+            Utils.logDebug(TAG, "generateFood: x: " + x + ", y: " + y);
+            // check if food is in snake
+        } while (isOnSnake(x, y));
+
+        mFood[0][0] = Math.min(x, mNumColumns - 1);
+        mFood[0][1] = Math.min(y, mNumRows - 1);
     }
 
-
+    /**
+     * check if (x, y) is in snake
+     * @param x int
+     * @param y int
+     * @return boolean
+     */
+    private boolean isOnSnake(int x, int y) {
+        for (int[] segment : mSnake) {
+            if (segment[0] == x && segment[1] == y) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * set direction of snake according to input Direction
@@ -198,7 +201,7 @@ public class SnakeGame {
     /**
      * get snake of snake
      *
-     * @return List<int[]>
+     * @return List<int [ ]>
      */
     public List<int[]> getSnake() {
         return mSnake;
@@ -220,6 +223,27 @@ public class SnakeGame {
      */
     public GameState getGameState() {
         return mGameState;
+    }
+
+    /**
+     * enum Direction
+     */
+    public enum Direction {
+        UP, DOWN, LEFT, RIGHT;
+
+        public boolean isOpposite(Direction other) {
+            return (this == UP && other == DOWN) ||
+                    (this == DOWN && other == UP) ||
+                    (this == LEFT && other == RIGHT) ||
+                    (this == RIGHT && other == LEFT);
+        }
+    }
+
+    /**
+     * enum GameState
+     */
+    public enum GameState {
+        RUNNING, GAME_OVER
     }
 
 }

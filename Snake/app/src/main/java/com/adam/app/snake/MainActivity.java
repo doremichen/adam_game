@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.snake.databinding.ActivityMainBinding;
 import com.adam.app.snake.model.SnakeGame;
+import com.adam.app.snake.view.SnakeView;
 import com.adam.app.snake.viewmodel.SnakeViewModel;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,10 +46,26 @@ public class MainActivity extends AppCompatActivity {
         // initial snake view model
         mSnakeViewModel = new ViewModelProvider(this).get(SnakeViewModel.class);
 
-        // initial game screen
-        int cols = getResources().getDisplayMetrics().widthPixels / 50;
-        int rows = getResources().getDisplayMetrics().heightPixels / 50;
-        mSnakeViewModel.initGame(rows, cols);
+        // get snake view width and height
+        mBinding.snakeView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+
+                    // Log snake view width and height
+                    int width = mBinding.snakeView.getWidth();
+                    int height = mBinding.snakeView.getHeight();
+                    Utils.logDebug(TAG, "onCreate: width: " + width + ", height: " + height);
+                    // initial game screen
+                    int cols = width / SnakeView.CEIL_SIZE;
+                    int rows = height / SnakeView.CEIL_SIZE;
+                    Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
+                    mSnakeViewModel.initGame(rows, cols);
+
+       });
+
+//        // initial game screen
+//        int cols = getResources().getDisplayMetrics().widthPixels / SnakeView.CEIL_SIZE;
+//        int rows = getResources().getDisplayMetrics().heightPixels / SnakeView.CEIL_SIZE;
+//        Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
+//        mSnakeViewModel.initGame(rows, cols);
 
         // back button click listener
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {

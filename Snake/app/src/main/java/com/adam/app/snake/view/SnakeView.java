@@ -17,9 +17,14 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.snake.Utils;
+
 import java.util.List;
 
 public class SnakeView extends View {
+    // TAG: SnakeView
+    private static final String TAG = "SnakeView";
+
     // paint snack
     private final Paint mPaintSnake = new Paint();
     // paint food
@@ -27,7 +32,7 @@ public class SnakeView extends View {
     // paint text
     private final Paint mPaintText = new Paint();
     // snake size
-    private int mSnakeSize = 50;
+    public final static int CEIL_SIZE = 50;
 
     // snake: List<int[]>
     private List<int[]> mSnake;
@@ -108,22 +113,24 @@ public class SnakeView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
+
+        // check if food is not null
+        if (mFood != null) {
+            // log food
+            Utils.logDebug(TAG, "onDraw: food: " + mFood[0][0] + ", " + mFood[0][1]);
+            // draw food
+            canvas.drawRect(mFood[0][0] * CEIL_SIZE, mFood[0][1] * CEIL_SIZE,
+                    (mFood[0][0] + 1) * CEIL_SIZE, (mFood[0][1] + 1) * CEIL_SIZE, mPaintFood);
+        }
+
         // check if snake is not null
         if (mSnake != null) {
             // draw snake
             for (int[] body : mSnake) {
-                canvas.drawRect(body[0] * mSnakeSize, body[1] * mSnakeSize,
-                        (body[0] + 1) * mSnakeSize, (body[1] + 1) * mSnakeSize, mPaintSnake);
+                canvas.drawRect(body[0] * CEIL_SIZE, body[1] * CEIL_SIZE,
+                        (body[0] + 1) * CEIL_SIZE, (body[1] + 1) * CEIL_SIZE, mPaintSnake);
             }
         }
-
-        // check if food is not null
-        if (mFood != null) {
-            // draw food
-            canvas.drawRect(mFood[0][0] * mSnakeSize, mFood[0][1] * mSnakeSize,
-                    (mFood[0][0] + 1) * mSnakeSize, (mFood[0][1] + 1) * mSnakeSize, mPaintFood);
-        }
-
 
         // draw score
         canvas.drawText("Score: " + mScore, 50, 100, mPaintText);
