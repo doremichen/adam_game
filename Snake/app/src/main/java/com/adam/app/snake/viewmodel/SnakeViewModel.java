@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 the Adam Game
- *
+ * <p>
  * Description: This class is the snake game view model
- *
+ * <p>
  * Author: Adam Chen
  * Date: 2025/09/24
  */
@@ -20,22 +20,18 @@ import com.adam.app.snake.model.SnakeGame;
 import java.util.List;
 
 public class SnakeViewModel extends ViewModel {
+    public static final long UPDATE_GAME_MILLIS = 300L;
     // TAG SnakeViewModel
     private static final String TAG = "SnakeViewModel";
-    public static final long UPDATE_GAME_MILLIS = 300L;
-
-
-    // SnakeGame model: mGame
-    private SnakeGame mGame;
     // Game Handler
     private final Handler mHandler = new Handler(Looper.getMainLooper());
-
     // live data
     private final MutableLiveData<List<int[]>> mGameLiveData = new MutableLiveData<>();
     private final MutableLiveData<int[][]> mFoodLiveData = new MutableLiveData<>();
     private final MutableLiveData<Integer> mScoreLiveData = new MutableLiveData<>();
     private final MutableLiveData<SnakeGame.GameState> mGameStateLiveData = new MutableLiveData<>();
-
+    // SnakeGame model: mGame
+    private SnakeGame mGame;
     // Runnable
     private Runnable mGameRunnable;
 
@@ -73,7 +69,7 @@ public class SnakeViewModel extends ViewModel {
         updateLiveData();
         // start game
         startGame();
-        
+
     }
 
     /**
@@ -136,12 +132,15 @@ public class SnakeViewModel extends ViewModel {
     public MutableLiveData<List<int[]>> getGameLiveData() {
         return mGameLiveData;
     }
+
     public MutableLiveData<int[][]> getFoodLiveData() {
         return mFoodLiveData;
     }
+
     public MutableLiveData<Integer> getScoreLiveData() {
         return mScoreLiveData;
     }
+
     public MutableLiveData<SnakeGame.GameState> getGameStateLiveData() {
         return mGameStateLiveData;
     }

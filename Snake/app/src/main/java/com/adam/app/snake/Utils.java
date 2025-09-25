@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 the Adam Game
- *
+ * <p>
  * Description: This class is the snake game utils
- *
+ * <p>
  * Author: Adam Chen
  * Date: 2025/09/24
  */
@@ -43,6 +43,30 @@ public final class Utils {
     }
 
     /**
+     * show dialog
+     *
+     * @param context Context
+     * @param title String
+     * @param message String
+     * @param positiveButton Content DialogButtonContent
+     * @param negativeButton Content DialogButtonContent
+     */
+    public static void showDialog(Context context, String title, String message,
+                                  DialogButtonContent positiveButton, DialogButtonContent negativeButton) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        if (positiveButton != null) {
+            builder.setPositiveButton(positiveButton.getLabel(), positiveButton.getListener());
+        }
+        if (negativeButton != null) {
+            builder.setNegativeButton(negativeButton.getLabel(), negativeButton.getListener());
+        }
+        builder.show();
+    }
+
+    /**
      * Class Dialog button Content
      * label String
      * listener DialogInterface.OnClickListener
@@ -50,6 +74,7 @@ public final class Utils {
     public static class DialogButtonContent {
         private final String mLabel;
         private final DialogInterface.OnClickListener mListener;
+
         public DialogButtonContent(String label, DialogInterface.OnClickListener listener) {
             this.mLabel = label;
             this.mListener = listener;
@@ -62,30 +87,6 @@ public final class Utils {
         public DialogInterface.OnClickListener getListener() {
             return mListener;
         }
-    }
-
-    /**
-     * show dialog
-     *
-     * @param context Context
-     * @param title String
-     * @param message String
-     * @param positiveButton Content DialogButtonContent
-     * @param negativeButton Content DialogButtonContent
-     */
-    public static void showDialog(Context context, String title, String message,
-                                   DialogButtonContent positiveButton, DialogButtonContent negativeButton) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setCancelable(false);
-        if (positiveButton != null) {
-            builder.setPositiveButton(positiveButton.getLabel(), positiveButton.getListener());
-        }
-        if (negativeButton != null) {
-            builder.setNegativeButton(negativeButton.getLabel(), negativeButton.getListener());
-        }
-        builder.show();
     }
 
 }

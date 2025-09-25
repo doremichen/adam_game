@@ -32,6 +32,7 @@ public class SnakeGame {
     private GameState mGameState = GameState.RUNNING;
     // initial Score is 0
     private int mScore = 0;
+
     /**
      * Constructor with rows and columns
      *
@@ -157,6 +158,7 @@ public class SnakeGame {
 
     /**
      * check if (x, y) is in snake
+     *
      * @param x int
      * @param y int
      * @return boolean

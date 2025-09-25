@@ -1,8 +1,8 @@
 /**
  * Copyright 2015 the Adam Game
- *
+ * <p>
  * Description: This class is the snake game activity
- *
+ * <p>
  * Author: Adam Chen
  * Date: 2025/09/24
  */
@@ -44,17 +44,17 @@ public class MainActivity extends AppCompatActivity {
         // get snake view width and height
         mBinding.snakeView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
 
-                    // Log snake view width and height
-                    int width = mBinding.snakeView.getWidth();
-                    int height = mBinding.snakeView.getHeight();
-                    Utils.logDebug(TAG, "onCreate: width: " + width + ", height: " + height);
-                    // initial game screen
-                    int cols = width / SnakeView.CEIL_SIZE;
-                    int rows = height / SnakeView.CEIL_SIZE;
-                    Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
-                    mSnakeViewModel.initGame(rows, cols);
+            // Log snake view width and height
+            int width = mBinding.snakeView.getWidth();
+            int height = mBinding.snakeView.getHeight();
+            Utils.logDebug(TAG, "onCreate: width: " + width + ", height: " + height);
+            // initial game screen
+            int cols = width / SnakeView.CEIL_SIZE;
+            int rows = height / SnakeView.CEIL_SIZE;
+            Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
+            mSnakeViewModel.initGame(rows, cols);
 
-       });
+        });
 
 
         // back button click listener
