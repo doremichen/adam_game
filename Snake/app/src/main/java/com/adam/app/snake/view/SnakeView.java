@@ -134,9 +134,9 @@ public class SnakeView extends View {
 
 
         // check if game over text is not empty
-        if (!mGameOverText.isEmpty()) {
-            // draw game over text
-            canvas.drawText(mGameOverText, 100, getHeight() / 2, mPaintText);
-        }
+//        if (!mGameOverText.isEmpty()) {
+//            // draw game over text
+//            canvas.drawText(mGameOverText, 100, getHeight() / 2, mPaintText);
+//        }
     }
 }

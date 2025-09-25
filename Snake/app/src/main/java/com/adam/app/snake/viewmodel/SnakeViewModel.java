@@ -53,6 +53,13 @@ public class SnakeViewModel extends ViewModel {
             @Override
             public void run() {
                 Utils.logDebug(TAG, "run");
+                // check game state is running
+                if (mGame.getGameState() != SnakeGame.GameState.RUNNING) {
+                    Utils.logDebug(TAG, "run: game is not running");
+                    return;
+                }
+
+
                 mGame.update();
                 updateLiveData();
                 if (mGame.getGameState() == SnakeGame.GameState.RUNNING) {
@@ -76,6 +83,15 @@ public class SnakeViewModel extends ViewModel {
         Utils.logDebug(TAG, "startGame");
 
         mHandler.postDelayed(mGameRunnable, UPDATE_GAME_MILLIS);
+    }
+
+    /**
+     * stop game
+     */
+    public void stopGame() {
+        Utils.logDebug(TAG, "stopGame");
+        mGame.stop();
+        mHandler.removeCallbacks(mGameRunnable);
     }
 
     /**

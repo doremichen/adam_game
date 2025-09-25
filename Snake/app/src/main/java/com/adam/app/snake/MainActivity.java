@@ -9,14 +9,9 @@
 package com.adam.app.snake;
 
 import android.os.Bundle;
-import android.view.MotionEvent;
 
-import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.snake.databinding.ActivityMainBinding;
@@ -66,8 +61,14 @@ public class MainActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // finish activity
-                finish();
+                // stop game
+                mSnakeViewModel.stopGame();
+
+                // show exit dialog
+                String title = getString(R.string.snake_game_exit_title);
+                String message = getString(R.string.snake_game_dialog_message);
+                showGameDialog(title, message);
+
             }
         });
 
@@ -85,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
         mSnakeViewModel.getGameLiveData().observe(this, mBinding.snakeView::setSnake);
         mSnakeViewModel.getFoodLiveData().observe(this, mBinding.snakeView::setFood);
         mSnakeViewModel.getScoreLiveData().observe(this, this::onChanged);
-        mSnakeViewModel.getGameStateLiveData().observe(this, isGameOver ->
-                mBinding.snakeView.setGameOverText(isGameOver == SnakeGame.GameState.GAME_OVER));
+        mSnakeViewModel.getGameStateLiveData().observe(this, this::onChanged);
 
     }
 
@@ -112,4 +112,38 @@ public class MainActivity extends AppCompatActivity {
         // set score text
         mBinding.coreTextView.setText(scoreText);
     }
+
+    private void onChanged(SnakeGame.GameState isGameOver) {
+
+        if (isGameOver == SnakeGame.GameState.GAME_OVER) {
+            // show game over dialog
+            String title = getString(R.string.snake_game_over_title);
+            String message = getString(R.string.snake_game_dialog_message);
+            showGameDialog(title, message);//showGameOverDialog();
+        }
+    }
+
+
+    /**
+     * ShowGameDialog with title and message
+     *
+     * @param title String
+     * @param message String
+     */
+    private void showGameDialog(String title, String message) {
+        // post dialog button content
+        Utils.DialogButtonContent postButton = new Utils.DialogButtonContent(getString(R.string.snake_game_restart),
+                (dialog, which) -> {
+                    mSnakeViewModel.resetGame();
+                });
+        // negative dialog button content
+        Utils.DialogButtonContent negativeButton = new Utils.DialogButtonContent(getString(R.string.snake_game_exit),
+                (dialog, which) -> {
+                    finish();
+                });
+        // show dialog
+        Utils.showDialog(this, title, message, postButton, negativeButton);
+    }
+
+
 }

@@ -64,6 +64,13 @@ public class SnakeGame {
     }
 
     /**
+     * stop the game
+     */
+    public void stop() {
+        mGameState = GameState.STOP;
+    }
+
+    /**
      * update the game
      */
     public void update() {
@@ -243,7 +250,7 @@ public class SnakeGame {
      * enum GameState
      */
     public enum GameState {
-        RUNNING, GAME_OVER
+        RUNNING, STOP, GAME_OVER
     }
 
 }
