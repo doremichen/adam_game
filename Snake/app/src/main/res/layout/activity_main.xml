@@ -8,21 +8,38 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
+    <!-- Core TextView with border -->
+    <TextView
+        android:id="@+id/coreTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/snake_game_core"
+        android:textColor="@color/white"
+        android:padding="8dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@drawable/border_background"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp" />
+
     <!-- Game Screen -->
     <com.adam.app.snake.view.SnakeView
         android:id="@+id/snakeView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/coreTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/controlPad" />
 
-    <!-- Control button  -->
+    <!-- Control button -->
     <GridLayout
         android:id="@+id/controlPad"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@drawable/border_background"
         android:padding="16dp"
         android:columnCount="3"
         android:rowCount="2"
@@ -30,7 +47,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- button layout -->
         <View
             android:layout_width="0dp"
             android:layout_height="0dp" />
@@ -39,7 +55,7 @@
             android:id="@+id/btnUp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="↑" />
+            android:text="@string/snake_game_up_array" />
 
         <View
             android:layout_width="0dp"
@@ -49,19 +65,19 @@
             android:id="@+id/btnLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="←" />
+            android:text="@string/snake_game_left_array" />
 
         <Button
             android:id="@+id/btnDown"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="↓" />
+            android:text="@string/snake_game_down_array" />
 
         <Button
             android:id="@+id/btnRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="→" />
+            android:text="@string/snake_game_right_array" />
     </GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

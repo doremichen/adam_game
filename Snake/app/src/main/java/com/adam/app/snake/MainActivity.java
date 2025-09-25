@@ -61,11 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
        });
 
-//        // initial game screen
-//        int cols = getResources().getDisplayMetrics().widthPixels / SnakeView.CEIL_SIZE;
-//        int rows = getResources().getDisplayMetrics().heightPixels / SnakeView.CEIL_SIZE;
-//        Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
-//        mSnakeViewModel.initGame(rows, cols);
 
         // back button click listener
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -89,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         // observer live data
         mSnakeViewModel.getGameLiveData().observe(this, mBinding.snakeView::setSnake);
         mSnakeViewModel.getFoodLiveData().observe(this, mBinding.snakeView::setFood);
-        mSnakeViewModel.getScoreLiveData().observe(this, mBinding.snakeView::setScore);
+        mSnakeViewModel.getScoreLiveData().observe(this, this::onChanged);
         mSnakeViewModel.getGameStateLiveData().observe(this, isGameOver ->
                 mBinding.snakeView.setGameOverText(isGameOver == SnakeGame.GameState.GAME_OVER));
 
@@ -110,37 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * onTouchEvent
-     *
-     * @param event
-     * @return
-     */
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Utils.logDebug(TAG, "onTouchEvent");
-        // touch event: Up
-        if (event.getAction() == MotionEvent.ACTION_UP) {
-            // get touch x and y
-            float x = event.getX();
-            float y = event.getY();
-            float centerX = getWindowManager().getDefaultDisplay().getWidth() / 2f;
-            float centerY = getWindowManager().getDefaultDisplay().getHeight() / 2f;
-            // LOG x y centerX centerY
-            Utils.logDebug(TAG, "onTouchEvent: x: " + x + ", y: " + y + ", centerX: " + centerX + ", centerY: " + centerY);
-            // check x and y
-            if (Math.abs(x - centerX) > Math.abs(y - centerY)) {
-                Utils.logDebug(TAG, "onTouchEvent: x > centerX");
-                if (x > centerX) mSnakeViewModel.setDirection(SnakeGame.Direction.RIGHT);
-                else mSnakeViewModel.setDirection(SnakeGame.Direction.LEFT);
-            } else {
-                Utils.logDebug(TAG, "onTouchEvent: y > centerY");
-                if (y > centerY) mSnakeViewModel.setDirection(SnakeGame.Direction.DOWN);
-                else mSnakeViewModel.setDirection(SnakeGame.Direction.UP);
-            }
 
-        }
-
-        return super.onTouchEvent(event);
+    private void onChanged(Integer score) {
+        int scoreValue = score == null ? 0 : score;
+        String scoreText = getString(R.string.snake_game_core, scoreValue);
+        // set score text
+        mBinding.coreTextView.setText(scoreText);
     }
 }

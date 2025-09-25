@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Snake</string>
+    <string name="snake_game_core">Core: %1$d</string>
+    <string name="snake_game_up_array">↑</string>
+    <string name="snake_game_left_array">←</string>
+    <string name="snake_game_down_array">↓</string>
+    <string name="snake_game_right_array">→</string>
 </resources>
