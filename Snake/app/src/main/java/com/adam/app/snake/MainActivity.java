@@ -9,6 +9,8 @@
 package com.adam.app.snake;
 
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -116,6 +118,11 @@ public class MainActivity extends AppCompatActivity {
     private void onChanged(SnakeGame.GameState isGameOver) {
 
         if (isGameOver == SnakeGame.GameState.GAME_OVER) {
+
+            // vibration
+            vibrateOnGameOver();
+
+
             // show game over dialog
             String title = getString(R.string.snake_game_over_title);
             String message = getString(R.string.snake_game_dialog_message);
@@ -123,11 +130,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Vibrate on game over
+     */
+    private void vibrateOnGameOver() {
+        // Vibrate on game over
+        final Vibrator vibrator = getSystemService(Vibrator.class);
+        // check if vibrator is supported
+        if (vibrator == null) {
+            // log error
+            Utils.logDebug(TAG, "vibrateOnGameOver: vibrator is not supported");
+            return;
+        }
+
+        vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+    }
+
 
     /**
      * ShowGameDialog with title and message
      *
-     * @param title String
+     * @param title   String
      * @param message String
      */
     private void showGameDialog(String title, String message) {
