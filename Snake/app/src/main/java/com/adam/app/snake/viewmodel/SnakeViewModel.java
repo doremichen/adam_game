@@ -49,10 +49,14 @@ public class SnakeViewModel extends ViewModel {
      *
      * @param rows
      * @param columns
+     * @param isWrap
      */
-    public void initGame(int rows, int columns) {
+    public void initGame(int rows, int columns, boolean isWrap) {
         Utils.logDebug(TAG, "initGame rows: " + rows + ", columns: " + columns);
         mGame = new SnakeGame(rows, columns);
+
+        // set wrap enabled
+        mGame.setWrapEnabled(isWrap);
 
         mGameRunnable = new Runnable() {
             @Override
@@ -137,6 +141,13 @@ public class SnakeViewModel extends ViewModel {
         mGame.reset();
         updateLiveData();
         startGame();
+    }
+
+    /**
+     * set wrap enabled
+     */
+    public void setWrapEnabled(boolean enabled) {
+        mGame.setWrapEnabled(enabled);
     }
 
     /**

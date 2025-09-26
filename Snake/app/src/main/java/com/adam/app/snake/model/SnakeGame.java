@@ -33,6 +33,9 @@ public class SnakeGame {
     // initial Score is 0
     private int mScore = 0;
 
+    // check if wrap is enabled
+    private boolean mWrapEnabled = false;
+
     /**
      * Constructor with rows and columns
      *
@@ -102,11 +105,19 @@ public class SnakeGame {
                 break;
         }
 
-        // check if head is out of bound
-        if (newX < 0 || newX >= mNumColumns || newY < 0 || newY >= mNumRows) {
-            mGameState = GameState.GAME_OVER;
-            return;
+        // check if wrap is enabled
+        if (mWrapEnabled) {
+            // wrap around if out of bound
+            newX = ((newX % mNumColumns) + mNumColumns) % mNumColumns;
+            newY = ((newY % mNumRows) + mNumRows) % mNumRows;
+        } else {
+            // check if head is out of bound
+            if (newX < 0 || newX >= mNumColumns || newY < 0 || newY >= mNumRows) {
+                mGameState = GameState.GAME_OVER;
+                return;
+            }
         }
+
 
         // check if head is in snake
         for (int[] body : mSnake) {
@@ -233,6 +244,21 @@ public class SnakeGame {
     public GameState getGameState() {
         return mGameState;
     }
+
+    /**
+     * set wrap enabled
+     */
+    public void setWrapEnabled(boolean enabled) {
+        mWrapEnabled = enabled;
+    }
+
+    /**
+     * get wrap enabled
+     */
+    public boolean isWrapEnabled() {
+        return mWrapEnabled;
+    }
+
 
     /**
      * enum Direction

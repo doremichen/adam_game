@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.snake.databinding.ActivityMainBinding;
 import com.adam.app.snake.model.SnakeGame;
+import com.adam.app.snake.store.file.SharedPreferenceManager;
 import com.adam.app.snake.view.SnakeView;
 import com.adam.app.snake.viewmodel.SnakeViewModel;
 
@@ -54,10 +55,16 @@ public class MainActivity extends AppCompatActivity {
             int cols = width / SnakeView.CEIL_SIZE;
             int rows = height / SnakeView.CEIL_SIZE;
             Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
-            mSnakeViewModel.initGame(rows, cols);
+            // get wrap mode from shared preferences
+            boolean isWrap = SharedPreferenceManager.getInstance(this)
+                    .getBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, false);
+
+            // update wrap mode
+            mBinding.switchWrapMode.setChecked(isWrap);
+
+            mSnakeViewModel.initGame(rows, cols, isWrap);
 
         });
-
 
         // back button click listener
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
@@ -72,6 +79,22 @@ public class MainActivity extends AppCompatActivity {
                 showGameDialog(title, message);
 
             }
+        });
+
+        // wrap mode click listener
+        mBinding.switchWrapMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            // check if wrap mode is enabled from shared preferences
+            boolean isWrap = SharedPreferenceManager.getInstance(this)
+                    .getBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, false);
+            // check if wrap mode is enabled
+            if (isWrap == isChecked) {
+                return;
+            }
+
+            mSnakeViewModel.setWrapEnabled(isChecked);
+            // set wrap mode to shared preferences
+            SharedPreferenceManager.getInstance(this)
+                    .putBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, isChecked);
         });
 
         // up button click listener

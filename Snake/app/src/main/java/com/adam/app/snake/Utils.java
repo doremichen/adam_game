@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.adam.app.snake.store.file.SharedPreferenceManager;
+
 public final class Utils {
     // DEBUG_TAG: SnakeGame
     public static final String DEBUG_TAG = "SnakeGame";
