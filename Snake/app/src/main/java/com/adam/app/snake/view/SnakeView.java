@@ -36,10 +36,6 @@ public class SnakeView extends View {
     private List<int[]> mSnake;
     // food: int[1][2]
     private int[][] mFood;
-    //score: int
-    private int mScore = 0;
-    // gem over text: string
-    private String mGameOverText;
 
 
     public SnakeView(Context context) {
@@ -87,25 +83,6 @@ public class SnakeView extends View {
         invalidate();
     }
 
-    /**
-     * set score with int
-     *
-     * @param score int
-     */
-    public void setScore(int score) {
-        mScore = score;
-        invalidate();
-    }
-
-    /**
-     * set game over text with isGameOver
-     *
-     * @param isGameOver boolean
-     */
-    public void setGameOverText(boolean isGameOver) {
-        mGameOverText = isGameOver ? "Game Over" : "";
-        invalidate();
-    }
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {

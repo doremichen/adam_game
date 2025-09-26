@@ -20,9 +20,18 @@ import com.adam.app.snake.model.SnakeGame;
 import java.util.List;
 
 public class SnakeViewModel extends ViewModel {
-    public static final long UPDATE_GAME_MILLIS = 300L;
+
+    private static final long INITIAL_UPDATE_INTERVAL = 300L;
+    private static final long MIN_UPDATE_INTERVAL = 100L; // min update interval
+    private static final long SPEED_STEP = 20L; // speed step
+
     // TAG SnakeViewModel
     private static final String TAG = "SnakeViewModel";
+
+    public long mUpdateInterval = INITIAL_UPDATE_INTERVAL;
+
+    private int mLastScore = 0;
+
     // Game Handler
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     // live data
@@ -60,7 +69,7 @@ public class SnakeViewModel extends ViewModel {
                 updateLiveData();
                 if (mGame.getGameState() == SnakeGame.GameState.RUNNING) {
                     Utils.logDebug(TAG, "run: game is running");
-                    mHandler.postDelayed(this, UPDATE_GAME_MILLIS);
+                    mHandler.postDelayed(this, mUpdateInterval);
                 }
             }
         };
@@ -78,7 +87,7 @@ public class SnakeViewModel extends ViewModel {
     private void startGame() {
         Utils.logDebug(TAG, "startGame");
 
-        mHandler.postDelayed(mGameRunnable, UPDATE_GAME_MILLIS);
+        mHandler.postDelayed(mGameRunnable, mUpdateInterval);
     }
 
     /**
@@ -98,6 +107,20 @@ public class SnakeViewModel extends ViewModel {
         mFoodLiveData.setValue(mGame.getFood());
         mScoreLiveData.setValue(mGame.getScore());
         mGameStateLiveData.setValue(mGame.getGameState());
+
+        // check if score is changed -> speed up
+        int currentScore = mGame.getScore();
+        if (currentScore > mLastScore) {
+            accelerate();
+            mLastScore = currentScore;
+        }
+
+    }
+
+    private void accelerate() {
+        Utils.logDebug(TAG, "accelerate");
+        mUpdateInterval = Math.max(MIN_UPDATE_INTERVAL, mUpdateInterval - SPEED_STEP);
+        Utils.logDebug(TAG, "accelerate: mUpdateInterval: " + mUpdateInterval);
     }
 
     /**
