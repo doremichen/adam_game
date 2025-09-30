@@ -12,4 +12,11 @@
     <string name="snake_game_exit">離開</string>
     <string name="snake_game_exit_title">離開</string>
     <string name="snake_game_wrap_mode">穿牆模式</string>
+    <string name="snake_game_setting_item">設定項目</string>
+    <string name="snake_game_setting_wrap_mode">穿牆模式</string>
+    <string name="snake_game_setting_special_food">特殊食物模式</string>
+    <string name="snake_game_setting_multi_foods_show">允許多個食物顯示</string>
+    <string name="snake_game_setting">設定</string>
+    <string name="snake_game_setting_toast_message">選項狀態: %1$s</string>
+    <string name="snake_game_ok_btn">確認</string>
 </resources>

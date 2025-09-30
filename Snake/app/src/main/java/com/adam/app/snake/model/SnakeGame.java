@@ -63,9 +63,16 @@ public class SnakeGame {
         generateFood();
 
         mDirection = Direction.RIGHT;
-        mGameState = GameState.RUNNING;
         mScore = 0;
     }
+
+    /**
+     * start the game
+     */
+    public void start() {
+        mGameState = GameState.RUNNING;
+    }
+
 
     /**
      * stop the game

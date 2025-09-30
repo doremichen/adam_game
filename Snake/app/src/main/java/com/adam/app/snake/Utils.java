@@ -91,4 +91,14 @@ public final class Utils {
         }
     }
 
+    /**
+     * null check with object
+     *
+     * @param object Object
+     * @return boolean
+     */
+    public static boolean isNull(Object object) {
+        return object == null;
+    }
+
 }

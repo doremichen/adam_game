@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="colorNormal">#2196F3</color>
+    <color name="colorPressed">#1976D2</color>
+    <color name="colorSurface">#FFFFFF</color>
+    <color name="colorOutline">#DDDDDD</color>
+    <color name="button_red_normal">#F44336</color>
+    <color name="button_red_pressed">#D32F2F</color>
 </resources>

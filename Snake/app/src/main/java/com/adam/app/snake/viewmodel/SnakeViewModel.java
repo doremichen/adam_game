@@ -8,14 +8,17 @@
  */
 package com.adam.app.snake.viewmodel;
 
+import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.adam.app.snake.R;
 import com.adam.app.snake.Utils;
 import com.adam.app.snake.model.SnakeGame;
+import com.adam.app.snake.store.file.SharedPreferenceManager;
 
 import java.util.List;
 
@@ -90,9 +93,33 @@ public class SnakeViewModel extends ViewModel {
      */
     private void startGame() {
         Utils.logDebug(TAG, "startGame");
-
+        mGame.start();
         mHandler.postDelayed(mGameRunnable, mUpdateInterval);
     }
+
+    /**
+     * Resume game
+     */
+    public void resumeGame(Activity activity) {
+        Utils.logDebug(TAG, "resumeGame");
+        if (Utils.isNull(mGame)) {
+            // log error
+            Utils.logDebug(TAG, "startGame: game is not initialized yet!!!");
+            return;
+        }
+
+        updateConfigData(activity);
+
+        startGame();
+    }
+
+    private void updateConfigData(Activity activity) {
+        String titleWraped = activity.getString(R.string.snake_game_setting_wrap_mode);
+        boolean isWrap = SharedPreferenceManager.getInstance(activity).getBoolean(titleWraped, false);
+        // set wrap enabled
+        mGame.setWrapEnabled(isWrap);
+    }
+
 
     /**
      * stop game

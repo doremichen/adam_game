@@ -12,4 +12,11 @@
     <string name="snake_game_exit">Exit\n</string>
     <string name="snake_game_exit_title">Exit</string>
     <string name="snake_game_wrap_mode">Wrape mode</string>
+    <string name="snake_game_setting_item">Setting item</string>
+    <string name="snake_game_setting_wrap_mode">Wraped mode</string>
+    <string name="snake_game_setting_special_food">Special food mode</string>
+    <string name="snake_game_setting_multi_foods_show">Allow multiple food</string>
+    <string name="snake_game_setting">Setting</string>
+    <string name="snake_game_setting_toast_message">Option State: %1$s</string>
+    <string name="snake_game_ok_btn">Ok</string>
 </resources>

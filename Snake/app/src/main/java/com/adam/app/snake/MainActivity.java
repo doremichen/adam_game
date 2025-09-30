@@ -56,11 +56,9 @@ public class MainActivity extends AppCompatActivity {
             int rows = height / SnakeView.CEIL_SIZE;
             Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
             // get wrap mode from shared preferences
+            String titleWraped = getString(R.string.snake_game_setting_wrap_mode);
             boolean isWrap = SharedPreferenceManager.getInstance(this)
-                    .getBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, false);
-
-            // update wrap mode
-            mBinding.switchWrapMode.setChecked(isWrap);
+                    .getBoolean(titleWraped, false);
 
             mSnakeViewModel.initGame(rows, cols, isWrap);
 
@@ -81,21 +79,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // wrap mode click listener
-        mBinding.switchWrapMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            // check if wrap mode is enabled from shared preferences
-            boolean isWrap = SharedPreferenceManager.getInstance(this)
-                    .getBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, false);
-            // check if wrap mode is enabled
-            if (isWrap == isChecked) {
-                return;
-            }
-
-            mSnakeViewModel.setWrapEnabled(isChecked);
-            // set wrap mode to shared preferences
-            SharedPreferenceManager.getInstance(this)
-                    .putBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, isChecked);
+        // set settings button click listener
+        mBinding.btnSetting.setOnClickListener(v -> {
+            startActivity(SettingActivity.createIntent(this));
         });
+
+
+        // wrap mode click listener
+//        mBinding.switchWrapMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+//            // check if wrap mode is enabled from shared preferences
+//            boolean isWrap = SharedPreferenceManager.getInstance(this)
+//                    .getBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, false);
+//            // check if wrap mode is enabled
+//            if (isWrap == isChecked) {
+//                return;
+//            }
+//
+//            mSnakeViewModel.setWrapEnabled(isChecked);
+//            // set wrap mode to shared preferences
+//            SharedPreferenceManager.getInstance(this)
+//                    .putBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, isChecked);
+//        });
 
         // up button click listener
         mBinding.btnUp.setOnClickListener(v -> mSnakeViewModel.setDirection(SnakeGame.Direction.UP));
@@ -115,6 +119,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // resume game
+        mSnakeViewModel.resumeGame(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // stop game
+        mSnakeViewModel.stopGame();
+    }
 
     @Override
     protected void onDestroy() {
@@ -138,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
         mBinding.coreTextView.setText(scoreText);
     }
 
-    private void onChanged(SnakeGame.GameState isGameOver) {
+    private void onChanged(SnakeGame.GameState GameState) {
 
-        if (isGameOver == SnakeGame.GameState.GAME_OVER) {
+        if (GameState == SnakeGame.GameState.GAME_OVER) {
 
             // vibration
             vibrateOnGameOver();

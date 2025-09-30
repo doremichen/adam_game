@@ -21,35 +21,24 @@
         android:background="@drawable/border_background"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/btnSetting"
         android:layout_margin="5dp" />
 
-    <!-- switch mode menu -->
-    <LinearLayout
-        android:id="@+id/modeSelector"
-        android:layout_width="0dp"
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSetting"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:text="@string/snake_game_setting"
+        android:textColor="@color/white"
         android:padding="8dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:backgroundTint="@drawable/button_background"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="5dp"
-        android:background="@drawable/border_background">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/snake_game_wrap_mode"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginEnd="8dp"/>
-
-        <Switch
-            android:id="@+id/switchWrapMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="false"/>
-    </LinearLayout>
+        app:layout_constraintBottom_toBottomOf="@id/coreTextView"
+        android:layout_margin="5dp"/>
 
     <!-- Game Screen -->
     <com.adam.app.snake.view.SnakeView
@@ -57,10 +46,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/snake_view_background"
-        app:layout_constraintTop_toBottomOf="@id/coreTextView"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/controlPad"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/controlPad" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/coreTextView"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_margin="5dp"/>
 
     <!-- Control button -->
     <GridLayout
