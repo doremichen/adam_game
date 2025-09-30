@@ -138,6 +138,9 @@ public class SnakeViewModel extends ViewModel {
      * reset game
      */
     public void resetGame() {
+        // reset interval
+        mUpdateInterval = INITIAL_UPDATE_INTERVAL;
+        mLastScore = 0;
         mGame.reset();
         updateLiveData();
         startGame();
