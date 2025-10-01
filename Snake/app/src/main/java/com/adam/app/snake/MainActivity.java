@@ -55,12 +55,12 @@ public class MainActivity extends AppCompatActivity {
             int cols = width / SnakeView.CEIL_SIZE;
             int rows = height / SnakeView.CEIL_SIZE;
             Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
-            // get wrap mode from shared preferences
-            String WrapMode = SharedPreferenceManager.Keys.WRAP_MODE;
-            boolean isWrap = SharedPreferenceManager.getInstance(this)
-                    .getBoolean(WrapMode, false);
+//            // get wrap mode from shared preferences
+//            String WrapMode = SharedPreferenceManager.Keys.WRAP_MODE;
+//            boolean isWrap = SharedPreferenceManager.getInstance(this)
+//                    .getBoolean(WrapMode, false);
 
-            mSnakeViewModel.initGame(rows, cols, isWrap);
+            mSnakeViewModel.initGame(rows, cols, this);
 
         });
 
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         // observer live data
         mSnakeViewModel.getGameLiveData().observe(this, mBinding.snakeView::setSnake);
         mSnakeViewModel.getFoodLiveData().observe(this, mBinding.snakeView::setFood);
+        mSnakeViewModel.getSpecialFoodLiveData().observe(this, mBinding.snakeView::setSpecialFood);
         mSnakeViewModel.getScoreLiveData().observe(this, this::onChanged);
         mSnakeViewModel.getGameStateLiveData().observe(this, this::onChanged);
 
@@ -127,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
         // clear handler
         mSnakeViewModel.getGameLiveData().removeObservers(this);
         mSnakeViewModel.getFoodLiveData().removeObservers(this);
+        mSnakeViewModel.getSpecialFoodLiveData().removeObservers(this);
         mSnakeViewModel.getScoreLiveData().removeObservers(this);
         mSnakeViewModel.getGameStateLiveData().removeObservers(this);
         mSnakeViewModel = null;

@@ -8,6 +8,8 @@
  */
 package com.adam.app.snake.model;
 
+import android.graphics.Point;
+
 import com.adam.app.snake.Utils;
 
 import java.util.ArrayList;
@@ -22,10 +24,12 @@ public class SnakeGame {
     private final int mNumColumns;
     // mNumRows: int
     private final int mNumRows;
-    // mFood[][]: int[1][2]
-    private final int[][] mFood = new int[1][2];
-    // mSnake: List<int[]>
-    private final List<int[]> mSnake = new ArrayList<>();
+    // mFood: Point
+    private Point mFood;
+    private Point mSpecialFood;
+    private long mSpecialFoodExpireTime = 0L;
+    // mSnake: List<Point>
+    private final List<Point> mSnake = new ArrayList<>();
     // initial Direction is RIGHT
     private Direction mDirection = Direction.RIGHT;
     // initial GameState is RUNNING
@@ -35,6 +39,15 @@ public class SnakeGame {
 
     // check if wrap is enabled
     private boolean mWrapEnabled = false;
+    // check if special food is enabled
+    private boolean mSpecialFoodEnabled = false;
+
+    private static final int SPECIAL_FOOD_SCORE = 3;
+    private static final long SPECIAL_FOOD_DURATION = 5000L; // exist time of special food 5 sec
+    private static final double SPECIAL_FOOD_PROB = 0.2f;     // 20% chance to generate special food
+    
+    Random mRandom = new Random();
+
 
     /**
      * Constructor with rows and columns
@@ -56,12 +69,12 @@ public class SnakeGame {
         // clear the snake
         mSnake.clear();
         // build snake
-        mSnake.add(new int[]{5, 5});
-        mSnake.add(new int[]{4, 5});
-        mSnake.add(new int[]{3, 5});
+        mSnake.add(new Point(5, 5));
+        mSnake.add(new Point(4, 5));
+        mSnake.add(new Point(3, 5));
 
         generateFood();
-
+        mSpecialFood = null;
         mGameState = GameState.RUNNING;
         mDirection = Direction.RIGHT;
         mScore = 0;
@@ -87,66 +100,98 @@ public class SnakeGame {
      */
     public void update() {
         Utils.logDebug(TAG, "update");
-        if (mGameState == GameState.GAME_OVER) {
+
+        if (isGameOver()) return;
+
+        removeExpiredSpecialFood();
+
+        Point newHead = calculateNewHead();
+
+        if (isOutOfBounds(newHead)) {
+            mGameState = GameState.GAME_OVER;
             return;
         }
 
-        // get head of snake
-        int[] head = mSnake.get(0);
-        // get x and y of head
-        int newX = head[0];
-        int newY = head[1];
+        if (isCollidingWithSelf(newHead)) {
+            mGameState = GameState.GAME_OVER;
+            return;
+        }
 
-        // update x and y of head according to direction
+        moveSnake(newHead);
+        handleFoodCollision(newHead);
+    }
+
+    private boolean isGameOver() {
+        return mGameState == GameState.GAME_OVER;
+    }
+
+    private void removeExpiredSpecialFood() {
+        if (mSpecialFood != null && System.currentTimeMillis() > mSpecialFoodExpireTime) {
+            mSpecialFood = null;
+        }
+    }
+
+    private Point calculateNewHead() {
+        Point head = mSnake.get(0);
+        int newX = head.x;
+        int newY = head.y;
+
         switch (mDirection) {
-            case UP:
-                newY--;
-                break;
-            case DOWN:
-                newY++;
-                break;
-            case LEFT:
-                newX--;
-                break;
-            case RIGHT:
-                newX++;
-                break;
+            case UP:    newY--; break;
+            case DOWN:  newY++; break;
+            case LEFT:  newX--; break;
+            case RIGHT: newX++; break;
         }
 
-        // check if wrap is enabled
         if (mWrapEnabled) {
-            // wrap around if out of bound
-            newX = ((newX % mNumColumns) + mNumColumns) % mNumColumns;
-            newY = ((newY % mNumRows) + mNumRows) % mNumRows;
-        } else {
-            // check if head is out of bound
-            if (newX < 0 || newX >= mNumColumns || newY < 0 || newY >= mNumRows) {
-                mGameState = GameState.GAME_OVER;
-                return;
-            }
+            newX = (newX + mNumColumns) % mNumColumns;
+            newY = (newY + mNumRows) % mNumRows;
         }
 
+        return new Point(newX, newY);
+    }
 
-        // check if head is in snake
-        for (int[] body : mSnake) {
-            if (body[0] == newX && body[1] == newY) {
-                mGameState = GameState.GAME_OVER;
-                return;
-            }
+    private boolean isOutOfBounds(Point p) {
+        if (mWrapEnabled) return false;
+        return p.x < 0 || p.x >= mNumColumns || p.y < 0 || p.y >= mNumRows;
+    }
+
+    private boolean isCollidingWithSelf(Point p) {
+        for (Point body : mSnake) {
+            if (body.equals(p)) return true;
         }
+        return false;
+    }
 
-        // move snake
-        mSnake.add(0, new int[]{newX, newY});
-        // check if head is in food
-        if (newX == mFood[0][0] && newY == mFood[0][1]) {
+    private void moveSnake(Point newHead) {
+        mSnake.add(0, newHead);
+    }
+
+    private void handleFoodCollision(Point newHead) {
+        if (newHead.equals(mFood)) {
             mScore++;
-            // generate new food
             generateFood();
+
+            if (mSpecialFoodEnabled && mRandom.nextDouble() < SPECIAL_FOOD_PROB) {
+                generateSpecialFood();
+            }
+        } else if (newHead.equals(mSpecialFood)) {
+            mScore += SPECIAL_FOOD_SCORE;
+            mSpecialFood = null;
         } else {
-            // remove tail of snake
             mSnake.remove(mSnake.size() - 1);
         }
+    }
 
+    private void generateSpecialFood() {
+        int x, y;
+        do {
+            x = mRandom.nextInt(mNumColumns);
+            y = mRandom.nextInt(mNumRows);
+        } while (isOnSnake(x, y) || (mFood != null && mFood.equals(new Point(x, y))));
+
+        mSpecialFood = new Point(x, y);
+        mSpecialFoodExpireTime = System.currentTimeMillis() + SPECIAL_FOOD_DURATION;
     }
 
     /**
@@ -162,17 +207,16 @@ public class SnakeGame {
         // log mNumColumns mNumRows
         Utils.logDebug(TAG, "generateFood: mNumColumns: " + mNumColumns + ", mNumRows: " + mNumRows);
 
-        Random random = new Random();
         int x, y;
         do {
-            x = random.nextInt(mNumColumns); // 0 ~ mNumColumns-1
-            y = random.nextInt(mNumRows);    // 0 ~ mNumRows-1
+            x = mRandom.nextInt(mNumColumns); // 0 ~ mNumColumns-1
+            y = mRandom.nextInt(mNumRows);    // 0 ~ mNumRows-1
             Utils.logDebug(TAG, "generateFood: x: " + x + ", y: " + y);
             // check if food is in snake
         } while (isOnSnake(x, y));
 
-        mFood[0][0] = Math.min(x, mNumColumns - 1);
-        mFood[0][1] = Math.min(y, mNumRows - 1);
+        // initial mFood
+        mFood = new Point(x, y);
     }
 
     /**
@@ -183,8 +227,8 @@ public class SnakeGame {
      * @return boolean
      */
     private boolean isOnSnake(int x, int y) {
-        for (int[] segment : mSnake) {
-            if (segment[0] == x && segment[1] == y) {
+        for (Point segment : mSnake) {
+            if (segment.x == x && segment.y == y) {
                 return true;
             }
         }
@@ -222,7 +266,7 @@ public class SnakeGame {
      *
      * @return int[1][2]
      */
-    public int[][] getFood() {
+    public Point getFood() {
         return mFood;
     }
 
@@ -231,7 +275,7 @@ public class SnakeGame {
      *
      * @return List<int [ ]>
      */
-    public List<int[]> getSnake() {
+    public List<Point> getSnake() {
         return mSnake;
     }
 
@@ -261,12 +305,15 @@ public class SnakeGame {
     }
 
     /**
-     * get wrap enabled
+     * set special food enabled
      */
-    public boolean isWrapEnabled() {
-        return mWrapEnabled;
+    public void setSpecialFoodEnabled(boolean enabled) {
+        mSpecialFoodEnabled = enabled;
     }
 
+    public Point getSpecialFood() {
+        return mSpecialFood;
+    }
 
     /**
      * enum Direction
