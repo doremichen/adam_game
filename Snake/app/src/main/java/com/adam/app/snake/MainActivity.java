@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
             int rows = height / SnakeView.CEIL_SIZE;
             Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
             // get wrap mode from shared preferences
-            String titleWraped = getString(R.string.snake_game_setting_wrap_mode);
+            String WrapMode = SharedPreferenceManager.Keys.WRAP_MODE;
             boolean isWrap = SharedPreferenceManager.getInstance(this)
-                    .getBoolean(titleWraped, false);
+                    .getBoolean(WrapMode, false);
 
             mSnakeViewModel.initGame(rows, cols, isWrap);
 
@@ -84,22 +84,6 @@ public class MainActivity extends AppCompatActivity {
             startActivity(SettingActivity.createIntent(this));
         });
 
-
-        // wrap mode click listener
-//        mBinding.switchWrapMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
-//            // check if wrap mode is enabled from shared preferences
-//            boolean isWrap = SharedPreferenceManager.getInstance(this)
-//                    .getBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, false);
-//            // check if wrap mode is enabled
-//            if (isWrap == isChecked) {
-//                return;
-//            }
-//
-//            mSnakeViewModel.setWrapEnabled(isChecked);
-//            // set wrap mode to shared preferences
-//            SharedPreferenceManager.getInstance(this)
-//                    .putBoolean(SharedPreferenceManager.Keys.WRAPPED_ENABLED, isChecked);
-//        });
 
         // up button click listener
         mBinding.btnUp.setOnClickListener(v -> mSnakeViewModel.setDirection(SnakeGame.Direction.UP));
@@ -160,10 +144,11 @@ public class MainActivity extends AppCompatActivity {
     private void onChanged(SnakeGame.GameState GameState) {
 
         if (GameState == SnakeGame.GameState.GAME_OVER) {
+            // log
+            Utils.logDebug(TAG, "onChanged: GAME_OVER");
 
             // vibration
             vibrateOnGameOver();
-
 
             // show game over dialog
             String title = getString(R.string.snake_game_over_title);
@@ -200,6 +185,8 @@ public class MainActivity extends AppCompatActivity {
         Utils.DialogButtonContent postButton = new Utils.DialogButtonContent(getString(R.string.snake_game_restart),
                 (dialog, which) -> {
                     mSnakeViewModel.resetGame();
+                    // dismiss dialog
+                    dialog.dismiss();
                 });
         // negative dialog button content
         Utils.DialogButtonContent negativeButton = new Utils.DialogButtonContent(getString(R.string.snake_game_exit),

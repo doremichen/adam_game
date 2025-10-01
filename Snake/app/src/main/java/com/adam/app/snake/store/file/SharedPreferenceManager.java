@@ -20,12 +20,19 @@ public class SharedPreferenceManager {
 
     /**
      * class Keys
-     * WRAPPED_ENABLED: String
+     * WRAP_MODE: key_wrap_mode
+     * SPECIAL_FOOD: key_special_food
+     * MULTI_FOODS_SHOW: key_multi_foods_show
+     * SPECIAL_FREQ: key_special_freq
+     * Version: key_version
      */
     public static class Keys {
-        public static final String WRAPPED_ENABLED = "wrapped_enabled";
+        public static final String WRAP_MODE = "key_wrap_mode";
+        public static final String SPECIAL_FOOD = "key_special_food";
+        public static final String MULTI_FOODS_SHOW = "key_multi_foods_show";
+        public static final String SPECIAL_FREQ = "key_special_freq";
+        public static final String VERSION = "key_version";
     }
-
 
 
     /**

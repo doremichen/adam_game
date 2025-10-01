@@ -109,13 +109,12 @@ public class SnakeViewModel extends ViewModel {
         }
 
         updateConfigData(activity);
-
         startGame();
     }
 
     private void updateConfigData(Activity activity) {
-        String titleWraped = activity.getString(R.string.snake_game_setting_wrap_mode);
-        boolean isWrap = SharedPreferenceManager.getInstance(activity).getBoolean(titleWraped, false);
+        String WrapMode = SharedPreferenceManager.Keys.WRAP_MODE;
+        boolean isWrap = SharedPreferenceManager.getInstance(activity).getBoolean(WrapMode, false);
         // set wrap enabled
         mGame.setWrapEnabled(isWrap);
     }
@@ -169,8 +168,8 @@ public class SnakeViewModel extends ViewModel {
         mUpdateInterval = INITIAL_UPDATE_INTERVAL;
         mLastScore = 0;
         mGame.reset();
-        updateLiveData();
         startGame();
+        updateLiveData();
     }
 
     /**

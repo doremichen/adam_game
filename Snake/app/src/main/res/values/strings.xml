@@ -19,4 +19,9 @@
     <string name="snake_game_setting">Setting</string>
     <string name="snake_game_setting_toast_message">Option State: %1$s</string>
     <string name="snake_game_ok_btn">Ok</string>
+    <string name="snake_game_setting_special_freq">special frequency setting</string>
+    <string name="snake_game_setting_freq_low">Low</string>
+    <string name="snake_game_setting_freq_middle">Middle</string>
+    <string name="snake_game_setting_freq_high">High</string>
+    <string name="app_version">version</string>
 </resources>

@@ -62,6 +62,7 @@ public class SnakeGame {
 
         generateFood();
 
+        mGameState = GameState.RUNNING;
         mDirection = Direction.RIGHT;
         mScore = 0;
     }
