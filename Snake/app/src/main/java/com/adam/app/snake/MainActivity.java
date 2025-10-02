@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.snake.databinding.ActivityMainBinding;
 import com.adam.app.snake.model.SnakeGame;
-import com.adam.app.snake.store.file.SharedPreferenceManager;
 import com.adam.app.snake.view.SnakeView;
 import com.adam.app.snake.viewmodel.SnakeViewModel;
 
@@ -55,10 +54,6 @@ public class MainActivity extends AppCompatActivity {
             int cols = width / SnakeView.CEIL_SIZE;
             int rows = height / SnakeView.CEIL_SIZE;
             Utils.logDebug(TAG, "onCreate: rows: " + rows + ", cols: " + cols);
-//            // get wrap mode from shared preferences
-//            String WrapMode = SharedPreferenceManager.Keys.WRAP_MODE;
-//            boolean isWrap = SharedPreferenceManager.getInstance(this)
-//                    .getBoolean(WrapMode, false);
 
             mSnakeViewModel.initGame(rows, cols, this);
 
@@ -98,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         // observer live data
         mSnakeViewModel.getGameLiveData().observe(this, mBinding.snakeView::setSnake);
         mSnakeViewModel.getFoodLiveData().observe(this, mBinding.snakeView::setFood);
-        mSnakeViewModel.getSpecialFoodLiveData().observe(this, mBinding.snakeView::setSpecialFood);
+        mSnakeViewModel.getSpecialFoodsLiveData().observe(this, mBinding.snakeView::setSpecialFoods);
         mSnakeViewModel.getScoreLiveData().observe(this, this::onChanged);
         mSnakeViewModel.getGameStateLiveData().observe(this, this::onChanged);
 
@@ -128,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         // clear handler
         mSnakeViewModel.getGameLiveData().removeObservers(this);
         mSnakeViewModel.getFoodLiveData().removeObservers(this);
-        mSnakeViewModel.getSpecialFoodLiveData().removeObservers(this);
+        mSnakeViewModel.getSpecialFoodsLiveData().removeObservers(this);
         mSnakeViewModel.getScoreLiveData().removeObservers(this);
         mSnakeViewModel.getGameStateLiveData().removeObservers(this);
         mSnakeViewModel = null;
@@ -184,17 +179,15 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showGameDialog(String title, String message) {
         // post dialog button content
-        Utils.DialogButtonContent postButton = new Utils.DialogButtonContent(getString(R.string.snake_game_restart),
-                (dialog, which) -> {
-                    mSnakeViewModel.resetGame();
-                    // dismiss dialog
-                    dialog.dismiss();
-                });
+        Utils.DialogButtonContent postButton = new Utils.DialogButtonContent(getString(R.string.snake_game_restart), (dialog, which) -> {
+            mSnakeViewModel.resetGame();
+            // dismiss dialog
+            dialog.dismiss();
+        });
         // negative dialog button content
-        Utils.DialogButtonContent negativeButton = new Utils.DialogButtonContent(getString(R.string.snake_game_exit),
-                (dialog, which) -> {
-                    finish();
-                });
+        Utils.DialogButtonContent negativeButton = new Utils.DialogButtonContent(getString(R.string.snake_game_exit), (dialog, which) -> {
+            finish();
+        });
         // show dialog
         Utils.showDialog(this, title, message, postButton, negativeButton);
     }

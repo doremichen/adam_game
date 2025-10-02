@@ -13,41 +13,47 @@ import android.graphics.Point;
 import com.adam.app.snake.Utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class SnakeGame {
 
     // TAG SnakeGame
-    private static final String TAG = "SnakeGame";
+    private static final String TAG = "SnakeGame";// 20% chance to generate special food
+    // Special food lifetime (ms)
+    private static final long SPECIAL_FOOD_LIFETIME = 8000L;
     // mNumColums: int
     private final int mNumColumns;
     // mNumRows: int
     private final int mNumRows;
-    // mFood: Point
-    private Point mFood;
-    private Point mSpecialFood;
-    private long mSpecialFoodExpireTime = 0L;
     // mSnake: List<Point>
     private final List<Point> mSnake = new ArrayList<>();
+    // Record special food timestamps
+    private final Map<SpecialFood, Long> mSpecialFoodTimestamps = new HashMap<>();
+    Random mRandom = new Random();
+    // mFood: Point
+    private Point mFood;
+    private long mSpecialFoodExpireTime = 0L;
+    private final List<SpecialFood> mSpecialFoods = new ArrayList<>();
     // initial Direction is RIGHT
     private Direction mDirection = Direction.RIGHT;
     // initial GameState is RUNNING
     private GameState mGameState = GameState.RUNNING;
     // initial Score is 0
     private int mScore = 0;
-
+    // initial normal food eaten is 0
+    private int mNormalFoodEaten = 0;
     // check if wrap is enabled
     private boolean mWrapEnabled = false;
     // check if special food is enabled
     private boolean mSpecialFoodEnabled = false;
-
-    private static final int SPECIAL_FOOD_SCORE = 3;
-    private static final long SPECIAL_FOOD_DURATION = 5000L; // exist time of special food 5 sec
-    private static final double SPECIAL_FOOD_PROB = 0.2f;     // 20% chance to generate special food
-    
-    Random mRandom = new Random();
-
+    // check if multiple special food is enabled
+    private boolean mAllowMultiSpecialFood = false;
+    // Game listener
+    private GameSpeedListener mGameSpeedListener;
 
     /**
      * Constructor with rows and columns
@@ -63,6 +69,16 @@ public class SnakeGame {
     }
 
     /**
+     * set game speed listener
+     *
+     * @param listener GameSpeedListener
+     */
+    public void setGameSpeedListener(GameSpeedListener listener) {
+        mGameSpeedListener = listener;
+    }
+
+
+    /**
      * reset the game
      */
     public void reset() {
@@ -74,10 +90,15 @@ public class SnakeGame {
         mSnake.add(new Point(3, 5));
 
         generateFood();
-        mSpecialFood = null;
+        // clear special food
+        mSpecialFoods.clear();
+        mSpecialFoodTimestamps.clear();
+        // clear special food expire time
+        mSpecialFoodExpireTime = 0L;
         mGameState = GameState.RUNNING;
         mDirection = Direction.RIGHT;
         mScore = 0;
+        mNormalFoodEaten = 0;
     }
 
     /**
@@ -103,7 +124,7 @@ public class SnakeGame {
 
         if (isGameOver()) return;
 
-        removeExpiredSpecialFood();
+        removeExpiredSpecialFoods();
 
         Point newHead = calculateNewHead();
 
@@ -125,9 +146,19 @@ public class SnakeGame {
         return mGameState == GameState.GAME_OVER;
     }
 
-    private void removeExpiredSpecialFood() {
-        if (mSpecialFood != null && System.currentTimeMillis() > mSpecialFoodExpireTime) {
-            mSpecialFood = null;
+
+    /**
+     * removeExpiredSpecialFoods
+     * remove expired special foods
+     */
+    public void removeExpiredSpecialFoods() {
+        Iterator<SpecialFood> iterator = mSpecialFoods.iterator();
+        while (iterator.hasNext()) {
+            SpecialFood food = iterator.next();
+            if (System.currentTimeMillis() - mSpecialFoodTimestamps.get(food) > SPECIAL_FOOD_LIFETIME) {
+                iterator.remove();
+                mSpecialFoodTimestamps.remove(food);
+            }
         }
     }
 
@@ -137,10 +168,18 @@ public class SnakeGame {
         int newY = head.y;
 
         switch (mDirection) {
-            case UP:    newY--; break;
-            case DOWN:  newY++; break;
-            case LEFT:  newX--; break;
-            case RIGHT: newX++; break;
+            case UP:
+                newY--;
+                break;
+            case DOWN:
+                newY++;
+                break;
+            case LEFT:
+                newX--;
+                break;
+            case RIGHT:
+                newX++;
+                break;
         }
 
         if (mWrapEnabled) {
@@ -170,29 +209,122 @@ public class SnakeGame {
     private void handleFoodCollision(Point newHead) {
         if (newHead.equals(mFood)) {
             mScore++;
+            mNormalFoodEaten++;
             generateFood();
 
-            if (mSpecialFoodEnabled && mRandom.nextDouble() < SPECIAL_FOOD_PROB) {
-                generateSpecialFood();
+            if (mSpecialFoodEnabled && mNormalFoodEaten % 5 == 0) {
+                generateSpecialFoods();
             }
-        } else if (newHead.equals(mSpecialFood)) {
-            mScore += SPECIAL_FOOD_SCORE;
-            mSpecialFood = null;
+        } else if (isSpecialFood()) {
+            // do nothing
         } else {
             mSnake.remove(mSnake.size() - 1);
         }
     }
 
-    private void generateSpecialFood() {
-        int x, y;
+    /**
+     * isSpecialFood
+     * check if there is the special food
+     *
+     * @return boolean
+     */
+    public boolean isSpecialFood() {
+        Iterator<SpecialFood> iterator = mSpecialFoods.iterator();
+        while (iterator.hasNext()) {
+            SpecialFood food = iterator.next();
+            // check if special food is meet the head of snack
+            if (mSnake.get(0).equals(new Point(food.getX(), food.getY()))) {
+                // apply special food effect
+                applySpecialFoodEffect(food);
+                // remove special food
+                iterator.remove();
+                mSpecialFoodTimestamps.remove(food);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    private void generateSpecialFoods() {
+        // check if multiple special food is enabled
+        if (!mAllowMultiSpecialFood) {
+            mSpecialFoods.clear();
+            mSpecialFoodTimestamps.clear();
+        }
+        int x, y, type;
         do {
             x = mRandom.nextInt(mNumColumns);
             y = mRandom.nextInt(mNumRows);
+            type = mRandom.nextInt(8);  // 0~7
         } while (isOnSnake(x, y) || (mFood != null && mFood.equals(new Point(x, y))));
+        // new special food
+        SpecialFood specialFood = new SpecialFood(x, y, type);
+        mSpecialFoods.add(specialFood);
+        mSpecialFoodTimestamps.put(specialFood, System.currentTimeMillis());
 
-        mSpecialFood = new Point(x, y);
-        mSpecialFoodExpireTime = System.currentTimeMillis() + SPECIAL_FOOD_DURATION;
+        Utils.logDebug(TAG, "generateSpecialFoods: x: " + x + ", y: " + y + ", type: " + type);
     }
+
+    /**
+     * apply special food effect
+     *
+     * @param specialFood SpecialFood
+     */
+    public void applySpecialFoodEffect(SpecialFood specialFood) {
+        Utils.logDebug(TAG, "applySpecialFoodEffect: " + specialFood);
+        switch (specialFood.getType()) {
+            case SpecialFood.TYPE.SPEED_UP:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: SPEED_UP");
+                // speed up snake
+                if (Utils.isNull(mGameSpeedListener)) {
+                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
+                } else {
+                    mGameSpeedListener.onGameSpeedUp();
+                }
+                break;
+            case SpecialFood.TYPE.SLOW_DOWN:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: SLOW_DOWN");
+                // slow down snake
+                if (Utils.isNull(mGameSpeedListener)) {
+                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
+                } else {
+                    mGameSpeedListener.onGameSlowDown();
+                }
+                break;
+            case SpecialFood.TYPE.SHORTEN:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: SHORTEN");
+                // shorten snake size if the snake size is large than 3
+                if (mSnake.size() > 3) {
+                    mSnake.remove(mSnake.size() - 1);
+                }
+                break;
+            case SpecialFood.TYPE.EXTEND:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: EXTEND");
+                // extend the snake size
+                Point last = mSnake.get(mSnake.size() - 1);
+                mSnake.add(new Point(last.x, last.y));
+                break;
+            case SpecialFood.TYPE.INVINCIBLE:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: INVINCIBLE");
+                break;
+            case SpecialFood.TYPE.INVISIBLE:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: INVISIBLE");
+                break;
+            case SpecialFood.TYPE.SCORE_DOUBLE:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: SCORE_DOUBLE");
+                mScore *= 2;
+                break;
+            case SpecialFood.TYPE.BOMB:
+                Utils.logDebug(TAG, "applySpecialFoodEffect: BOMB");
+                // state game over
+                mGameState = GameState.GAME_OVER;
+                break;
+        }
+
+    }
+
 
     /**
      * generate new food
@@ -311,9 +443,17 @@ public class SnakeGame {
         mSpecialFoodEnabled = enabled;
     }
 
-    public Point getSpecialFood() {
-        return mSpecialFood;
+    /**
+     * set multiple special food enabled
+     */
+    public void allowMultiSpecialFood(boolean enabled) {
+        mAllowMultiSpecialFood = enabled;
     }
+
+    public List<SpecialFood> getSpecialFoods() {
+        return mSpecialFoods;
+    }
+
 
     /**
      * enum Direction
@@ -322,10 +462,7 @@ public class SnakeGame {
         UP, DOWN, LEFT, RIGHT;
 
         public boolean isOpposite(Direction other) {
-            return (this == UP && other == DOWN) ||
-                    (this == DOWN && other == UP) ||
-                    (this == LEFT && other == RIGHT) ||
-                    (this == RIGHT && other == LEFT);
+            return (this == UP && other == DOWN) || (this == DOWN && other == UP) || (this == LEFT && other == RIGHT) || (this == RIGHT && other == LEFT);
         }
     }
 
@@ -334,6 +471,17 @@ public class SnakeGame {
      */
     public enum GameState {
         RUNNING, STOP, GAME_OVER
+    }
+
+    /**
+     * interface listener
+     * onGameSpeedUp
+     * onGameSlowDown
+     */
+    public interface GameSpeedListener {
+        void onGameSpeedUp();
+
+        void onGameSlowDown();
     }
 
 }

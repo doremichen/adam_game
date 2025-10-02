@@ -18,8 +18,9 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
-import com.adam.app.snake.Utils;
+import com.adam.app.snake.model.SpecialFood;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SnakeView extends View {
@@ -33,14 +34,14 @@ public class SnakeView extends View {
     private final Paint mPaintFood = new Paint();
     // paint special food
     private final Paint mPaintSpecialFood = new Paint();
-    // paint text
-    private final Paint mPaintText = new Paint();
+
+    // list of special food
+    private final List<SpecialFood> mSpecialFoods = new ArrayList<>();
     // snake: List<Point>
     private List<Point> mSnake;
+
     // food: Point
     private Point mFood;
-    // special food: Point
-    private Point mSpecialFood;
 
 
     public SnakeView(Context context) {
@@ -65,9 +66,6 @@ public class SnakeView extends View {
         mPaintFood.setColor(Color.RED);
         // special food color: yellow
         mPaintSpecialFood.setColor(Color.YELLOW);
-        // text color: white
-        mPaintText.setColor(Color.YELLOW);
-        mPaintText.setTextSize(80f);
     }
 
     /**
@@ -91,12 +89,15 @@ public class SnakeView extends View {
     }
 
     /**
-     * set special food with Point
+     * set special foods with foods
      *
-     * @param specialFood Point
+     * @param foods List<SpecialFood>
      */
-    public void setSpecialFood(Point specialFood) {
-        mSpecialFood = specialFood;
+    public void setSpecialFoods(List<SpecialFood> foods) {
+        mSpecialFoods.clear();
+        if (foods != null) {
+            mSpecialFoods.addAll(foods);
+        }
         invalidate();
     }
 
@@ -108,27 +109,51 @@ public class SnakeView extends View {
         // check if food is not null
         if (mFood != null) {
             // draw food
-            canvas.drawRect(mFood.x * CEIL_SIZE, mFood.y * CEIL_SIZE,
-                    (mFood.x + 1) * CEIL_SIZE, (mFood.y + 1) * CEIL_SIZE, mPaintFood);
+            canvas.drawRect(mFood.x * CEIL_SIZE, mFood.y * CEIL_SIZE, (mFood.x + 1) * CEIL_SIZE, (mFood.y + 1) * CEIL_SIZE, mPaintFood);
         }
 
 
-        // check if special food is not null
-        if (mSpecialFood != null) {
-            // draw special food
-            canvas.drawRect(mSpecialFood.x * CEIL_SIZE, mSpecialFood.y * CEIL_SIZE,
-                    (mSpecialFood.x + 1) * CEIL_SIZE, (mSpecialFood.y + 1) * CEIL_SIZE, mPaintSpecialFood);
+        // draw special foods
+        for (SpecialFood food : mSpecialFoods) {
+            // paint
+            Paint paint = new Paint();
+            switch (food.getType()) {
+                case SpecialFood.TYPE.SPEED_UP:
+                    paint.setColor(Color.CYAN);
+                    break; // cyan
+                case SpecialFood.TYPE.SLOW_DOWN:
+                    paint.setColor(Color.rgb(192, 192, 192));
+                    break; // gray
+                case SpecialFood.TYPE.SHORTEN:
+                    paint.setColor(Color.MAGENTA);
+                    break; // magenta
+                case SpecialFood.TYPE.EXTEND:
+                    paint.setColor(Color.GREEN);
+                    break; // green
+                case SpecialFood.TYPE.INVINCIBLE:
+                    paint.setColor(Color.YELLOW);
+                    break; // yellow
+                case SpecialFood.TYPE.INVISIBLE:
+                    paint.setColor(Color.LTGRAY);
+                    break; // light gray
+                case SpecialFood.TYPE.SCORE_DOUBLE:
+                    paint.setColor(Color.rgb(255, 165, 0));
+                    break; // orange
+                case SpecialFood.TYPE.BOMB:
+                    paint.setColor(Color.BLACK);
+                    break; // black
+            }
+            canvas.drawRect(food.getX() * CEIL_SIZE, food.getY() * CEIL_SIZE, (food.getX() + 1) * CEIL_SIZE, (food.getY() + 1) * CEIL_SIZE, paint);
         }
+
 
         // check if snake is not null
         if (mSnake != null) {
             // draw snake
             for (Point body : mSnake) {
-                canvas.drawRect(body.x * CEIL_SIZE, body.y * CEIL_SIZE,
-                        (body.x + 1) * CEIL_SIZE, (body.y + 1) * CEIL_SIZE, mPaintSnake);
+                canvas.drawRect(body.x * CEIL_SIZE, body.y * CEIL_SIZE, (body.x + 1) * CEIL_SIZE, (body.y + 1) * CEIL_SIZE, mPaintSnake);
             }
         }
-
 
     }
 }

@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.adam.app.snake.Utils;
 import com.adam.app.snake.model.SnakeGame;
+import com.adam.app.snake.model.SpecialFood;
 import com.adam.app.snake.store.file.SharedPreferenceManager;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class SnakeViewModel extends ViewModel {
     // live data
     private final MutableLiveData<List<Point>> mGameLiveData = new MutableLiveData<>();
     private final MutableLiveData<Point> mFoodLiveData = new MutableLiveData<>();
-    private final MutableLiveData<Point> mSpecialFoodLiveData = new MutableLiveData<>();
+    private final MutableLiveData<List<SpecialFood>> mSpecialFoodsLiveData = new MutableLiveData<>();
     private final MutableLiveData<Integer> mScoreLiveData = new MutableLiveData<>();
     private final MutableLiveData<SnakeGame.GameState> mGameStateLiveData = new MutableLiveData<>();
     public long mUpdateInterval = INITIAL_UPDATE_INTERVAL;
@@ -40,6 +41,22 @@ public class SnakeViewModel extends ViewModel {
     private SnakeGame mGame;
     // GameLoop
     private GameLoop mGameLoop;
+
+    // Game listener
+    private SnakeGame.GameSpeedListener mGameSpeedListener = new SnakeGame.GameSpeedListener() {
+        @Override
+        public void onGameSpeedUp() {
+            Utils.logDebug(TAG, "onSpeedUp");
+            accelerate();
+        }
+
+        @Override
+        public void onGameSlowDown() {
+            Utils.logDebug(TAG, "onSpeedDown");
+            decelerate();
+        }
+    };
+
 
     /**
      * initial game with rows and columns
@@ -52,19 +69,19 @@ public class SnakeViewModel extends ViewModel {
         Utils.logDebug(TAG, "initGame rows: " + rows + ", columns: " + columns);
         mGame = new SnakeGame(rows, columns);
 
-        // set wrap enabled
-        //mGame.setWrapEnabled(isWrap);
+        // set game speed listener
+        mGame.setGameSpeedListener(mGameSpeedListener);
 
         // update config data
         updateConfigData(activity);
 
         // initial Game loop
-        mGameLoop = new GameLoop(mUpdateInterval, () -> {
+        mGameLoop = new GameLoop(() -> {
             if (mGame.getGameState() == SnakeGame.GameState.RUNNING) {
                 mGame.update();
                 updateLiveData();
                 // start game loop again
-                mGameLoop.start();
+                mGameLoop.start(mUpdateInterval);
             }
         });
 
@@ -81,7 +98,7 @@ public class SnakeViewModel extends ViewModel {
     private void startGame() {
         Utils.logDebug(TAG, "startGame");
         mGame.start();
-        mGameLoop.start();
+        mGameLoop.start(mUpdateInterval);
     }
 
     /**
@@ -96,7 +113,8 @@ public class SnakeViewModel extends ViewModel {
         }
 
         updateConfigData(activity);
-        startGame();
+        mGame.start();
+        mGameLoop.start(mUpdateInterval);
     }
 
     private void updateConfigData(Activity activity) {
@@ -109,6 +127,11 @@ public class SnakeViewModel extends ViewModel {
         boolean isSpecialFood = SharedPreferenceManager.getInstance(activity).getBoolean(SpecialFood, false);
         // set special food enabled
         mGame.setSpecialFoodEnabled(isSpecialFood);
+
+        String MultiSpecialFood = SharedPreferenceManager.Keys.MULTI_FOODS_SHOW;
+        boolean isMultiSpecialFood = SharedPreferenceManager.getInstance(activity).getBoolean(MultiSpecialFood, false);
+        // set special food enabled
+        mGame.allowMultiSpecialFood(isMultiSpecialFood);
 
     }
 
@@ -128,7 +151,7 @@ public class SnakeViewModel extends ViewModel {
     private void updateLiveData() {
         mGameLiveData.setValue(mGame.getSnake());
         mFoodLiveData.setValue(mGame.getFood());
-        mSpecialFoodLiveData.setValue(mGame.getSpecialFood());
+        mSpecialFoodsLiveData.setValue(mGame.getSpecialFoods());
         mScoreLiveData.setValue(mGame.getScore());
         mGameStateLiveData.setValue(mGame.getGameState());
 
@@ -145,6 +168,12 @@ public class SnakeViewModel extends ViewModel {
         Utils.logDebug(TAG, "accelerate");
         mUpdateInterval = Math.max(MIN_UPDATE_INTERVAL, mUpdateInterval - SPEED_STEP);
         Utils.logDebug(TAG, "accelerate: mUpdateInterval: " + mUpdateInterval);
+    }
+
+    private void decelerate() {
+        Utils.logDebug(TAG, "decelerate");
+        mUpdateInterval = Math.min(INITIAL_UPDATE_INTERVAL, mUpdateInterval + SPEED_STEP);
+        Utils.logDebug(TAG, "decelerate: mUpdateInterval: " + mUpdateInterval);
     }
 
     /**
@@ -167,13 +196,6 @@ public class SnakeViewModel extends ViewModel {
     }
 
     /**
-     * set wrap enabled
-     */
-    public void setWrapEnabled(boolean enabled) {
-        mGame.setWrapEnabled(enabled);
-    }
-
-    /**
      * clear handler
      */
     @Override
@@ -181,6 +203,15 @@ public class SnakeViewModel extends ViewModel {
         super.onCleared();
         Utils.logDebug(TAG, "onCleared");
         mGameLoop.stop();
+        mGame = null;
+        mGameLoop = null;
+        mGameSpeedListener = null;
+        mGameLiveData.setValue(null);
+        mFoodLiveData.setValue(null);
+        mSpecialFoodsLiveData.setValue(null);
+        mScoreLiveData.setValue(null);
+        mGameStateLiveData.setValue(null);
+
     }
 
 
@@ -193,8 +224,9 @@ public class SnakeViewModel extends ViewModel {
         return mFoodLiveData;
     }
 
-    public MutableLiveData<Point> getSpecialFoodLiveData() {
-        return mSpecialFoodLiveData;
+
+    public MutableLiveData<List<SpecialFood>> getSpecialFoodsLiveData() {
+        return mSpecialFoodsLiveData;
     }
 
     public MutableLiveData<Integer> getScoreLiveData() {
