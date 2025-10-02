@@ -35,6 +35,7 @@ public class SnakeViewModel extends ViewModel {
     private final MutableLiveData<List<SpecialFood>> mSpecialFoodsLiveData = new MutableLiveData<>();
     private final MutableLiveData<Integer> mScoreLiveData = new MutableLiveData<>();
     private final MutableLiveData<SnakeGame.GameState> mGameStateLiveData = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mSnakeInvisibleLiveData = new MutableLiveData<>();
     public long mUpdateInterval = INITIAL_UPDATE_INTERVAL;
     private int mLastScore = 0;
     // SnakeGame model: mGame
@@ -55,6 +56,26 @@ public class SnakeViewModel extends ViewModel {
             Utils.logDebug(TAG, "onSpeedDown");
             decelerate();
         }
+
+        @Override
+        public void onSnakeInVisible() {
+            // start timer to hide snake
+            GameLoop timer = new GameLoop(() -> {
+               mGame.setInvisible(false); // show snake
+            });
+            timer.start(3000L);
+
+        }
+
+        @Override
+        public void onSnakeInvincible() {
+            // start timer to disable snake invincible
+            GameLoop timer = new GameLoop(() -> {
+                mGame.setInvincible(false); // disable snake invincible
+            });
+            timer.start(8000L);
+        }
+
     };
 
 
@@ -160,6 +181,7 @@ public class SnakeViewModel extends ViewModel {
         mSpecialFoodsLiveData.setValue(mGame.getSpecialFoods());
         mScoreLiveData.setValue(mGame.getScore());
         mGameStateLiveData.setValue(mGame.getGameState());
+        mSnakeInvisibleLiveData.setValue(mGame.isInvisible());
 
         // check if score is changed -> speed up
         int currentScore = mGame.getScore();
@@ -241,6 +263,10 @@ public class SnakeViewModel extends ViewModel {
 
     public MutableLiveData<SnakeGame.GameState> getGameStateLiveData() {
         return mGameStateLiveData;
+    }
+
+    public MutableLiveData<Boolean> getSnakeInvisibleLiveData() {
+        return mSnakeInvisibleLiveData;
     }
 
     /**

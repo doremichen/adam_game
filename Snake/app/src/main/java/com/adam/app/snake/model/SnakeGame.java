@@ -36,7 +36,6 @@ public class SnakeGame {
     Random mRandom = new Random();
     // mFood: Point
     private Point mFood;
-    private long mSpecialFoodExpireTime = 0L;
     private final List<SpecialFood> mSpecialFoods = new ArrayList<>();
     // initial Direction is RIGHT
     private Direction mDirection = Direction.RIGHT;
@@ -52,6 +51,11 @@ public class SnakeGame {
     private boolean mSpecialFoodEnabled = false;
     // check if multiple special food is enabled
     private boolean mAllowMultiSpecialFood = false;
+    // check if the snake is invincible
+    private boolean mIsInvincible = false;
+    // check if the snake is invisible
+    private boolean mIsInvisible = false;
+
     // Game listener
     private GameSpeedListener mGameSpeedListener;
 
@@ -93,12 +97,12 @@ public class SnakeGame {
         // clear special food
         mSpecialFoods.clear();
         mSpecialFoodTimestamps.clear();
-        // clear special food expire time
-        mSpecialFoodExpireTime = 0L;
         mGameState = GameState.RUNNING;
         mDirection = Direction.RIGHT;
         mScore = 0;
         mNormalFoodEaten = 0;
+        mIsInvincible = false;
+        mIsInvisible = false;
     }
 
     /**
@@ -182,7 +186,7 @@ public class SnakeGame {
                 break;
         }
 
-        if (mWrapEnabled) {
+        if (mWrapEnabled || mIsInvincible) {
             newX = (newX + mNumColumns) % mNumColumns;
             newY = (newY + mNumRows) % mNumRows;
         }
@@ -191,11 +195,12 @@ public class SnakeGame {
     }
 
     private boolean isOutOfBounds(Point p) {
-        if (mWrapEnabled) return false;
+        if (mWrapEnabled || mIsInvincible) return false;
         return p.x < 0 || p.x >= mNumColumns || p.y < 0 || p.y >= mNumRows;
     }
 
     private boolean isCollidingWithSelf(Point p) {
+        if (mIsInvincible) return false;
         for (Point body : mSnake) {
             if (body.equals(p)) return true;
         }
@@ -212,7 +217,7 @@ public class SnakeGame {
             mNormalFoodEaten++;
             generateFood();
 
-            if (mSpecialFoodEnabled && mNormalFoodEaten % 5 == 0) {
+            if (mSpecialFoodEnabled && mNormalFoodEaten % 3 == 0) {
                 generateSpecialFoods();
             }
         } else if (isSpecialFood()) {
@@ -308,9 +313,21 @@ public class SnakeGame {
                 break;
             case SpecialFood.TYPE.INVINCIBLE:
                 Utils.logDebug(TAG, "applySpecialFoodEffect: INVINCIBLE");
+                mIsInvincible = true;
+                if (Utils.isNull(mGameSpeedListener)) {
+                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
+                } else {
+                    mGameSpeedListener.onSnakeInvincible();
+                }
                 break;
             case SpecialFood.TYPE.INVISIBLE:
                 Utils.logDebug(TAG, "applySpecialFoodEffect: INVISIBLE");
+                mIsInvisible = true;
+                if (Utils.isNull(mGameSpeedListener)) {
+                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
+                } else {
+                    mGameSpeedListener.onSnakeInVisible();
+                }
                 break;
             case SpecialFood.TYPE.SCORE_DOUBLE:
                 Utils.logDebug(TAG, "applySpecialFoodEffect: SCORE_DOUBLE");
@@ -429,6 +446,36 @@ public class SnakeGame {
         return mGameState;
     }
 
+
+    /**
+     * set Invisible
+     *
+     * @param invisible boolean
+     */
+    public void setInvisible(boolean invisible) {
+        mIsInvisible = invisible;
+    }
+
+    /**
+     * set invincible
+     *
+     * @param invincible boolean
+     */
+    public void setInvincible(boolean invincible) {
+        mIsInvincible = invincible;
+    }
+
+
+    /**
+     * get Invisible
+     *
+     * @return boolean
+     */
+    public boolean isInvisible() {
+        return mIsInvisible;
+    }
+
+
     /**
      * set wrap enabled
      */
@@ -454,7 +501,6 @@ public class SnakeGame {
         return mSpecialFoods;
     }
 
-
     /**
      * enum Direction
      */
@@ -477,11 +523,18 @@ public class SnakeGame {
      * interface listener
      * onGameSpeedUp
      * onGameSlowDown
+     * onSnakeInVisible
+     * onSnakeInvincible
      */
     public interface GameSpeedListener {
         void onGameSpeedUp();
 
         void onGameSlowDown();
+
+        void onSnakeInVisible();
+
+        void onSnakeInvincible();
+
     }
 
 }

@@ -101,6 +101,21 @@ public class SnakeView extends View {
         invalidate();
     }
 
+    /**
+     * set snake invisible state
+     *
+     * @param Invisible boolean
+     *
+     */
+    public void setSnakeInvisible(boolean Invisible) {
+        if (Invisible) {
+            mPaintSnake.setAlpha(0);
+        } else {
+            mPaintSnake.setAlpha(255);
+        }
+        invalidate();
+    }
+
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {

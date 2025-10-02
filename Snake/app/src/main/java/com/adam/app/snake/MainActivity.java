@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
         mSnakeViewModel.getSpecialFoodsLiveData().observe(this, mBinding.snakeView::setSpecialFoods);
         mSnakeViewModel.getScoreLiveData().observe(this, this::onChanged);
         mSnakeViewModel.getGameStateLiveData().observe(this, this::onChanged);
+        mSnakeViewModel.getSnakeInvisibleLiveData().observe(this, mBinding.snakeView::setSnakeInvisible);
 
     }
 
@@ -126,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         mSnakeViewModel.getSpecialFoodsLiveData().removeObservers(this);
         mSnakeViewModel.getScoreLiveData().removeObservers(this);
         mSnakeViewModel.getGameStateLiveData().removeObservers(this);
+        mSnakeViewModel.getSnakeInvisibleLiveData().removeObservers(this);
         mSnakeViewModel = null;
 
     }
