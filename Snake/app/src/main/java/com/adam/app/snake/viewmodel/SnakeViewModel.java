@@ -133,6 +133,12 @@ public class SnakeViewModel extends ViewModel {
         // set special food enabled
         mGame.allowMultiSpecialFood(isMultiSpecialFood);
 
+        // get speed mode
+        int speedMode = SharedPreferenceManager.getInstance(activity).getInt(SharedPreferenceManager.Keys.SPECIAL_FREQ, 0);
+        SpeedLevel speedLevel = SpeedLevel.fromId(speedMode);
+        if (speedLevel != null) {
+            mUpdateInterval = speedLevel.toValue();
+        }
     }
 
 
@@ -236,5 +242,59 @@ public class SnakeViewModel extends ViewModel {
     public MutableLiveData<SnakeGame.GameState> getGameStateLiveData() {
         return mGameStateLiveData;
     }
+
+    /**
+     * enum SpeedLevel
+     * id: int
+     * Low, Middle, High
+     */
+    private static enum SpeedLevel {
+        Low(0) {
+            @Override
+            long toValue() {
+                return LOW_VALUE;
+            }
+        },
+        Middle(1) {
+            @Override
+            long toValue() {
+                return MIDDLE_VALUE;
+            }
+        },
+        High(2) {
+            @Override
+            long toValue() {
+                return HIGH_VALUE;
+            }
+        };
+
+        private static final long LOW_VALUE = 300L;
+        private static final long MIDDLE_VALUE = 150L;
+        private static final long HIGH_VALUE = 100L;
+
+
+        private int mId;
+        private SpeedLevel(int id) {
+            mId = id;
+        }
+
+        abstract long toValue();
+
+        /**
+         * get id
+         *
+         * @param id int
+         * @return SpeedLevel
+         */
+        public static SpeedLevel fromId(int id) {
+            for (SpeedLevel level : values()) {
+                if (level.mId == id) {
+                    return level;
+                }
+            }
+            return null;
+        }
+    }
+
 
 }
