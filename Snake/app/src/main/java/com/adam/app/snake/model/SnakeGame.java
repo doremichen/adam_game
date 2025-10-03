@@ -14,7 +14,6 @@ import com.adam.app.snake.Utils;
 import com.adam.app.snake.model.strategy.ISpecialFoodEffect;
 import com.adam.app.snake.model.strategy.SpecialFoodStrategyFactory;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -27,7 +26,7 @@ public final class SnakeGame {
     // TAG SnakeGame
     private static final String TAG = "SnakeGame";// 20% chance to generate special food
     // Special food lifetime (ms)
-    private static final long SPECIAL_FOOD_LIFETIME = 8000L;
+    private static final long SPECIAL_FOOD_LIFETIME = 30000L;
     // mNumColums: int
     private final int mNumColumns;
     // mNumRows: int
@@ -60,7 +59,7 @@ public final class SnakeGame {
     private boolean mIsInvisible = false;
 
     // Game listener
-    private GameSpeedListener mGameSpeedListener;
+    private GameListener mGameListener;
 
     /**
      * Constructor with rows and columns
@@ -78,10 +77,10 @@ public final class SnakeGame {
     /**
      * set game speed listener
      *
-     * @param listener GameSpeedListener
+     * @param listener GameListener
      */
-    public void setGameSpeedListener(GameSpeedListener listener) {
-        mGameSpeedListener = listener;
+    public void setGameListener(GameListener listener) {
+        mGameListener = listener;
     }
 
 
@@ -290,10 +289,9 @@ public final class SnakeGame {
         }
 
         // tell view model to show special food type
-        if (mGameSpeedListener != null) {
-            mGameSpeedListener.onShowSpecialFood(specialFood.toText());
+        if (mGameListener != null) {
+            mGameListener.onShowSpecialFood(specialFood.toText());
         }
-
 
         strategy.apply(this);
 
@@ -461,15 +459,15 @@ public final class SnakeGame {
     public void speedUp(boolean speedUp) {
         // tell view model to speed up
         Utils.logDebug(TAG, "speedUp");
-        if (Utils.isNull(mGameSpeedListener)) {
+        if (Utils.isNull(mGameListener)) {
             Utils.logDebug(TAG, "mGameSpeedListener is null");
             return;
         }
 
         if (speedUp) {
-            mGameSpeedListener.onGameSpeedUp();
+            mGameListener.onGameSpeedUp();
         } else {
-            mGameSpeedListener.onGameSlowDown();
+            mGameListener.onGameSlowDown();
         }
     }
 
@@ -486,21 +484,21 @@ public final class SnakeGame {
 
     public void makeSnakeInvisible() {
         mIsInvisible = true;
-        if (Utils.isNull(mGameSpeedListener)) {
+        if (Utils.isNull(mGameListener)) {
             Utils.logDebug(TAG, "mGameSpeedListener is null");
             return;
         }
 
-        mGameSpeedListener.onSnakeInVisible();
+        mGameListener.onSnakeInVisible();
     }
 
     public void makeSnakeInvincible() {
         mIsInvincible = true;
-        if (Utils.isNull(mGameSpeedListener)) {
+        if (Utils.isNull(mGameListener)) {
             Utils.logDebug(TAG, "mGameSpeedListener is null");
             return;
         }
-        mGameSpeedListener.onSnakeInvincible();
+        mGameListener.onSnakeInvincible();
     }
 
     public void doubleScore() {
@@ -537,7 +535,7 @@ public final class SnakeGame {
      * onSnakeInVisible
      * onSnakeInvincible
      */
-    public interface GameSpeedListener {
+    public interface GameListener {
         void onGameSpeedUp();
 
         void onGameSlowDown();

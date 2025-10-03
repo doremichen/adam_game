@@ -9,7 +9,6 @@
 package com.adam.app.snake.viewmodel;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Point;
 
 import androidx.lifecycle.MutableLiveData;
@@ -48,7 +47,7 @@ public class SnakeViewModel extends ViewModel {
 
 
     // Game listener
-    private SnakeGame.GameSpeedListener mGameSpeedListener = new SnakeGame.GameSpeedListener() {
+    private SnakeGame.GameListener mGameListener = new SnakeGame.GameListener() {
         @Override
         public void onGameSpeedUp() {
             Utils.logDebug(TAG, "onSpeedUp");
@@ -103,7 +102,7 @@ public class SnakeViewModel extends ViewModel {
         mGame = new SnakeGame(rows, columns);
 
         // set game speed listener
-        mGame.setGameSpeedListener(mGameSpeedListener);
+        mGame.setGameListener(mGameListener);
 
         // update config data
         updateConfigData(activity);
@@ -245,7 +244,7 @@ public class SnakeViewModel extends ViewModel {
         mGameLoop.stop();
         mGame = null;
         mGameLoop = null;
-        mGameSpeedListener = null;
+        mGameListener = null;
         mGameLiveData.setValue(null);
         mFoodLiveData.setValue(null);
         mSpecialFoodsLiveData.setValue(null);

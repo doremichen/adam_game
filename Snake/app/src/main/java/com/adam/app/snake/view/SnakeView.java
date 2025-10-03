@@ -19,6 +19,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.adam.app.snake.model.SpecialFood;
+import com.adam.app.snake.view.strategy.FoodPaintStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,32 +133,15 @@ public class SnakeView extends View {
         for (SpecialFood food : mSpecialFoods) {
             // paint
             Paint paint = new Paint();
-            switch (food.getType()) {
-                case SpecialFood.TYPE.SPEED_UP:
-                    paint.setColor(Color.CYAN);
-                    break; // cyan
-                case SpecialFood.TYPE.SLOW_DOWN:
-                    paint.setColor(Color.rgb(192, 192, 192));
-                    break; // gray
-                case SpecialFood.TYPE.SHORTEN:
-                    paint.setColor(Color.MAGENTA);
-                    break; // magenta
-                case SpecialFood.TYPE.EXTEND:
-                    paint.setColor(Color.GREEN);
-                    break; // green
-                case SpecialFood.TYPE.INVINCIBLE:
-                    paint.setColor(Color.YELLOW);
-                    break; // yellow
-                case SpecialFood.TYPE.INVISIBLE:
-                    paint.setColor(Color.LTGRAY);
-                    break; // light gray
-                case SpecialFood.TYPE.SCORE_DOUBLE:
-                    paint.setColor(Color.rgb(255, 165, 0));
-                    break; // orange
-                case SpecialFood.TYPE.BOMB:
-                    paint.setColor(Color.BLACK);
-                    break; // black
+
+            // get food paint strategy
+            FoodPaintStrategy strategy = FoodPaintStrategy.get(food.getType());
+            if (strategy != null) {
+                strategy.applyPaint(paint);
+            } else {
+                paint.setColor(Color.WHITE);
             }
+
             canvas.drawRect(food.getX() * CEIL_SIZE, food.getY() * CEIL_SIZE, (food.getX() + 1) * CEIL_SIZE, (food.getY() + 1) * CEIL_SIZE, paint);
         }
 
