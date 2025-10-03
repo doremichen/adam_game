@@ -11,6 +11,8 @@ package com.adam.app.snake.model;
 import android.graphics.Point;
 
 import com.adam.app.snake.Utils;
+import com.adam.app.snake.model.strategy.ISpecialFoodEffect;
+import com.adam.app.snake.model.strategy.SpecialFoodStrategyFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class SnakeGame {
+public final class SnakeGame {
 
     // TAG SnakeGame
     private static final String TAG = "SnakeGame";// 20% chance to generate special food
@@ -279,66 +281,14 @@ public class SnakeGame {
      */
     public void applySpecialFoodEffect(SpecialFood specialFood) {
         Utils.logDebug(TAG, "applySpecialFoodEffect: " + specialFood);
-        switch (specialFood.getType()) {
-            case SpecialFood.TYPE.SPEED_UP:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: SPEED_UP");
-                // speed up snake
-                if (Utils.isNull(mGameSpeedListener)) {
-                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
-                } else {
-                    mGameSpeedListener.onGameSpeedUp();
-                }
-                break;
-            case SpecialFood.TYPE.SLOW_DOWN:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: SLOW_DOWN");
-                // slow down snake
-                if (Utils.isNull(mGameSpeedListener)) {
-                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
-                } else {
-                    mGameSpeedListener.onGameSlowDown();
-                }
-                break;
-            case SpecialFood.TYPE.SHORTEN:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: SHORTEN");
-                // shorten snake size if the snake size is large than 3
-                if (mSnake.size() > 3) {
-                    mSnake.remove(mSnake.size() - 1);
-                }
-                break;
-            case SpecialFood.TYPE.EXTEND:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: EXTEND");
-                // extend the snake size
-                Point last = mSnake.get(mSnake.size() - 1);
-                mSnake.add(new Point(last.x, last.y));
-                break;
-            case SpecialFood.TYPE.INVINCIBLE:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: INVINCIBLE");
-                mIsInvincible = true;
-                if (Utils.isNull(mGameSpeedListener)) {
-                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
-                } else {
-                    mGameSpeedListener.onSnakeInvincible();
-                }
-                break;
-            case SpecialFood.TYPE.INVISIBLE:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: INVISIBLE");
-                mIsInvisible = true;
-                if (Utils.isNull(mGameSpeedListener)) {
-                    Utils.logDebug(TAG, "applySpecialFoodEffect: mGameSpeedListener is null");
-                } else {
-                    mGameSpeedListener.onSnakeInVisible();
-                }
-                break;
-            case SpecialFood.TYPE.SCORE_DOUBLE:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: SCORE_DOUBLE");
-                mScore *= 2;
-                break;
-            case SpecialFood.TYPE.BOMB:
-                Utils.logDebug(TAG, "applySpecialFoodEffect: BOMB");
-                // state game over
-                mGameState = GameState.GAME_OVER;
-                break;
+        // get strategy
+        ISpecialFoodEffect strategy = SpecialFoodStrategyFactory.getStrategy(specialFood.getType());
+        if (Utils.isNull(strategy)) {
+            Utils.logDebug(TAG, "applySpecialFoodEffect: strategy is null");
+            return;
         }
+
+        strategy.apply(this);
 
     }
 
@@ -500,6 +450,60 @@ public class SnakeGame {
     public List<SpecialFood> getSpecialFoods() {
         return mSpecialFoods;
     }
+
+    public void speedUp(boolean speedUp) {
+        // tell view model to speed up
+        Utils.logDebug(TAG, "speedUp");
+        if (Utils.isNull(mGameSpeedListener)) {
+            Utils.logDebug(TAG, "mGameSpeedListener is null");
+            return;
+        }
+
+        if (speedUp) {
+            mGameSpeedListener.onGameSpeedUp();
+        } else {
+            mGameSpeedListener.onGameSlowDown();
+        }
+    }
+
+    public void shortenSnake() {
+        if (mSnake.size() > 3) {
+            mSnake.remove(mSnake.size() - 1);
+        }
+    }
+
+    public void extendSnake() {
+        Point last = mSnake.get(mSnake.size() - 1);
+        mSnake.add(new Point(last.x, last.y));
+    }
+
+    public void makeSnakeInvisible() {
+        mIsInvisible = true;
+        if (Utils.isNull(mGameSpeedListener)) {
+            Utils.logDebug(TAG, "mGameSpeedListener is null");
+            return;
+        }
+
+        mGameSpeedListener.onSnakeInVisible();
+    }
+
+    public void makeSnakeInvincible() {
+        mIsInvincible = true;
+        if (Utils.isNull(mGameSpeedListener)) {
+            Utils.logDebug(TAG, "mGameSpeedListener is null");
+            return;
+        }
+        mGameSpeedListener.onSnakeInvincible();
+    }
+
+    public void doubleScore() {
+        mScore *= 2;
+    }
+
+    public void gameOver() {
+        mGameState = GameState.GAME_OVER;
+    }
+
 
     /**
      * enum Direction

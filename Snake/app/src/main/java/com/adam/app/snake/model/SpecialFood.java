@@ -8,7 +8,7 @@
  */
 package com.adam.app.snake.model;
 
-public class SpecialFood {
+public final class SpecialFood {
     /**
      * class TYPE
      * SPEED_UP
