@@ -9,6 +9,7 @@
 package com.adam.app.snake.viewmodel;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Point;
 
 import androidx.lifecycle.MutableLiveData;
@@ -42,6 +43,9 @@ public class SnakeViewModel extends ViewModel {
     private SnakeGame mGame;
     // GameLoop
     private GameLoop mGameLoop;
+    // Activity context;
+    private Activity mContext;
+
 
     // Game listener
     private SnakeGame.GameSpeedListener mGameSpeedListener = new SnakeGame.GameSpeedListener() {
@@ -76,6 +80,12 @@ public class SnakeViewModel extends ViewModel {
             timer.start(8000L);
         }
 
+        @Override
+        public void onShowSpecialFood(String type) {
+            // show toast
+            Utils.showToast(mContext, "Special Food: " + type);
+        }
+
     };
 
 
@@ -88,6 +98,8 @@ public class SnakeViewModel extends ViewModel {
      */
     public void initGame(int rows, int columns, Activity activity) {
         Utils.logDebug(TAG, "initGame rows: " + rows + ", columns: " + columns);
+        mContext = activity;
+
         mGame = new SnakeGame(rows, columns);
 
         // set game speed listener

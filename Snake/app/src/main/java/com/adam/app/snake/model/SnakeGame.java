@@ -14,6 +14,7 @@ import com.adam.app.snake.Utils;
 import com.adam.app.snake.model.strategy.ISpecialFoodEffect;
 import com.adam.app.snake.model.strategy.SpecialFoodStrategyFactory;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -288,6 +289,12 @@ public final class SnakeGame {
             return;
         }
 
+        // tell view model to show special food type
+        if (mGameSpeedListener != null) {
+            mGameSpeedListener.onShowSpecialFood(specialFood.toText());
+        }
+
+
         strategy.apply(this);
 
     }
@@ -538,6 +545,8 @@ public final class SnakeGame {
         void onSnakeInVisible();
 
         void onSnakeInvincible();
+
+        void onShowSpecialFood(String type);
 
     }
 
