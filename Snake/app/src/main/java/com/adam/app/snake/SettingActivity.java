@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.adam.app.snake.databinding.ActivitySettingBinding;
@@ -21,6 +23,7 @@ import com.adam.app.snake.store.file.SharedPreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -91,6 +94,11 @@ public class SettingActivity extends AppCompatActivity {
         // recycler view set adapter
         final GameSettingAdapter adapter = new GameSettingAdapter(this, settingItems);
         mBinding.recyclerGameSettings.setAdapter(adapter);
+        // set divider
+        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        divider.setDrawable(Objects.requireNonNull(ContextCompat.getDrawable(this, R.drawable.divider)));
+        mBinding.recyclerGameSettings.addItemDecoration(divider);
+
 
         // exit button click listener
         mBinding.btnOk.setOnClickListener(v -> {
