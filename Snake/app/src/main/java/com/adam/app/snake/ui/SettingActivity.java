@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.adam.app.snake.databinding.ActivitySettingBinding;
 import com.adam.app.snake.setting.GameSettingAdapter;
 import com.adam.app.snake.setting.GameSettingItem;
-import com.adam.app.snake.store.file.SharedPreferenceManager;
+import com.adam.app.snake.data.file.SharedPreferenceManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class SettingActivity extends AppCompatActivity {
     private ActivitySettingBinding mBinding;
 
 
-    public static Intent createIntent(MainActivity mainActivity) {
+    public static Intent createIntent(GameActivity mainActivity) {
         return new Intent(mainActivity, SettingActivity.class);
     }
 

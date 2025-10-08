@@ -16,17 +16,18 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.adam.app.snake.databinding.ActivityMainBinding;
+import com.adam.app.snake.databinding.ActivityGameBinding;
 import com.adam.app.snake.model.SnakeGame;
+import com.adam.app.snake.util.Utils;
 import com.adam.app.snake.view.SnakeView;
 import com.adam.app.snake.viewmodel.SnakeViewModel;
 
-public class MainActivity extends AppCompatActivity {
-    // TAG MainActivity
-    private static final String TAG = "MainActivity";
+public class GameActivity extends AppCompatActivity {
+    // TAG GameActivity
+    private static final String TAG = "GameActivity";
 
     // view binding
-    private ActivityMainBinding mBinding;
+    private ActivityGameBinding mBinding;
 
     // snake view model
     private SnakeViewModel mSnakeViewModel;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Utils.logDebug(TAG, "onCreate");
         // view binding
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
         // initial snake view model
