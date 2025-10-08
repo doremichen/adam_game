@@ -25,11 +25,11 @@ public class GameSettingItem {
     }
 
     // TYPE
-    private final int type; // optional type
+    private final int mType; // optional type
     // Key
-    private final String key; // shared preference key
+    private final String mKey; // shared preference key
     // title
-    private final String title; // title
+    private final String mTitle; // title
 
     // for switch option
     private boolean mIsEnable;
@@ -50,9 +50,9 @@ public class GameSettingItem {
      * @param isEnable: boolean
      */
     public GameSettingItem(int type, String key, String title, boolean isEnable) {
-        this.type = type;
-        this.key = key;
-        this.title = title;
+        this.mType = type;
+        this.mKey = key;
+        this.mTitle = title;
         this.mIsEnable = isEnable;
     }
 
@@ -70,9 +70,9 @@ public class GameSettingItem {
                            String title,
                            List<String> spinnerItems,
                            int spinnerIndex) {
-        this.type = type;
-        this.key = key;
-        this.title = title;
+        this.mType = type;
+        this.mKey = key;
+        this.mTitle = title;
         this.mSpinnerItems = spinnerItems;
         this.mSpinnerIndex = spinnerIndex;
     }
@@ -86,29 +86,27 @@ public class GameSettingItem {
      * @param textValue: String
      */
     public GameSettingItem(int type, String key, String title, String textValue) {
-        this.type = type;
-        this.key = key;
-        this.title = title;
+        this.mType = type;
+        this.mKey = key;
+        this.mTitle = title;
         this.mTextValue = textValue;
     }
 
     // Getter
     public int getType() {
-        return type;
+        return mType;
     }
     public String getKey() {
-        return key;
+        return mKey;
     }
     public String getTitle() {
-        return title;
+        return mTitle;
     }
     // switch
     public boolean isEnable() {
         return mIsEnable;
     }
-    public void setEnable(boolean enable) {
-        mIsEnable = enable;
-    }
+
     // spinner
     public List<String> getSpinnerItems() {
         return mSpinnerItems;
@@ -124,7 +122,5 @@ public class GameSettingItem {
     public String getTextValue() {
         return mTextValue;
     }
-    public void setTextValue(String textValue) {
-        mTextValue = textValue;
-    }
+
 }
