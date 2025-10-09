@@ -11,13 +11,16 @@ package com.adam.app.snake.viewmodel;
 import android.app.Activity;
 import android.graphics.Point;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.adam.app.snake.Utils;
+import com.adam.app.snake.data.entity.LeaderboardEntry;
+import com.adam.app.snake.data.repository.LeaderboardRepository;
+import com.adam.app.snake.util.Utils;
 import com.adam.app.snake.model.SnakeGame;
 import com.adam.app.snake.model.SpecialFood;
-import com.adam.app.snake.store.file.SharedPreferenceManager;
+import com.adam.app.snake.data.file.SharedPreferenceManager;
 
 import java.util.List;
 
@@ -44,6 +47,9 @@ public class SnakeViewModel extends ViewModel {
     private GameLoop mGameLoop;
     // Activity context;
     private Activity mContext;
+
+    // repository
+    private LeaderboardRepository mRepository;
 
 
     // Game listener
@@ -99,6 +105,10 @@ public class SnakeViewModel extends ViewModel {
         Utils.logDebug(TAG, "initGame rows: " + rows + ", columns: " + columns);
         mContext = activity;
 
+        // initial repository
+        mRepository = new LeaderboardRepository(activity.getApplication());
+
+
         mGame = new SnakeGame(rows, columns);
 
         // set game speed listener
@@ -111,6 +121,7 @@ public class SnakeViewModel extends ViewModel {
         mGameLoop = new GameLoop(() -> {
             if (mGame.getGameState() == SnakeGame.GameState.RUNNING) {
                 mGame.update();
+                syncGameProgress();
                 updateLiveData();
                 // start game loop again
                 mGameLoop.start(mUpdateInterval);
@@ -184,6 +195,41 @@ public class SnakeViewModel extends ViewModel {
     }
 
     /**
+     *  Save game score in database
+     */
+    public void saveGameScore() {
+        Utils.logDebug(TAG, "saveGameScore");
+        // new leaderboard entry
+        LeaderboardEntry entry = new LeaderboardEntry(
+                "Test",
+                mGame.getScore(),
+                System.currentTimeMillis()
+        );
+        // insert entry
+        mRepository.insert(entry);
+    }
+
+    /**
+     *  Save game score in database
+     *
+     *  @param name String
+     */
+    public void saveGameScore(String name) {
+        Utils.logDebug(TAG, "saveGameScore");
+        // new leaderboard entry
+        LeaderboardEntry entry = new LeaderboardEntry(
+                name,
+                mGame.getScore(),
+                System.currentTimeMillis()
+        );
+        // insert entry
+        mRepository.insert(entry);
+    }
+
+
+
+
+    /**
      * update live data
      */
     private void updateLiveData() {
@@ -194,13 +240,16 @@ public class SnakeViewModel extends ViewModel {
         mGameStateLiveData.setValue(mGame.getGameState());
         mSnakeInvisibleLiveData.setValue(mGame.isInvisible());
 
+
+    }
+
+    private void syncGameProgress() {
         // check if score is changed -> speed up
         int currentScore = mGame.getScore();
         if (currentScore > mLastScore) {
             accelerate();
             mLastScore = currentScore;
         }
-
     }
 
     private void accelerate() {

@@ -10,7 +10,7 @@ package com.adam.app.snake.model;
 
 import android.graphics.Point;
 
-import com.adam.app.snake.Utils;
+import com.adam.app.snake.util.Utils;
 import com.adam.app.snake.model.strategy.ISpecialFoodEffect;
 import com.adam.app.snake.model.strategy.SpecialFoodStrategyFactory;
 

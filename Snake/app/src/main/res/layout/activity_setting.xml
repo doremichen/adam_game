@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="#121212"
     android:fitsSystemWindows="true"
-    tools:context=".SettingActivity">
+    tools:context=".ui.SettingActivity">
 
     <!-- Settings List -->
     <androidx.recyclerview.widget.RecyclerView

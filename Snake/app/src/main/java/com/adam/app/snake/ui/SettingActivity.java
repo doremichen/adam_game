@@ -6,7 +6,7 @@
  * Author: Adam Chen
  * Date: 2025/09/30
  */
-package com.adam.app.snake;
+package com.adam.app.snake.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.adam.app.snake.R;
 import com.adam.app.snake.databinding.ActivitySettingBinding;
 import com.adam.app.snake.setting.GameSettingAdapter;
 import com.adam.app.snake.setting.GameSettingItem;

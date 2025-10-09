@@ -6,7 +6,7 @@
  * Author: Adam Chen
  * Date: 2025/09/26
  */
-package com.adam.app.snake.store.file;
+package com.adam.app.snake.data.file;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -27,6 +27,7 @@ public class SharedPreferenceManager {
      * Version: key_version
      */
     public static class Keys {
+        public static final String USER_NAME = "key_user_name";
         public static final String WRAP_MODE = "key_wrap_mode";
         public static final String SPECIAL_FOOD = "key_special_food";
         public static final String MULTI_FOODS_SHOW = "key_multi_foods_show";

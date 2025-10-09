@@ -6,15 +6,18 @@
  * Author: Adam Chen
  * Date: 2025/09/24
  */
-package com.adam.app.snake;
+package com.adam.app.snake.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
-import com.adam.app.snake.store.file.SharedPreferenceManager;
+import com.adam.app.snake.R;
 
 public final class Utils {
     // DEBUG_TAG: SnakeGame
@@ -89,6 +92,7 @@ public final class Utils {
         public DialogInterface.OnClickListener getListener() {
             return mListener;
         }
+
     }
 
     /**

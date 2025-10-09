@@ -24,4 +24,14 @@
     <string name="snake_game_setting_freq_middle">Middle</string>
     <string name="snake_game_setting_freq_high">High</string>
     <string name="app_version">version</string>
+    <string name="snake_game_title">SNAKE GAME</string>
+    <string name="snake_game_start">Start Game</string>
+    <string name="snake_game_leader_board">Leader Board</string>
+    <string name="snake_game_no_data">No data</string>
+    <string name="snake_game_leaderboard_title">leader board</string>
+    <string name="snake_game_input_name">Please input your name：</string>
+    <string name="snake_game_edit_hint">Player name</string>
+    <string name="snake_game_user_name_dialog_title">User input dialog</string>
+    <string name="snake_game_cancel">Cancel</string>
+    <string name="snake_game_user_name_error">please input Non-empty string</string>
 </resources>

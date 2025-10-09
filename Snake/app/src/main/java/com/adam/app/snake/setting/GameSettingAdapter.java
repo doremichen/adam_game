@@ -22,8 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adam.app.snake.R;
-import com.adam.app.snake.Utils;
-import com.adam.app.snake.store.file.SharedPreferenceManager;
+import com.adam.app.snake.util.Utils;
+import com.adam.app.snake.data.file.SharedPreferenceManager;
 
 import java.util.List;
 

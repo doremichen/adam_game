@@ -24,4 +24,14 @@
     <string name="snake_game_setting_freq_middle">中</string>
     <string name="snake_game_setting_freq_high">高</string>
     <string name="app_version">版本</string>
+    <string name="snake_game_title">貪食蛇</string>
+    <string name="snake_game_start">開始遊戲</string>
+    <string name="snake_game_leader_board">排行榜</string>
+    <string name="snake_game_no_data">目前尚無排行榜資料</string>
+    <string name="snake_game_leaderboard_title">排行榜</string>
+    <string name="snake_game_input_name">請輸入你的名字：</string>
+    <string name="snake_game_edit_hint">玩家名稱</string>
+    <string name="snake_game_user_name_dialog_title">使用者輸入對話框</string>
+    <string name="snake_game_cancel">取消</string>
+    <string name="snake_game_user_name_error">請輸入非空字串</string>
 </resources>

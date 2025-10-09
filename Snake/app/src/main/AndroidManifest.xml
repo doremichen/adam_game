@@ -14,11 +14,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Snake">
         <activity
-            android:name=".SettingActivity"
+            android:name=".ui.LeaderBoardActivity"
             android:exported="false"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".WelcomeActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -27,6 +27,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.SettingActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.GameActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|smallestScreenSize|uiMode|layoutDirection|density"
+            android:windowSoftInputMode="stateHidden|adjustPan|adjustResize"
+            android:launchMode="singleTop"
+            android:keepScreenOn="true"/>
     </application>
 
 </manifest>
