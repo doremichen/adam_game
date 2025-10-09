@@ -38,12 +38,12 @@ public class NameInputDialog extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Utils.logDebug(TAG, "onCreateDialog");
 
-        // inflate 自訂 layout
+        // inflate
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_input_name, null);
         mEtPlayerName = view.findViewById(R.id.etPlayerName);
 
-        // 建立 AlertDialog
+        // create dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setTitle(R.string.snake_game_user_name_dialog_title)
                 .setView(view)
@@ -65,7 +65,7 @@ public class NameInputDialog extends DialogFragment {
         Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
         Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
 
-        // 防止空指標
+        // null check
         if (positiveButton == null || mEtPlayerName == null) {
             Utils.logDebug(TAG, "onStart: button or edittext is null");
             return;

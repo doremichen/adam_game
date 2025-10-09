@@ -89,7 +89,7 @@ public class LeaderboardFragment extends Fragment {
     }
 
     /**
-     * 顯示「無資料」畫面
+     * Update empty view
      */
     private void showEmptyView() {
         Utils.logDebug(TAG, "No leaderboard data available");
@@ -106,7 +106,6 @@ public class LeaderboardFragment extends Fragment {
      */
     private void showListView(List<LeaderboardEntry> entries) {
         Utils.logDebug(TAG, "Show leaderboard data");
-        dumpList(entries);
         mEmptyTextView.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
         mRecyclerView.setAlpha(0f);
@@ -117,7 +116,7 @@ public class LeaderboardFragment extends Fragment {
     }
 
     /**
-     * （可選）Debug 輔助函式
+     * Debug dump list
      */
     private static void dumpList(List<LeaderboardEntry> leaderboardEntries) {
         if (leaderboardEntries == null) return;

@@ -11,16 +11,15 @@ package com.adam.app.snake.viewmodel;
 import android.app.Activity;
 import android.graphics.Point;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.snake.data.entity.LeaderboardEntry;
+import com.adam.app.snake.data.file.SharedPreferenceManager;
 import com.adam.app.snake.data.repository.LeaderboardRepository;
-import com.adam.app.snake.util.Utils;
 import com.adam.app.snake.model.SnakeGame;
 import com.adam.app.snake.model.SpecialFood;
-import com.adam.app.snake.data.file.SharedPreferenceManager;
+import com.adam.app.snake.util.Utils;
 
 import java.util.List;
 
@@ -70,7 +69,7 @@ public class SnakeViewModel extends ViewModel {
         public void onSnakeInVisible() {
             // start timer to hide snake
             GameLoop timer = new GameLoop(() -> {
-               mGame.setInvisible(false); // show snake
+                mGame.setInvisible(false); // show snake
             });
             timer.start(3000L);
 
@@ -107,7 +106,6 @@ public class SnakeViewModel extends ViewModel {
 
         // initial repository
         mRepository = new LeaderboardRepository(activity.getApplication());
-
 
         mGame = new SnakeGame(rows, columns);
 
@@ -194,25 +192,11 @@ public class SnakeViewModel extends ViewModel {
         mGameLoop.stop();
     }
 
-    /**
-     *  Save game score in database
-     */
-    public void saveGameScore() {
-        Utils.logDebug(TAG, "saveGameScore");
-        // new leaderboard entry
-        LeaderboardEntry entry = new LeaderboardEntry(
-                "Test",
-                mGame.getScore(),
-                System.currentTimeMillis()
-        );
-        // insert entry
-        mRepository.insert(entry);
-    }
 
     /**
-     *  Save game score in database
+     * Save game score in database
      *
-     *  @param name String
+     * @param name String
      */
     public void saveGameScore(String name) {
         Utils.logDebug(TAG, "saveGameScore");
@@ -225,8 +209,6 @@ public class SnakeViewModel extends ViewModel {
         // insert entry
         mRepository.insert(entry);
     }
-
-
 
 
     /**
@@ -360,11 +342,10 @@ public class SnakeViewModel extends ViewModel {
 
 
         private int mId;
+
         private SpeedLevel(int id) {
             mId = id;
         }
-
-        abstract long toValue();
 
         /**
          * get id
@@ -380,6 +361,8 @@ public class SnakeViewModel extends ViewModel {
             }
             return null;
         }
+
+        abstract long toValue();
     }
 
 

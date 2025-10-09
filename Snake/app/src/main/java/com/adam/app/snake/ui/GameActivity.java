@@ -77,21 +77,8 @@ public class GameActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 // stop game
                 mSnakeViewModel.stopGame();
-
-                // set Exit type
-                //mExitType = ExitType.Normal;
-
-                //showNameDialogAndSaveScore(mSnakeViewModel.getScoreLiveData().getValue());
-
-                showExitDialog(ExitType.Normal);
-
-                // save game score
-                //mSnakeViewModel.saveGameScore();
-
-//                // show exit dialog
-//                String title = getString(R.string.snake_game_exit_title);
-//                String message = getString(R.string.snake_game_dialog_message);
-//                showGameDialog(title, message);
+                // show game exit dialog
+                showGameExitDialog(ExitType.Normal);
 
             }
         });
@@ -157,7 +144,7 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        Utils.logDebug(TAG, "onConfigurationChanged: " + newConfig.toString());
+        Utils.logDebug(TAG, "onConfigurationChanged: " + newConfig);
         super.onConfigurationChanged(newConfig);
     }
 
@@ -177,20 +164,12 @@ public class GameActivity extends AppCompatActivity {
             // stop game
             mSnakeViewModel.stopGame();
 
-            // set Exit type
-            //mExitType = ExitType.GameOver;
-
             // vibration
             vibrateOnGameOver();
 
-            showExitDialog(ExitType.GameOver);
+            // show game exit dialog
+            showGameExitDialog(ExitType.GameOver);
 
-            //showNameDialogAndSaveScore(mSnakeViewModel.getScoreLiveData().getValue());
-
-            // show game over dialog
-//            String title = getString(R.string.snake_game_over_title);
-//            String message = getString(R.string.snake_game_dialog_message);
-//            showGameDialog(title, message);//showGameOverDialog();
         }
     }
 
@@ -235,38 +214,13 @@ public class GameActivity extends AppCompatActivity {
         Utils.showDialog(this, title, message, postButton, negativeButton);
     }
 
-    /**
-     * showNameDialogAndSaveScore
-     */
-//    private void showNameDialogAndSaveScore(final int score) {
-//        Utils.logDebug(TAG, "showNameDialogAndSaveScore");
-//
-//        NameInputDialog dlg = new NameInputDialog();
-//        dlg.setListener(new NameInputDialog.Listener() {
-//            @Override
-//            public void onNameConfirmed(String name) {
-//                mSnakeViewModel.saveGameScore(name);
-//                Toast.makeText(GameActivity.this, "已儲存分數", Toast.LENGTH_SHORT).show();
-//                showExitDialog(mExitType);
-//            }
-//
-//            @Override
-//            public void onNameCanceled() {
-//                Toast.makeText(GameActivity.this, "已取消儲存分數", Toast.LENGTH_SHORT).show();
-//                showExitDialog(mExitType);
-//            }
-//        });
-//
-//        dlg.show(getSupportFragmentManager(), "name_input_dialog");
-//    }
-
 
     /**
-     * show exit dialog
+     * show game exit dialog
      *
-     * @param type
+     * @param type ExitType
      */
-    private void showExitDialog(ExitType type) {
+    private void showGameExitDialog(ExitType type) {
         Utils.logDebug(TAG, "showExitDialog");
         String title = "";
         if (type == ExitType.Normal) {
@@ -281,8 +235,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private enum ExitType {
-        Normal,
-        GameOver;
+        Normal, GameOver
     }
 
 
