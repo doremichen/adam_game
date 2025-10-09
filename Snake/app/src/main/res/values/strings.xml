@@ -34,4 +34,13 @@
     <string name="snake_game_user_name_dialog_title">User input dialog</string>
     <string name="snake_game_cancel">Cancel</string>
     <string name="snake_game_user_name_error">please input Non-empty string</string>
+    <string name="snake_game_special_food_speedup">Speed up</string>
+    <string name="snake_game_special_food_slowdown">Slow down</string>
+    <string name="snake_game_special_food_shorten">Shorten</string>
+    <string name="snake_game_special_food_extend">Extend</string>
+    <string name="snake_game_special_food_invincible">Invincible</string>
+    <string name="snake_game_special_food_invisible">Invisible</string>
+    <string name="snake_game_special_food_score_double">Score double</string>
+    <string name="snake_game_special_food_bomb">Bomb</string>
+    <string name="snake_game_special_food_toast">Special Food: %1$s</string>
 </resources>

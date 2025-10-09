@@ -126,7 +126,7 @@ public final class SnakeGame {
      * update the game
      */
     public void update() {
-        Utils.logDebug(TAG, "update");
+        //Utils.logDebug(TAG, "update");
 
         if (isGameOver()) return;
 
@@ -290,7 +290,7 @@ public final class SnakeGame {
 
         // tell view model to show special food type
         if (mGameListener != null) {
-            mGameListener.onShowSpecialFood(specialFood.toText());
+            mGameListener.onShowSpecialFood(specialFood.toResource());
         }
 
         strategy.apply(this);
@@ -544,7 +544,7 @@ public final class SnakeGame {
 
         void onSnakeInvincible();
 
-        void onShowSpecialFood(String type);
+        void onShowSpecialFood(int resId);
 
     }
 

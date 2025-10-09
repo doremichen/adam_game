@@ -14,6 +14,7 @@ import android.graphics.Point;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.adam.app.snake.R;
 import com.adam.app.snake.data.entity.LeaderboardEntry;
 import com.adam.app.snake.data.file.SharedPreferenceManager;
 import com.adam.app.snake.data.repository.LeaderboardRepository;
@@ -85,9 +86,10 @@ public class SnakeViewModel extends ViewModel {
         }
 
         @Override
-        public void onShowSpecialFood(String type) {
+        public void onShowSpecialFood(int resId) {
             // show toast
-            Utils.showToast(mContext, "Special Food: " + type);
+            String type = mContext.getResources().getString(resId);
+            Utils.showToast(mContext, mContext.getString(R.string.snake_game_special_food_toast, type));
         }
 
     };

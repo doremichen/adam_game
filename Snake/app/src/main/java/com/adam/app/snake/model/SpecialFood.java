@@ -8,20 +8,37 @@
  */
 package com.adam.app.snake.model;
 
-import java.util.Objects;
+import com.adam.app.snake.R;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class SpecialFood {
+    // String resource map key: type, value: id
+    private static final Map<Integer, Integer> mResourceMap = new HashMap<>() {
+        {
+            put(TYPE.SPEED_UP, R.string.snake_game_special_food_speedup);
+            put(TYPE.SLOW_DOWN, R.string.snake_game_special_food_slowdown);
+            put(TYPE.SHORTEN, R.string.snake_game_special_food_shorten);
+            put(TYPE.EXTEND, R.string.snake_game_special_food_extend);
+            put(TYPE.INVINCIBLE, R.string.snake_game_special_food_invincible);
+            put(TYPE.INVISIBLE, R.string.snake_game_special_food_invisible);
+            put(TYPE.SCORE_DOUBLE, R.string.snake_game_special_food_score_double);
+            put(TYPE.BOMB, R.string.snake_game_special_food_bomb);
+        }
+    };
     // x int
     private final int mX;
     // y int
     private final int mY;
     // type TYPE
     private final int mType;
+
     /**
      * constructor
      *
-     * @param x int
-     * @param y int
+     * @param x    int
+     * @param y    int
      * @param type TYPE
      */
     public SpecialFood(int x, int y, int type) {
@@ -43,50 +60,24 @@ public final class SpecialFood {
         return mType;
     }
 
-    public String toText() {
-        return Objects.requireNonNull(Convert.fromType(mType)).name();
-    }
 
     /**
-     *
      * toString
      */
     @Override
     public String toString() {
-        return "SpecialFood{" +
-                "mX=" + mX +
-                ", mY=" + mY +
-                ", mType=" + mType +
-                '}';
+        return "SpecialFood{" + "mX=" + mX + ", mY=" + mY + ", mType=" + mType + '}';
     }
 
-
-    private enum Convert {
-        SpeedUp(TYPE.SPEED_UP),
-        SlowDown(TYPE.SLOW_DOWN),
-        Shorten(TYPE.SHORTEN),
-        Extend(TYPE.EXTEND),
-        Invincible(TYPE.INVINCIBLE),
-        Invisible(TYPE.INVISIBLE),
-        ScoreDouble(TYPE.SCORE_DOUBLE),
-        Bomb(TYPE.BOMB);
-
-        private int mType;
-
-        private Convert(int type) {
-            mType = type;
-        }
-
-        static Convert fromType(int type) {
-            for (Convert convert : Convert.values()) {
-                if (convert.mType == type) {
-                    return convert;
-                }
-            }
-            return null;
-        }
-
+    /**
+     * toResource
+     *
+     * @return int
+     */
+    public int toResource() {
+        return mResourceMap.get(mType);
     }
+
 
     /**
      * class TYPE

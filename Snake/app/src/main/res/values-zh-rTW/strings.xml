@@ -34,4 +34,13 @@
     <string name="snake_game_user_name_dialog_title">使用者輸入對話框</string>
     <string name="snake_game_cancel">取消</string>
     <string name="snake_game_user_name_error">請輸入非空字串</string>
+    <string name="snake_game_special_food_speedup">加速</string>
+    <string name="snake_game_special_food_slowdown">減速</string>
+    <string name="snake_game_special_food_shorten">縮短</string>
+    <string name="snake_game_special_food_extend">擴展</string>
+    <string name="snake_game_special_food_invincible">無敵</string>
+    <string name="snake_game_special_food_invisible">隱藏</string>
+    <string name="snake_game_special_food_score_double">分數翻倍</string>
+    <string name="snake_game_special_food_bomb">炸彈</string>
+    <string name="snake_game_special_food_toast">特殊食物: %1$s</string>
 </resources>
