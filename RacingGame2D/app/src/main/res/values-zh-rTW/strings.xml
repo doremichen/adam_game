@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">賽車遊戲2D</string>
+    <string name="racinggame2d_sart_btn">開始</string>
+    <string name="racinggame2d_setting_btn">設定</string>
+    <string name="racinggame2d_leader_board_btn">排行榜</string>
+    <string name="racinggame2d_about_btn">關於</string>
+    <string name="racinggame2d_exit_btn">離開</string>
+    <string name="racinggame2d_car_racing_game_tv">小汽車大冒險</string>
+    <string name="racinggame2d_dlg_ok_btn_label">確認</string>
+    <string name="racinggame2d_dlg_edit_player_name_title">輸入玩家姓名</string>
+    <string name="racinggame2d_dlg_cancel_btn_label">取消</string>
+</resources>

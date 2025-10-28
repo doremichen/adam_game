@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">RacingGame2D</string>
+    <string name="racinggame2d_sart_btn">Sart</string>
+    <string name="racinggame2d_setting_btn">Setting</string>
+    <string name="racinggame2d_leader_board_btn">leader board</string>
+    <string name="racinggame2d_about_btn">About</string>
+    <string name="racinggame2d_exit_btn">Exit</string>
+    <string name="racinggame2d_car_racing_game_tv">Car racing game</string>
+    <string name="racinggame2d_dlg_ok_btn_label">Ok</string>
+    <string name="racinggame2d_dlg_edit_player_name_title">Input Player Name</string>
+    <string name="racinggame2d_dlg_cancel_btn_label">Cancel\n\n</string>
+</resources>
