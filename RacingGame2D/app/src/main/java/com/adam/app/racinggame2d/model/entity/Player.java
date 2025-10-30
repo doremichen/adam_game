@@ -1,8 +1,8 @@
 /**
  * Copyright 2025 - Adam Game. All rights reserved.
- *
+ * <p>
  * Description: This class is the entity of the player.
- *
+ * <p>
  * Author: Adam Game
  * Created Date: 2025/10/27
  */

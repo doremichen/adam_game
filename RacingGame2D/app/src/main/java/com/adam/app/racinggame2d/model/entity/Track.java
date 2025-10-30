@@ -12,12 +12,19 @@ import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.racinggame2d.util.GameUtil;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
 public class Track {
+
+    // TAG
+    private static final String TAG = Track.class.getSimpleName();
+
     // CHECKPOINT_RADIUS
     private static final float CHECKPOINT_RADIUS = 30f;
 
@@ -29,13 +36,15 @@ public class Track {
     private final List<PointF> mCheckPoints;
     // List of Obstacle
     private final List<Obstacle> mObstacles;
+    // scroll offset
+    private float mScrollOffsetY = 0f;
 
     /**
      * Constructor
      *
-     * @param width
-     * @param height
-     * @param checkPoints
+     * @param width       width of screen
+     * @param height      height of screen
+     * @param checkPoints List of check points
      */
     public Track(int width, int height, List<PointF> checkPoints) {
 
@@ -51,7 +60,7 @@ public class Track {
      * generateRandomObstacles
      * generate random obstacles with counts
      *
-     * @param count
+     * @param count count of obstacles
      */
     public void generateRandomObstacles(int count) {
         // preCheck if count is valid
@@ -59,58 +68,65 @@ public class Track {
             return;
         }
 
-
         // Random
         Random random = new Random();
         // clear obstacles
         mObstacles.clear();
 
+        // define obstacle types
+        List<ObstacleData> obstacleTypes = Arrays.asList(
+                new ObstacleData(Obstacle.Type.OIL, "drawable/obstacle_oil.png"),
+                new ObstacleData(Obstacle.Type.ROCK, "drawable/obstacle_rock.png"),
+                new ObstacleData(Obstacle.Type.BOOST, "drawable/obstacle_boost.png")
+        );
+
+
         // Generate random obstacles
         for (int i = 0; i < count; i++) {
             float x = random.nextFloat() * mWidth;
-            float y = random.nextFloat() * mHeight;
+            float y = random.nextFloat() * mHeight - mHeight;  // random y between 0 and height
             float radius = random.nextFloat() * 30f + 20f; // radius between 20 and 50
-            Obstacle.Type type;
-            String imgPath;
 
-            switch (random.nextInt(3)) {
-                case 0: {
-                    type = Obstacle.Type.OIL;
-                    imgPath = "drawable/obstacle_oil.png";
-                }
-                break;
-                case 1: {
-                    type = Obstacle.Type.ROCK;
-                    imgPath = "drawable/obstacle_rock.png";
-                }
-                break;
-                default: {
-                    type = Obstacle.Type.BOOST;
-                    imgPath = "drawable/obstacle_boost.png";
-                }
-                break;
-            }
+            ObstacleData selected = obstacleTypes.get(random.nextInt(obstacleTypes.size()));
+            mObstacles.add(new Obstacle(new PointF(x, y), radius, selected.type, selected.imgPath));
 
-            mObstacles.add(new Obstacle(new PointF(x, y), radius, type, imgPath));
+     }
+
+    }
+
+    /**
+     * ObstacleData
+     *  This class is used to record the obstacle data
+     *  type: Obstacle.Type
+     *  imgPath: String
+     */
+    private static class ObstacleData {
+        Obstacle.Type type;
+        String imgPath;
+
+        ObstacleData(Obstacle.Type type, String imgPath) {
+            this.type = type;
+            this.imgPath = imgPath;
         }
-
     }
 
     /**
      * checkCollisions
      * check collisions between car and obstacles
      *
-     * @param car
-     * @param callback
+     * @param car      Car
+     * @param callback CheckPointCallback
      * @return boolean
      * true: if there is a collision
      * false: if there is no collision
      */
     public boolean checkCollisions(Car car, @NonNull CheckPointCallback callback) {
+        GameUtil.log(TAG, "checkCollisions");
         // position of car
         PointF carPosition = car.getPosition();
         // boundary check
         if (isOutOfBoundary(carPosition)) {
+            GameUtil.log(TAG, "car is out of boundary");
             return true;
         }
 
@@ -139,10 +155,11 @@ public class Track {
             float dy = carPosition.y - obstacle.getPosition().y;
             float dist = (float) Math.sqrt(dx * dx + dy * dy);
             if (dist <= obstacle.getRadius()) {
+                GameUtil.log(TAG, "car is hit by obstacle");
                 return true;
             }
         }
-
+        GameUtil.log(TAG, "car is not hit by obstacle");
         return false;
     }
 
@@ -157,6 +174,34 @@ public class Track {
      */
     private boolean isOutOfBoundary(PointF carPosition) {
         return carPosition.x < 0 || carPosition.x > mWidth || carPosition.y < 0 || carPosition.y > mHeight;
+    }
+
+    /**
+     * scroll
+     *  scroll the track
+     * @param deltaY the distance to scroll
+     */
+    public void scroll(float deltaY) {
+        mScrollOffsetY += deltaY;
+        for (PointF cp : mCheckPoints) {
+            cp.y += deltaY;
+            if (cp.y > mHeight) cp.y -= mHeight; // roll back to the top if it reaches the bottom
+        }
+        for (Obstacle o : mObstacles) {
+            PointF pos = o.getPosition();
+            pos.y += deltaY;
+            if (pos.y > mHeight) pos.y -= mHeight;
+        }
+    }
+
+    /**
+     * update
+     * update the track
+     * @param deltaTime the time interval
+     * @param scrollSpeed the scroll speed
+     */
+    public void update(float deltaTime, float scrollSpeed) {
+        scroll(scrollSpeed * deltaTime);
     }
 
     //--- get ---

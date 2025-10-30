@@ -12,26 +12,20 @@ import android.graphics.PointF;
 
 public class Obstacle {
 
-    public enum Type {
-        OIL, ROCK, BOOST
-    }
-
-    // Position: PointF
-    private PointF mPosition;
-    // radius of collision: float
-    private float mRadius;
-
     // Obstacle type: Type
     private final Type mType;
     // Image path: String
     private final String mImagePath;
-
+    // Position: PointF
+    private PointF mPosition;
+    // radius of collision: float
+    private float mRadius;
     /**
      * Constructor
      *
-     * @param position PointF
-     * @param radius float
-     * @param type Type
+     * @param position  PointF
+     * @param radius    float
+     * @param type      Type
      * @param imagePath String
      */
     public Obstacle(PointF position, float radius, Type type, String imagePath) {
@@ -56,5 +50,12 @@ public class Obstacle {
 
     public String getImagePath() {
         return mImagePath;
+    }
+
+    /**
+     * Type of obstacle
+     */
+    public enum Type {
+        OIL, ROCK, BOOST
     }
 }

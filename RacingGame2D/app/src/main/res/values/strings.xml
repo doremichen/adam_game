@@ -7,6 +7,11 @@
     <string name="racinggame2d_exit_btn">Exit</string>
     <string name="racinggame2d_car_racing_game_tv">Car racing game</string>
     <string name="racinggame2d_dlg_ok_btn_label">Ok</string>
-    <string name="racinggame2d_dlg_edit_player_name_title">Input Player Name</string>
+    <string name="racinggame2d_dlg_edit_player_name_hint">Input Player Name</string>
     <string name="racinggame2d_dlg_cancel_btn_label">Cancel\n\n</string>
+    <string name="racinggame2d_left_btn">left</string>
+    <string name="racinggame2d_right_btn">right</string>
+    <string name="racinggame2d_default_name">Default name</string>
+    <string name="racinggame2d_dlg_edit_player_name_tilte">Start Game</string>
+    <string name="racinggame2d_dlg_edit_player_name_text">Abb</string>
 </resources>

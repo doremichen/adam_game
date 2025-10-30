@@ -1,8 +1,8 @@
 /**
  * Copyright 2025 - Adam Game. All rights reserved.
- *
+ * <p>
  * Description: This class is used to create a car object.
- *
+ * <p>
  * Author: Adam Game
  * Created Date: 2025/10/27
  */
@@ -10,18 +10,21 @@ package com.adam.app.racinggame2d.model.entity;
 
 import android.graphics.PointF;
 
+import com.adam.app.racinggame2d.util.GameUtil;
+
 public class Car {
+    // TAG
+    private static final String TAG = Car.class.getSimpleName();
+
     // mId
-    private String mId;
+    private final String mId;
     // mName
-    private String mName;
+    private final String mName;
+    // mAcceleration: float
+    private final float mAcceleration;
     // mSpeed: float
     private float mSpeed;
-    // mAcceleration: float
-    private float mAcceleration;
-    // mAngle: float
-    private float mAngle;
-
+    // position of car
     private PointF mPosition;
 
     /**
@@ -39,24 +42,24 @@ public class Car {
         this.mAcceleration = acceleration;
 
         // initialize position
-        this.mAngle = 0.0f;
         this.mPosition = new PointF(0.0f, 0.0f);
 
     }
 
-    /**
-     * move
-     *  move coordinates
-     *
-     *  @param deltaTime: float
-     */
-    public void move(float deltaTime) {
-        // move instance by speed multiple by delta time
-         float instance = mSpeed * deltaTime;
-         this.mPosition.x = (float)Math.cos(Math.toRadians(mAngle)) * instance;
-         this.mPosition.y = (float)Math.sin(Math.toRadians(mAngle)) * instance;
-    }
 
+    /**
+     * initPosition
+     *  initialize position of car
+     *
+     * @param viewWidth the width of view
+     * @param viewHeight the height of view
+     */
+    public void initPosition(float viewWidth, float viewHeight) {
+        GameUtil.log(TAG, "initPosition");
+        this.mPosition.x = viewWidth / 2f;
+        this.mPosition.y = viewHeight * 0.85f;
+        GameUtil.log(TAG, "mPosition: " + this.mPosition.toString());
+    }
 
     /**
      * accelerate
@@ -82,6 +85,10 @@ public class Car {
         return mSpeed;
     }
 
+    public void setSpeed(float speed) {
+        this.mSpeed = speed;
+    }
+
     public float getAcceleration() {
         return mAcceleration;
     }
@@ -90,20 +97,19 @@ public class Car {
         return mPosition;
     }
 
-
-    public float getDirection() {
-        return mAngle;
-    }
-
-    public void setDirection(float direction) {
-        this.mAngle = direction;
-    }
-
-    public void setSpeed(float speed) {
-        this.mSpeed = speed;
-    }
-
     public void setPosition(PointF position) {
         this.mPosition = position;
     }
+
+    /**
+     * moveHorizontally
+     *  move instance left or right by speed multiple by delta time
+     *
+     * @param isLeft: boolean
+     */
+    public void moveHorizontally(boolean isLeft) {
+        float instance = isLeft ? -100f : 100f;
+        this.mPosition.x += instance;
+    }
+
 }

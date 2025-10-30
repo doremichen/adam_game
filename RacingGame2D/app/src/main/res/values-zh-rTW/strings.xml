@@ -7,6 +7,11 @@
     <string name="racinggame2d_exit_btn">離開</string>
     <string name="racinggame2d_car_racing_game_tv">小汽車大冒險</string>
     <string name="racinggame2d_dlg_ok_btn_label">確認</string>
-    <string name="racinggame2d_dlg_edit_player_name_title">輸入玩家姓名</string>
+    <string name="racinggame2d_dlg_edit_player_name_hint">輸入玩家姓名</string>
     <string name="racinggame2d_dlg_cancel_btn_label">取消</string>
+    <string name="racinggame2d_left_btn">左</string>
+    <string name="racinggame2d_right_btn">右</string>
+    <string name="racinggame2d_default_name">預設名字</string>
+    <string name="racinggame2d_dlg_edit_player_name_tilte">遊戲名稱</string>
+    <string name="racinggame2d_dlg_edit_player_name_text">Abb</string>
 </resources>
