@@ -125,7 +125,7 @@ public class GameViewModel extends AndroidViewModel {
         Track track = new Track(width, height, checkpoints);
 
         // create GameEngine
-        mGameEngine = new GameEngine(mPlayer, track);
+        mGameEngine = new GameEngine(getApplication(), mPlayer, track);
     }
 
 

@@ -8,17 +8,21 @@
  */
 package com.adam.app.racinggame2d.viewmodel;
 
+import android.content.Context;
 import android.graphics.PointF;
 import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.model.entity.Car;
 import com.adam.app.racinggame2d.model.entity.Obstacle;
 import com.adam.app.racinggame2d.model.entity.Player;
 import com.adam.app.racinggame2d.model.entity.Track;
+import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
+import com.adam.app.racinggame2d.util.SoundPlayer;
 
 import java.util.List;
 
@@ -30,6 +34,10 @@ public class GameEngine {
     private final Player mPlayer;
     // Track
     private final Track mTrack;
+
+    // sound
+    private final SoundPlayer mSoundPlayer;
+
     // Used to control update at every 60 fps
     private final Handler mHandler = new Handler(Looper.getMainLooper());
     // used to check running
@@ -58,13 +66,17 @@ public class GameEngine {
     /**
      * Constructor
      *
+     * @param context Application context
      * @param player Player
      * @param track  Track
      */
-    public GameEngine(@NonNull Player player, @NonNull Track track) {
+    public GameEngine(@NonNull Context context, @NonNull Player player, @NonNull Track track) {
         mPlayer = player;
         mTrack = track;
         mIsRunning = false;
+        boolean enableSound = true;  //TODO: shared preference
+        // init sound
+        mSoundPlayer = new SoundPlayer(context, enableSound);
     }
 
     /**
@@ -88,6 +100,12 @@ public class GameEngine {
         mIsRunning = true;
         mStartTime = System.currentTimeMillis();
         mHandler.post(mUpdateRunnable);
+
+        // play background music
+        mSoundPlayer.playBgm(R.raw.background_music, true);
+        // play start short sound effect
+        mSoundPlayer.playShortSound(Constants.SOUND_BUTTON, false);
+
     }
 
     /**
@@ -105,6 +123,11 @@ public class GameEngine {
         // add score
         mPlayer.addScore((int) timeInSeconds);
 
+        // stop play background music
+        mSoundPlayer.stopBgm();
+        // play end short sound effect
+        mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
+
     }
 
     /**
@@ -121,7 +144,11 @@ public class GameEngine {
 
         // detect collision: use fixed car position to detect
         Car car = mPlayer.getCar();
-        boolean collided = mTrack.checkCollisions(car, () -> mPlayer.addScore(50));
+        boolean collided = mTrack.checkCollisions(car, () -> {
+            mPlayer.addScore(50);
+            // play collision sound effect
+            mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
+        });
         if (collided) {
             stop();
         }
