@@ -14,4 +14,23 @@
     <string name="racinggame2d_default_name">預設名字</string>
     <string name="racinggame2d_dlg_edit_player_name_tilte">遊戲名稱</string>
     <string name="racinggame2d_dlg_edit_player_name_text">Abb</string>
+    <string name="racinggame2d_sound_effect_setting_tv">音效設定</string>
+    <string name="racinggame2d_enable_switch">啟用音效</string>
+    <string name="racinggame2d_enable_background_music_switch">啟用背景音樂</string>
+    <string name="racinggame2d_control_setting_tv">控制設定</string>
+    <string name="racinggame2d_touch_rb">觸控</string>
+    <string name="racinggame2d_gsensor_rb">重力感應</string>
+    <string name="racinggame2d_sensitivity_tv">靈感度</string>
+    <string name="racinggame2d_player_setting_tv">玩家設定</string>
+    <string name="racinggame2d_player_name_et">玩家名字</string>
+    <string name="racinggame2d_save_btn">儲存設定</string>
+    <string name="racinggame2d_volume_tv">音量</string>
+    <string name="racinggame2d_settings_tv">設定</string>
+
+
+    <string-array name="difficulty_levels">
+        <item>簡單</item>
+        <item>一般</item>
+        <item>困難</item>
+    </string-array>
 </resources>

@@ -14,4 +14,23 @@
     <string name="racinggame2d_default_name">Default name</string>
     <string name="racinggame2d_dlg_edit_player_name_tilte">Start Game</string>
     <string name="racinggame2d_dlg_edit_player_name_text">Abb</string>
+    <string name="racinggame2d_sound_effect_setting_tv">Sound effect setting</string>
+    <string name="racinggame2d_enable_switch">Enable sound effect</string>
+    <string name="racinggame2d_enable_background_music_switch">Enable background music</string>
+    <string name="racinggame2d_control_setting_tv">Control setting</string>
+    <string name="racinggame2d_touch_rb">Touch</string>
+    <string name="racinggame2d_gsensor_rb">Gsensor</string>
+    <string name="racinggame2d_sensitivity_tv">Sensitivity</string>
+    <string name="racinggame2d_player_setting_tv">Player setting</string>
+    <string name="racinggame2d_player_name_et">Player name</string>
+    <string name="racinggame2d_save_btn">Save</string>
+    <string name="racinggame2d_volume_tv">Volume</string>
+    <string name="racinggame2d_settings_tv">Settings</string>
+
+
+    <string-array name="difficulty_levels">
+        <item>Simple</item>
+        <item>Normal</item>
+        <item>Hard</item>
+    </string-array>
 </resources>

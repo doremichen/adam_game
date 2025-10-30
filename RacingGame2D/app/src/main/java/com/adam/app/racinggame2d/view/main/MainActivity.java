@@ -21,6 +21,7 @@ import com.adam.app.racinggame2d.databinding.ActivityMainBinding;
 import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.view.game.GameActivity;
+import com.adam.app.racinggame2d.view.setting.SettingsActivity;
 import com.adam.app.racinggame2d.viewmodel.MainViewModel;
 
 import java.util.HashMap;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         Map<MainViewModel.NavigateEvent, Runnable> navigationActions = new HashMap<>();
         navigationActions.put(MainViewModel.NavigateEvent.START_GAME, this::showPlayerNameDialog);
         navigationActions.put(MainViewModel.NavigateEvent.LEADER_BOARD, this::showNoImplement);
-        navigationActions.put(MainViewModel.NavigateEvent.SETTING, this::showNoImplement);
+        navigationActions.put(MainViewModel.NavigateEvent.SETTING, this::gotoSettings);
         navigationActions.put(MainViewModel.NavigateEvent.ABOUT, this::showNoImplement);
         navigationActions.put(MainViewModel.NavigateEvent.EXIT, this::finish);
 
@@ -130,6 +131,17 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra(Constants.PLAYER_NAME, text);
         startActivity(intent);
     }
+
+    /**
+     * gotoSettings
+     */
+    private void gotoSettings() {
+        // go to settings activity
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+
 
     private void showNoImplement() {
         GameUtil.showToast(this, "Not implemented yet!");

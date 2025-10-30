@@ -19,9 +19,11 @@ import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.model.entity.Car;
 import com.adam.app.racinggame2d.model.entity.Obstacle;
 import com.adam.app.racinggame2d.model.entity.Player;
+import com.adam.app.racinggame2d.model.entity.Settings;
 import com.adam.app.racinggame2d.model.entity.Track;
 import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
+import com.adam.app.racinggame2d.util.SharedPrefHelper;
 import com.adam.app.racinggame2d.util.SoundPlayer;
 
 import java.util.List;
@@ -74,9 +76,13 @@ public class GameEngine {
         mPlayer = player;
         mTrack = track;
         mIsRunning = false;
-        boolean enableSound = true;  //TODO: shared preference
+
+        // load settings from shared preferences
+        Settings currentSettings = SharedPrefHelper.getInstance(context).loadSettings();
+        boolean isSoundEnable = currentSettings != null && currentSettings.isSoundEnable();
+
         // init sound
-        mSoundPlayer = new SoundPlayer(context, enableSound);
+        mSoundPlayer = new SoundPlayer(context, isSoundEnable);
     }
 
     /**

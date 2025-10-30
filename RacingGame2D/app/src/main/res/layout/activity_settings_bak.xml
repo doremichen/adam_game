@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".view.setting.SettingsActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="?android:attr/dividerVertical"
+        android:showDividers="middle">
+
+        <!-- 🏁 Title -->
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Settings"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Sound effect setting -->
+        <TextView
+            android:id="@+id/text_sound_effect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_sound_effect_setting_tv"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingBottom="8dp"/>
+
+        <Switch
+            android:id="@+id/switch_sound"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_enable_switch" />
+
+        <Switch
+            android:id="@+id/switch_music"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_enable_background_music_switch" />
+
+        <TextView
+            android:id="@+id/text_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_volume_tv"/>
+        <SeekBar
+            android:id="@+id/seek_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="80"
+            android:paddingBottom="16dp"/>
+
+        <!-- Control setting -->
+        <TextView
+            android:id="@+id/text_control_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_control_setting_tv"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <RadioGroup
+            android:id="@+id/group_control_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/radio_touch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/racinggame2d_touch_rb"/>
+            <RadioButton
+                android:id="@+id/radio_tilt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/racinggame2d_gsensor_rb"/>
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/text_sensitivity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_sensitivity_tv"/>
+        <SeekBar
+            android:id="@+id/seek_sensitivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:max="100"
+            android:progress="50"/>
+
+        <!-- Player setting -->
+        <TextView
+            android:id="@+id/text_player_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_player_setting_tv"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/edit_player_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/racinggame2d_player_name_et"
+            android:inputType="textPersonName"/>
+
+        <Spinner
+            android:id="@+id/spinner_difficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:entries="@array/difficulty_levels"/>
+
+        <!-- Save button -->
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_save_btn"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="center_horizontal"/>
+
+    </LinearLayout>
+
+</ScrollView>

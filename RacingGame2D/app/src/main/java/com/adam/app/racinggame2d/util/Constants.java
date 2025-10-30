@@ -18,7 +18,7 @@ public final class Constants {
     public static final String PREF_NAME = "racing_game_prefs";
     public static final String PREF_PLAYER_NAME = "player_name";
     public static final String PREF_HIGH_SCORE = "high_score";
-    public static final String PREF_SOUND_ENABLED = "sound_enabled";
+    public static final String PREF_SETTINGS = "game_settings";
     // === sound resource constants ===
     public static final int SOUND_COLLISION = 1;
     public static final int SOUND_ENGINE = 2;
