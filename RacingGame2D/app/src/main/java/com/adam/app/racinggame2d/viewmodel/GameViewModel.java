@@ -21,6 +21,7 @@ import com.adam.app.racinggame2d.model.entity.Obstacle;
 import com.adam.app.racinggame2d.model.entity.Player;
 import com.adam.app.racinggame2d.model.entity.Track;
 import com.adam.app.racinggame2d.util.GameUtil;
+import com.adam.app.racinggame2d.util.SharedPrefHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -107,7 +108,12 @@ public class GameViewModel extends AndroidViewModel {
         GameUtil.log(TAG, "Prepare game engine");
         Car car = new Car("BXP1234", "car1", 100f, 30f);
         car.initPosition(width, height);
-        mPlayer = new Player("player", car);
+        // get player name from shared preferences
+        String playerName = SharedPrefHelper.getInstance(getApplication()).getPlayerName();
+        // log
+        GameUtil.log(TAG, "Player name: " + playerName);
+        // create player
+        mPlayer = new Player(playerName, car);
 
         // generate list of checkpoints
         List<PointF> checkpoints = new ArrayList<>();

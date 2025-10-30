@@ -24,8 +24,6 @@ import androidx.annotation.Nullable;
 
 public final class GameUtil {
 
-    public static final String PLAYER_NAME = "key.player.name";
-
     private GameUtil() {
         // avoid to be instantiated
     }

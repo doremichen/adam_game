@@ -14,7 +14,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.racinggame2d.databinding.ActivityGameBinding;
+import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
+import com.adam.app.racinggame2d.util.SharedPrefHelper;
 import com.adam.app.racinggame2d.viewmodel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity {
@@ -35,6 +37,14 @@ public class GameActivity extends AppCompatActivity {
         // View binding
         mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+
+        // get player name by intent
+        String playerName = getIntent().getStringExtra(Constants.PLAYER_NAME);
+        GameUtil.log(TAG, "player name: " + playerName);
+        // save player name to shared preferences
+        SharedPrefHelper sharedPrefHelper = SharedPrefHelper.getInstance(getApplicationContext());
+        sharedPrefHelper.setPlayerName(playerName);
+
 
         // GameViewModel
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);

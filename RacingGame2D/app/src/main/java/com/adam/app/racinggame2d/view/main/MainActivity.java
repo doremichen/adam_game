@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.databinding.ActivityMainBinding;
+import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.view.game.GameActivity;
 import com.adam.app.racinggame2d.viewmodel.MainViewModel;
@@ -126,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
     private void goToGame(String text) {
         // go to game activity
         Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra(GameUtil.PLAYER_NAME, text);
+        intent.putExtra(Constants.PLAYER_NAME, text);
         startActivity(intent);
     }
 
