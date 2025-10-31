@@ -49,6 +49,12 @@ public class GameEngine {
     // callback when update
     private GameUpdateListener mUpdateCallback;
 
+    private boolean mIsAccelate = false;
+    private boolean mMoveLeft = false;
+    private boolean mMoveRight = false;
+
+
+
     // update task
     private final Runnable mUpdateRunnable = new Runnable() {
         @Override
@@ -145,14 +151,36 @@ public class GameEngine {
      */
     private void update(float deltaTime) {
         GameUtil.log(TAG, "update");
+        // update car speed
+        Car car = mPlayer.getCar();
+        // log car
+        GameUtil.log(TAG, "car : " + car.toString());
+        car.updateSpeed(mIsAccelate, deltaTime);
+
+        // move horizontal
+        if (mMoveLeft) {
+            car.moveHorizontallyEx(deltaTime, true);
+            // reset
+            mMoveLeft = false;
+            mMoveRight = false;
+        }
+        if (mMoveRight) {
+            car.moveHorizontallyEx(deltaTime, false);
+            // reset
+            mMoveLeft = false;
+            mMoveRight = false;
+        }
+
+        // range check (width = 1080）
+        PointF pos = car.getPosition();
+        pos.x = Math.max(40, Math.min(mTrack.getWidth() - 40, pos.x));
+        car.setPosition(pos);
+
         // monitor car run forward
         float scrollSpeed = mPlayer.getCar().getSpeed(); // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
 
         // detect collision: use fixed car position to detect
-        Car car = mPlayer.getCar();
-        // log car
-        GameUtil.log(TAG, "car : " + car.toString());
         boolean collided = mTrack.checkCollisions(car, () -> {
             mPlayer.addScore(50);
             // play collision sound effect
@@ -218,10 +246,21 @@ public class GameEngine {
     }
 
     public void moveHorizontally(boolean isLeft) {
-        Car car = mPlayer.getCar();
-        float instance = 50f;
-        car.moveHorizontally(instance, isLeft);
+        mMoveLeft = isLeft;
+        mMoveRight = !isLeft;
+//        Car car = mPlayer.getCar();
+//        float instance = 50f;
+//        car.moveHorizontally(instance, isLeft);
     }
+
+    public void moveLeft(boolean pressed) {
+        mMoveLeft = pressed;
+    }
+
+    public void moveRight(boolean pressed) {
+        mMoveRight = pressed;
+    }
+
 
     /**
      * speedUp
@@ -230,15 +269,17 @@ public class GameEngine {
      * @param isSpeedUp boolean
      */
     public void speedUp(boolean isSpeedUp) {
-        final Car car = mPlayer.getCar();
-        car.accelerate(isSpeedUp ? SPPED_INCREMENT_TIME : -SPPED_INCREMENT_TIME);
-        // limit speed
-        float speed = car.getSpeed();
-        if (speed < 0) {
-            speed = 0;
-        }
-        // set speed
-        car.setSpeed(speed);
+        mIsAccelate = isSpeedUp;
+//        // get car
+//        final Car car = mPlayer.getCar();
+//        car.accelerate(isSpeedUp ? SPPED_INCREMENT_TIME : -SPPED_INCREMENT_TIME);
+//        // limit speed
+//        float speed = car.getSpeed();
+//        if (speed < 0) {
+//            speed = 0;
+//        }
+//        // set speed
+//        car.setSpeed(speed);
     }
 
 

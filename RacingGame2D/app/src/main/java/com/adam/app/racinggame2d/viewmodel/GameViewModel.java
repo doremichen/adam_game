@@ -106,7 +106,7 @@ public class GameViewModel extends AndroidViewModel {
      */
     public void prepareGameEngine(int width, int height) {
         GameUtil.log(TAG, "Prepare game engine");
-        Car car = new Car("BXP1234", "car1", 300f, 150f);
+        Car car = new Car("BXP1234", "car1", 600f, 250f);
         car.initPosition(width, height);
         // get player name from shared preferences
         String playerName = SharedPrefHelper.getInstance(getApplication()).getPlayerName();
@@ -241,6 +241,17 @@ public class GameViewModel extends AndroidViewModel {
     public void moveHorizontally(boolean isLeft) {
         mGameEngine.moveHorizontally(isLeft);
     }
+
+
+    public void moveLeft(boolean pressed) {
+        mGameEngine.moveLeft(pressed);
+    }
+
+    public void moveRight(boolean pressed) {
+        mGameEngine.moveRight(pressed);
+    }
+
+
 
     /**
      * speedUp

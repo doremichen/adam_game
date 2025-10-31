@@ -12,6 +12,7 @@ import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 
 public class Car {
@@ -64,6 +65,40 @@ public class Car {
         this.mPosition.x = viewWidth / 2f;
         this.mPosition.y = viewHeight * 0.85f;
         GameUtil.log(TAG, "mPosition: " + this.mPosition.toString());
+    }
+
+    /**
+     * updateSpeed
+     *  update speed of car
+     *
+     * @param isAccelerating : boolean
+     * @param deltaTime : float
+     */
+    public void updateSpeed(boolean isAccelerating, float deltaTime) {
+        accelerate(isAccelerating? deltaTime : -deltaTime);
+        GameUtil.log(TAG, "updateSpeed: " + this.mSpeed);
+
+        // limit speed range
+        if (this.mSpeed > Constants.MAX_SPEED) {
+            this.mSpeed = Constants.MAX_SPEED;
+            GameUtil.log(TAG, "mSpeed: " + this.mSpeed);
+        } else if (this.mSpeed < Constants.MIN_SPEED) {
+            this.mSpeed = Constants.MIN_SPEED;
+            GameUtil.log(TAG, "mSpeed: " + this.mSpeed);
+        }
+    }
+
+
+    /**
+     * moveHorizontallyEx
+     *  move instance left or right by speed multiple by delta time
+     *
+     * @param deltaTime : float
+     * @param isLeft : boolean
+     */
+    public void moveHorizontallyEx(float deltaTime, boolean isLeft) {
+        float distance = mSpeed * Constants.HORIZONTAL_RATIO * deltaTime;
+        this.mPosition.x += isLeft ? -distance : distance;
     }
 
     /**

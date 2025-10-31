@@ -43,6 +43,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:weightSum="4"
         app:layout_constraintTop_toBottomOf="@id/gameView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -51,43 +52,75 @@
         <!-- Left Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonLeft"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
             android:layout_marginEnd="5dp"
+            android:backgroundTint="@color/white"
             app:icon="@drawable/ic_arrow_left"
-            app:iconSize="32dp"/>
-
+            app:iconSize="48dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/black"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+        />
 
         <!-- Right Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonRight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
             android:layout_marginEnd="5dp"
+            android:backgroundTint="@color/white"
             app:icon="@drawable/ic_arrow_right"
-            app:iconSize="32dp"/>
+            app:iconSize="48dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/black"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            />
 
         <!-- Speed Up Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSpeedUp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
             android:layout_marginEnd="5dp"
+            android:backgroundTint="@color/white"
             app:icon="@drawable/ic_accelerator"
-            app:iconSize="32dp"/>
+            app:iconSize="48dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/black"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            />
 
         <!-- Slow Down Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSlowDown"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1"
             android:layout_marginEnd="5dp"
-            app:icon="@drawable/ic_break"
-            app:iconSize="32dp"/>
+            android:backgroundTint="@color/white"
+            app:icon="@drawable/ic_brake"
+            app:iconSize="48dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
+            app:iconTint="@color/black"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            />
+
 
     </LinearLayout>
 

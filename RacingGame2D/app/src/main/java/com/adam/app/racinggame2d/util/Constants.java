@@ -15,6 +15,10 @@ public final class Constants {
     public static final int UPDATE_INTERVAL_MS = 16;    // about 60 FPS
     public static final float DELTA_TIME = UPDATE_INTERVAL_MS / 1000f;
     public static final int INITIAL_LIVES = 3;          // initial lives
+    public static final float MAX_SPEED = 900f;   // px/s
+    public static final float MIN_SPEED = 100f;   // px/s
+    public static final float HORIZONTAL_RATIO = 0.7f; // Control the horizontal speed of the car.
+
     // === SharedPreferences Keys ===
     public static final String PREF_NAME = "racing_game_prefs";
     public static final String PREF_PLAYER_NAME = "player_name";
