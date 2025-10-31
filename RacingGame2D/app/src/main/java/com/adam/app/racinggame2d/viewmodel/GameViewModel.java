@@ -242,6 +242,16 @@ public class GameViewModel extends AndroidViewModel {
         mGameEngine.moveHorizontally(isLeft);
     }
 
+    /**
+     * speedUp
+     * speed up
+     *
+     * @param isSpeedUp is speed up
+     */
+    public void speedUp(boolean isSpeedUp) {
+        mGameEngine.speedUp(isSpeedUp);
+    }
+
 
     /**
      * enum GameState

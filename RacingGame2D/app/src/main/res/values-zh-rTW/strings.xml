@@ -26,6 +26,8 @@
     <string name="racinggame2d_save_btn">儲存設定</string>
     <string name="racinggame2d_volume_tv">音量</string>
     <string name="racinggame2d_settings_tv">設定</string>
+    <string name="racinggame2d_speed_up_btn">加速</string>
+    <string name="racinggame2d_slow_down_btn">減速</string>
 
 
     <string-array name="difficulty_levels">

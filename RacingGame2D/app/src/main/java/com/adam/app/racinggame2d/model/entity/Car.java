@@ -10,6 +10,8 @@ package com.adam.app.racinggame2d.model.entity;
 
 import android.graphics.PointF;
 
+import androidx.annotation.NonNull;
+
 import com.adam.app.racinggame2d.util.GameUtil;
 
 public class Car {
@@ -26,6 +28,9 @@ public class Car {
     private float mSpeed;
     // position of car
     private PointF mPosition;
+    // horizontal speed of car
+    private float mHorizontalSpeed = 0f;
+
 
     /**
      * Constructor
@@ -103,13 +108,24 @@ public class Car {
 
     /**
      * moveHorizontally
-     *  move instance left or right by speed multiple by delta time
+     * move instance left or right by speed multiple by delta time
      *
-     * @param isLeft: boolean
+     * @param instance : float
+     * @param isLeft   : boolean
      */
-    public void moveHorizontally(boolean isLeft) {
-        float instance = isLeft ? -100f : 100f;
-        this.mPosition.x += instance;
+    public void moveHorizontally(float instance, boolean isLeft) {
+        this.mPosition.x += isLeft ? -instance : instance;
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return "Car{" +
+                "mId='" + mId + '\'' +
+                ", mName='" + mName + '\'' +
+                ", mAcceleration=" + mAcceleration +
+                ", mSpeed=" + mSpeed +
+                ", mPosition=" + mPosition +
+                '}';
+    }
 }

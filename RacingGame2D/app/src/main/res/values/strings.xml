@@ -26,6 +26,8 @@
     <string name="racinggame2d_save_btn">Save</string>
     <string name="racinggame2d_volume_tv">Volume</string>
     <string name="racinggame2d_settings_tv">Settings</string>
+    <string name="racinggame2d_speed_up_btn">accelerate</string>
+    <string name="racinggame2d_slow_down_btn">slow down</string>
 
 
     <string-array name="difficulty_levels">

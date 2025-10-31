@@ -30,39 +30,65 @@
         android:layout_height="0dp"
         android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:layout_constraintBottom_toTopOf="@id/buttonLeft"
+        app:layout_constraintBottom_toTopOf="@id/buttonLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Left Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonLeft"
+    <LinearLayout
+        android:id="@+id/buttonLayout"
         android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:text="@string/racinggame2d_left_btn"
-        android:textSize="24sp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="8dp"
-        app:cornerRadius="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/buttonRight"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_chainStyle="spread" />
-
-    <!-- Right Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonRight"
-        android:layout_width="0dp"
-        android:layout_height="60dp"
-        android:text="@string/racinggame2d_right_btn"
-        android:textSize="24sp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        app:cornerRadius="12dp"
-        app:layout_constraintStart_toEndOf="@id/buttonLeft"
+        app:layout_constraintTop_toBottomOf="@id/gameView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        >
+        <!-- Left Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginEnd="5dp"
+            app:icon="@drawable/ic_arrow_left"
+            app:iconSize="32dp"/>
+
+
+        <!-- Right Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:layout_marginEnd="5dp"
+            app:icon="@drawable/ic_arrow_right"
+            app:iconSize="32dp"/>
+
+        <!-- Speed Up Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSpeedUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_marginEnd="5dp"
+            app:icon="@drawable/ic_accelerator"
+            app:iconSize="32dp"/>
+
+        <!-- Slow Down Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonSlowDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_marginEnd="5dp"
+            app:icon="@drawable/ic_break"
+            app:iconSize="32dp"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -60,11 +60,11 @@ public class GameActivity extends AppCompatActivity {
             mViewModel.startGame();
         });
 
-        setupMovementButtons();
+        setupFooterButtons();
 
     }
 
-    private void setupMovementButtons() {
+    private void setupFooterButtons() {
         // set button click listener
         mBinding.buttonLeft.setOnClickListener(v -> {
             mViewModel.moveHorizontally(true);
@@ -73,6 +73,15 @@ public class GameActivity extends AppCompatActivity {
         mBinding.buttonRight.setOnClickListener(v -> {
             mViewModel.moveHorizontally(false);
         });
+
+        mBinding.buttonSpeedUp.setOnClickListener(v -> {
+            mViewModel.speedUp(true);
+        });
+
+        mBinding.buttonSlowDown.setOnClickListener(v -> {
+            mViewModel.speedUp(false);
+        });
+
     }
 
     @Override

@@ -32,6 +32,8 @@ public class GameEngine {
     // TAG
     private static final String TAG = "GameEngine";
     private static final int UPDATE_INTERVAL_MS = 16;
+    public static final float DELTA_TIME = UPDATE_INTERVAL_MS / 1000f;
+    public static final float SPPED_INCREMENT_TIME = 10f;
     // Player
     private final Player mPlayer;
     // Track
@@ -59,10 +61,11 @@ public class GameEngine {
                 return;
             }
 
-            update(UPDATE_INTERVAL_MS / 1000f);
+            update(DELTA_TIME);
             mHandler.postDelayed(this, UPDATE_INTERVAL_MS);
         }
     };
+
 
 
     /**
@@ -143,13 +146,14 @@ public class GameEngine {
      */
     private void update(float deltaTime) {
         GameUtil.log(TAG, "update");
-
         // monitor car run forward
         float scrollSpeed = mPlayer.getCar().getSpeed(); // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
 
         // detect collision: use fixed car position to detect
         Car car = mPlayer.getCar();
+        // log car
+        GameUtil.log(TAG, "car : " + car.toString());
         boolean collided = mTrack.checkCollisions(car, () -> {
             mPlayer.addScore(50);
             // play collision sound effect
@@ -216,8 +220,28 @@ public class GameEngine {
 
     public void moveHorizontally(boolean isLeft) {
         Car car = mPlayer.getCar();
-        car.moveHorizontally(isLeft);
+        float instance = car.getSpeed();
+        car.moveHorizontally(instance, isLeft);
     }
+
+    /**
+     * speedUp
+     * speed up car
+     *
+     * @param isSpeedUp boolean
+     */
+    public void speedUp(boolean isSpeedUp) {
+        final Car car = mPlayer.getCar();
+        car.accelerate(isSpeedUp ? SPPED_INCREMENT_TIME : -SPPED_INCREMENT_TIME);
+        // limit speed
+        float speed = car.getSpeed();
+        if (speed < 0) {
+            speed = 0;
+        }
+        // set speed
+        car.setSpeed(speed);
+    }
+
 
     /**
      * interface updateCallback
