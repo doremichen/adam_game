@@ -106,7 +106,7 @@ public class GameViewModel extends AndroidViewModel {
      */
     public void prepareGameEngine(int width, int height) {
         GameUtil.log(TAG, "Prepare game engine");
-        Car car = new Car("BXP1234", "car1", 100f, 30f);
+        Car car = new Car("BXP1234", "car1", 300f, 150f);
         car.initPosition(width, height);
         // get player name from shared preferences
         String playerName = SharedPrefHelper.getInstance(getApplication()).getPlayerName();

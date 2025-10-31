@@ -9,10 +9,13 @@
 package com.adam.app.racinggame2d.view.game;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -23,6 +26,9 @@ import com.adam.app.racinggame2d.model.entity.Obstacle;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.viewmodel.GameEngine;
 import com.adam.app.racinggame2d.viewmodel.GameViewModel;
+
+import com.adam.app.racinggame2d.R;
+
 
 public class GameView extends View implements GameEngine.GameUpdateListener {
     // TAG
@@ -78,7 +84,17 @@ public class GameView extends View implements GameEngine.GameUpdateListener {
 
         // draw Obstacle
         for (Obstacle obstacle : mViewModel.getObstacles()) {
-            switch (obstacle.getType()) {
+            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), obstacle.getImageRes());
+            if (bitmap != null) {
+                float left = obstacle.getPosition().x - obstacle.getRadius();
+                float top = obstacle.getPosition().y - obstacle.getRadius();
+                float right = obstacle.getPosition().x + obstacle.getRadius();
+                float bottom = obstacle.getPosition().y + obstacle.getRadius();
+                RectF dst = new RectF(left, top, right, bottom);
+                canvas.drawBitmap(bitmap, null, dst, null);
+            } else {
+                GameUtil.log(TAG, "bitmap is null");
+                switch (obstacle.getType()) {
                 case OIL:
                     mPaint.setColor(Color.BLACK);
                     break;
@@ -88,16 +104,30 @@ public class GameView extends View implements GameEngine.GameUpdateListener {
                 case BOOST:
                     mPaint.setColor(Color.CYAN);
                     break;
+                }
+                canvas.drawCircle(obstacle.getPosition().x, obstacle.getPosition().y, 20f, mPaint);
             }
-            canvas.drawCircle(obstacle.getPosition().x, obstacle.getPosition().y, 20f, mPaint);
         }
 
         // draw car
         // fix car position (not move with background)
-        PointF carPosition = mViewModel.getCarPosition();
-        mPaint.setColor(Color.RED);
-        GameUtil.log(TAG, "carPosition: " + carPosition.x + ", " + carPosition.y);
-        canvas.drawRect(carPosition.x - 30, carPosition.y - 50, carPosition.x + 30, carPosition.y + 10, mPaint);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.car);
+        if (bitmap != null) {
+            float left = mViewModel.getCarPosition().x - 30;
+            float top = mViewModel.getCarPosition().y - 50;
+            float right = mViewModel.getCarPosition().x + 30;
+            float bottom = mViewModel.getCarPosition().y + 10;
+            RectF dst = new RectF(left, top, right, bottom);
+            canvas.drawBitmap(bitmap, null, dst, null);
+        } else {
+            GameUtil.log(TAG, "bitmap is null");
+            PointF carPosition = mViewModel.getCarPosition();
+            mPaint.setColor(Color.RED);
+            GameUtil.log(TAG, "carPosition: " + carPosition.x + ", " + carPosition.y);
+            canvas.drawRect(carPosition.x - 30, carPosition.y - 50, carPosition.x + 30, carPosition.y + 10, mPaint);
+
+        }
+
 
         // draw score
         mPaint.setColor(Color.WHITE);

@@ -15,7 +15,7 @@ public class Obstacle {
     // Obstacle type: Type
     private final Type mType;
     // Image path: String
-    private final String mImagePath;
+    private final int mImageRes;
     // Position: PointF
     private PointF mPosition;
     // radius of collision: float
@@ -23,16 +23,16 @@ public class Obstacle {
     /**
      * Constructor
      *
-     * @param position  PointF
-     * @param radius    float
-     * @param type      Type
-     * @param imagePath String
+     * @param position PointF
+     * @param radius   float
+     * @param type     Type
+     * @param imageRes String
      */
-    public Obstacle(PointF position, float radius, Type type, String imagePath) {
+    public Obstacle(PointF position, float radius, Type type, int imageRes) {
         this.mPosition = position;
         this.mRadius = radius;
         this.mType = type;
-        this.mImagePath = imagePath;
+        this.mImageRes = imageRes;
     }
 
     //--- get ---
@@ -48,8 +48,8 @@ public class Obstacle {
         return mType;
     }
 
-    public String getImagePath() {
-        return mImagePath;
+    public int getImageRes() {
+        return mImageRes;
     }
 
     /**

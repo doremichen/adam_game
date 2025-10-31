@@ -12,6 +12,7 @@ import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.util.GameUtil;
 
 import java.util.ArrayList;
@@ -75,9 +76,9 @@ public class Track {
 
         // define obstacle types
         List<ObstacleData> obstacleTypes = Arrays.asList(
-                new ObstacleData(Obstacle.Type.OIL, "drawable/obstacle_oil.png"),
-                new ObstacleData(Obstacle.Type.ROCK, "drawable/obstacle_rock.png"),
-                new ObstacleData(Obstacle.Type.BOOST, "drawable/obstacle_boost.png")
+                new ObstacleData(Obstacle.Type.OIL, R.drawable.obstacle_oil),
+                new ObstacleData(Obstacle.Type.ROCK, R.drawable.obstacle_rock),
+                new ObstacleData(Obstacle.Type.BOOST, R.drawable.obstacle_boost)
         );
 
 
@@ -88,9 +89,9 @@ public class Track {
             float radius = random.nextFloat() * 30f + 20f; // radius between 20 and 50
 
             ObstacleData selected = obstacleTypes.get(random.nextInt(obstacleTypes.size()));
-            mObstacles.add(new Obstacle(new PointF(x, y), radius, selected.type, selected.imgPath));
+            mObstacles.add(new Obstacle(new PointF(x, y), radius, selected.type, selected.imgRes));
 
-     }
+        }
 
     }
 
@@ -102,11 +103,11 @@ public class Track {
      */
     private static class ObstacleData {
         Obstacle.Type type;
-        String imgPath;
+        int imgRes;
 
-        ObstacleData(Obstacle.Type type, String imgPath) {
+        ObstacleData(Obstacle.Type type, int imgRes) {
             this.type = type;
-            this.imgPath = imgPath;
+            this.imgRes = imgRes;
         }
     }
 
@@ -182,6 +183,7 @@ public class Track {
      * @param deltaY the distance to scroll
      */
     public void scroll(float deltaY) {
+        GameUtil.log(TAG, "=================> scroll: " + deltaY);
         mScrollOffsetY += deltaY;
         for (PointF cp : mCheckPoints) {
             cp.y += deltaY;

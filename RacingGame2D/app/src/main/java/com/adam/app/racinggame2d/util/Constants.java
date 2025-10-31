@@ -13,6 +13,7 @@ public final class Constants {
     // === Game logic constants ===
     public static final int CAR_MOVE_STEP = 20;         // Every time the car moves, it moves 20 pixels.
     public static final int UPDATE_INTERVAL_MS = 16;    // about 60 FPS
+    public static final float DELTA_TIME = UPDATE_INTERVAL_MS / 1000f;
     public static final int INITIAL_LIVES = 3;          // initial lives
     // === SharedPreferences Keys ===
     public static final String PREF_NAME = "racing_game_prefs";

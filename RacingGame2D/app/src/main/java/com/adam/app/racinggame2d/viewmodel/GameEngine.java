@@ -31,8 +31,6 @@ import java.util.List;
 public class GameEngine {
     // TAG
     private static final String TAG = "GameEngine";
-    private static final int UPDATE_INTERVAL_MS = 16;
-    public static final float DELTA_TIME = UPDATE_INTERVAL_MS / 1000f;
     public static final float SPPED_INCREMENT_TIME = 10f;
     // Player
     private final Player mPlayer;
@@ -61,8 +59,8 @@ public class GameEngine {
                 return;
             }
 
-            update(DELTA_TIME);
-            mHandler.postDelayed(this, UPDATE_INTERVAL_MS);
+            update(Constants.DELTA_TIME);
+            mHandler.postDelayed(this, Constants.UPDATE_INTERVAL_MS);
         }
     };
 
@@ -110,10 +108,11 @@ public class GameEngine {
         mStartTime = System.currentTimeMillis();
         mHandler.post(mUpdateRunnable);
 
-        // play background music
-        mSoundPlayer.playBgm(R.raw.background_music, true);
         // play start short sound effect
         mSoundPlayer.playShortSound(Constants.SOUND_BUTTON, false);
+
+        // play background music
+        mSoundPlayer.playBgm(R.raw.background_music, true);
 
     }
 
@@ -135,7 +134,7 @@ public class GameEngine {
         // stop play background music
         mSoundPlayer.stopBgm();
         // play end short sound effect
-        mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
+        mSoundPlayer.playShortSound(Constants.SOUND_BUTTON, false);
 
     }
 
@@ -220,7 +219,7 @@ public class GameEngine {
 
     public void moveHorizontally(boolean isLeft) {
         Car car = mPlayer.getCar();
-        float instance = car.getSpeed();
+        float instance = 50f;
         car.moveHorizontally(instance, isLeft);
     }
 
