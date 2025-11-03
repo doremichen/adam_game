@@ -153,47 +153,68 @@ public class GameEngine {
         GameUtil.log(TAG, "update");
         // update car speed
         Car car = mPlayer.getCar();
-        // log car
-        GameUtil.log(TAG, "car : " + car.toString());
-        car.updateSpeed(mIsAccelate, deltaTime);
-
-        // move horizontal
-        if (mMoveLeft) {
-            car.moveHorizontallyEx(deltaTime, true);
-            // reset
-            mMoveLeft = false;
-            mMoveRight = false;
-        }
-        if (mMoveRight) {
-            car.moveHorizontallyEx(deltaTime, false);
-            // reset
-            mMoveLeft = false;
-            mMoveRight = false;
-        }
-
-        // range check (width = 1080）
-        PointF pos = car.getPosition();
-        pos.x = Math.max(40, Math.min(mTrack.getWidth() - 40, pos.x));
-        car.setPosition(pos);
-
-        // monitor car run forward
-        float scrollSpeed = mPlayer.getCar().getSpeed(); // the car speed is convert to background scroll speed
+        // scroll background
+        float scrollSpeed = car.getSpeed(); // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
 
-        // detect collision: use fixed car position to detect
-        boolean collided = mTrack.checkCollisions(car, () -> {
-            mPlayer.addScore(50);
-            // play collision sound effect
-            mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
-        });
-        if (collided) {
-            stop();
-        }
-
+        // update game view
         if (mUpdateCallback != null) {
             mUpdateCallback.onUpdate();
         }
+
     }
+
+
+//    /**
+//     * update
+//     *
+//     * @param deltaTime flaot
+//     */
+//    private void update(float deltaTime) {
+//        GameUtil.log(TAG, "update");
+//        // update car speed
+//        Car car = mPlayer.getCar();
+//        // log car
+//        GameUtil.log(TAG, "car : " + car.toString());
+//        car.updateSpeed(mIsAccelate, deltaTime);
+//
+//        // move horizontal
+//        if (mMoveLeft) {
+//            car.moveHorizontallyEx(deltaTime, true);
+//            // reset
+//            mMoveLeft = false;
+//            mMoveRight = false;
+//        }
+//        if (mMoveRight) {
+//            car.moveHorizontallyEx(deltaTime, false);
+//            // reset
+//            mMoveLeft = false;
+//            mMoveRight = false;
+//        }
+//
+//        // range check (width = 1080）
+//        PointF pos = car.getPosition();
+//        pos.x = Math.max(40, Math.min(mTrack.getWidth() - 40, pos.x));
+//        car.setPosition(pos);
+//
+//        // monitor car run forward
+//        float scrollSpeed = mPlayer.getCar().getSpeed(); // the car speed is convert to background scroll speed
+//        mTrack.update(deltaTime, scrollSpeed);
+//
+//        // detect collision: use fixed car position to detect
+//        boolean collided = mTrack.checkCollisions(car, () -> {
+//            mPlayer.addScore(50);
+//            // play collision sound effect
+//            mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
+//        });
+//        if (collided) {
+//            stop();
+//        }
+//
+//        if (mUpdateCallback != null) {
+//            mUpdateCallback.onUpdate();
+//        }
+//    }
 
 
     /**

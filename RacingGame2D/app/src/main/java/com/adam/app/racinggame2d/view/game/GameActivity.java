@@ -74,24 +74,33 @@ public class GameActivity extends AppCompatActivity {
     private void setupFooterButtons() {
         // set button click listener
 //        mBinding.buttonLeft.setOnClickListener(v -> {
-//            mViewModel.moveHorizontally(true);
+//            // SHOW TOAST MESAGE
+//            GameUtil.showToast(this, "Left button clicked");
 //        });
 //
+//        mBinding.buttonLeft.setOnLongClickListener(v -> {
+//            // SHOW TOAST MESAGE
+//            GameUtil.showToast(this, "Left button long clicked");
+//            return true;
+//        });
+//
+//
 //        mBinding.buttonRight.setOnClickListener(v -> {
-//            mViewModel.moveHorizontally(false);
+//            // SHOW TOAST MESAGE
+//            GameUtil.showToast(this, "right button clicked");
 //        });
 
-        // left button
-        bindButtonRepeatAction(mBinding.buttonLeft, () -> mViewModel.moveLeft(true), 16, () -> mViewModel.moveLeft(false));
-
-        // right button
-        bindButtonRepeatAction(mBinding.buttonRight, () -> mViewModel.moveRight(true), 16, () -> mViewModel.moveRight(false));
-
-        // accelaration button
-        bindButtonRepeatAction(mBinding.buttonSpeedUp, () -> mViewModel.speedUp(true), 100, null);
-
-        // slow down button
-        bindButtonRepeatAction(mBinding.buttonSlowDown, () -> mViewModel.speedUp(false), 100, null);
+//        // left button
+//        bindButtonRepeatAction(mBinding.buttonLeft, () -> mViewModel.moveLeft(true), 16, () -> mViewModel.moveLeft(false));
+//
+//        // right button
+//        bindButtonRepeatAction(mBinding.buttonRight, () -> mViewModel.moveRight(true), 16, () -> mViewModel.moveRight(false));
+//
+//        // accelaration button
+//        bindButtonRepeatAction(mBinding.buttonSpeedUp, () -> mViewModel.speedUp(true), 100, null);
+//
+//        // slow down button
+//        bindButtonRepeatAction(mBinding.buttonSlowDown, () -> mViewModel.speedUp(false), 100, null);
 
     }
 
