@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">賽車遊戲</string>
+    <string name="racing_game_count_number_tv">3</string>
+    <string name="racing_game_start_game_toast">開始遊戲!!!</string>
+</resources>
