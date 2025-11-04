@@ -17,6 +17,7 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.databinding.ActivityGameBinding;
 import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
@@ -67,8 +68,32 @@ public class GameActivity extends AppCompatActivity {
             mViewModel.startGame();
         });
 
+        //observer
+        mViewModel.getIsGameOver().observe(this, isGameOver -> {
+            if (isGameOver) {
+                // stop the game
+                mViewModel.stopGame();
+                // show game over dialog
+                showGameOverDialog();
+            }
+        });
+
+
         setupFooterButtons();
 
+    }
+
+    private void showGameOverDialog() {
+        GameUtil.DialogButtonContent positive = new GameUtil.DialogButtonContent(getString(R.string.racinggame2d_dlg_ok_btn_label), (dialog, which) -> {
+            // restart game again
+            mViewModel.restartGame();
+
+        });
+        GameUtil.DialogButtonContent negative = new GameUtil.DialogButtonContent(getString(R.string.racinggame2d_dlg_cancel_btn_label), (dialog, which) -> {
+            // finish the activity
+            finish();
+        });
+        GameUtil.showDialog(this, getString(R.string.racinggame2d_game_over_dlog_title), getString(R.string.racinggame2d_game_over_dlg_content), positive, negative);
     }
 
     private void setupFooterButtons() {

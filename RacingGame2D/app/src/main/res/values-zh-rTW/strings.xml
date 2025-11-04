@@ -28,6 +28,8 @@
     <string name="racinggame2d_settings_tv">設定</string>
     <string name="racinggame2d_speed_up_btn">加速</string>
     <string name="racinggame2d_slow_down_btn">減速</string>
+    <string name="racinggame2d_game_over_dlog_title">Game Over</string>
+    <string name="racinggame2d_game_over_dlg_content">你想要再玩一次嗎？</string>
 
 
     <string-array name="difficulty_levels">

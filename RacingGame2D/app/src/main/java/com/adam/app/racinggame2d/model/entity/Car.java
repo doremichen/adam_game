@@ -31,6 +31,7 @@ public class Car {
     private PointF mPosition;
     // horizontal speed of car
     private float mHorizontalSpeed = 0f;
+    private DefaultInfo mDefault;
 
 
     /**
@@ -52,7 +53,6 @@ public class Car {
 
     }
 
-
     /**
      * initPosition
      * initialize position of car
@@ -64,7 +64,14 @@ public class Car {
         GameUtil.log(TAG, "initPosition");
         this.mPosition.x = viewWidth / 2f;
         this.mPosition.y = viewHeight * 0.85f;
+        //
+        mDefault = new DefaultInfo(new PointF(this.mPosition.x, this.mPosition.y));
+
         GameUtil.log(TAG, "mPosition: " + this.mPosition.toString());
+    }
+
+    public DefaultInfo getDefaultInfo() {
+        return mDefault;
     }
 
     /**
@@ -87,7 +94,6 @@ public class Car {
             GameUtil.log(TAG, "mSpeed: " + this.mSpeed);
         }
     }
-
 
     /**
      * moveHorizontallyEx
@@ -138,6 +144,7 @@ public class Car {
     }
 
     public void setPosition(PointF position) {
+        GameUtil.log(TAG, "setPosition: " + position.toString());
         this.mPosition = position;
     }
 
@@ -162,5 +169,17 @@ public class Car {
                 ", mSpeed=" + mSpeed +
                 ", mPosition=" + mPosition +
                 '}';
+    }
+
+    public class DefaultInfo {
+        private final PointF mPosition;
+
+        private DefaultInfo(PointF position) {
+            this.mPosition = position;
+        }
+
+        public PointF getPosition() {
+            return mPosition;
+        }
     }
 }

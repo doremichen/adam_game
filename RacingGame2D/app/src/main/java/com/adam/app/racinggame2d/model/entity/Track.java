@@ -53,7 +53,7 @@ public class Track {
         this.mWidth = width;
         this.mHeight = height;
 
-        this.mCheckPoints = checkPoints != null ? checkPoints : new ArrayList<>();
+        this.mCheckPoints = checkPoints != null ? new ArrayList<>(checkPoints) : new ArrayList<>();
 
         this.mObstacles = new ArrayList<>();
     }
@@ -110,6 +110,8 @@ public class Track {
         GameUtil.log(TAG, "checkCollisions");
         // position of car
         PointF carPosition = car.getPosition();
+        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
+
         // boundary check
         if (isOutOfBoundary(carPosition)) {
             GameUtil.log(TAG, "car is out of boundary");
@@ -160,9 +162,9 @@ public class Track {
      */
     private boolean isOutOfBoundary(PointF carPosition) {
         // log
-//        GameUtil.log(TAG, "isOutOfBoundary");
-//        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
-//        GameUtil.log(TAG, "mWidth: " + mWidth + ", mHeight: " + mHeight);
+        GameUtil.log(TAG, "isOutOfBoundary");
+        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
+        GameUtil.log(TAG, "mWidth: " + mWidth + ", mHeight: " + mHeight);
 
         return carPosition.x <= Constants.BOUNDARY_VALUE || carPosition.x >= mWidth - Constants.BOUNDARY_VALUE;
     }
@@ -196,6 +198,12 @@ public class Track {
      */
     public void update(float deltaTime, float scrollSpeed) {
         scroll(scrollSpeed * deltaTime);
+    }
+
+    //--- set ---
+    public void setCheckPoints(List<PointF> checkPoints){
+        this.mCheckPoints.clear();
+        this.mCheckPoints.addAll(checkPoints);
     }
 
     //--- get ---

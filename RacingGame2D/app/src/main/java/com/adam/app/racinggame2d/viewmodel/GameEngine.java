@@ -51,6 +51,9 @@ public class GameEngine {
     private long mStartTime;
     // callback when update
     private GameUpdateListener mUpdateCallback;
+    // callback when game over
+    private onGameOverListener mGameOverCallback;
+
     // update task
     private final Runnable mUpdateRunnable = new Runnable() {
         @Override
@@ -96,6 +99,16 @@ public class GameEngine {
      */
     public void setGameUpdateListener(GameUpdateListener updateCallback) {
         mUpdateCallback = updateCallback;
+    }
+
+    /**
+     * setGameOverListener
+     * set callback when game over
+     *
+     * @param gameOverCallback onGameOverListener
+     */
+    public void setGameOverListener(onGameOverListener gameOverCallback) {
+        mGameOverCallback = gameOverCallback;
     }
 
     /**
@@ -180,6 +193,11 @@ public class GameEngine {
         });
         if (collided) {
             stop();
+
+            // notify game over
+            if (mGameOverCallback != null) {
+                mGameOverCallback.onGameOver();
+            }
         }
 
         // update game view
@@ -198,6 +216,11 @@ public class GameEngine {
     public List<PointF> getCheckPoints() {
         return mTrack.getCheckPoints();
     }
+
+    public void setCheckPoints(List<PointF> checkPoints) {
+        mTrack.setCheckPoints(checkPoints);
+    }
+
 
     /**
      * getObstacles
@@ -261,6 +284,14 @@ public class GameEngine {
      */
     public interface GameUpdateListener {
         void onUpdate();
+    }
+
+    /**
+     * interface gameOverListener
+     * callback when game over
+     */
+    public interface onGameOverListener {
+        void onGameOver();
     }
 
 }

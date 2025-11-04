@@ -86,12 +86,12 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     /**
-     * onGameOver
+     * postGameOver
      * set game over
      *
      * @param isGameOver is game over
      */
-    public void onGameOver(boolean isGameOver) {
+    public void postGameOver(boolean isGameOver) {
         mIsGameOver.postValue(isGameOver);
     }
 
@@ -124,6 +124,14 @@ public class GameViewModel extends AndroidViewModel {
 
         // create GameEngine
         mGameEngine = new GameEngine(getApplication(), mPlayer, track);
+        // set game update listener
+        mGameEngine.setGameOverListener(new GameEngine.onGameOverListener() {
+            @Override
+            public void onGameOver() {
+                // post game over
+                postGameOver(true);
+            }
+        });
     }
 
 
@@ -162,6 +170,27 @@ public class GameViewModel extends AndroidViewModel {
         GameUtil.log(TAG, "Stop game");
         changeState(GameState.IDLE);
     }
+
+    /**
+     * restartGame
+     * restart game engine
+     */
+    public void restartGame() {
+        GameUtil.log(TAG, "Restart game");
+        changeState(GameState.IDLE);
+        // car
+        Car car = this.mPlayer.getCar();
+        Car.DefaultInfo defaultInfo = car.getDefaultInfo();
+        PointF carPosition = (defaultInfo != null)? defaultInfo.getPosition(): new PointF(0.0f, 0.0f);
+        // remove car
+        car.setPosition(carPosition);
+        // set checkpoints
+        List<PointF> checkpoints = new ArrayList<>(this.mGameEngine.getCheckPoints());
+        this.mGameEngine.setCheckPoints(checkpoints);
+
+        changeState(GameState.RUNNING);
+    }
+
 
     /**
      * isReady

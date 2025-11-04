@@ -105,6 +105,7 @@ public final class GameUtil {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setMessage(message);
+        builder.setCancelable(false);
         if (positiveButtonContent != null) {
             builder.setPositiveButton(positiveButtonContent.getLabel(), positiveButtonContent.getClickListener());
         }
@@ -144,9 +145,11 @@ public final class GameUtil {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title);
         builder.setView(editText);
+        builder.setCancelable(false);
 
         // set positive button
         builder.setPositiveButton(positiveButtonContent.getLabel(), (dialog, which) -> {
+            // get the text from the edit text
             String text = editText.getText().toString();
             positiveButtonContent.getOnEditConfirmedListener().onEditConfirmed(text);
         });
