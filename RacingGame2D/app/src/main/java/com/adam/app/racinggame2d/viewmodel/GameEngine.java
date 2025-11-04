@@ -261,6 +261,10 @@ public class GameEngine {
         return mPlayer.getScore();
     }
 
+    public void resetScore() {
+        mPlayer.resetScore();
+    }
+
     public void moveHorizontally(boolean isLeft) {
         Car car = mPlayer.getCar();
         car.moveHorizontally(isLeft);

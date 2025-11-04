@@ -188,6 +188,12 @@ public class GameViewModel extends AndroidViewModel {
         List<PointF> checkpoints = new ArrayList<>(this.mGameEngine.getCheckPoints());
         this.mGameEngine.setCheckPoints(checkpoints);
 
+        // reset score
+        mGameEngine.resetScore();
+        // reset game over
+        mIsGameOver.postValue(false);
+        // start game
+
         changeState(GameState.RUNNING);
     }
 
