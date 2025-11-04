@@ -117,6 +117,16 @@ public class GameActivity extends AppCompatActivity {
             mViewModel.moveHorizontally(false);
         });
 
+        mBinding.buttonSpeedUp.setOnClickListener(v -> {
+                mViewModel.speedUp(true);
+        });
+
+        mBinding.buttonSlowDown.setOnClickListener(v -> {
+                mViewModel.speedUp(false);
+        });
+
+
+
 //        // left button
 //        bindButtonRepeatAction(mBinding.buttonLeft, () -> mViewModel.moveLeft(true), 16, () -> mViewModel.moveLeft(false));
 //

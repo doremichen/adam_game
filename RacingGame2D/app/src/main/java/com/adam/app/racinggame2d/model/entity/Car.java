@@ -20,11 +20,11 @@ public class Car {
     private static final String TAG = Car.class.getSimpleName();
 
     // mId
-    private final String mId;
+    private String mId;
     // mName
-    private final String mName;
+    private String mName;
     // mAcceleration: float
-    private final float mAcceleration;
+    private float mAcceleration;
     // mSpeed: float
     private float mSpeed;
     // position of car
@@ -48,6 +48,8 @@ public class Car {
         this.mSpeed = speed;
         this.mAcceleration = acceleration;
 
+        mDefault = new DefaultInfo(id, name, speed, acceleration);
+
         // initialize position
         this.mPosition = new PointF(0.0f, 0.0f);
 
@@ -65,9 +67,7 @@ public class Car {
         this.mPosition.x = viewWidth / 2f;
         this.mPosition.y = viewHeight * 0.85f;
         //
-        mDefault = new DefaultInfo(new PointF(this.mPosition.x, this.mPosition.y));
-
-        GameUtil.log(TAG, "mPosition: " + this.mPosition.toString());
+        mDefault.setPosition(new PointF(this.mPosition.x, this.mPosition.y));
     }
 
     public DefaultInfo getDefaultInfo() {
@@ -78,11 +78,10 @@ public class Car {
      * updateSpeed
      * update speed of car
      *
-     * @param isAccelerating : boolean
-     * @param deltaTime      : float
+     * @param isAccelerating : boolean     : float
      */
-    public void updateSpeed(boolean isAccelerating, float deltaTime) {
-        accelerate(isAccelerating ? deltaTime : -deltaTime);
+    public void updateSpeed(boolean isAccelerating) {
+        accelerate(isAccelerating ? 1f : -1f);
         GameUtil.log(TAG, "updateSpeed: " + this.mSpeed);
 
         // limit speed range
@@ -155,8 +154,7 @@ public class Car {
      * @param isLeft : boolean
      */
     public void moveHorizontally(boolean isLeft) {
-        float offset = mSpeed * Constants.HORIZONTAL_RATIO;
-        this.mPosition.x += isLeft ? -offset : offset;
+        this.mPosition.x += isLeft ? -Constants.HORIZONTAL_INCREMENT : Constants.HORIZONTAL_INCREMENT;
     }
 
     @NonNull
@@ -171,15 +169,71 @@ public class Car {
                 '}';
     }
 
-    public class DefaultInfo {
-        private final PointF mPosition;
+    public void reset() {
+        this.mSpeed = mDefault.getSpeed();
+        this.mPosition.x = mDefault.getPosition().x;
+        this.mPosition.y = mDefault.getPosition().y;
+        this.mHorizontalSpeed = 0f;
+        this.mAcceleration = mDefault.getAcceleration();
+        this.mName = mDefault.getName();
+        this.mId = mDefault.getId();
+        GameUtil.log(TAG, "reset: " + this.toString());
+    }
 
-        private DefaultInfo(PointF position) {
-            this.mPosition = position;
+    public static class DefaultInfo {
+        private final String mId;
+        // mName
+        private final String mName;
+        // mAcceleration: float
+        private final float mAcceleration;
+        // mSpeed: float
+        private float mSpeed;
+
+        private PointF mPosition;
+
+        public DefaultInfo(String id, String name, float speed, float acceleration) {
+            this.mId = id;
+            this.mName = name;
+            this.mSpeed = speed;
+            this.mAcceleration = acceleration;
+        }
+
+        //--- get ---
+        public String getId() {
+            return mId;
+        }
+
+        public String getName() {
+            return mName;
+        }
+
+        public float getSpeed() {
+            return mSpeed;
+        }
+
+        public float getAcceleration() {
+            return mAcceleration;
         }
 
         public PointF getPosition() {
             return mPosition;
+        }
+
+        //--- set ---
+        public void setPosition(PointF position) {
+            this.mPosition = position;
+        }
+
+        @NonNull
+        @Override
+        public String toString() {
+            return "DefaultInfo {" +
+                    "mId='" + mId + '\'' +
+                    ", mName='" + mName + '\'' +
+                    ", mAcceleration=" + mAcceleration +
+                    ", mSpeed=" + mSpeed +
+                    ", mPosition=" + mPosition +
+                    "}";
         }
     }
 }

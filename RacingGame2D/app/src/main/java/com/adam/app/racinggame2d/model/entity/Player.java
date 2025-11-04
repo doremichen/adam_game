@@ -67,4 +67,9 @@ public class Player {
     public String getName() {
         return mPlayerName;
     }
+
+    public void reset() {
+        mPlayerScore = 0;
+        mCar.reset();
+    }
 }

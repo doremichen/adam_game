@@ -19,6 +19,9 @@ public final class Constants {
     public static final float MIN_SPEED = 100f;   // px/s
     public static final float HORIZONTAL_RATIO = 0.7f; // Control the horizontal speed of the car.
     public static final int BOUNDARY_VALUE = 40;
+    public static final float HORIZONTAL_INCREMENT = 12f;
+    public static final float Default_SPEED = 300f;
+    public static final float DEFAULT_ACCELERATOR = 50f;
     // === SharedPreferences Keys ===
     public static final String PREF_NAME = "racing_game_prefs";
     public static final String PREF_PLAYER_NAME = "player_name";

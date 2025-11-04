@@ -20,6 +20,7 @@ import com.adam.app.racinggame2d.model.entity.Car;
 import com.adam.app.racinggame2d.model.entity.Obstacle;
 import com.adam.app.racinggame2d.model.entity.Player;
 import com.adam.app.racinggame2d.model.entity.Track;
+import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.util.SharedPrefHelper;
 
@@ -104,7 +105,7 @@ public class GameViewModel extends AndroidViewModel {
      */
     public void prepareGameEngine(int width, int height) {
         GameUtil.log(TAG, "Prepare game engine");
-        Car car = new Car("BXP1234", "car1", 300f, 50f);
+        Car car = new Car("BXP1234", "car1", Constants.Default_SPEED, Constants.DEFAULT_ACCELERATOR);
         car.initPosition(width, height);
         // get player name from shared preferences
         String playerName = SharedPrefHelper.getInstance(getApplication()).getPlayerName();
@@ -178,18 +179,12 @@ public class GameViewModel extends AndroidViewModel {
     public void restartGame() {
         GameUtil.log(TAG, "Restart game");
         changeState(GameState.IDLE);
-        // car
-        Car car = this.mPlayer.getCar();
-        Car.DefaultInfo defaultInfo = car.getDefaultInfo();
-        PointF carPosition = (defaultInfo != null)? defaultInfo.getPosition(): new PointF(0.0f, 0.0f);
-        // remove car
-        car.setPosition(carPosition);
         // set checkpoints
         List<PointF> checkpoints = new ArrayList<>(this.mGameEngine.getCheckPoints());
         this.mGameEngine.setCheckPoints(checkpoints);
 
         // reset score
-        mGameEngine.resetScore();
+        mGameEngine.reset();
         // reset game over
         mIsGameOver.postValue(false);
         // start game

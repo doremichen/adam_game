@@ -175,6 +175,8 @@ public class GameEngine {
         GameUtil.log(TAG, "update");
         // update car speed
         Car car = mPlayer.getCar();
+        GameUtil.log(TAG, "===== car speed: ==== " + car.getSpeed());
+
         // scroll background
         float scrollSpeed = car.getSpeed(); // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
@@ -261,8 +263,8 @@ public class GameEngine {
         return mPlayer.getScore();
     }
 
-    public void resetScore() {
-        mPlayer.resetScore();
+    public void reset() {
+        mPlayer.reset();
     }
 
     public void moveHorizontally(boolean isLeft) {
@@ -278,7 +280,9 @@ public class GameEngine {
      */
     public void speedUp(boolean isSpeedUp) {
         mIsAccelate = isSpeedUp;
-
+        // car
+        Car car = mPlayer.getCar();
+        car.updateSpeed(isSpeedUp);
     }
 
 
