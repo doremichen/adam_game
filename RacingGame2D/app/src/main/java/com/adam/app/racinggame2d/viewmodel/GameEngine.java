@@ -10,8 +10,6 @@ package com.adam.app.racinggame2d.viewmodel;
 
 import android.content.Context;
 import android.graphics.PointF;
-import android.os.Handler;
-import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
@@ -27,11 +25,15 @@ import com.adam.app.racinggame2d.util.SharedPrefHelper;
 import com.adam.app.racinggame2d.util.SoundPlayer;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameEngine {
+    public static final float SPPED_INCREMENT_TIME = 10f;
     // TAG
     private static final String TAG = "GameEngine";
-    public static final float SPPED_INCREMENT_TIME = 10f;
     // Player
     private final Player mPlayer;
     // Track
@@ -41,20 +43,14 @@ public class GameEngine {
     private final SoundPlayer mSoundPlayer;
 
     // Used to control update at every 60 fps
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final ScheduledExecutorService mService;
+    private Future<?> mUpdateController;
     // used to check running
-    private boolean mIsRunning;
+    private volatile boolean mIsRunning;
     // start time
     private long mStartTime;
     // callback when update
     private GameUpdateListener mUpdateCallback;
-
-    private boolean mIsAccelate = false;
-    private boolean mMoveLeft = false;
-    private boolean mMoveRight = false;
-
-
-
     // update task
     private final Runnable mUpdateRunnable = new Runnable() {
         @Override
@@ -66,23 +62,23 @@ public class GameEngine {
             }
 
             update(Constants.DELTA_TIME);
-            mHandler.postDelayed(this, Constants.UPDATE_INTERVAL_MS);
         }
     };
-
-
+    private boolean mIsAccelate = false;
 
     /**
      * Constructor
      *
      * @param context Application context
-     * @param player Player
-     * @param track  Track
+     * @param player  Player
+     * @param track   Track
      */
     public GameEngine(@NonNull Context context, @NonNull Player player, @NonNull Track track) {
         mPlayer = player;
         mTrack = track;
         mIsRunning = false;
+        // initial executor for update view
+        mService = Executors.newSingleThreadScheduledExecutor();
 
         // load settings from shared preferences
         Settings currentSettings = SharedPrefHelper.getInstance(context).loadSettings();
@@ -107,12 +103,23 @@ public class GameEngine {
      */
     public void start() {
         GameUtil.log(TAG, "Game is started!!!");
+
+        // cancel previous task
+        if (mUpdateController != null) {
+            mUpdateController.cancel(true);
+        }
+
         // generate Obstacle by track
         mTrack.generateRandomObstacles(8);
         // start time
         mIsRunning = true;
         mStartTime = System.currentTimeMillis();
-        mHandler.post(mUpdateRunnable);
+        //mHandler.post(mUpdateRunnable);
+        // start to update view by thread
+        mUpdateController = mService.scheduleWithFixedDelay(mUpdateRunnable,
+                0,
+                Constants.UPDATE_INTERVAL_MS,
+                TimeUnit.MICROSECONDS);
 
         // play start short sound effect
         mSoundPlayer.playShortSound(Constants.SOUND_BUTTON, false);
@@ -129,7 +136,9 @@ public class GameEngine {
         GameUtil.log(TAG, "Game is stopped!!!");
         mIsRunning = false;
         // remove runnable
-        mHandler.removeCallbacks(mUpdateRunnable);
+        if (mUpdateController != null) {
+            mUpdateController.cancel(true);
+        }
         // elapsed time
         long elapsedTime = System.currentTimeMillis() - mStartTime;
         // time convert to add score
@@ -157,65 +166,28 @@ public class GameEngine {
         float scrollSpeed = car.getSpeed(); // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
 
+        // range check (width = 1080)
+        float xPosition = car.getPosition().x;
+        float yPosition = car.getPosition().y;
+        xPosition = Math.max(Constants.BOUNDARY_VALUE, Math.min(mTrack.getWidth() - Constants.BOUNDARY_VALUE, xPosition));
+        car.setPosition(new PointF(xPosition, yPosition));
+
+        // detect collision: use fixed car position to detect
+        boolean collided = mTrack.checkCollisions(car, () -> {
+            mPlayer.addScore(50);
+            // play collision sound effect
+            mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
+        });
+        if (collided) {
+            stop();
+        }
+
         // update game view
         if (mUpdateCallback != null) {
             mUpdateCallback.onUpdate();
         }
 
     }
-
-
-//    /**
-//     * update
-//     *
-//     * @param deltaTime flaot
-//     */
-//    private void update(float deltaTime) {
-//        GameUtil.log(TAG, "update");
-//        // update car speed
-//        Car car = mPlayer.getCar();
-//        // log car
-//        GameUtil.log(TAG, "car : " + car.toString());
-//        car.updateSpeed(mIsAccelate, deltaTime);
-//
-//        // move horizontal
-//        if (mMoveLeft) {
-//            car.moveHorizontallyEx(deltaTime, true);
-//            // reset
-//            mMoveLeft = false;
-//            mMoveRight = false;
-//        }
-//        if (mMoveRight) {
-//            car.moveHorizontallyEx(deltaTime, false);
-//            // reset
-//            mMoveLeft = false;
-//            mMoveRight = false;
-//        }
-//
-//        // range check (width = 1080）
-//        PointF pos = car.getPosition();
-//        pos.x = Math.max(40, Math.min(mTrack.getWidth() - 40, pos.x));
-//        car.setPosition(pos);
-//
-//        // monitor car run forward
-//        float scrollSpeed = mPlayer.getCar().getSpeed(); // the car speed is convert to background scroll speed
-//        mTrack.update(deltaTime, scrollSpeed);
-//
-//        // detect collision: use fixed car position to detect
-//        boolean collided = mTrack.checkCollisions(car, () -> {
-//            mPlayer.addScore(50);
-//            // play collision sound effect
-//            mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
-//        });
-//        if (collided) {
-//            stop();
-//        }
-//
-//        if (mUpdateCallback != null) {
-//            mUpdateCallback.onUpdate();
-//        }
-//    }
-
 
     /**
      * getCheckPoints
@@ -267,21 +239,9 @@ public class GameEngine {
     }
 
     public void moveHorizontally(boolean isLeft) {
-        mMoveLeft = isLeft;
-        mMoveRight = !isLeft;
-//        Car car = mPlayer.getCar();
-//        float instance = 50f;
-//        car.moveHorizontally(instance, isLeft);
+        Car car = mPlayer.getCar();
+        car.moveHorizontally(isLeft);
     }
-
-    public void moveLeft(boolean pressed) {
-        mMoveLeft = pressed;
-    }
-
-    public void moveRight(boolean pressed) {
-        mMoveRight = pressed;
-    }
-
 
     /**
      * speedUp
@@ -291,16 +251,7 @@ public class GameEngine {
      */
     public void speedUp(boolean isSpeedUp) {
         mIsAccelate = isSpeedUp;
-//        // get car
-//        final Car car = mPlayer.getCar();
-//        car.accelerate(isSpeedUp ? SPPED_INCREMENT_TIME : -SPPED_INCREMENT_TIME);
-//        // limit speed
-//        float speed = car.getSpeed();
-//        if (speed < 0) {
-//            speed = 0;
-//        }
-//        // set speed
-//        car.setSpeed(speed);
+
     }
 
 

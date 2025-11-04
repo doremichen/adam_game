@@ -55,9 +55,9 @@ public class Car {
 
     /**
      * initPosition
-     *  initialize position of car
+     * initialize position of car
      *
-     * @param viewWidth the width of view
+     * @param viewWidth  the width of view
      * @param viewHeight the height of view
      */
     public void initPosition(float viewWidth, float viewHeight) {
@@ -69,13 +69,13 @@ public class Car {
 
     /**
      * updateSpeed
-     *  update speed of car
+     * update speed of car
      *
      * @param isAccelerating : boolean
-     * @param deltaTime : float
+     * @param deltaTime      : float
      */
     public void updateSpeed(boolean isAccelerating, float deltaTime) {
-        accelerate(isAccelerating? deltaTime : -deltaTime);
+        accelerate(isAccelerating ? deltaTime : -deltaTime);
         GameUtil.log(TAG, "updateSpeed: " + this.mSpeed);
 
         // limit speed range
@@ -91,10 +91,10 @@ public class Car {
 
     /**
      * moveHorizontallyEx
-     *  move instance left or right by speed multiple by delta time
+     * move instance left or right by speed multiple by delta time
      *
      * @param deltaTime : float
-     * @param isLeft : boolean
+     * @param isLeft    : boolean
      */
     public void moveHorizontallyEx(float deltaTime, boolean isLeft) {
         float distance = mSpeed * Constants.HORIZONTAL_RATIO * deltaTime;
@@ -103,9 +103,9 @@ public class Car {
 
     /**
      * accelerate
-     *  accelerate instance
+     * accelerate instance
      *
-     *  @param deltaTime: float
+     * @param deltaTime: float
      */
     public void accelerate(float deltaTime) {
         // accelerate instance by acceleration multiple by delta time
@@ -145,11 +145,11 @@ public class Car {
      * moveHorizontally
      * move instance left or right by speed multiple by delta time
      *
-     * @param instance : float
-     * @param isLeft   : boolean
+     * @param isLeft : boolean
      */
-    public void moveHorizontally(float instance, boolean isLeft) {
-        this.mPosition.x += isLeft ? -instance : instance;
+    public void moveHorizontally(boolean isLeft) {
+        float offset = mSpeed * Constants.HORIZONTAL_RATIO;
+        this.mPosition.x += isLeft ? -offset : offset;
     }
 
     @NonNull

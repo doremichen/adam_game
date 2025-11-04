@@ -181,3 +181,124 @@ GameFragment 顯示倒數計時（3、2、1、Go!）
 
 
 接下來你想加入賽車控制（UC02）、地圖載入、或是遊戲循環嗎？我可以幫你一步步擴充。你想繼續哪一部分？
+===================================================
+為了使用 Navigation 架構來導向 GameFragment，我們需要進行以下幾個步驟來修正 MainActivity 並整合 Navigation Component：
+
+✅ 步驟總覽
+
+加入 Navigation Component 依賴
+建立 Navigation Graph (nav_graph.xml)
+建立 GameFragment
+修改 MainActivity 使用 NavHostFragment
+使用 View Binding 整合畫面
+
+
+📦 1. 加入 Navigation 依賴
+在 build.gradle（Module: app）中加入：
+Gradledependencies {    implementation "androidx.navigation:navigation-fragment:2.7.5"    implementation "androidx.navigation:navigation-ui:2.7.5"}顯示更多行
+然後 Sync Gradle。
+
+📄 2. 建立 Navigation Graph
+在 res/navigation 資料夾中建立 nav_graph.xml：
+XML<?xml version="1.0" encoding="utf-8"?><navigation xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"    app:startDestination="@id/gameFragment">    <fragment        android:id="@+id/gameFragment"        android:name="com.example.racinggame.view.GameFragment"       layout/fragment_game" /></navigation>顯示更多行
+
+🧭 3. 修改 MainActivity 使用 Navigation
+🔧 activity_main.xml
+XML<?xml version="1.0" encoding="utf-8"?><androidx.fragment.app.FragmentContainerView    xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"    android:id="@+id/nav_host_fragment"    android:name="androidx.navigation.fragment.NavHostFragment"    android:layout_width="match_parent"   _parent"    app:navGraph="@navigation/nav_graph"    app:defaultNavHost="true" />``顯示更多行
+
+🔧 MainActivity.java
+Javapackage com.example.racinggame.view;import android.os.Bundle;import androidx.appcompat.app.AppCompatActivity;import com.example.racinggame.databinding.ActivityMainBinding;public class MainActivity extends AppCompatActivity {    private ActivityMainBinding binding;    @Override    protected void onCreate(Bundle savedInstanceState) {        super.onCreate(savedInstanceState);        binding = ActivityMainBinding.inflate(getLayoutInflater());        setContentView(binding.getRoot());        // 不需要手動載入 Fragment，NavHostFragment 會自動載入 nav_graph 的 startDestination    }}``顯示更多行
+
+🎮 4. GameFragment（含倒數計時）
+這部分你已經有了，我再補充 ViewModel 初始化的部分：
+🔧 GameFragment.java
+Javapackage com.example.racinggame.view;import android.os.Bundle;import android.os.CountDownTimer;import android.view.LayoutInflater;import android.view.View;import android.view.ViewGroup;import androidx.annotation.NonNull;import androidx.annotation.Nullable;import androidx.fragment.app.Fragment;import androidx.lifecycle.ViewModelProvider;import com.example.racinggame.databinding.FragmentGameBinding;import com.example.racinggame.viewmodel.GameViewModel;public class GameFragment extends Fragment {    private FragmentGameBinding binding;    private GameViewModel viewModel;    @Nullable    @Override    public View onCreateView(@NonNull LayoutInflater inflater,                             @Nullable ViewGroup container,                             Bundle savedInstanceState) {        binding = FragmentGameBinding.inflate(inflater, container, false);        return binding.getRoot();    }    @Override    public void onViewCreated(@NonNull View view,                              @Nullable Bundle savedInstanceState) {        super.onViewCreated(view, savedInstanceState);        viewModel = new ViewModelProvider(this).get(GameViewModel.class);        binding.countdownText.setVisibility(View.VISIBLE);        startCountdown();    }    private void startCountdown() {        new CountDownTimer(4000, 1000) {            int count = 3;            public void onTick(long millisUntilFinished) {                if (count > 0) {                    binding.countdownText.setText(String.valueOf(count));                    count--;                } else {                    binding.countdownText.setText("Go!");                }            }            public void onFinish() {                binding.countdownText.setVisibility(View.GONE);                viewModel.startGame(); // 通知 ViewModel 開始遊戲            }        }.start();    }    @Override    public void onDestroyView() {        super.onDestroyView();        binding = null;    }}顯示更多行
+
+這樣你就完成了：
+
+使用 Navigation Component 導向 GameFragment
+使用 View Binding 管理 UI
+在 GameFragment 中初始化 ViewModel 並加入倒數邏輯
+
+
+接下來你想加入哪個功能？例如：
+
+賽車控制（UC02）
+地圖與障礙物載入
+分數系統與排行榜
+
+我可以幫你一步步擴充！
+======================================
+🎮 UC02 - 賽車控制（Control Car）
+📦 架構設計
+
+Model：Car.java（包含位置、速度、方向等屬性）
+ViewModel：GameViewModel.java（處理控制邏輯）
+View：GameFragment.java（接收按鈕或感應器輸入）
+
+🔧 功能要點
+
+支援左右按鈕控制方向
+可擴充加速度感應器（使用 SensorManager）
+ViewModel 接收輸入並更新賽車狀態 → UI 反映位置變化
+
+
+🗺️ 地圖與障礙物載入
+📦 架構設計
+
+Model：Track.java, Obstacle.java
+ViewModel：GameViewModel.java
+View：GameFragment.java（使用 Canvas 或 SurfaceView 繪製）
+
+🔧 功能要點
+
+地圖可為靜態背景或 tile-based 動態地圖
+障礙物資料可從 JSON 或 XML 載入
+ViewModel 管理地圖與障礙物資料 → 提供給 View 繪製
+
+
+🧮 分數系統（Score System）
+📦 架構設計
+
+Model：Score.java
+ViewModel：ScoreViewModel.java
+Repository：ScoreRepository.java（使用 Room 儲存）
+
+🔧 功能要點
+
+根據前進距離或擊敗敵車更新分數
+使用 LiveData<Integer> 推送分數至 UI
+遊戲結束時儲存分數至排行榜
+
+
+🏆 排行榜（Leaderboard）
+📦 架構設計
+
+Model：LeaderboardEntry.java
+ViewModel：LeaderboardViewModel.java
+Repository：ScoreRepository.java
+View：LeaderboardFragment.java
+
+🔧 功能要點
+
+從 Room 或 Firebase 讀取歷史分數
+顯示名次與分數列表
+可排序與過濾（例如只顯示本週最高分）
+
+
+✅ 下一步建議
+我們可以依照以下順序來實作：
+
+建立 Car.java 與 GameViewModel 控制邏輯（UC02）
+加入地圖與障礙物載入邏輯
+建立 ScoreViewModel 與分數更新機制
+建立 Room 資料庫與排行榜畫面
+
+
+你想先從哪一個模組開始實作？我可以幫你產生完整的 Java 類別與 XML UI，例如：
+
+Car.java + 控制邏輯
+GameViewModel.java 控制方向與位置
+GameFragment.java 加入左右按鈕控制
+
+要不要我們先從 UC02 賽車控制開始？

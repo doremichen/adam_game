@@ -13,6 +13,7 @@ import android.graphics.PointF;
 import androidx.annotation.NonNull;
 
 import com.adam.app.racinggame2d.R;
+import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 
 import java.util.ArrayList;
@@ -96,22 +97,6 @@ public class Track {
     }
 
     /**
-     * ObstacleData
-     *  This class is used to record the obstacle data
-     *  type: Obstacle.Type
-     *  imgPath: String
-     */
-    private static class ObstacleData {
-        Obstacle.Type type;
-        int imgRes;
-
-        ObstacleData(Obstacle.Type type, int imgRes) {
-            this.type = type;
-            this.imgRes = imgRes;
-        }
-    }
-
-    /**
      * checkCollisions
      * check collisions between car and obstacles
      *
@@ -174,12 +159,18 @@ public class Track {
      * false: if the car is not out of boundary
      */
     private boolean isOutOfBoundary(PointF carPosition) {
-        return carPosition.x < 0 || carPosition.x > mWidth || carPosition.y < 0 || carPosition.y > mHeight;
+        // log
+//        GameUtil.log(TAG, "isOutOfBoundary");
+//        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
+//        GameUtil.log(TAG, "mWidth: " + mWidth + ", mHeight: " + mHeight);
+
+        return carPosition.x <= Constants.BOUNDARY_VALUE || carPosition.x >= mWidth - Constants.BOUNDARY_VALUE;
     }
 
     /**
      * scroll
-     *  scroll the track
+     * scroll the track
+     *
      * @param deltaY the distance to scroll
      */
     public void scroll(float deltaY) {
@@ -199,7 +190,8 @@ public class Track {
     /**
      * update
      * update the track
-     * @param deltaTime the time interval
+     *
+     * @param deltaTime   the time interval
      * @param scrollSpeed the scroll speed
      */
     public void update(float deltaTime, float scrollSpeed) {
@@ -233,6 +225,22 @@ public class Track {
          * callback when check point is reached
          */
         void onCheckPointReached();
+    }
+
+    /**
+     * ObstacleData
+     * This class is used to record the obstacle data
+     * type: Obstacle.Type
+     * imgPath: String
+     */
+    private static class ObstacleData {
+        Obstacle.Type type;
+        int imgRes;
+
+        ObstacleData(Obstacle.Type type, int imgRes) {
+            this.type = type;
+            this.imgRes = imgRes;
+        }
     }
 
 }

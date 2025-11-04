@@ -73,10 +73,11 @@ public class GameActivity extends AppCompatActivity {
 
     private void setupFooterButtons() {
         // set button click listener
-//        mBinding.buttonLeft.setOnClickListener(v -> {
-//            // SHOW TOAST MESAGE
-//            GameUtil.showToast(this, "Left button clicked");
-//        });
+        mBinding.buttonLeft.setOnClickListener(v -> {
+            // SHOW TOAST MESAGE
+            //GameUtil.showToast(this, "Left button clicked");
+            mViewModel.moveHorizontally(true);
+        });
 //
 //        mBinding.buttonLeft.setOnLongClickListener(v -> {
 //            // SHOW TOAST MESAGE
@@ -85,10 +86,11 @@ public class GameActivity extends AppCompatActivity {
 //        });
 //
 //
-//        mBinding.buttonRight.setOnClickListener(v -> {
-//            // SHOW TOAST MESAGE
-//            GameUtil.showToast(this, "right button clicked");
-//        });
+        mBinding.buttonRight.setOnClickListener(v -> {
+            // SHOW TOAST MESAGE
+            //GameUtil.showToast(this, "right button clicked");
+            mViewModel.moveHorizontally(false);
+        });
 
 //        // left button
 //        bindButtonRepeatAction(mBinding.buttonLeft, () -> mViewModel.moveLeft(true), 16, () -> mViewModel.moveLeft(false));
@@ -132,10 +134,11 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * Bind a button to a long press action.
-     * @param button The button to bind.
+     *
+     * @param button     The button to bind.
      * @param actionDown The action to perform when the button is pressed.
      * @param intervalMs The interval between each action.
-     * @param actionUp The action to perform when the button is released.
+     * @param actionUp   The action to perform when the button is released.
      */
     private void bindButtonRepeatAction(View button, Runnable actionDown, long intervalMs, Runnable actionUp) {
         final Runnable repeatRunnable = new Runnable() {

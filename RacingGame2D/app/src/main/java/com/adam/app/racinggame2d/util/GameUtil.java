@@ -1,8 +1,8 @@
 /**
  * Copyright 2025 - Adam Game. All rights reserved.
- *
+ * <p>
  * Description: This class is used to provide utility functions for the game.
- *
+ * <p>
  * Author: Adam Game
  * Created Date: 2025/10/28
  */
@@ -12,6 +12,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
@@ -24,16 +27,18 @@ import androidx.annotation.Nullable;
 
 public final class GameUtil {
 
+    public static final String UTil_TAG = "GameUtil";
+    // TAG
+    public static final String TAG = "RacingGame2D";
+
     private GameUtil() {
         // avoid to be instantiated
     }
 
-    // TAG
-    public static final String TAG = "RacingGame2D";
-
     /**
      * Log
-     *  log the message
+     * log the message
+     *
      * @param title
      * @param message
      */
@@ -44,7 +49,8 @@ public final class GameUtil {
 
     /**
      * errorLog
-     *  log the error message
+     * log the error message
+     *
      * @param title
      * @param message
      */
@@ -56,7 +62,7 @@ public final class GameUtil {
 
     /**
      * showToast
-     *  Show toast message
+     * Show toast message
      *
      * @param context
      * @param message
@@ -85,75 +91,12 @@ public final class GameUtil {
     }
 
     /**
-     * class DialogButtonContent
-     *  Dialog button content that has label and click listener
-     */
-    public static class DialogButtonContent {
-        /**
-         * label
-         * label of the button
-         */
-        private String mLabel;
-
-        /**
-         * clickListener
-         *  click listener of the button
-         */
-        private DialogInterface.OnClickListener mClickListener;
-
-
-        /**
-         * interface OnEditConfirmedListener
-         */
-        public interface OnEditConfirmedListener {
-            void onEditConfirmed(String text);
-        }
-
-        private OnEditConfirmedListener mOnEditConfirmedListener;
-
-        /**
-         * Edit text content
-         * Constructor
-         * @param label label of the button
-         * @param onEditConfirmedListener click listener of the button
-         */
-        public DialogButtonContent(String label, @NonNull OnEditConfirmedListener onEditConfirmedListener) {
-            mLabel = label;
-            mOnEditConfirmedListener = onEditConfirmedListener;
-        }
-
-        /**
-         * Show info
-         * Constructor
-         * @param label label of the button
-         * @param clickListener click listener of the button
-         */
-        public DialogButtonContent(String label, DialogInterface.OnClickListener clickListener) {
-            mLabel = label;
-            mClickListener = clickListener;
-        }
-
-        public String getLabel() {
-            return mLabel;
-        }
-
-        public DialogInterface.OnClickListener getClickListener() {
-            return mClickListener;
-        }
-
-        public OnEditConfirmedListener getOnEditConfirmedListener() {
-            return mOnEditConfirmedListener;
-        }
-
-
-    }
-
-    /**
      * showDialog
-     *  Show dialog
-     * @param context context
-     * @param title title of the dialog
-     * @param message message of the dialog
+     * Show dialog
+     *
+     * @param context               context
+     * @param title                 title of the dialog
+     * @param message               message of the dialog
      * @param positiveButtonContent positive button content
      * @param negativeButtonContent negative button content
      */
@@ -171,14 +114,14 @@ public final class GameUtil {
         builder.show();
     }
 
-
     /**
      * showEditDialog
-     *  Show edit dialog
-     * @param context context
-     * @param title title of the dialog
-     * @param hint hint of the edit text
-     * @param initialText initial text of the edit text
+     * Show edit dialog
+     *
+     * @param context               context
+     * @param title                 title of the dialog
+     * @param hint                  hint of the edit text
+     * @param initialText           initial text of the edit text
      * @param positiveButtonContent positive button content
      * @param negativeButtonContent negative button content
      */
@@ -215,6 +158,101 @@ public final class GameUtil {
 
         // show
         builder.show();
+    }
+
+    /**
+     * debugDraw
+     * Draw debug lines on the canvas
+     *
+     * @param canvas canvas to draw on
+     */
+    public static void debugDraw(Canvas canvas) {
+        log(UTil_TAG, "debugDraw");
+        // draw debug grid lines
+        Paint debugPaint = new Paint();
+        debugPaint.setColor(Color.GREEN);
+        debugPaint.setStrokeWidth(2f);
+        debugPaint.setTextSize(30f);
+
+        // draw debug grid lines on the canvas (every 20px)
+        for (int y = 0; y < canvas.getHeight(); y += 200) {
+            canvas.drawLine(0, y, canvas.getWidth(), y, debugPaint);
+            canvas.drawText("Y=" + y, 10, y + 30, debugPaint);
+        }
+
+        // draw debug grid lines on the canvas (every 20px)
+        for (int x = 0; x < canvas.getWidth(); x += 200) {
+            canvas.drawLine(x, 0, x, canvas.getHeight(), debugPaint);
+            canvas.drawText("X=" + x, x + 10, 40, debugPaint);
+        }
+
+        // draw debug center line
+        canvas.drawCircle(canvas.getWidth() / 2f, canvas.getHeight() / 2f, 10f, debugPaint);
+        canvas.drawText("Center", canvas.getWidth() / 2f + 10, canvas.getHeight() / 2f + 10, debugPaint);
+    }
+
+    /**
+     * class DialogButtonContent
+     * Dialog button content that has label and click listener
+     */
+    public static class DialogButtonContent {
+        /**
+         * label
+         * label of the button
+         */
+        private String mLabel;
+
+        /**
+         * clickListener
+         * click listener of the button
+         */
+        private DialogInterface.OnClickListener mClickListener;
+        private OnEditConfirmedListener mOnEditConfirmedListener;
+
+        /**
+         * Edit text content
+         * Constructor
+         *
+         * @param label                   label of the button
+         * @param onEditConfirmedListener click listener of the button
+         */
+        public DialogButtonContent(String label, @NonNull OnEditConfirmedListener onEditConfirmedListener) {
+            mLabel = label;
+            mOnEditConfirmedListener = onEditConfirmedListener;
+        }
+
+        /**
+         * Show info
+         * Constructor
+         *
+         * @param label         label of the button
+         * @param clickListener click listener of the button
+         */
+        public DialogButtonContent(String label, DialogInterface.OnClickListener clickListener) {
+            mLabel = label;
+            mClickListener = clickListener;
+        }
+
+        public String getLabel() {
+            return mLabel;
+        }
+
+        public DialogInterface.OnClickListener getClickListener() {
+            return mClickListener;
+        }
+
+        public OnEditConfirmedListener getOnEditConfirmedListener() {
+            return mOnEditConfirmedListener;
+        }
+
+        /**
+         * interface OnEditConfirmedListener
+         */
+        public interface OnEditConfirmedListener {
+            void onEditConfirmed(String text);
+        }
+
+
     }
 
 }

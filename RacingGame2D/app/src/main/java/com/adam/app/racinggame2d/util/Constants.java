@@ -18,7 +18,7 @@ public final class Constants {
     public static final float MAX_SPEED = 900f;   // px/s
     public static final float MIN_SPEED = 100f;   // px/s
     public static final float HORIZONTAL_RATIO = 0.7f; // Control the horizontal speed of the car.
-
+    public static final int BOUNDARY_VALUE = 40;
     // === SharedPreferences Keys ===
     public static final String PREF_NAME = "racing_game_prefs";
     public static final String PREF_PLAYER_NAME = "player_name";
@@ -30,6 +30,7 @@ public final class Constants {
     public static final int SOUND_BUTTON = 3;
     // === Intent keys ===
     public static final String PLAYER_NAME = "key.player.name";
+
 
 
     private Constants() {
