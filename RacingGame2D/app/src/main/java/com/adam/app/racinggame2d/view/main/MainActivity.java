@@ -20,6 +20,7 @@ import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.databinding.ActivityMainBinding;
 import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
+import com.adam.app.racinggame2d.view.about.AboutActivity;
 import com.adam.app.racinggame2d.view.game.GameActivity;
 import com.adam.app.racinggame2d.view.setting.SettingsActivity;
 import com.adam.app.racinggame2d.viewmodel.MainViewModel;
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         navigationActions.put(MainViewModel.NavigateEvent.START_GAME, this::showPlayerNameDialog);
         navigationActions.put(MainViewModel.NavigateEvent.LEADER_BOARD, this::showNoImplement);
         navigationActions.put(MainViewModel.NavigateEvent.SETTING, this::gotoSettings);
-        navigationActions.put(MainViewModel.NavigateEvent.ABOUT, this::showNoImplement);
+        navigationActions.put(MainViewModel.NavigateEvent.ABOUT, this::gotoAbout);
         navigationActions.put(MainViewModel.NavigateEvent.EXIT, this::finish);
 
         // observer
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
     private void intView() {
         // button click listener
@@ -138,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
     private void gotoSettings() {
         // go to settings activity
         Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    /**
+     * gotoAbout
+     */
+    private void gotoAbout() {
+        // go to about activity
+        Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 

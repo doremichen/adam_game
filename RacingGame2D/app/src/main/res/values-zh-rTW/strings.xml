@@ -30,6 +30,9 @@
     <string name="racinggame2d_slow_down_btn">減速</string>
     <string name="racinggame2d_game_over_dlog_title">Game Over</string>
     <string name="racinggame2d_game_over_dlg_content">你想要再玩一次嗎？</string>
+    <string name="racinggame2d_about_racing_game_title">關於賽車大冒險</string>
+    <string name="racinggame2d_about_instruction">Racing Game 2D 是一款充滿速度與挑戰的賽車遊戲。玩家可以透過簡單的操作體驗逼真的駕駛感受，閃避障礙、收集道具、挑戰極限分數。快來展現你的反應力與技巧，征服賽道吧！</string>
+    <string name="racinggame2d_about_exit_btn">離開</string>
 
 
     <string-array name="difficulty_levels">

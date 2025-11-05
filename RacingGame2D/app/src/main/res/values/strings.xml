@@ -30,6 +30,9 @@
     <string name="racinggame2d_slow_down_btn">slow down</string>
     <string name="racinggame2d_game_over_dlog_title">Game Over</string>
     <string name="racinggame2d_game_over_dlg_content">Do you want to restart the game?</string>
+    <string name="racinggame2d_about_racing_game_title">About Racing Game</string>
+    <string name="racinggame2d_about_instruction">Racing Game 2D is a racing game full of speed and challenge. Players can experience realistic driving through simple controls, dodging obstacles, collecting items, and challenging their limits. Show off your reflexes and skills, and conquer the track!</string>
+    <string name="racinggame2d_about_exit_btn">Exit</string>
 
 
     <string-array name="difficulty_levels">
