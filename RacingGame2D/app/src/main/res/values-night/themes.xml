@@ -4,4 +4,6 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+    <style name="Theme.RacingGame2D" parent="Base.Theme.RacingGame2D">
+    </style>
 </resources>
