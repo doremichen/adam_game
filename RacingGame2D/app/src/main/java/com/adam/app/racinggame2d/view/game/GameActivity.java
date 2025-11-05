@@ -8,12 +8,14 @@
  */
 package com.adam.app.racinggame2d.view.game;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -73,6 +75,8 @@ public class GameActivity extends AppCompatActivity {
             if (isGameOver) {
                 // stop the game
                 mViewModel.stopGame();
+                // save game result
+                mViewModel.saveGameResult();
                 // show game over dialog
                 showGameOverDialog();
             }
@@ -80,6 +84,30 @@ public class GameActivity extends AppCompatActivity {
 
 
         setupFooterButtons();
+
+        // register back button listener
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // stop the game
+                mViewModel.pauseGame();
+                showExitConfirmDialog();
+            }
+        });
+    }
+
+    private void showExitConfirmDialog() {
+        GameUtil.DialogButtonContent positive = new GameUtil.DialogButtonContent(getString(R.string.racinggame2d_dlg_ok_btn_label), (dialog, which) -> {
+            // save
+            mViewModel.saveGameResult();
+            // finish the activity
+            finish();
+        });
+        GameUtil.DialogButtonContent negative = new GameUtil.DialogButtonContent(getString(R.string.racinggame2d_dlg_cancel_btn_label), (dialog, which) -> {
+            // start game
+            mViewModel.resumeGame();
+        });
+        GameUtil.showDialog(this, getString(R.string.racinggame2d_exit_dlg_title), getString(R.string.racinggame2d_exit_dlg_content), positive, negative);
 
     }
 
@@ -118,13 +146,12 @@ public class GameActivity extends AppCompatActivity {
         });
 
         mBinding.buttonSpeedUp.setOnClickListener(v -> {
-                mViewModel.speedUp(true);
+            mViewModel.speedUp(true);
         });
 
         mBinding.buttonSlowDown.setOnClickListener(v -> {
-                mViewModel.speedUp(false);
+            mViewModel.speedUp(false);
         });
-
 
 
 //        // left button

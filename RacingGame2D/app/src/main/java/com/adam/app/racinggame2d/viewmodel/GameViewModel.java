@@ -16,10 +16,12 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.adam.app.racinggame2d.data.LeaderboardEntity;
 import com.adam.app.racinggame2d.model.entity.Car;
 import com.adam.app.racinggame2d.model.entity.Obstacle;
 import com.adam.app.racinggame2d.model.entity.Player;
 import com.adam.app.racinggame2d.model.entity.Track;
+import com.adam.app.racinggame2d.model.repository.LeaderboardRepository;
 import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.util.SharedPrefHelper;
@@ -45,8 +47,12 @@ public class GameViewModel extends AndroidViewModel {
     // Game state
     private GameState mGameState = GameState.IDLE;
 
+    // repository
+    private final LeaderboardRepository mRepository;
+
     public GameViewModel(@NonNull Application application) {
         super(application);
+        mRepository = new LeaderboardRepository(application);
     }
 
     /**
@@ -281,6 +287,21 @@ public class GameViewModel extends AndroidViewModel {
         mGameEngine.speedUp(isSpeedUp);
     }
 
+
+    /**
+     * saveGameResult
+     * save game result to database
+     */
+    public void saveGameResult() {
+        // get player name from shared preferences
+        String playerName = SharedPrefHelper.getInstance(getApplication()).getPlayerName();
+        // get score from game engine
+        int score = mGameEngine.getScore();
+        // build leaderboard entity
+        LeaderboardEntity entity = new LeaderboardEntity(playerName, score, System.currentTimeMillis());
+        // save to database
+        mRepository.addScore(entity);
+    }
 
     /**
      * enum GameState

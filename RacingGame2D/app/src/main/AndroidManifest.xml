@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RacingGame2D">
         <activity
+            android:name=".view.leaderboard.LeaderBoardActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.about.AboutActivity"
             android:exported="false" />
         <activity

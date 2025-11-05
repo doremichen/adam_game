@@ -22,6 +22,7 @@ import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.view.about.AboutActivity;
 import com.adam.app.racinggame2d.view.game.GameActivity;
+import com.adam.app.racinggame2d.view.leaderboard.LeaderBoardActivity;
 import com.adam.app.racinggame2d.view.setting.SettingsActivity;
 import com.adam.app.racinggame2d.viewmodel.MainViewModel;
 
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         // define event map table
         Map<MainViewModel.NavigateEvent, Runnable> navigationActions = new HashMap<>();
         navigationActions.put(MainViewModel.NavigateEvent.START_GAME, this::showPlayerNameDialog);
-        navigationActions.put(MainViewModel.NavigateEvent.LEADER_BOARD, this::showNoImplement);
+        navigationActions.put(MainViewModel.NavigateEvent.LEADER_BOARD, this::gotoLeaderBoard);
         navigationActions.put(MainViewModel.NavigateEvent.SETTING, this::gotoSettings);
         navigationActions.put(MainViewModel.NavigateEvent.ABOUT, this::gotoAbout);
         navigationActions.put(MainViewModel.NavigateEvent.EXIT, this::finish);
@@ -151,6 +152,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
+
+    private void gotoLeaderBoard() {
+        // go to leader board activity
+        Intent intent = new Intent(this, LeaderBoardActivity.class);
+        startActivity(intent);
+    }
+
 
 
 

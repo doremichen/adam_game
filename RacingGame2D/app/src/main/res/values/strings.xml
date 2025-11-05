@@ -33,6 +33,15 @@
     <string name="racinggame2d_about_racing_game_title">About Racing Game</string>
     <string name="racinggame2d_about_instruction">Racing Game 2D is a racing game full of speed and challenge. Players can experience realistic driving through simple controls, dodging obstacles, collecting items, and challenging their limits. Show off your reflexes and skills, and conquer the track!</string>
     <string name="racinggame2d_about_exit_btn">Exit</string>
+    <string name="racinggame2d_leaderboard_title">Leaderboard</string>
+    <string name="racinggame2d_leaderboard_close_btn">Close</string>
+    <string name="racinggame2d_item_rank_tv">1</string>
+    <string name="racinggame2d_item_name_tv">Player</string>
+    <string name="racinggame2d_item_score_tv">9999</string>
+    <string name="racinggame2d_item_time_tv">2025/11/05 12:00</string>
+    <string name="racinggame2d_exit_dlg_title">Exit Game</string>
+    <string name="racinggame2d_exit_dlg_content">Are you sure you want to exit the game?</string>
+    <string name="racinggame2d_no_data_tv">No data</string>
 
 
     <string-array name="difficulty_levels">
