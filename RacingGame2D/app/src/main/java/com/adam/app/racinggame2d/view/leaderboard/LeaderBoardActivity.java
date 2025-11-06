@@ -13,6 +13,7 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.adam.app.racinggame2d.databinding.ActivityLeaderBoardBinding;
@@ -82,6 +83,12 @@ public class LeaderBoardActivity extends AppCompatActivity {
         info("setupRecycleView");
         // set layout manager
         mBinding.recyclerLeaderboard.setLayoutManager(new LinearLayoutManager(this));
+
+        // initial RecyclerView divider
+        DividerItemDecoration divider = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        mBinding.recyclerLeaderboard.addItemDecoration(divider);
+
+
 
         // set adapter
         mBinding.recyclerLeaderboard.setAdapter(mAdapter);
