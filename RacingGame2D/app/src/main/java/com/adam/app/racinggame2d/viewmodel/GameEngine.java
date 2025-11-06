@@ -265,6 +265,7 @@ public class GameEngine {
 
     public void reset() {
         mPlayer.reset();
+        mTrack.reset();
     }
 
     public void moveHorizontally(boolean isLeft) {

@@ -40,6 +40,9 @@ public class Track {
     private final List<Obstacle> mObstacles;
     // scroll offset
     private float mScrollOffsetY = 0f;
+    // backup check points
+    private final List<PointF> mBackupCheckPoints;
+
 
     /**
      * Constructor
@@ -53,7 +56,10 @@ public class Track {
         this.mWidth = width;
         this.mHeight = height;
 
-        this.mCheckPoints = checkPoints != null ? new ArrayList<>(checkPoints) : new ArrayList<>();
+        this.mCheckPoints = checkPoints != null ? checkPoints : new ArrayList<>();
+
+        mBackupCheckPoints = new ArrayList<>();
+        mBackupCheckPoints.addAll(mCheckPoints);
 
         this.mObstacles = new ArrayList<>();
     }
@@ -119,22 +125,27 @@ public class Track {
         }
 
         // check points
-        if (mCheckPoints != null && !mCheckPoints.isEmpty()) {
-            Iterator<PointF> iterator = mCheckPoints.iterator();
-            while (iterator.hasNext()) {
-                PointF checkPoint = iterator.next();
-                float dx = carPosition.x - checkPoint.x;
-                float dy = carPosition.y - checkPoint.y;
-                float dist = (float) Math.sqrt(dx * dx + dy * dy);
-                // check if car is close to check point
-                if (dist <= CHECKPOINT_RADIUS) {
-                    // call callback
-                    callback.onCheckPointReached();
-                    // remove check point
-                    iterator.remove();
+        if (mCheckPoints != null) {
+            if (mCheckPoints.isEmpty()) {
+                GameUtil.log(TAG, "check points is empty");
+                // restore check points
+                mCheckPoints.addAll(mBackupCheckPoints);
+            } else {
+                Iterator<PointF> iterator = mCheckPoints.iterator();
+                while (iterator.hasNext()) {
+                    PointF checkPoint = iterator.next();
+                    float dx = carPosition.x - checkPoint.x;
+                    float dy = carPosition.y - checkPoint.y;
+                    float dist = (float) Math.sqrt(dx * dx + dy * dy);
+                    // check if car is close to check point
+                    if (dist <= CHECKPOINT_RADIUS) {
+                        // call callback
+                        callback.onCheckPointReached();
+                        // remove check point
+                        iterator.remove();
+                    }
                 }
             }
-
         }
 
         // check collisions with obstacles
@@ -221,6 +232,13 @@ public class Track {
 
     public float getHeight() {
         return mHeight;
+    }
+
+    public void reset() {
+        mScrollOffsetY = 0f;
+        mCheckPoints.clear();
+        mCheckPoints.addAll(mBackupCheckPoints);
+        generateRandomObstacles(8);
     }
 
     /**

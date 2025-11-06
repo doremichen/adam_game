@@ -180,7 +180,7 @@ public class Car {
         GameUtil.log(TAG, "reset: " + this.toString());
     }
 
-    public static class DefaultInfo {
+    private static class DefaultInfo {
         private final String mId;
         // mName
         private final String mName;
