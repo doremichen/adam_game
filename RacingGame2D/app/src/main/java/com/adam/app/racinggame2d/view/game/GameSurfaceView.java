@@ -116,7 +116,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         canvas.drawColor(0xff000000);
 
         // draw background
-        mPaint.setColor(Color.DKGRAY);
+        mPaint.setColor(Color.WHITE);
         canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mPaint);
 
         // draw checkpoint
