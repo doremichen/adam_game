@@ -56,6 +56,6 @@ public class Obstacle {
      * Type of obstacle
      */
     public enum Type {
-        OIL, ROCK, BOOST
+        OIL, ROCK, BOOST, NONE
     }
 }

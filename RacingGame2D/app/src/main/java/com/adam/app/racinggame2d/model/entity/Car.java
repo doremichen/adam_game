@@ -33,6 +33,10 @@ public class Car {
     private float mHorizontalSpeed = 0f;
     private DefaultInfo mDefault;
 
+    // --- Slip Control ---
+    private boolean mIsSlipping = false;  //used to check if slipping
+    private float mSlipTimer = 0f; // the remaining time of slipping
+    private static final float SLIP_DURATION = 2.0f;    // slip duration
 
     /**
      * Constructor
@@ -154,7 +158,47 @@ public class Car {
      * @param isLeft : boolean
      */
     public void moveHorizontally(boolean isLeft) {
-        this.mPosition.x += isLeft ? -Constants.HORIZONTAL_INCREMENT : Constants.HORIZONTAL_INCREMENT;
+        float distance = Constants.HORIZONTAL_INCREMENT;
+        // slip
+        if (mIsSlipping) {
+            float randomFactor = (float) (Math.random() * 2 - 1);
+            distance *= 0.7f + (randomFactor * 0.3f);
+
+            // slip randomly
+            if (Math.random() < 0.2) {
+                isLeft = !isLeft;
+            }
+        }
+        this.mPosition.x += isLeft ? -distance : distance;
+    }
+
+    /**
+     * moveVertically
+     * move instance up or down by speed multiple by delta time
+     *
+     */
+    public void startSlip() {
+        if (mIsSlipping) {
+            return;
+        }
+        mIsSlipping = true;
+        mSlipTimer = SLIP_DURATION;
+        GameUtil.log(TAG, "startSlip");
+    }
+
+    /**
+     * updateSlip
+     * update slip timer
+     * @param deltaTime : float
+     */
+    public void updateSlip(float deltaTime) {
+        if (mIsSlipping) {
+            mSlipTimer -= deltaTime;
+            if (mSlipTimer <= 0f) {
+                mIsSlipping = false;
+            }
+        }
+        GameUtil.log(TAG, "updateSlip: " + mSlipTimer);
     }
 
     @NonNull

@@ -38,10 +38,12 @@ public class Track {
     private final List<PointF> mCheckPoints;
     // List of Obstacle
     private final List<Obstacle> mObstacles;
-    // scroll offset
-    private float mScrollOffsetY = 0f;
     // backup check points
     private final List<PointF> mBackupCheckPoints;
+    // Obstacle type
+    private Obstacle.Type mObstacleType = Obstacle.Type.NONE;
+    // scroll offset
+    private float mScrollOffsetY = 0f;
 
 
     /**
@@ -118,11 +120,11 @@ public class Track {
         PointF carPosition = car.getPosition();
         GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
 
-        // boundary check
-        if (isOutOfBoundary(carPosition)) {
-            GameUtil.log(TAG, "car is out of boundary");
-            return true;
-        }
+//        // boundary check
+//        if (isOutOfBoundary(carPosition)) {
+//            GameUtil.log(TAG, "car is out of boundary");
+//            return true;
+//        }
 
         // check points
         if (mCheckPoints != null) {
@@ -155,6 +157,7 @@ public class Track {
             float dist = (float) Math.sqrt(dx * dx + dy * dy);
             if (dist <= obstacle.getRadius()) {
                 GameUtil.log(TAG, "car is hit by obstacle");
+                mObstacleType = obstacle.getType();
                 return true;
             }
         }
@@ -162,23 +165,40 @@ public class Track {
         return false;
     }
 
+//    /**
+//     * isOutOfBoundary
+//     * check if the car is out of boundary
+//     *
+//     * @param carPosition PointF
+//     * @return boolean
+//     * true: if the car is out of boundary
+//     * false: if the car is not out of boundary
+//     */
+//    private boolean isOutOfBoundary(PointF carPosition) {
+//        // log
+//        GameUtil.log(TAG, "isOutOfBoundary");
+//        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
+//        GameUtil.log(TAG, "mWidth: " + mWidth + ", mHeight: " + mHeight);
+//
+//        return carPosition.x <= Constants.BOUNDARY_VALUE || carPosition.x >= mWidth - Constants.BOUNDARY_VALUE;
+//    }
+
     /**
-     * isOutOfBoundary
+     * checkBoundary
      * check if the car is out of boundary
      *
-     * @param carPosition PointF
+     * @param car Car
      * @return boolean
      * true: if the car is out of boundary
      * false: if the car is not out of boundary
      */
-    private boolean isOutOfBoundary(PointF carPosition) {
-        // log
-        GameUtil.log(TAG, "isOutOfBoundary");
-        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
-        GameUtil.log(TAG, "mWidth: " + mWidth + ", mHeight: " + mHeight);
-
+    public boolean checkBoundary(Car car) {
+        // car position
+        PointF carPosition = car.getPosition();
         return carPosition.x <= Constants.BOUNDARY_VALUE || carPosition.x >= mWidth - Constants.BOUNDARY_VALUE;
     }
+
+
 
     /**
      * scroll
@@ -211,20 +231,25 @@ public class Track {
         scroll(scrollSpeed * deltaTime);
     }
 
-    //--- set ---
-    public void setCheckPoints(List<PointF> checkPoints){
-        this.mCheckPoints.clear();
-        this.mCheckPoints.addAll(checkPoints);
-    }
-
     //--- get ---
     public List<PointF> getCheckPoints() {
         return mCheckPoints;
     }
 
+    //--- set ---
+    public void setCheckPoints(List<PointF> checkPoints) {
+        this.mCheckPoints.clear();
+        this.mCheckPoints.addAll(checkPoints);
+    }
+
     public List<Obstacle> getObstacles() {
         return mObstacles;
     }
+
+    public Obstacle.Type getObstacleType() {
+        return mObstacleType;
+    }
+
 
     public float getWidth() {
         return mWidth;
@@ -240,6 +265,7 @@ public class Track {
         mCheckPoints.addAll(mBackupCheckPoints);
         generateRandomObstacles(8);
     }
+
 
     /**
      * interface checkPointCallback

@@ -31,14 +31,6 @@ public class Player {
     }
 
     /**
-     * reset score
-     */
-    public void resetScore() {
-        mPlayerScore = 0;
-    }
-
-
-    /**
      * addScore
      *  add score to player
      * @param score: Int

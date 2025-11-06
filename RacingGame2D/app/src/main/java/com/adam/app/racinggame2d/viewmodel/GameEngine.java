@@ -173,33 +173,34 @@ public class GameEngine {
      */
     private void update(float deltaTime) {
         GameUtil.log(TAG, "update");
-        // update car speed
-        Car car = mPlayer.getCar();
-        GameUtil.log(TAG, "===== car speed: ==== " + car.getSpeed());
+        if (mPlayer == null || mTrack == null) {
+            GameUtil.error(TAG, "player or track is null");
+            return;
+        }
 
-        // scroll background
-        float scrollSpeed = car.getSpeed(); // the car speed is convert to background scroll speed
+        Car car = mPlayer.getCar();
+        float scrollSpeed = car.getSpeed();
+        // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
 
-        // range check (width = 1080)
-        float xPosition = car.getPosition().x;
-        float yPosition = car.getPosition().y;
-        xPosition = Math.max(Constants.BOUNDARY_VALUE, Math.min(mTrack.getWidth() - Constants.BOUNDARY_VALUE, xPosition));
-        car.setPosition(new PointF(xPosition, yPosition));
+        // update car position
+        updateCarPosition(car);
+
+        // boundary check
+        if (mTrack.checkBoundary(car)) {
+            gameOver();
+        }
+
+        // check if slipped
+        car.updateSlip(deltaTime);
 
         // detect collision: use fixed car position to detect
-        boolean collided = mTrack.checkCollisions(car, () -> {
-            mPlayer.addScore(50);
+        if ( mTrack.checkCollisions(car, () -> {
+            mPlayer.addScore(Constants.COLLISION_SCORE);
             // play collision sound effect
             mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
-        });
-        if (collided) {
-            stop();
-
-            // notify game over
-            if (mGameOverCallback != null) {
-                mGameOverCallback.onGameOver();
-            }
+        })) {
+            handleObstacleEffect(car);
         }
 
         // update game view
@@ -207,6 +208,39 @@ public class GameEngine {
             mUpdateCallback.onUpdate();
         }
 
+    }
+
+    private void handleObstacleEffect(Car car) {
+        Obstacle.Type type = mTrack.getObstacleType();
+        GameUtil.log(TAG, "collided: " + type.name());
+        switch (type) {
+            case OIL:  // This causes the car to skid and become difficult to control.
+                car.startSlip();
+                break;
+            case ROCK:
+                break;
+            case BOOST:
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + type);
+        }
+    }
+
+    private void updateCarPosition(Car car) {
+        // update car position (width = 1080)
+        float xPosition = car.getPosition().x;
+        float yPosition = car.getPosition().y;
+        xPosition = Math.max(Constants.BOUNDARY_VALUE, Math.min(mTrack.getWidth() - Constants.BOUNDARY_VALUE, xPosition));
+        car.setPosition(new PointF(xPosition, yPosition));
+    }
+
+    private void gameOver() {
+        stop();
+
+        // notify game over
+        if (mGameOverCallback != null) {
+            mGameOverCallback.onGameOver();
+        }
     }
 
     /**
