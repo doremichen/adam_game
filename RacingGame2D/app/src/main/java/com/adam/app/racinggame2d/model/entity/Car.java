@@ -18,7 +18,8 @@ import com.adam.app.racinggame2d.util.GameUtil;
 public class Car {
     // TAG
     private static final String TAG = Car.class.getSimpleName();
-
+    private static final float SLIP_DURATION = 2.0f;    // slip duration
+    private static final float BOOST_DURATION = 3.0f;  // boost duration
     // mId
     private String mId;
     // mName
@@ -32,11 +33,15 @@ public class Car {
     // horizontal speed of car
     private float mHorizontalSpeed = 0f;
     private DefaultInfo mDefault;
-
     // --- Slip Control ---
     private boolean mIsSlipping = false;  //used to check if slipping
     private float mSlipTimer = 0f; // the remaining time of slipping
-    private static final float SLIP_DURATION = 2.0f;    // slip duration
+    // --- Boost Control ---
+    private boolean mIsBoosting = false;  //used to check if boosting
+    private float mBoostTimer = 0f; // the remaining time of boosting
+    private float mBoostFactor = 1.5f;  // the boost factor
+    private float mOriginalSpeedBeforeBoost = 0f;   // record the original speed
+
 
     /**
      * Constructor
@@ -96,18 +101,6 @@ public class Car {
             this.mSpeed = Constants.MIN_SPEED;
             GameUtil.log(TAG, "mSpeed: " + this.mSpeed);
         }
-    }
-
-    /**
-     * moveHorizontallyEx
-     * move instance left or right by speed multiple by delta time
-     *
-     * @param deltaTime : float
-     * @param isLeft    : boolean
-     */
-    public void moveHorizontallyEx(float deltaTime, boolean isLeft) {
-        float distance = mSpeed * Constants.HORIZONTAL_RATIO * deltaTime;
-        this.mPosition.x += isLeft ? -distance : distance;
     }
 
     /**
@@ -175,10 +168,10 @@ public class Car {
     /**
      * moveVertically
      * move instance up or down by speed multiple by delta time
-     *
      */
     public void startSlip() {
         if (mIsSlipping) {
+            GameUtil.log(TAG, "startSlip: already slipping");
             return;
         }
         mIsSlipping = true;
@@ -189,6 +182,7 @@ public class Car {
     /**
      * updateSlip
      * update slip timer
+     *
      * @param deltaTime : float
      */
     public void updateSlip(float deltaTime) {
@@ -199,6 +193,38 @@ public class Car {
             }
         }
         GameUtil.log(TAG, "updateSlip: " + mSlipTimer);
+    }
+
+
+    public void startBoost() {
+        if (mIsBoosting) {
+            GameUtil.log(TAG, "startBoost: already boosting");
+            mBoostTimer = BOOST_DURATION;   //reset boost timer
+            return;
+        }
+
+        this.mOriginalSpeedBeforeBoost = mSpeed;
+        this.mSpeed *= mBoostFactor;
+        mIsBoosting = true;
+        mBoostTimer = BOOST_DURATION;
+
+        // Limit speed
+        if (this.mSpeed > Constants.MAX_SPEED) {
+            this.mSpeed = Constants.MAX_SPEED;
+        }
+
+        GameUtil.log(TAG, "startBoost");
+    }
+
+    public void updateBoost(float deltaTime) {
+        if (mIsBoosting) {
+            mBoostTimer -= deltaTime;
+            if (mBoostTimer <= 0f) {
+                mIsBoosting = false;
+                mSpeed = Math.min(mOriginalSpeedBeforeBoost, Constants.MAX_SPEED);
+                GameUtil.log(TAG, "Car boost ended, speed reset to " + mSpeed);
+            }
+        }
     }
 
     @NonNull

@@ -193,6 +193,9 @@ public class GameEngine {
 
         // check if slipped
         car.updateSlip(deltaTime);
+        // check if boost
+        car.updateBoost(deltaTime);
+
 
         // detect collision: use fixed car position to detect
         if ( mTrack.checkCollisions(car, () -> {
@@ -220,6 +223,7 @@ public class GameEngine {
             case ROCK:
                 break;
             case BOOST:
+                car.startBoost();
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + type);

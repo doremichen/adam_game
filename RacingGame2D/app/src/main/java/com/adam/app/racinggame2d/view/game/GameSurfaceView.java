@@ -150,7 +150,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         canvas.drawRect(carPosition.x - 30, carPosition.y - 50, carPosition.x + 30, carPosition.y + 10, mPaint);
 
         // draw score
-        mPaint.setColor(Color.WHITE);
+        mPaint.setColor(Color.BLACK);
         mPaint.setTextSize(50f);
         GameUtil.log(TAG, "Score: " + mViewModel.getScore().getValue());
         canvas.drawText("Score: " + mViewModel.getScore().getValue(), 50f, 80f, mPaint);
