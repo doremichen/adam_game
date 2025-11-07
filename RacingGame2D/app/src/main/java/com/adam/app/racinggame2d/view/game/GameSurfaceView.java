@@ -10,26 +10,23 @@ package com.adam.app.racinggame2d.view.game;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.RectF;
-import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.model.entity.Obstacle;
+import com.adam.app.racinggame2d.util.GameImageLoader;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.viewmodel.GameEngine;
 import com.adam.app.racinggame2d.viewmodel.GameViewModel;
 
-public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, GameEngine.GameUpdateListener{
+public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, GameEngine.GameUpdateListener {
     // TAG
     private static final String TAG = "GameSurfaceView";
 
@@ -99,7 +96,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     /**
      * drawGame
-     *   draw game view
+     * draw game view
      *
      * @param canvas
      */
@@ -126,20 +123,29 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         // draw Obstacle
         for (Obstacle obstacle : mViewModel.getObstacles()) {
-            switch (obstacle.getType()) {
-                case OIL:
-                    mPaint.setColor(Color.BLACK);
-                    break;
-                case ROCK:
-                    mPaint.setColor(Color.GRAY);
-                    break;
-                case BOOST:
-                    mPaint.setColor(Color.CYAN);
-                    break;
-            }
-            canvas.drawCircle(obstacle.getPosition().x, obstacle.getPosition().y, 20f, mPaint);
+            PointF pos = obstacle.getPosition();
+            String assetPath = "images/" + obstacle.getType().name().toLowerCase() + ".png"; // 預設用 PNG
+            Bitmap bitmap = GameImageLoader.load(getContext(), assetPath, 80, 80);
 
+            if (bitmap != null) {
+                canvas.drawBitmap(bitmap, pos.x - bitmap.getWidth() / 2f, pos.y - bitmap.getHeight() / 2f, mPaint);
+            }
         }
+//        for (Obstacle obstacle : mViewModel.getObstacles()) {
+//            switch (obstacle.getType()) {
+//                case OIL:
+//                    mPaint.setColor(Color.BLACK);
+//                    break;
+//                case ROCK:
+//                    mPaint.setColor(Color.GRAY);
+//                    break;
+//                case BOOST:
+//                    mPaint.setColor(Color.CYAN);
+//                    break;
+//            }
+//            canvas.drawCircle(obstacle.getPosition().x, obstacle.getPosition().y, 20f, mPaint);
+//
+//        }
 
         // draw car
         // fix car position (not move with background)
