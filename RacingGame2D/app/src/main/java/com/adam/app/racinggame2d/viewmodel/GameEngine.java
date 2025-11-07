@@ -24,7 +24,9 @@ import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.util.SharedPrefHelper;
 import com.adam.app.racinggame2d.util.SoundPlayer;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -241,19 +243,7 @@ public class GameEngine {
     private void handleObstacleEffect(Car car) {
         Obstacle.Type type = mTrack.getObstacleType();
         GameUtil.log(TAG, "collided: " + type.name());
-        switch (type) {
-            case OIL:  // This causes the car to skid and become difficult to control.
-                car.startSlip();
-                break;
-            case ROCK:
-                car.startRock();
-                break;
-            case BOOST:
-                car.startBoost();
-                break;
-            default:
-                throw new IllegalStateException("Unexpected value: " + type);
-        }
+        ObstacleEffectStrategy.handle(type, car);
     }
 
     /**
@@ -292,7 +282,6 @@ public class GameEngine {
     public List<PointF> getCheckPoints() {
         return mTrack.getCheckPoints();
     }
-
 
     /**
      * getObstacles
@@ -365,6 +354,56 @@ public class GameEngine {
      */
     public int getCarHP() {
         return mPlayer.getCar().getCarHP();
+    }
+
+    /**
+     * ObstacleEffectStrategy
+     * handle obstacle effect
+     */
+    private enum ObstacleEffectStrategy {
+        OIL() {
+            @Override
+            void applyTo(Car car) {
+                car.startSlip();
+            }
+
+        },
+        ROCK() {
+            @Override
+            void applyTo(Car car) {
+                car.startRock();
+            }
+
+        },
+        BOOST() {
+            @Override
+            void applyTo(Car car) {
+                car.startBoost();
+            }
+        };
+
+        private static final Map<Obstacle.Type, ObstacleEffectStrategy> MAP = new HashMap<>() {
+            {
+                put(Obstacle.Type.OIL, OIL);
+                put(Obstacle.Type.ROCK, ROCK);
+                put(Obstacle.Type.BOOST, BOOST);
+            }
+        };
+
+
+        private ObstacleEffectStrategy() {
+        }
+
+        public static void handle(Obstacle.Type type, Car car) {
+            ObstacleEffectStrategy strategy = MAP.get(type);
+            if (strategy != null) {
+                strategy.applyTo(car);
+            } else {
+                throw new IllegalStateException("Unexpected value: " + type);
+            }
+        }
+
+        abstract void applyTo(Car car);
     }
 
 
