@@ -157,16 +157,7 @@ public class Car {
     public int getCarHP() {
         return mCarHP;
     }
-
-    public void decreaseCarHP() {
-        mCarHP--;
-        GameUtil.log(TAG, "decreaseCarHP: " + mCarHP);
-    }
-
-    public void resetCarHP() {
-        mCarHP = 3;
-    }
-
+    
     /**
      * moveHorizontally
      * move instance left or right by speed multiple by delta time

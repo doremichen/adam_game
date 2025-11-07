@@ -24,6 +24,7 @@ import com.adam.app.racinggame2d.databinding.ActivityGameBinding;
 import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.util.SharedPrefHelper;
+import com.adam.app.racinggame2d.util.LongPressButtonHelper;
 import com.adam.app.racinggame2d.viewmodel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity {
@@ -131,14 +132,7 @@ public class GameActivity extends AppCompatActivity {
             //GameUtil.showToast(this, "Left button clicked");
             mViewModel.moveHorizontally(true);
         });
-//
-//        mBinding.buttonLeft.setOnLongClickListener(v -> {
-//            // SHOW TOAST MESAGE
-//            GameUtil.showToast(this, "Left button long clicked");
-//            return true;
-//        });
-//
-//
+
         mBinding.buttonRight.setOnClickListener(v -> {
             // SHOW TOAST MESAGE
             //GameUtil.showToast(this, "right button clicked");
@@ -153,20 +147,20 @@ public class GameActivity extends AppCompatActivity {
             mViewModel.speedUp(false);
         });
 
-
-//        // left button
-//        bindButtonRepeatAction(mBinding.buttonLeft, () -> mViewModel.moveLeft(true), 16, () -> mViewModel.moveLeft(false));
-//
-//        // right button
-//        bindButtonRepeatAction(mBinding.buttonRight, () -> mViewModel.moveRight(true), 16, () -> mViewModel.moveRight(false));
-//
-//        // accelaration button
-//        bindButtonRepeatAction(mBinding.buttonSpeedUp, () -> mViewModel.speedUp(true), 100, null);
-//
-//        // slow down button
-//        bindButtonRepeatAction(mBinding.buttonSlowDown, () -> mViewModel.speedUp(false), 100, null);
-
-    }
+        // --- long press button action ---
+        LongPressButtonHelper.attach(mBinding.buttonLeft, 100L, () -> {
+            mViewModel.moveHorizontally(true);
+        });
+        LongPressButtonHelper.attach(mBinding.buttonRight, 100L, () -> {
+            mViewModel.moveHorizontally(false);
+        });
+        LongPressButtonHelper.attach(mBinding.buttonSpeedUp, 100L, () -> {
+            mViewModel.speedUp(true);
+        });
+        LongPressButtonHelper.attach(mBinding.buttonSlowDown, 100L, () -> {
+            mViewModel.speedUp(false);
+        });
+  }
 
     @Override
     protected void onResume() {
@@ -194,39 +188,4 @@ public class GameActivity extends AppCompatActivity {
         mViewModel.stopGame();
     }
 
-    /**
-     * Bind a button to a long press action.
-     *
-     * @param button     The button to bind.
-     * @param actionDown The action to perform when the button is pressed.
-     * @param intervalMs The interval between each action.
-     * @param actionUp   The action to perform when the button is released.
-     */
-    private void bindButtonRepeatAction(View button, Runnable actionDown, long intervalMs, Runnable actionUp) {
-        final Runnable repeatRunnable = new Runnable() {
-            @Override
-            public void run() {
-                actionDown.run();
-                mHandler.postDelayed(this, intervalMs);
-            }
-        };
-
-        button.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mHandler.post(repeatRunnable);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        mHandler.removeCallbacks(repeatRunnable);
-                        if (actionUp != null) actionUp.run();
-                        break;
-                }
-                return true;
-            }
-
-        });
-    }
 }
