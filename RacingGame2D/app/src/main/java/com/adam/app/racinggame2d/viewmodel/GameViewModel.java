@@ -299,6 +299,10 @@ public class GameViewModel extends AndroidViewModel {
         mRepository.addScore(entity);
     }
 
+    public int getCarHP() {
+        return mGameEngine.getCarHP();
+    }
+
     /**
      * enum GameState
      * define game state

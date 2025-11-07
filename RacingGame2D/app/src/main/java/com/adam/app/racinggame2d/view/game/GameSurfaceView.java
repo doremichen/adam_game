@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -149,11 +150,28 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         GameUtil.log(TAG, "carPosition: " + carPosition.x + ", " + carPosition.y);
         canvas.drawRect(carPosition.x - 30, carPosition.y - 50, carPosition.x + 30, carPosition.y + 10, mPaint);
 
-        // draw score
+        // draw score and hp
         mPaint.setColor(Color.BLACK);
         mPaint.setTextSize(50f);
-        GameUtil.log(TAG, "Score: " + mViewModel.getScore().getValue());
-        canvas.drawText("Score: " + mViewModel.getScore().getValue(), 50f, 80f, mPaint);
+        mPaint.setTypeface(Typeface.DEFAULT_BOLD);
+
+        float marginLeft = 50f;
+        float marginTop = 80f;
+        Integer score = mViewModel.getScore().getValue();
+        int hp = mViewModel.getCarHP();
+
+        // display score
+        canvas.drawText("Score: " + score, marginLeft, marginTop, mPaint);
+
+        // display hp
+        mPaint.setTextSize(45f);
+        // log
+        GameUtil.log(TAG, "HP: " + hp);
+        canvas.drawText("HP: " + hp, marginLeft, marginTop + 50f, mPaint);
+
+
+//        GameUtil.log(TAG, "Score: " + mViewModel.getScore().getValue());
+//        canvas.drawText("Score: " + mViewModel.getScore().getValue(), 50f, 80f, mPaint);
 
     }
 }

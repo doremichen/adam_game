@@ -33,6 +33,10 @@ public class Car {
     // horizontal speed of car
     private float mHorizontalSpeed = 0f;
     private DefaultInfo mDefault;
+    // car life time
+    private int mCarHP = 3;  // hp of car
+
+
     // --- Slip Control ---
     private boolean mIsSlipping = false;  //used to check if slipping
     private float mSlipTimer = 0f; // the remaining time of slipping
@@ -41,6 +45,10 @@ public class Car {
     private float mBoostTimer = 0f; // the remaining time of boosting
     private float mBoostFactor = 1.5f;  // the boost factor
     private float mOriginalSpeedBeforeBoost = 0f;   // record the original speed
+    // --- Rock Control ---
+    private boolean mIsRock = false;
+
+
 
 
     /**
@@ -129,6 +137,8 @@ public class Car {
 
     public void setSpeed(float speed) {
         this.mSpeed = speed;
+        // limit speed range
+        this.mSpeed = Math.max(Constants.MIN_SPEED, Math.min(Constants.MAX_SPEED, this.mSpeed));
     }
 
     public float getAcceleration() {
@@ -142,6 +152,19 @@ public class Car {
     public void setPosition(PointF position) {
         GameUtil.log(TAG, "setPosition: " + position.toString());
         this.mPosition = position;
+    }
+
+    public int getCarHP() {
+        return mCarHP;
+    }
+
+    public void decreaseCarHP() {
+        mCarHP--;
+        GameUtil.log(TAG, "decreaseCarHP: " + mCarHP);
+    }
+
+    public void resetCarHP() {
+        mCarHP = 3;
     }
 
     /**
@@ -227,6 +250,41 @@ public class Car {
         }
     }
 
+    public void startRock() {
+        if (mIsRock) {
+            GameUtil.log(TAG, "startRock: already rock");
+            return;
+        }
+        // set speed to 0
+        this.mSpeed *= 0.7f;
+        // decrease hp
+        this.mCarHP--;
+
+        mIsRock = true;
+        GameUtil.log(TAG, "startRock");
+    }
+
+    public boolean updateRock() {
+        GameUtil.log(TAG, "updateRock: " + mIsRock);
+        if (mIsRock) {
+            if (mCarHP <= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void unsetRock() {
+        GameUtil.log(TAG, "unsetRock");
+        if (!mIsRock) {
+            GameUtil.log(TAG, "unsetRock: not rock");
+            return;
+        }
+
+        mIsRock = false;
+    }
+
+
     @NonNull
     @Override
     public String toString() {
@@ -247,6 +305,10 @@ public class Car {
         this.mAcceleration = mDefault.getAcceleration();
         this.mName = mDefault.getName();
         this.mId = mDefault.getId();
+        this.mIsSlipping = false;
+        this.mIsBoosting = false;
+        this.mIsRock = false;
+        this.mCarHP = 3;
         GameUtil.log(TAG, "reset: " + this.toString());
     }
 

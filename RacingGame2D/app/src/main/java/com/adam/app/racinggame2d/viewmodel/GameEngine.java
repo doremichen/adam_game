@@ -183,18 +183,23 @@ public class GameEngine {
         // the car speed is convert to background scroll speed
         mTrack.update(deltaTime, scrollSpeed);
 
-        // update car position
-        updateCarPosition(car);
+        // update car  x position
+        clampCarXPosition(car);
 
         // boundary check
         if (mTrack.checkBoundary(car)) {
             gameOver();
         }
 
+
         // check if slipped
         car.updateSlip(deltaTime);
         // check if boost
         car.updateBoost(deltaTime);
+        // check if rock
+        if (car.updateRock()) {
+            gameOver();
+        }
 
 
         // detect collision: use fixed car position to detect
@@ -204,6 +209,8 @@ public class GameEngine {
             mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
         })) {
             handleObstacleEffect(car);
+        } else {
+            car.unsetRock();
         }
 
         // update game view
@@ -221,6 +228,7 @@ public class GameEngine {
                 car.startSlip();
                 break;
             case ROCK:
+                car.startRock();
                 break;
             case BOOST:
                 car.startBoost();
@@ -230,7 +238,7 @@ public class GameEngine {
         }
     }
 
-    private void updateCarPosition(Car car) {
+    private void clampCarXPosition(Car car) {
         // update car position (width = 1080)
         float xPosition = car.getPosition().x;
         float yPosition = car.getPosition().y;
@@ -322,6 +330,16 @@ public class GameEngine {
         // car
         Car car = mPlayer.getCar();
         car.updateSpeed(isSpeedUp);
+    }
+
+    /**
+     * getCarHP
+     * get car hp
+     *
+     * @return car hp
+     */
+    public int getCarHP() {
+        return mPlayer.getCar().getCarHP();
     }
 
 
