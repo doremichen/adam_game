@@ -23,6 +23,8 @@ public final class Constants {
     public static final float Default_SPEED = 300f;
     public static final float DEFAULT_ACCELERATOR = 50f;
     public static final int COLLISION_SCORE = 50;
+    public static final int MAX_CAR_HP = 3;
+
     // === SharedPreferences Keys ===
     public static final String PREF_NAME = "racing_game_prefs";
     public static final String PREF_PLAYER_NAME = "player_name";

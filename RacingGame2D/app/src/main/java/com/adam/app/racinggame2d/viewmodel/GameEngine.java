@@ -309,6 +309,16 @@ public class GameEngine {
         return mPlayer.getScore();
     }
 
+    /**
+     * get hp
+     * @return hp value
+     */
+    public int getHp() {
+        Car car = mPlayer.getCar();
+        return car.getCarHP();
+    }
+
+
     public void reset() {
         mPlayer.reset();
         mTrack.reset();

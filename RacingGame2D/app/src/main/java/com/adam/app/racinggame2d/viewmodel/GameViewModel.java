@@ -36,6 +36,9 @@ public class GameViewModel extends AndroidViewModel {
 
     // live data: score
     private MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
+    // live data: hp
+    private MutableLiveData<Integer> mHp = new MutableLiveData<>(3);
+
     // live date: isGameOver
     private MutableLiveData<Boolean> mIsGameOver = new MutableLiveData<>(false);
 
@@ -57,9 +60,18 @@ public class GameViewModel extends AndroidViewModel {
 
     /**
      * get score
+     * @return live data: score
      */
     public LiveData<Integer> getScore() {
         return mScore;
+    }
+
+    /**
+     * get hp
+     * @return live data: hp
+     */
+    public LiveData<Integer> getHp() {
+        return mHp;
     }
 
     /**
@@ -90,6 +102,10 @@ public class GameViewModel extends AndroidViewModel {
      */
     public void updateScore() {
         mScore.postValue(mGameEngine.getScore());
+    }
+
+    public void updateHp() {
+        mHp.postValue(mGameEngine.getCarHP());
     }
 
     /**

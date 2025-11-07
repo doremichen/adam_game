@@ -83,6 +83,17 @@ public class GameActivity extends AppCompatActivity {
             }
         });
 
+        mViewModel.getScore().observe(this, score -> {
+                    String scoreText = getString(R.string.racinggame2d_score_tv, String.valueOf(score));
+                    mBinding.tvScore.setText(scoreText);
+        });
+
+        // progressbar setMax is max car hp
+        mBinding.progressHp.setMax(Constants.MAX_CAR_HP);
+
+        mViewModel.getHp().observe(this, hp -> {
+            mBinding.progressHp.setProgress(hp);
+        });
 
         setupFooterButtons();
 

@@ -42,6 +42,8 @@
     <string name="racinggame2d_exit_dlg_title">Exit Game</string>
     <string name="racinggame2d_exit_dlg_content">Are you sure you want to exit the game?</string>
     <string name="racinggame2d_no_data_tv">No data</string>
+    <string name="racinggame2d_score_tv">Score: %1$s</string>
+    <string name="racinggame2d_hp_tv">HP:</string>
 
 
     <string-array name="difficulty_levels">

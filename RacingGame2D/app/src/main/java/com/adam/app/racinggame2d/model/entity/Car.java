@@ -34,8 +34,7 @@ public class Car {
     private float mHorizontalSpeed = 0f;
     private DefaultInfo mDefault;
     // car life time
-    private int mCarHP = 3;  // hp of car
-
+    private int mCarHP = Constants.MAX_CAR_HP;  // hp of car
 
     // --- Slip Control ---
     private boolean mIsSlipping = false;  //used to check if slipping
@@ -157,7 +156,7 @@ public class Car {
     public int getCarHP() {
         return mCarHP;
     }
-    
+
     /**
      * moveHorizontally
      * move instance left or right by speed multiple by delta time
