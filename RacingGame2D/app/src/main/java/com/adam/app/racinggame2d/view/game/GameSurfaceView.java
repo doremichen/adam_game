@@ -112,15 +112,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             return;
         }
 
-        // draw line to debug
-        GameUtil.debugDraw(canvas);
-
         // clear background
-        canvas.drawColor(0xff000000);
+        canvas.drawColor(Color.WHITE);
 
         // draw background
-        mPaint.setColor(Color.WHITE);
-        canvas.drawRect(0, 0, canvas.getWidth(), canvas.getHeight(), mPaint);
+        drawBackground(canvas);
 
         // draw checkpoint
         mPaint.setColor(Color.YELLOW);
@@ -153,4 +149,26 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         canvas.drawRect(carPosition.x - 30, carPosition.y - 50, carPosition.x + 30, carPosition.y + 10, mPaint);
 
     }
+
+    private void drawBackground(@NonNull Canvas canvas) {
+        GameUtil.log(TAG, "drawBackground");
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+        int gridSize = 100;  // size of block
+
+        mPaint.setColor(Color.BLUE);
+        mPaint.setStrokeWidth(2f);
+        mPaint.setAlpha(80);
+
+        // vertical line
+        for (int x = 0; x <= width; x += gridSize) {
+            canvas.drawLine(x, 0, x, height, mPaint);
+        }
+
+        // horizontal line
+        for (int y = 0; y <= height; y += gridSize) {
+            canvas.drawLine(0, y, width, y, mPaint);
+        }
+    }
+
 }

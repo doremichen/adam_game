@@ -38,7 +38,6 @@ public final class Constants {
     public static final String PLAYER_NAME = "key.player.name";
 
 
-
     private Constants() {
         // avoid to be instantiated
     }

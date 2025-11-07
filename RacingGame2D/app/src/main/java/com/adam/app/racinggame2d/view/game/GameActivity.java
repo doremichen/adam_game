@@ -84,6 +84,8 @@ public class GameActivity extends AppCompatActivity {
         });
 
         mViewModel.getScore().observe(this, score -> {
+                    GameUtil.log(TAG, "score: " + score);
+                    // update score text
                     String scoreText = getString(R.string.racinggame2d_score_tv, String.valueOf(score));
                     mBinding.tvScore.setText(scoreText);
         });

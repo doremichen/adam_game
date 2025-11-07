@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.os.Looper;
 import android.text.InputType;
 import android.util.Log;
@@ -24,6 +25,9 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class GameUtil {
 
@@ -257,5 +261,38 @@ public final class GameUtil {
 
 
     }
+
+    /**
+     * dumpList
+     * Dump the list to the log
+     * @param list list to dump
+     */
+    public static void dumpList(String Name, List<PointF> list) {
+        if (list == null && list.isEmpty()) {
+            return;
+        }
+        log(UTil_TAG, Name + " size: " + list.size());
+        log(UTil_TAG, "============================================");
+        for (PointF pointF : list) {
+            log(UTil_TAG, "dumpList: " + pointF.x + ", " + pointF.y);
+        }
+        log(UTil_TAG, "============================================");
+    }
+
+    /**
+     * deepCopyPoints
+     * Deep copy the list of points
+     * @param source source list
+     * @return copy list
+     */
+    public static List<PointF> deepCopyPoints(List<PointF> source) {
+        List<PointF> copy = new ArrayList<>();
+        for (PointF p : source) {
+            copy.add(new PointF(p.x, p.y)); // deep copy
+        }
+        return copy;
+    }
+
+
 
 }

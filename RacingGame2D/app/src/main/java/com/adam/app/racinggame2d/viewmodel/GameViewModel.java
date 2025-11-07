@@ -101,6 +101,7 @@ public class GameViewModel extends AndroidViewModel {
      * update score
      */
     public void updateScore() {
+        GameUtil.log(TAG, "Update score");
         mScore.postValue(mGameEngine.getScore());
     }
 
@@ -203,10 +204,11 @@ public class GameViewModel extends AndroidViewModel {
         changeState(GameState.IDLE);
         // reset score
         mGameEngine.reset();
+        // reset score
+        mScore.postValue(0);
         // reset game over
         mIsGameOver.postValue(false);
         // start game
-
         changeState(GameState.RUNNING);
     }
 
@@ -252,15 +254,6 @@ public class GameViewModel extends AndroidViewModel {
         return mGameEngine.getCarPosition();
     }
 
-    /**
-     * setCarPosition
-     * set car position
-     *
-     * @param position car position
-     */
-    public void setCarPosition(PointF position) {
-        mGameEngine.setCarPosition(position);
-    }
 
     /**
      * changeState

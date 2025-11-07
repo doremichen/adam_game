@@ -9,8 +9,12 @@
 package com.adam.app.racinggame2d.model.entity;
 
 import androidx.annotation.NonNull;
+import com.adam.app.racinggame2d.util.GameUtil;
+
 
 public class Player {
+    //TAG
+    private static final String TAG = "Player";
     // mPlayerName: String
     private String mPlayerName;
     // mPlayerScore: Int
@@ -43,6 +47,7 @@ public class Player {
      * getScore
      */
     public int getScore() {
+        GameUtil.log(TAG, "getScore: " + mPlayerScore);
         return mPlayerScore;
     }
 
@@ -61,6 +66,7 @@ public class Player {
     }
 
     public void reset() {
+        GameUtil.log(TAG, "reset");
         mPlayerScore = 0;
         mCar.reset();
     }

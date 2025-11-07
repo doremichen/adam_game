@@ -34,12 +34,12 @@ public class Track {
     private final int mWidth;
     // height of screen
     private final int mHeight;
-    // mCheckPoints: List<float[]>
-    private final List<PointF> mCheckPoints;
     // List of Obstacle
     private final List<Obstacle> mObstacles;
     // backup check points
     private final List<PointF> mBackupCheckPoints;
+    // mCheckPoints: List<float[]>
+    private List<PointF> mCheckPoints;
     // Obstacle type
     private Obstacle.Type mObstacleType = Obstacle.Type.NONE;
     // scroll offset
@@ -54,14 +54,20 @@ public class Track {
      * @param checkPoints List of check points
      */
     public Track(int width, int height, List<PointF> checkPoints) {
-
+        GameUtil.log(TAG, "Constructor");
         this.mWidth = width;
         this.mHeight = height;
 
+        // dump checkPoints
+        GameUtil.dumpList("checkPoints", checkPoints);
+
         this.mCheckPoints = checkPoints != null ? checkPoints : new ArrayList<>();
 
-        mBackupCheckPoints = new ArrayList<>();
-        mBackupCheckPoints.addAll(mCheckPoints);
+        mBackupCheckPoints = GameUtil.deepCopyPoints(mCheckPoints);
+
+        // dump backup checkPoints
+        GameUtil.dumpList("mBackupCheckPoints", mBackupCheckPoints);
+
 
         this.mObstacles = new ArrayList<>();
     }
@@ -120,18 +126,12 @@ public class Track {
         PointF carPosition = car.getPosition();
         GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
 
-//        // boundary check
-//        if (isOutOfBoundary(carPosition)) {
-//            GameUtil.log(TAG, "car is out of boundary");
-//            return true;
-//        }
-
         // check points
         if (mCheckPoints != null) {
             if (mCheckPoints.isEmpty()) {
                 GameUtil.log(TAG, "check points is empty");
                 // restore check points
-                mCheckPoints.addAll(mBackupCheckPoints);
+                mCheckPoints = GameUtil.deepCopyPoints(mBackupCheckPoints);
             } else {
                 Iterator<PointF> iterator = mCheckPoints.iterator();
                 while (iterator.hasNext()) {
@@ -165,23 +165,6 @@ public class Track {
         return false;
     }
 
-//    /**
-//     * isOutOfBoundary
-//     * check if the car is out of boundary
-//     *
-//     * @param carPosition PointF
-//     * @return boolean
-//     * true: if the car is out of boundary
-//     * false: if the car is not out of boundary
-//     */
-//    private boolean isOutOfBoundary(PointF carPosition) {
-//        // log
-//        GameUtil.log(TAG, "isOutOfBoundary");
-//        GameUtil.log(TAG, "carPosition.x: " + carPosition.x + ", carPosition.y: " + carPosition.y);
-//        GameUtil.log(TAG, "mWidth: " + mWidth + ", mHeight: " + mHeight);
-//
-//        return carPosition.x <= Constants.BOUNDARY_VALUE || carPosition.x >= mWidth - Constants.BOUNDARY_VALUE;
-//    }
 
     /**
      * checkBoundary
@@ -197,7 +180,6 @@ public class Track {
         PointF carPosition = car.getPosition();
         return carPosition.x <= Constants.BOUNDARY_VALUE || carPosition.x >= mWidth - Constants.BOUNDARY_VALUE;
     }
-
 
 
     /**
@@ -238,8 +220,7 @@ public class Track {
 
     //--- set ---
     public void setCheckPoints(List<PointF> checkPoints) {
-        this.mCheckPoints.clear();
-        this.mCheckPoints.addAll(checkPoints);
+        mCheckPoints = GameUtil.deepCopyPoints(checkPoints);
     }
 
     public List<Obstacle> getObstacles() {
@@ -260,9 +241,9 @@ public class Track {
     }
 
     public void reset() {
+        GameUtil.log(TAG, "reset");
         mScrollOffsetY = 0f;
-        mCheckPoints.clear();
-        mCheckPoints.addAll(mBackupCheckPoints);
+        mCheckPoints = GameUtil.deepCopyPoints(mBackupCheckPoints);
         generateRandomObstacles(8);
     }
 

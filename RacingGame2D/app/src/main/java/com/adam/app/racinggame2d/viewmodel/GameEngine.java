@@ -31,7 +31,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GameEngine {
-    public static final float SPPED_INCREMENT_TIME = 10f;
     // TAG
     private static final String TAG = "GameEngine";
     // Player
@@ -152,12 +151,6 @@ public class GameEngine {
         if (mUpdateController != null) {
             mUpdateController.cancel(true);
         }
-        // elapsed time
-        long elapsedTime = System.currentTimeMillis() - mStartTime;
-        // time convert to add score
-        long timeInSeconds = elapsedTime / 1000;
-        // add score
-        mPlayer.addScore((int) timeInSeconds);
 
         // stop play background music
         mSoundPlayer.stopBgm();
@@ -186,6 +179,12 @@ public class GameEngine {
         // update car  x position
         clampCarXPosition(car);
 
+        // update game view
+        if (mUpdateCallback != null) {
+            mUpdateCallback.onUpdate();
+        }
+
+
         // boundary check
         if (mTrack.checkBoundary(car)) {
             gameOver();
@@ -201,9 +200,8 @@ public class GameEngine {
             gameOver();
         }
 
-
         // detect collision: use fixed car position to detect
-        if ( mTrack.checkCollisions(car, () -> {
+        if (mTrack.checkCollisions(car, () -> {
             mPlayer.addScore(Constants.COLLISION_SCORE);
             // play collision sound effect
             mSoundPlayer.playShortSound(Constants.SOUND_COLLISION, false);
@@ -213,10 +211,6 @@ public class GameEngine {
             car.unsetRock();
         }
 
-        // update game view
-        if (mUpdateCallback != null) {
-            mUpdateCallback.onUpdate();
-        }
 
     }
 
@@ -238,6 +232,12 @@ public class GameEngine {
         }
     }
 
+    /**
+     * clampCarXPosition
+     * clamp car x position
+     *
+     * @param car Car
+     */
     private void clampCarXPosition(Car car) {
         // update car position (width = 1080)
         float xPosition = car.getPosition().x;
@@ -246,6 +246,10 @@ public class GameEngine {
         car.setPosition(new PointF(xPosition, yPosition));
     }
 
+    /**
+     * gameOver
+     * game over
+     */
     private void gameOver() {
         stop();
 
@@ -263,10 +267,6 @@ public class GameEngine {
      */
     public List<PointF> getCheckPoints() {
         return mTrack.getCheckPoints();
-    }
-
-    public void setCheckPoints(List<PointF> checkPoints) {
-        mTrack.setCheckPoints(checkPoints);
     }
 
 
@@ -292,38 +292,29 @@ public class GameEngine {
     }
 
     /**
-     * setCarPosition
-     * set car position
-     *
-     * @param position car position
-     */
-    public void setCarPosition(PointF position) {
-        Car car = mPlayer.getCar();
-        car.setPosition(position);
-    }
-
-    /**
      * get score
      */
     public int getScore() {
+        GameUtil.log(TAG, "getScore: " + mPlayer.getScore());
         return mPlayer.getScore();
     }
 
     /**
-     * get hp
-     * @return hp value
+     * reset
+     * reset game
      */
-    public int getHp() {
-        Car car = mPlayer.getCar();
-        return car.getCarHP();
-    }
-
-
     public void reset() {
+        GameUtil.log(TAG, "reset");
         mPlayer.reset();
         mTrack.reset();
     }
 
+    /**
+     * moveHorizontally
+     * move car horizontally
+     *
+     * @param isLeft boolean
+     */
     public void moveHorizontally(boolean isLeft) {
         Car car = mPlayer.getCar();
         car.moveHorizontally(isLeft);
