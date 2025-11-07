@@ -63,7 +63,7 @@ public class GameEngine {
                 return;
             }
 
-            update(Constants.DELTA_TIME);
+            updateGameFrame(Constants.DELTA_TIME);
         }
     };
     private boolean mIsAccelate = false;
@@ -126,7 +126,7 @@ public class GameEngine {
         // start time
         mIsRunning = true;
         mStartTime = System.currentTimeMillis();
-        //mHandler.post(mUpdateRunnable);
+
         // start to update view by thread
         mUpdateController = mService.scheduleWithFixedDelay(mUpdateRunnable,
                 0,
@@ -164,7 +164,7 @@ public class GameEngine {
      *
      * @param deltaTime flaot
      */
-    private void update(float deltaTime) {
+    private void updateGameFrame(float deltaTime) {
         GameUtil.log(TAG, "update");
         if (mPlayer == null || mTrack == null) {
             GameUtil.error(TAG, "player or track is null");
@@ -172,35 +172,19 @@ public class GameEngine {
         }
 
         Car car = mPlayer.getCar();
-        float scrollSpeed = car.getSpeed();
-        // the car speed is convert to background scroll speed
-        mTrack.update(deltaTime, scrollSpeed);
-
+        // --- update game ---
+        updateTrackScroll(deltaTime, car);
+        updateCarState(deltaTime, car);
         // update car  x position
         clampCarXPosition(car);
 
-        // update game view
-        if (mUpdateCallback != null) {
-            mUpdateCallback.onUpdate();
-        }
-
-
-        // boundary check
+        // --- detected boundary ---
         if (mTrack.checkBoundary(car)) {
-            gameOver();
+            handleGameOver();
+            return;
         }
 
-
-        // check if slipped
-        car.updateSlip(deltaTime);
-        // check if boost
-        car.updateBoost(deltaTime);
-        // check if rock
-        if (car.updateRock()) {
-            gameOver();
-        }
-
-        // detect collision: use fixed car position to detect
+        // --- detect collision: use fixed car position to detect ---
         if (mTrack.checkCollisions(car, () -> {
             mPlayer.addScore(Constants.COLLISION_SCORE);
             // play collision sound effect
@@ -211,9 +195,49 @@ public class GameEngine {
             car.unsetRock();
         }
 
-
+        // --- update game view ---
+        if (mUpdateCallback != null) {
+            mUpdateCallback.onUpdate();
+        }
     }
 
+    /**
+     * updateCarState
+     * update car state
+     *
+     * @param deltaTime float
+     * @param car       Car
+     */
+    private void updateCarState(float deltaTime, Car car) {
+        // check if slipped
+        car.updateSlip(deltaTime);
+        // check if boost
+        car.updateBoost(deltaTime);
+        // check if rock
+        if (car.updateRock()) {
+            handleGameOver();
+        }
+    }
+
+    /**
+     * updateTrackScroll
+     * update track scroll
+     *
+     * @param deltaTime float
+     * @param car       Car
+     */
+    private void updateTrackScroll(float deltaTime, Car car) {
+        float scrollSpeed = car.getSpeed();
+        // the car speed is convert to background scroll speed
+        mTrack.update(deltaTime, scrollSpeed);
+    }
+
+    /**
+     * handleObstacleEffect
+     * handle obstacle effect
+     *
+     * @param car Car
+     */
     private void handleObstacleEffect(Car car) {
         Obstacle.Type type = mTrack.getObstacleType();
         GameUtil.log(TAG, "collided: " + type.name());
@@ -250,7 +274,7 @@ public class GameEngine {
      * gameOver
      * game over
      */
-    private void gameOver() {
+    private void handleGameOver() {
         stop();
 
         // notify game over
