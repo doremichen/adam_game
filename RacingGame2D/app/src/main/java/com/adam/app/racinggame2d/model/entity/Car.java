@@ -32,7 +32,7 @@ public class Car {
     private PointF mPosition;
     // horizontal speed of car
     private float mHorizontalSpeed = 0f;
-    private DefaultInfo mDefault;
+    private final DefaultInfo mDefault;
     // car life time
     private int mCarHP = Constants.MAX_CAR_HP;  // hp of car
 
@@ -42,13 +42,12 @@ public class Car {
     // --- Boost Control ---
     private boolean mIsBoosting = false;  //used to check if boosting
     private float mBoostTimer = 0f; // the remaining time of boosting
-    private float mBoostFactor = 1.5f;  // the boost factor
+    private final float mBoostFactor = 1.5f;  // the boost factor
     private float mOriginalSpeedBeforeBoost = 0f;   // record the original speed
     // --- Rock Control ---
     private boolean mIsRock = false;
-
-
-
+    // Game difficulty setting
+    private Settings.GameDifficulty mDifficultySetting = Settings.GameDifficulty.EASY;
 
     /**
      * Constructor
@@ -164,7 +163,8 @@ public class Car {
      * @param isLeft : boolean
      */
     public void moveHorizontally(boolean isLeft) {
-        float distance = mSpeed * Constants.DELTA_TIME;
+        float sensitivity = (this.mDifficultySetting != null)? this.mDifficultySetting.getCtlSensitivity() : 1f;
+        float distance = mSpeed * Constants.DELTA_TIME * sensitivity;
         // slip
         if (mIsSlipping) {
             float randomFactor = (float) (Math.random() * 2 - 1);
@@ -188,7 +188,7 @@ public class Car {
             return;
         }
         mIsSlipping = true;
-        mSlipTimer = SLIP_DURATION;
+        mSlipTimer = (this.mDifficultySetting != null)? this.mDifficultySetting.getObstacleEffectDuration(): (float)SLIP_DURATION;
         GameUtil.log(TAG, "startSlip");
     }
 
@@ -212,7 +212,7 @@ public class Car {
     public void startBoost() {
         if (mIsBoosting) {
             GameUtil.log(TAG, "startBoost: already boosting");
-            mBoostTimer = BOOST_DURATION;   //reset boost timer
+            mBoostTimer = (this.mDifficultySetting != null)? this.mDifficultySetting.getObstacleEffectDuration(): (float)BOOST_DURATION;   //reset boost timer
             return;
         }
 
@@ -257,9 +257,7 @@ public class Car {
     public boolean updateRock() {
         GameUtil.log(TAG, "updateRock: " + mIsRock);
         if (mIsRock) {
-            if (mCarHP <= 0) {
-                return true;
-            }
+            return mCarHP <= 0;
         }
         return false;
     }
@@ -278,13 +276,7 @@ public class Car {
     @NonNull
     @Override
     public String toString() {
-        return "Car{" +
-                "mId='" + mId + '\'' +
-                ", mName='" + mName + '\'' +
-                ", mAcceleration=" + mAcceleration +
-                ", mSpeed=" + mSpeed +
-                ", mPosition=" + mPosition +
-                '}';
+        return "Car{" + "mId='" + mId + '\'' + ", mName='" + mName + '\'' + ", mAcceleration=" + mAcceleration + ", mSpeed=" + mSpeed + ", mPosition=" + mPosition + '}';
     }
 
     public void reset() {
@@ -299,7 +291,19 @@ public class Car {
         this.mIsBoosting = false;
         this.mIsRock = false;
         this.mCarHP = 3;
-        GameUtil.log(TAG, "reset: " + this.toString());
+        GameUtil.log(TAG, "reset: " + this);
+    }
+
+    /**
+     * applyTo
+     * apply to settings
+     *
+     * @param difficultySetting : Settings.GameDifficulty
+     */
+    public void applyTo(Settings.GameDifficulty difficultySetting) {
+        this.mDifficultySetting = difficultySetting;
+        // set acceleration
+        this.mAcceleration *= difficultySetting.getFrictionCoefficient();
     }
 
     private static class DefaultInfo {
@@ -309,7 +313,7 @@ public class Car {
         // mAcceleration: float
         private final float mAcceleration;
         // mSpeed: float
-        private float mSpeed;
+        private final float mSpeed;
 
         private PointF mPosition;
 
@@ -349,13 +353,7 @@ public class Car {
         @NonNull
         @Override
         public String toString() {
-            return "DefaultInfo {" +
-                    "mId='" + mId + '\'' +
-                    ", mName='" + mName + '\'' +
-                    ", mAcceleration=" + mAcceleration +
-                    ", mSpeed=" + mSpeed +
-                    ", mPosition=" + mPosition +
-                    "}";
+            return "DefaultInfo {" + "mId='" + mId + '\'' + ", mName='" + mName + '\'' + ", mAcceleration=" + mAcceleration + ", mSpeed=" + mSpeed + ", mPosition=" + mPosition + "}";
         }
     }
 }

@@ -87,6 +87,13 @@ public class GameEngine {
         // load settings from shared preferences
         Settings currentSettings = SharedPrefHelper.getInstance(context).loadSettings();
         boolean isSoundEnable = currentSettings != null && currentSettings.isSoundEnable();
+        Settings.GameDifficulty difficultySetting = currentSettings != null ? currentSettings.getDifficulty() : Settings.GameDifficulty.EASY;
+        // apply to car
+        mPlayer.getCar().applyTo(difficultySetting);
+        // apply to track
+        mTrack.applyTo(difficultySetting);
+
+
 
         // init sound
         mSoundPlayer = new SoundPlayer(context, isSoundEnable);
@@ -124,7 +131,7 @@ public class GameEngine {
         }
 
         // generate Obstacle by track
-        mTrack.generateRandomObstacles(8);
+        mTrack.generateRandomObstacles();
         // start time
         mIsRunning = true;
         mStartTime = System.currentTimeMillis();

@@ -54,14 +54,16 @@ public class Settings {
      */
     public enum GameDifficulty {
         EASY(
-                0.6f,   // controlSensitivity
-                0.5f,   // obstacleSpawnRate
-                500f,   // checkpointDistance
-                1.2f,   // frictionCoefficient
-                0.5f    // obstacleEffectDuration
+                0.6f,
+                8,
+                0.5f,
+                500f,
+                1.2f,
+                0.5f
         ),
         NORMAL(
                 1.0f,
+                16,
                 1.0f,
                 700f,
                 1.0f,
@@ -69,20 +71,22 @@ public class Settings {
         ),
         HARD(
                 1.4f,
+                24,
                 1.5f,
                 900f,
                 0.8f,
                 1.5f
         );
-
         private final float mCtlSensitivity;
+        private final int mObstacleCount;
         private final float mObstacleSpawnRate;
         private final float mCheckpointDistance;
         private final float mFrictionCoefficient;
         private final float mObstacleEffectDuration;
 
-        private GameDifficulty(float ctlSensitivity, float obstacleSpawnRate, float checkpointDistance, float frictionCoefficient, float obstacleEffectDuration) {
+        private GameDifficulty(float ctlSensitivity, int obstacleCount, float obstacleSpawnRate, float checkpointDistance, float frictionCoefficient, float obstacleEffectDuration) {
             mCtlSensitivity = ctlSensitivity;
+            mObstacleCount = obstacleCount;
             mObstacleSpawnRate = obstacleSpawnRate;
             mCheckpointDistance = checkpointDistance;
             mFrictionCoefficient = frictionCoefficient;
@@ -92,6 +96,10 @@ public class Settings {
         // --- getter ---
         public float getCtlSensitivity() {
             return mCtlSensitivity;
+        }
+
+        public int getObstacleCount() {
+            return mObstacleCount;
         }
 
         public float getObstacleSpawnRate() {

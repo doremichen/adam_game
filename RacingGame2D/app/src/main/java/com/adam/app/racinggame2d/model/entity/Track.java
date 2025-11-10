@@ -45,6 +45,8 @@ public class Track {
     // scroll offset
     private float mScrollOffsetY = 0f;
 
+    // game difficulty setting
+    private Settings.GameDifficulty mDifficultySetting = Settings.GameDifficulty.EASY;
 
     /**
      * Constructor
@@ -62,6 +64,7 @@ public class Track {
         GameUtil.dumpList("checkPoints", checkPoints);
 
         this.mCheckPoints = checkPoints != null ? checkPoints : new ArrayList<>();
+        adjustCheckPointsSpacing();
 
         mBackupCheckPoints = GameUtil.deepCopyPoints(mCheckPoints);
 
@@ -72,18 +75,25 @@ public class Track {
         this.mObstacles = new ArrayList<>();
     }
 
+
+    private void adjustCheckPointsSpacing() {
+        if (this.mDifficultySetting == null || mCheckPoints == null) return;
+
+        float factor = this.mDifficultySetting.getCheckpointDistance();
+        for (int i = 1; i < mCheckPoints.size(); i++) {
+            PointF prev = mCheckPoints.get(i - 1);
+            PointF curr = mCheckPoints.get(i);
+            curr.y = prev.y - factor;  // adjust distance
+        }
+    }
+
+
     /**
      * generateRandomObstacles
      * generate random obstacles with counts
-     *
-     * @param count count of obstacles
      */
-    public void generateRandomObstacles(int count) {
-        // preCheck if count is valid
-        if (count <= 0) {
-            return;
-        }
-
+    public void generateRandomObstacles() {
+       int count = (this.mDifficultySetting != null)? this.mDifficultySetting.getObstacleCount() : Settings.GameDifficulty.EASY.getObstacleCount();
         // Random
         Random random = new Random();
         // clear obstacles
@@ -102,6 +112,12 @@ public class Track {
             float x = random.nextFloat() * mWidth;
             float y = random.nextFloat() * mHeight - mHeight;  // random y between 0 and height
             float radius = random.nextFloat() * 30f + 20f; // radius between 20 and 50
+
+            // spawn rate
+            float spawnRate = (this.mDifficultySetting != null)? this.mDifficultySetting.getObstacleSpawnRate() : Settings.GameDifficulty.EASY.getObstacleSpawnRate();
+            if (random.nextFloat() > spawnRate) {
+                continue;
+            }
 
             ObstacleData selected = obstacleTypes.get(random.nextInt(obstacleTypes.size()));
             mObstacles.add(new Obstacle(new PointF(x, y), radius, selected.type, selected.imgRes));
@@ -244,7 +260,16 @@ public class Track {
         GameUtil.log(TAG, "reset");
         mScrollOffsetY = 0f;
         mCheckPoints = GameUtil.deepCopyPoints(mBackupCheckPoints);
-        generateRandomObstacles(8);
+        generateRandomObstacles();
+    }
+
+    /**
+     * applyTo
+     * apply the settings to the game
+     *
+     * @param difficultySetting GameDifficulty
+     */
+    public void applyTo(Settings.GameDifficulty difficultySetting) {
     }
 
 
