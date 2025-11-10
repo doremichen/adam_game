@@ -18,7 +18,7 @@ import com.adam.app.racinggame2d.util.GameUtil;
 public class Car {
     // TAG
     private static final String TAG = Car.class.getSimpleName();
-    private static final float SLIP_DURATION = 2.0f;    // slip duration
+    private static final float SLIP_DURATION = 4.0f;    // slip duration
     private static final float BOOST_DURATION = 3.0f;  // boost duration
     // mId
     private String mId;
@@ -164,7 +164,7 @@ public class Car {
      * @param isLeft : boolean
      */
     public void moveHorizontally(boolean isLeft) {
-        float distance = Constants.HORIZONTAL_INCREMENT;
+        float distance = mSpeed * Constants.DELTA_TIME;
         // slip
         if (mIsSlipping) {
             float randomFactor = (float) (Math.random() * 2 - 1);
