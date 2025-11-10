@@ -44,6 +44,10 @@
     <string name="racinggame2d_no_data_tv">沒資料</string>
     <string name="racinggame2d_score_tv">分數: %1$s</string>
     <string name="racinggame2d_hp_tv">血量:</string>
+    <string name="racinggame2d_game_difficuty_setting_tv">遊戲難度</string>
+    <string name="racinggame2d_difficuty_item_easy">容易</string>
+    <string name="racinggame2d_difficuty_item_medium">中等</string>
+    <string name="racinggame2d_difficuty_item_hard">艱難</string>
 
 
     <string-array name="difficulty_levels">

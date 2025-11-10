@@ -44,6 +44,10 @@
     <string name="racinggame2d_no_data_tv">No data</string>
     <string name="racinggame2d_score_tv">Score: %1$s</string>
     <string name="racinggame2d_hp_tv">HP:</string>
+    <string name="racinggame2d_game_difficuty_setting_tv">Game Difficuty</string>
+    <string name="racinggame2d_difficuty_item_easy">Easy</string>
+    <string name="racinggame2d_difficuty_item_medium">Medium</string>
+    <string name="racinggame2d_difficuty_item_hard">Hard</string>
 
 
     <string-array name="difficulty_levels">

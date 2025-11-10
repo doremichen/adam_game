@@ -39,7 +39,6 @@ public class SettingsViewModel extends AndroidViewModel {
 
     /**
      * get settings live data
-     *
      */
     public LiveData<Settings> getSettingsLiveData() {
         return mSettingsLiveDate;
@@ -59,27 +58,11 @@ public class SettingsViewModel extends AndroidViewModel {
     }
 
     /**
-     * set sound enable
-     *
-     * @param isChecked boolean
-     *  true if sound is enabled
-     *  false if sound is disabled
-     */
-    public void setSoundEnable(boolean isChecked) {
-        // get current settings
-        Settings currentSettings = this.mSettingsLiveDate.getValue();
-        if (currentSettings != null) {
-            currentSettings.setSoundEnable(isChecked);
-            this.mSettingsLiveDate.setValue(currentSettings);
-        }
-    }
-
-    /**
      * is sound enable
      *
      * @return boolean
-     *  true if sound is enabled
-     *  false if sound is disabled
+     * true if sound is enabled
+     * false if sound is disabled
      */
     public boolean isSoundEnable() {
         // get current settings
@@ -91,4 +74,35 @@ public class SettingsViewModel extends AndroidViewModel {
         return false;
     }
 
+    /**
+     * set sound enable
+     *
+     * @param isChecked boolean
+     *                  true if sound is enabled
+     *                  false if sound is disabled
+     */
+    public void setSoundEnable(boolean isChecked) {
+        // get current settings
+        Settings currentSettings = this.mSettingsLiveDate.getValue();
+        if (currentSettings != null) {
+            currentSettings.setSoundEnable(isChecked);
+            this.mSettingsLiveDate.setValue(currentSettings);
+        }
+    }
+
+    /**
+     * setDifficulty
+     * set the difficulty of the game
+     *
+     * @param difficulty: GameDifficulty
+     */
+    public void setDifficulty(Settings.GameDifficulty difficulty) {
+        // get current settings
+        Settings currentSettings = this.mSettingsLiveDate.getValue();
+        if (currentSettings != null) {
+            currentSettings.setDifficulty(difficulty);
+            this.mSettingsLiveDate.setValue(currentSettings);
+        }
+    }
+    
 }

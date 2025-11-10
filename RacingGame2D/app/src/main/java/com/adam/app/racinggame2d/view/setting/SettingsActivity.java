@@ -9,11 +9,16 @@
 package com.adam.app.racinggame2d.view.setting;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.adam.app.racinggame2d.R;
 import com.adam.app.racinggame2d.databinding.ActivitySettingsBinding;
+import com.adam.app.racinggame2d.model.entity.Settings;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.viewmodel.SettingsViewModel;
 
@@ -42,14 +47,16 @@ public class SettingsActivity extends AppCompatActivity {
 
         // observer
         mViewModel.getSettingsLiveData().observe(this, setting -> {
+            updateDifficultyUI(setting.getDifficulty());
             updateSoundSwitchUI(setting.isSoundEnable());
         });
 
         // init UI
         initUI();
 
-
     }
+
+
 
     /**
      * init UI
@@ -61,6 +68,9 @@ public class SettingsActivity extends AppCompatActivity {
         mBinding.switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
             this.mViewModel.setSoundEnable(isChecked);
         });
+        
+        // init spinner
+        initSpinner();
 
         // save button listener
         mBinding.btnSave.setOnClickListener(v -> {
@@ -70,11 +80,44 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
+    private void initSpinner() {
+        // items
+        String[] items = new String[]{getString(R.string.racinggame2d_difficuty_item_easy),
+                getString(R.string.racinggame2d_difficuty_item_medium),
+                getString(R.string.racinggame2d_difficuty_item_hard)};
+        // adapter
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, items);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mBinding.spinnerDifficulty.setAdapter(adapter);
+
+        // set selected item listener
+        mBinding.spinnerDifficulty.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Settings.GameDifficulty difficulty = Settings.GameDifficulty.values()[position];
+                mViewModel.setDifficulty(difficulty);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+    }
+
     /**
      * update sound switch UI
      * @param soundEnable sound enable
      */
     private void updateSoundSwitchUI(boolean soundEnable) {
         mBinding.switchSound.setChecked(soundEnable);
+    }
+
+
+    /**
+     * update difficulty UI
+     * @param difficulty difficulty
+     */
+    private void updateDifficultyUI(Settings.GameDifficulty difficulty) {
+        mBinding.spinnerDifficulty.setSelection(difficulty.ordinal());
     }
 }
