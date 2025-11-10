@@ -137,14 +137,8 @@ public class GameViewModel extends AndroidViewModel {
         // create player
         mPlayer = new Player(playerName, car);
 
-        // generate list of checkpoints
-        List<PointF> checkpoints = new ArrayList<>();
-        checkpoints.add(new PointF(width * 0.2f, height * 0.3f));
-        checkpoints.add(new PointF(width * 0.5f, height * 0.5f));
-        checkpoints.add(new PointF(width * 0.8f, height * 0.7f));
-
         // create Track
-        Track track = new Track(width, height, checkpoints);
+        Track track = new Track(width, height);
 
         // create GameEngine
         mGameEngine = new GameEngine(getApplication(), mPlayer, track);

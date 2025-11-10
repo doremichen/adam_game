@@ -57,37 +57,39 @@ public class Settings {
                 0.6f,
                 8,
                 0.5f,
+                3,
                 500f,
                 1.2f,
-                0.5f
-        ),
+                0.5f),
         NORMAL(
                 1.0f,
                 16,
                 1.0f,
+                4,
                 700f,
                 1.0f,
-                1.0f
-        ),
+                1.0f),
         HARD(
                 1.4f,
                 24,
                 1.5f,
+                5,
                 900f,
                 0.8f,
-                1.5f
-        );
+                1.5f);
         private final float mCtlSensitivity;
         private final int mObstacleCount;
         private final float mObstacleSpawnRate;
+        private final int mCheckpointCount;
         private final float mCheckpointDistance;
         private final float mFrictionCoefficient;
         private final float mObstacleEffectDuration;
 
-        private GameDifficulty(float ctlSensitivity, int obstacleCount, float obstacleSpawnRate, float checkpointDistance, float frictionCoefficient, float obstacleEffectDuration) {
+        private GameDifficulty(float ctlSensitivity, int obstacleCount, float obstacleSpawnRate, int checkpointCount, float checkpointDistance, float frictionCoefficient, float obstacleEffectDuration) {
             mCtlSensitivity = ctlSensitivity;
             mObstacleCount = obstacleCount;
             mObstacleSpawnRate = obstacleSpawnRate;
+            mCheckpointCount = checkpointCount;
             mCheckpointDistance = checkpointDistance;
             mFrictionCoefficient = frictionCoefficient;
             mObstacleEffectDuration = obstacleEffectDuration;
@@ -105,6 +107,11 @@ public class Settings {
         public float getObstacleSpawnRate() {
             return mObstacleSpawnRate;
         }
+
+        public int getCheckpointCount() {
+            return mCheckpointCount;
+        }
+
 
         public float getCheckpointDistance() {
             return mCheckpointDistance;

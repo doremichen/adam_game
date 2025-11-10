@@ -37,7 +37,7 @@ public class Track {
     // List of Obstacle
     private final List<Obstacle> mObstacles;
     // backup check points
-    private final List<PointF> mBackupCheckPoints;
+    private List<PointF> mBackupCheckPoints;
     // mCheckPoints: List<float[]>
     private List<PointF> mCheckPoints;
     // Obstacle type
@@ -51,27 +51,13 @@ public class Track {
     /**
      * Constructor
      *
-     * @param width       width of screen
-     * @param height      height of screen
-     * @param checkPoints List of check points
+     * @param width  width of screen
+     * @param height height of screen
      */
-    public Track(int width, int height, List<PointF> checkPoints) {
+    public Track(int width, int height) {
         GameUtil.log(TAG, "Constructor");
         this.mWidth = width;
         this.mHeight = height;
-
-        // dump checkPoints
-        GameUtil.dumpList("checkPoints", checkPoints);
-
-        this.mCheckPoints = checkPoints != null ? checkPoints : new ArrayList<>();
-        adjustCheckPointsSpacing();
-
-        mBackupCheckPoints = GameUtil.deepCopyPoints(mCheckPoints);
-
-        // dump backup checkPoints
-        GameUtil.dumpList("mBackupCheckPoints", mBackupCheckPoints);
-
-
         this.mObstacles = new ArrayList<>();
     }
 
@@ -86,6 +72,32 @@ public class Track {
             curr.y = prev.y - factor;  // adjust distance
         }
     }
+
+
+    private List<PointF> generateRandomCheckpoints() {
+        List<PointF> checkPoints = new ArrayList<>();
+        // get count of check points
+        int count = (this.mDifficultySetting != null)? this.mDifficultySetting.getCheckpointCount() : Settings.GameDifficulty.EASY.getCheckpointCount();
+        // get distance between check points
+        float distance = (this.mDifficultySetting != null)? this.mDifficultySetting.getCheckpointDistance() : Settings.GameDifficulty.EASY.getCheckpointDistance();
+
+        // random
+        Random random = new Random();
+
+        float currentY = this.mHeight * 0.2f;
+
+        // generate random check points
+        for (int i = 0; i < count; i++) {
+            float x = this.mWidth * (0.2f + 0.6f * random.nextFloat());
+            float randomOffset = (random.nextFloat() - 0.5f) * distance * 0.4f;
+            float y = currentY + randomOffset;
+            checkPoints.add(new PointF(x, y));
+            currentY = distance;  // next distance of check points
+        }
+
+        return checkPoints;
+    }
+
 
 
     /**
@@ -270,6 +282,11 @@ public class Track {
      * @param difficultySetting GameDifficulty
      */
     public void applyTo(Settings.GameDifficulty difficultySetting) {
+        mDifficultySetting = difficultySetting;
+        this.mCheckPoints = generateRandomCheckpoints();
+        mBackupCheckPoints = GameUtil.deepCopyPoints(mCheckPoints);
+        // dump backup checkPoints
+        GameUtil.dumpList("mBackupCheckPoints", mBackupCheckPoints);
     }
 
 

@@ -93,8 +93,6 @@ public class GameEngine {
         // apply to track
         mTrack.applyTo(difficultySetting);
 
-
-
         // init sound
         mSoundPlayer = new SoundPlayer(context, isSoundEnable);
     }

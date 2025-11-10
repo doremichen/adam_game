@@ -276,7 +276,12 @@ public class Car {
     @NonNull
     @Override
     public String toString() {
-        return "Car{" + "mId='" + mId + '\'' + ", mName='" + mName + '\'' + ", mAcceleration=" + mAcceleration + ", mSpeed=" + mSpeed + ", mPosition=" + mPosition + '}';
+        return "Car{" + "mId='" + mId +
+                ", mName='" + mName +
+                ", mAcceleration=" + mAcceleration +
+                ", mSpeed=" + mSpeed +
+                ", mPosition=" + mPosition +
+                '}';
     }
 
     public void reset() {
