@@ -123,7 +123,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         // draw checkpoint
         mPaint.setColor(Color.YELLOW);
         for (PointF point : mViewModel.getCheckpoints()) {
-            canvas.drawCircle(point.x, point.y, 20f, mPaint);
+            String assetPath = "images/flag.png";
+            Bitmap bitmap = GameImageLoader.load(getContext(), assetPath, 80, 80);
+
+            if (bitmap != null) {
+                canvas.drawBitmap(bitmap, point.x - bitmap.getWidth() / 2f, point.y - bitmap.getHeight() / 2f, mPaint);
+            }
         }
 
         // draw Obstacle
