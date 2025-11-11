@@ -362,6 +362,17 @@ public class GameEngine {
     }
 
     /**
+     * getCarAngle
+     * get car angle
+     *
+     * @return car angle
+     */
+    public float getCarRotationAngle() {
+        Car car = mPlayer.getCar();
+        return (car != null)? car.getRotationAngle(): 0f;
+    }
+
+    /**
      * ObstacleEffectStrategy
      * handle obstacle effect
      */

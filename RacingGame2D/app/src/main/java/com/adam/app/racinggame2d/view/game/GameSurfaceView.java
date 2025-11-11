@@ -150,6 +150,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     private void drawCar(@NonNull Canvas canvas) {
         PointF carPosition = mViewModel.getCarPosition();
+        // init car bitmap
         if (mCarBitmap == null) {
             Bitmap raw = BitmapFactory.decodeResource(getResources(), R.drawable.car);
             if (raw != null) {
@@ -161,8 +162,15 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         if (mCarBitmap != null) {
-            float x = carPosition.x - mCarBitmap.getWidth() / 2f;
-            float y = carPosition.y - mCarBitmap.getHeight() / 2f;
+            float rotationAngle = 0f;
+            rotationAngle = mViewModel.getCarRotationAngle();
+            // Config
+            canvas.save();
+            canvas.translate(carPosition.x, carPosition.y);
+            canvas.rotate(rotationAngle);
+            // draw bitmap
+            float x = - mCarBitmap.getWidth() / 2f;
+            float y = - mCarBitmap.getHeight() / 2f;
             canvas.drawBitmap(mCarBitmap, x, y, mPaint);
         } else {
             // fallback

@@ -26,7 +26,6 @@ import com.adam.app.racinggame2d.util.Constants;
 import com.adam.app.racinggame2d.util.GameUtil;
 import com.adam.app.racinggame2d.util.SharedPrefHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GameViewModel extends AndroidViewModel {
@@ -105,8 +104,21 @@ public class GameViewModel extends AndroidViewModel {
         mScore.postValue(mGameEngine.getScore());
     }
 
+    /**
+     * update hp
+     */
     public void updateHp() {
         mHp.postValue(mGameEngine.getCarHP());
+    }
+
+    /**
+     * getCarAngle
+     * get car angle
+     *
+     * @return car angle
+     */
+    public float getCarRotationAngle() {
+        return mGameEngine.getCarRotationAngle();
     }
 
     /**

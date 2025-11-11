@@ -20,6 +20,8 @@ public class Car {
     private static final String TAG = Car.class.getSimpleName();
     private static final float SLIP_DURATION = 4.0f;    // slip duration
     private static final float BOOST_DURATION = 3.0f;  // boost duration
+    private final DefaultInfo mDefault;
+    private final float mBoostFactor = 1.5f;  // the boost factor
     // mId
     private String mId;
     // mName
@@ -32,17 +34,16 @@ public class Car {
     private PointF mPosition;
     // horizontal speed of car
     private float mHorizontalSpeed = 0f;
-    private final DefaultInfo mDefault;
     // car life time
     private int mCarHP = Constants.MAX_CAR_HP;  // hp of car
-
     // --- Slip Control ---
     private boolean mIsSlipping = false;  //used to check if slipping
     private float mSlipTimer = 0f; // the remaining time of slipping
+    private float mSlipAngle = 0f; // the angle of slipping
+    private float mSlipIntensity = 0f; // the intensity of slipping
     // --- Boost Control ---
     private boolean mIsBoosting = false;  //used to check if boosting
     private float mBoostTimer = 0f; // the remaining time of boosting
-    private final float mBoostFactor = 1.5f;  // the boost factor
     private float mOriginalSpeedBeforeBoost = 0f;   // record the original speed
     // --- Rock Control ---
     private boolean mIsRock = false;
@@ -156,6 +157,16 @@ public class Car {
         return mCarHP;
     }
 
+
+    /**
+     * getAngle
+     * get angle of slip
+     * @return float
+     */
+    public float getRotationAngle() {
+        return (mIsSlipping) ? (float) Math.sin(mSlipAngle) * 10f : 0f;
+    }
+
     /**
      * moveHorizontally
      * move instance left or right by speed multiple by delta time
@@ -163,19 +174,20 @@ public class Car {
      * @param isLeft : boolean
      */
     public void moveHorizontally(boolean isLeft) {
-        float sensitivity = (this.mDifficultySetting != null)? this.mDifficultySetting.getCtlSensitivity() : 1f;
+        float sensitivity = (this.mDifficultySetting != null)
+                ? this.mDifficultySetting.getCtlSensitivity()
+                : 1f;
         float distance = mSpeed * Constants.DELTA_TIME * sensitivity;
+        // normal move
+        float moveDir = isLeft ? -1f : 1f;
+
         // slip
         if (mIsSlipping) {
-            float randomFactor = (float) (Math.random() * 2 - 1);
-            distance *= 0.7f + (randomFactor * 0.3f);
-
-            // slip randomly
-            if (Math.random() < 0.2) {
-                isLeft = !isLeft;
-            }
+            float slipOffset = (float) Math.sin(mSlipAngle) * mSlipIntensity * 0.5f;
+            this.mPosition.x += (moveDir * distance) + slipOffset * Constants.DELTA_TIME;
+        } else {
+            this.mPosition.x += moveDir * distance;
         }
-        this.mPosition.x += isLeft ? -distance : distance;
     }
 
     /**
@@ -188,7 +200,17 @@ public class Car {
             return;
         }
         mIsSlipping = true;
-        mSlipTimer = (this.mDifficultySetting != null)? this.mDifficultySetting.getObstacleEffectDuration(): (float)SLIP_DURATION;
+        mSlipTimer = (this.mDifficultySetting != null)
+                ? this.mDifficultySetting.getObstacleEffectDuration()
+                : (float) SLIP_DURATION;
+        // set slip intensity by speed or difficulty
+        float baseIntensity = 15f;
+        if (this.mDifficultySetting != null) {
+            baseIntensity *= this.mDifficultySetting.getCtlSensitivity();
+        }
+        mSlipIntensity = baseIntensity + (float)(Math.random() * 10f);
+        mSlipAngle = (float)(Math.random() * Math.PI * 2);
+
         GameUtil.log(TAG, "startSlip");
     }
 
@@ -201,8 +223,11 @@ public class Car {
     public void updateSlip(float deltaTime) {
         if (mIsSlipping) {
             mSlipTimer -= deltaTime;
+            mSlipAngle += deltaTime * 6f; // increase slip angle
             if (mSlipTimer <= 0f) {
                 mIsSlipping = false;
+                mSlipAngle = 0f;
+                mSlipIntensity = 0f;
             }
         }
         GameUtil.log(TAG, "updateSlip: " + mSlipTimer);
@@ -212,7 +237,7 @@ public class Car {
     public void startBoost() {
         if (mIsBoosting) {
             GameUtil.log(TAG, "startBoost: already boosting");
-            mBoostTimer = (this.mDifficultySetting != null)? this.mDifficultySetting.getObstacleEffectDuration(): (float)BOOST_DURATION;   //reset boost timer
+            mBoostTimer = (this.mDifficultySetting != null) ? this.mDifficultySetting.getObstacleEffectDuration() : (float) BOOST_DURATION;   //reset boost timer
             return;
         }
 

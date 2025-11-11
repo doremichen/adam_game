@@ -60,7 +60,7 @@ public class Settings {
                 3,
                 500f,
                 1.2f,
-                0.5f),
+                3.0f),
         NORMAL(
                 1.0f,
                 16,
@@ -68,7 +68,7 @@ public class Settings {
                 4,
                 700f,
                 1.0f,
-                1.0f),
+                4.0f),
         HARD(
                 1.4f,
                 24,
@@ -76,7 +76,7 @@ public class Settings {
                 5,
                 900f,
                 0.8f,
-                1.5f);
+                5.0f);
         private final float mCtlSensitivity;
         private final int mObstacleCount;
         private final float mObstacleSpawnRate;
