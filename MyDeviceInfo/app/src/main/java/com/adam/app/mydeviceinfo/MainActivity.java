@@ -25,7 +25,6 @@ import androidx.core.view.WindowInsetsCompat;
 import com.adam.app.mydeviceinfo.databinding.ActivityMainBinding;
 import com.adam.app.mydeviceinfo.service.InfoService;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -70,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         mBinding.btnRefresh.setOnClickListener(v -> fetchInfo());
         // export to file
         mBinding.btnExport.setOnClickListener(v -> exportToFile());
+        // exit app
+        mBinding.btnExit.setOnClickListener(v -> finish());
+
 
         // bind service
         bindService(new Intent(this, InfoService.class), mConnection, BIND_AUTO_CREATE);
@@ -109,13 +111,13 @@ public class MainActivity extends AppCompatActivity {
         String content = mBinding.textCpuInfo.getText().toString() + "\n\n" + mBinding.textMemory.getText().toString();
         // write to file
         ContentValues values = new ContentValues();
-        values.put(MediaStore.Downloads.DISPLAY_NAME, fileName); // 檔名
-        values.put(MediaStore.Downloads.MIME_TYPE, "text/plain"); // 類型
-        values.put(MediaStore.Downloads.IS_PENDING, 1); // 開始寫入前設為 pending
+        values.put(MediaStore.Downloads.DISPLAY_NAME, fileName); // file name
+        values.put(MediaStore.Downloads.MIME_TYPE, "text/plain"); // type
+        values.put(MediaStore.Downloads.IS_PENDING, 1); // set pending
 
         ContentResolver resolver = getContentResolver();
         Uri collection = MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL_PRIMARY);
-        Uri fileUri = resolver.insert(collection, values); // 建立下載項目
+        Uri fileUri = resolver.insert(collection, values); // write to file
 
         if (fileUri == null) {
             Util.showToast(this, getString(R.string.toast_can_not_create_uri));
@@ -126,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
             os.write(content.getBytes(StandardCharsets.UTF_8));
             os.flush();
             values.clear();
-            values.put(MediaStore.Downloads.IS_PENDING, 0); // 完成寫入
+            values.put(MediaStore.Downloads.IS_PENDING, 0); // set not pending
             resolver.update(fileUri, values, null, null);
             Util.showToast(this, getString(R.string.toast_has_been_saved_to_download_folder));
         } catch (IOException e) {
