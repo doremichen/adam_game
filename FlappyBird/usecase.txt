@@ -1,0 +1,184 @@
+🐦 Flappy Bird – Use Case（MVVM 版本）
+1. 角色（Actors）
+Actor	說明
+Player（玩家）	操控畫面，點擊螢幕讓小鳥飛行
+Game System（遊戲系統）	管理遊戲狀態、鳥的位置、管道移動、碰撞、分數
+2. Use Case List（用例列表）
+編號	Use Case 名稱	主要角色
+UC01	開始遊戲	Player
+UC02	玩家點擊讓小鳥上升	Player
+UC03	更新小鳥位置	Game System
+UC04	管道移動與更新	Game System
+UC05	碰撞偵測	Game System
+UC06	計分	Game System
+UC07	遊戲結束	Game System
+UC08	重新開始遊戲	Player
+3. Use Case 詳細描述
+✅ UC01 – 開始遊戲 Start Game
+
+主要角色：Player
+目的：開始進入遊戲循環，鳥開始掉落、管道開始移動。
+
+前置條件
+
+遊戲目前處於「Ready」狀態（尚未開始）。
+
+後置條件
+
+遊戲進入「Playing」狀態。
+
+計時器 / 遊戲迴圈開始更新。
+
+流程
+
+玩家點擊畫面任意位置。
+
+View 通知 ViewModel「StartGame()」。
+
+ViewModel 將遊戲狀態設定為 Playing。
+
+系統開始：
+
+每 frame 更新鳥的位置（重力作用）
+
+每 frame 更新管道位置
+
+檢查碰撞與計分
+
+✅ UC02 – 玩家點擊讓小鳥上升 Bird Fly Up
+
+主要角色：Player
+
+前置條件
+
+遊戲狀態＝Playing。
+
+後置條件
+
+小鳥給予一個向上的速度。
+
+流程
+
+玩家點擊畫面。
+
+View 通知 ViewModel：「onTap()」
+
+ViewModel：
+
+把 birdVelocity 設為負值（如 -10）
+
+✅ UC03 – 更新小鳥位置 Update Bird Position
+
+主要角色：Game System
+
+前置條件
+
+遊戲狀態＝Playing。
+
+後置條件
+
+小鳥位置更新（受到重力與速度影響）。
+
+流程（每 frame）
+
+ViewModel 對 birdVelocity += gravity
+
+birdY += birdVelocity
+
+若超過上/下界 → 遊戲結束（UC07）
+
+✅ UC04 – 管道移動與更新 Pipe Movement
+
+主要角色：Game System
+
+前置條件
+
+遊戲狀態＝Playing。
+
+流程（每 frame）
+
+所有管道 X -= pipeSpeed
+
+管道完全離開螢幕左側 → 重新產生於右側（帶隨機高度）
+
+管道位置透過 ViewModel 的 LiveData / StateFlow 通知 View
+
+✅ UC05 – 碰撞偵測 Collision Detection
+
+主要角色：Game System
+
+前置條件
+
+Playing 狀態中
+
+流程
+
+檢查鳥與任意管道 bounding box 是否重疊。
+
+檢查鳥是否碰到地板或天花板。
+
+若任一條件成立 → 呼叫 UC07 遊戲結束。
+
+✅ UC06 – 計分 Scoring
+
+主要角色：Game System
+
+前置條件
+
+Playing 狀態中
+
+流程
+
+每當鳥通過管道中線（未與管道碰撞）
+
+分數 +1
+
+ViewModel 發送 score LiveData / Flow 更新給 View
+
+✅ UC07 – 遊戲結束 Game Over
+
+主要角色：Game System
+
+前置條件
+
+bird hits pipe 或 bird hits ground 或 bird hits top bound
+
+後置條件
+
+遊戲停止
+
+顯示 Game Over 畫面
+
+可重新開始（UC08）
+
+流程
+
+ViewModel 將遊戲狀態設為 GameOver
+
+停止遊戲迴圈（timer / coroutine）
+
+顯示重新開始按鈕
+
+✅ UC08 – 重新開始遊戲 Restart Game
+
+主要角色：Player
+
+前置條件
+
+GameOver 中
+
+流程
+
+玩家按下 Restart
+
+ViewModel：
+
+重置分數
+
+重置鳥位置/速度
+
+重置管道資料
+
+設定狀態＝Ready
+
+回到 UC01 等待玩家開始

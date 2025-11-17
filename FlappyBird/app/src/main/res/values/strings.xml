@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Flappy Bird</string>
+    <string name="flappy_bird_exit_btn">Exit</string>
+</resources>
