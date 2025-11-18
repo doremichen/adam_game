@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">飛揚的小鳥</string>
+    <string name="flappy_bird_exit_btn">離開</string>
+    <string name="flappy_bird_ok_dlg_btn">確認</string>
+    <string name="flappy_bird_game_over_dlg_title">遊戲結束</string>
+    <string name="flappy_bird_dlg_message">遊戲結束！請按確定鍵退出遊戲！</string>
+</resources>

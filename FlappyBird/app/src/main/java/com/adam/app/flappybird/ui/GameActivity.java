@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.adam.app.flappybird.R;
 import com.adam.app.flappybird.databinding.ActivityMainBinding;
 import com.adam.app.flappybird.model.GameState;
 import com.adam.app.flappybird.util.GameUtil;
@@ -66,14 +67,14 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void showGameOverDialog() {
-        GameUtil.ButtonContent positiveButton = new GameUtil.ButtonContent("Ok", new DialogInterface.OnClickListener() {
+        GameUtil.ButtonContent positiveButton = new GameUtil.ButtonContent(getString(R.string.flappy_bird_ok_dlg_btn), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 finish();
             }
         });
         // show
-        GameUtil.showDialog(this, "Game Over", "Game over! Please press ok button to exit this game!", positiveButton, null);
+        GameUtil.showDialog(this, getString(R.string.flappy_bird_game_over_dlg_title), getString(R.string.flappy_bird_dlg_message), positiveButton, null);
 
     }
 }

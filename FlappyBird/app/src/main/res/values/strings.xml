@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Flappy Bird</string>
     <string name="flappy_bird_exit_btn">Exit</string>
+    <string name="flappy_bird_ok_dlg_btn">Ok</string>
+    <string name="flappy_bird_game_over_dlg_title">Game Over</string>
+    <string name="flappy_bird_dlg_message">Game over! Please press ok button to exit this game!</string>
 </resources>
