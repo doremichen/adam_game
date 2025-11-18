@@ -8,6 +8,8 @@
 package com.adam.app.flappybird.view;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -18,7 +20,9 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.flappybird.R;
 import com.adam.app.flappybird.model.Pipe;
+import com.adam.app.flappybird.util.BackgroundLayer;
 import com.adam.app.flappybird.util.GameConstants;
 import com.adam.app.flappybird.util.GameUtil;
 import com.adam.app.flappybird.viewmodel.GameViewModel;
@@ -37,12 +41,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private final ExecutorService mService;
     private Future<?> mFuture;
 
+    private BackgroundLayer mBgFar;
+    private BackgroundLayer mBgNear;
+
     private long mLastTimesNs;
 
     // surface holder
     private SurfaceHolder mSurfaceHolder;
     private Paint mBirdPaint;
     private Paint mPipePaint;
+    private Paint mBgPaint;
 
     // view model
     private GameViewModel mViewModel;
@@ -54,13 +62,30 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.mSurfaceHolder = getHolder();
         this.mSurfaceHolder.addCallback(this);
         this.mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
+
         this.mBirdPaint = new Paint();
         this.mBirdPaint.setColor(Color.RED);
         this.mBirdPaint.setTextSize(48f);
+
         this.mPipePaint = new Paint();
         this.mPipePaint.setColor(Color.GREEN);
 
+        this.mBgPaint = new Paint();
+        this.mBgPaint.setColor(Color.CYAN);
+
+
         mService = Executors.newSingleThreadExecutor();
+        
+        initBg();
+    }
+
+    private void initBg() {
+        Bitmap bg1 = BitmapFactory.decodeResource(getResources(), R.drawable.bg_far);
+        Bitmap bg2 = BitmapFactory.decodeResource(getResources(), R.drawable.bg_near);
+
+        int w = getWidth();
+        mBgFar = new BackgroundLayer(bg1, 50f, w);
+        mBgNear = new BackgroundLayer(bg2, 100f, w);
     }
 
     /**
@@ -92,6 +117,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
             if (deltaSec > GameConstants.MAX_DELTA) deltaSec = GameConstants.MAX_DELTA;
 
+            // update the background
+            mBgFar.update(deltaSec);
+            mBgNear.update(deltaSec);
+
             // update the game
             this.mViewModel.update(deltaSec);
             // draw
@@ -116,7 +145,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         // draw the background
-        canvas.drawColor(Color.CYAN);
+        mBgFar.draw(canvas, mBgPaint, 0f);
+        mBgNear.draw(canvas, mBgPaint, 0f);
+
+        //canvas.drawColor(Color.CYAN);
 
         drawPipes(canvas);
         drawBird(canvas);
