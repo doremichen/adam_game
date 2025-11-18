@@ -4,4 +4,5 @@
     <string name="flappy_bird_ok_dlg_btn">確認</string>
     <string name="flappy_bird_game_over_dlg_title">遊戲結束</string>
     <string name="flappy_bird_dlg_message">遊戲結束！請按確定鍵退出遊戲！</string>
+    <string name="flappy_bird_score_tv">分數: %1$s</string>
 </resources>

@@ -16,14 +16,28 @@ public class Pipe {
 
     public final float mSpeed = 6f;
 
+    public boolean mMarkScored;
+
     public Pipe(PointF mPosition) {
         this.mPosition = mPosition;
+        mMarkScored = false;
     }
 
     public void update() {
         mPosition.x -= mSpeed;
     }
 
+    // --- setter ---
+
+    /**
+     * set mark pipe as scored
+     * @param mark true if scored
+     */
+    public void setMarkScored(boolean mark) {
+        this.mMarkScored = mark;
+    }
+
+    // --- getter ---
     public PointF getPosition() {
         return mPosition;
     }
@@ -38,5 +52,9 @@ public class Pipe {
 
     public float getPipeWidth() {
         return PIPE_WIDTH;
+    }
+
+    public boolean isMarkScored() {
+        return mMarkScored;
     }
 }

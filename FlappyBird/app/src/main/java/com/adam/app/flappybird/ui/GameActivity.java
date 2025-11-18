@@ -41,7 +41,6 @@ public class GameActivity extends AppCompatActivity {
 
         // set touch listener
         mBinding.gameSurface.setOnTouchListener((v, event) -> {
-
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 mViewModel.flap();
             }
@@ -54,6 +53,11 @@ public class GameActivity extends AppCompatActivity {
                 if (gameState == GameState.GAME_OVER) {
                     showGameOverDialog();
                 }
+        });
+        mViewModel.getScore().observe(this, score -> {
+            // update score
+            String scoreString = String.valueOf(score);
+            mBinding.tvScore.setText(getString(R.string.flappy_bird_score_tv, scoreString));
         });
 
 

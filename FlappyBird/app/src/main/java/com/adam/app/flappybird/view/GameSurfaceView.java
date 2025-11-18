@@ -11,6 +11,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
@@ -47,8 +48,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     // constructor
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setZOrderMediaOverlay(true);
         this.mSurfaceHolder = getHolder();
         this.mSurfaceHolder.addCallback(this);
+        this.mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
         this.mBirdPaint = new Paint();
         this.mBirdPaint.setColor(Color.RED);
         this.mBirdPaint.setTextSize(48f);

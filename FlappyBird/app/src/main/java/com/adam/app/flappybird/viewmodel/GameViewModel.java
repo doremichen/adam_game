@@ -28,6 +28,11 @@ import java.util.Random;
 public class GameViewModel extends AndroidViewModel {
     // Live data: game state
     private final MutableLiveData<GameState> mGameState = new MutableLiveData<>(GameState.READY);
+    private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
+
+    private int lastScoredPipeIndex = -1;
+
+
     private Bird mBird;
     private List<Pipe> mPipes = new ArrayList<>();
 
@@ -77,31 +82,70 @@ public class GameViewModel extends AndroidViewModel {
             mBird.update();
             // update pipes
             handlePipes();
-            checkCollision();
+            // update game status
+            updateGameStatus();
+        }
+    }
+
+
+    /**
+     * update game status
+     */
+    private void updateGameStatus() {
+        // boundary
+        if (isCollidingWithBounds()) return;
+        // pipe
+        for (int i = 0; i < mPipes.size(); i++) {
+            Pipe pipe = mPipes.get(i);
+            if (isCollidingWithPipes(pipe)) return;
+
+            // check if bird passed pipe
+            updateScore(pipe);
+
+        }
+
+    }
+
+    /**
+     * update score
+     *
+     * @param pipe pipe
+     */
+    private void updateScore(Pipe pipe) {
+        if (!pipe.isMarkScored() && mBird.getPosition().x > pipe.getPosition().x + pipe.getPipeWidth()) {
+            addScore();
+            // mark pipe as scored
+            pipe.setMarkScored(true);
         }
     }
 
     /**
-     * detect collision
+     * check if colliding with pipes
+     * @param pipe pipe
+     * @return true if colliding with pipes otherwise false
      */
-    private void checkCollision() {
-        // boundary
+    private boolean isCollidingWithPipes(Pipe pipe) {
+        boolean inXrange = mBird.getPosition().x + GameUtil.COLLISION_RANGE > pipe.getPosition().x
+                && mBird.getPosition().x - GameUtil.COLLISION_RANGE < pipe.getPosition().x + pipe.getPipeWidth();
+        boolean inYrange = mBird.getPosition().y + GameUtil.COLLISION_RANGE > pipe.getBottomPipeTopY()
+                || mBird.getPosition().y - GameUtil.COLLISION_RANGE < pipe.getTopPipeBottomY();
+        if (inXrange && inYrange) {
+            mGameState.postValue(GameState.GAME_OVER);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * check if colliding with bounds
+     * @return true if colliding with bounds otherwise false
+     */
+    private boolean isCollidingWithBounds() {
         if (mBird.getPosition().y < 0 || mBird.getPosition().y > 2000) {
             mGameState.postValue(GameState.GAME_OVER);
-            return;
+            return true;
         }
-        // pipe
-        for (Pipe pipe : mPipes) {
-            boolean inXrange = mBird.getPosition().x + GameUtil.COLLISION_RANGE > pipe.getPosition().x
-                    && mBird.getPosition().x - GameUtil.COLLISION_RANGE < pipe.getPosition().x + pipe.getPipeWidth();
-            boolean inYrange = mBird.getPosition().y + GameUtil.COLLISION_RANGE > pipe.getBottomPipeTopY()
-                    || mBird.getPosition().y - GameUtil.COLLISION_RANGE < pipe.getTopPipeBottomY();
-            if (inXrange && inYrange) {
-                mGameState.postValue(GameState.GAME_OVER);
-                return;
-            }
-        }
-
+        return false;
     }
 
     /**
@@ -138,6 +182,17 @@ public class GameViewModel extends AndroidViewModel {
         }
     }
 
+    // --- setter ---
+
+    /**
+     * add score
+     */
+    public void addScore() {
+        mScore.postValue(mScore.getValue() + 5);
+    }
+
+
+
     // --- getter ---
     public PointF getBirdPosition() {
         return mBird.getPosition();
@@ -149,6 +204,10 @@ public class GameViewModel extends AndroidViewModel {
 
     public LiveData<GameState> getGameState() {
         return mGameState;
+    }
+
+    public LiveData<Integer> getScore() {
+        return mScore;
     }
 
     public boolean isGameOver() {
