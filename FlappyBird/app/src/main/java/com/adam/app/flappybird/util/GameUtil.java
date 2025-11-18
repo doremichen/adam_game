@@ -10,7 +10,10 @@ package com.adam.app.flappybird.util;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 public final class GameUtil {
 
@@ -66,6 +69,20 @@ public final class GameUtil {
             builder.setNegativeButton(negativeButton.getLabel(), negativeButton.getOnClickListener());
         }
         builder.show();
+    }
+
+    public static void showToast(Context mContext, String message) {
+        // check if the main thread
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+        } else {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     /**

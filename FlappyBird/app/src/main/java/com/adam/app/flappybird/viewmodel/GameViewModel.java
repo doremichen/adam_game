@@ -9,6 +9,7 @@
 package com.adam.app.flappybird.viewmodel;
 
 import android.app.Application;
+import android.content.Context;
 import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
@@ -22,6 +23,7 @@ import com.adam.app.flappybird.model.GameState;
 import com.adam.app.flappybird.model.Pipe;
 import com.adam.app.flappybird.util.GameConstants;
 import com.adam.app.flappybird.util.GameUtil;
+import com.adam.app.flappybird.util.SoundPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,13 +38,18 @@ public class GameViewModel extends AndroidViewModel {
 
     private Bird mBird;
     private PipesManager mPipesManager;
+    private SoundPlayer mPlayer;
+
+
+
     private float mScreenWidth = GameConstants.SCREEN_WIDTH;
     private float mScreenHeight = GameConstants.SCREEN_HEIGHT;
 
     // Constructor
     public GameViewModel(@NonNull Application application) {
         super(application);
-
+        Context context = application.getApplicationContext();
+        mPlayer = new SoundPlayer(context, true);
     }
 
     public void init(float screenWidth, float screenHeight) {
@@ -122,6 +129,8 @@ public class GameViewModel extends AndroidViewModel {
         // bounds
         if (mBird.getPosition().y - GameConstants.BIRD_RADIUS < 0 ||
                 mBird.getPosition().y + GameConstants.BIRD_RADIUS > mScreenHeight) {
+            // play hit short sound
+            mPlayer.playHitSound();
             return true;
         }
 
@@ -137,6 +146,8 @@ public class GameViewModel extends AndroidViewModel {
                     birdY + GameConstants.BIRD_RADIUS > p.getBottomPipeTopY();
 
             if (inXrange && inYrange) {
+                // play hit short sound
+                mPlayer.playHitSound();
                 updateScore(p);
                 return true;
             }
@@ -153,6 +164,9 @@ public class GameViewModel extends AndroidViewModel {
      */
     private void updateScore(Pipe pipe) {
         if (!pipe.isMarkScored() && mBird.getPosition().x > pipe.getRightX()) {
+            // play point short sound
+            mPlayer.playPointSound();
+
             addScore();
             // mark pipe as scored
             pipe.setMarkScored(true);
@@ -166,9 +180,16 @@ public class GameViewModel extends AndroidViewModel {
     public void flap() {
         if (!validCheck()) return;
         if (mGameState.getValue() == GameState.RUNNING) {
+            // play swing sound
+            mPlayer.playSwingSound();
             mBird.flap();
         }
     }
+
+    public void release() {
+        mPlayer.release();
+    }
+
 
     // --- setter ---
 

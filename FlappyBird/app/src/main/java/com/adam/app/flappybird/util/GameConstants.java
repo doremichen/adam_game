@@ -21,6 +21,12 @@ public final class GameConstants {
     public static final float FLAP_VELOCITY = -450f; // px / second
     public static final int SPAWN_INTERVAL = 900; // px distance between pipe centers (approx)
     public static final float MAX_DELTA = 0.05f; // cap delta time (seconds)
+    public static final int SOUND_WING = 1;
+    public static final int SOUND_HIT = 2;
+    public static final int SOUND_POINT = 3;
+
+
+
     private GameConstants() {
         // avoid to instance
     }

@@ -78,6 +78,14 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // release resources
+        mViewModel.release();
+    }
+
     private void showGameOverDialog() {
         GameUtil.ButtonContent positiveButton = new GameUtil.ButtonContent(getString(R.string.flappy_bird_ok_dlg_btn), new DialogInterface.OnClickListener() {
             @Override
