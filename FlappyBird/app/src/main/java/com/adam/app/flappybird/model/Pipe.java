@@ -9,14 +9,12 @@ package com.adam.app.flappybird.model;
 
 import android.graphics.PointF;
 
+import com.adam.app.flappybird.util.GameConstants;
+
 public class Pipe {
     private final PointF mPosition;
-    private static final float PIPE_WIDTH = 200f;
-    private static final float PIPE_HEIGHT = 300f;
 
-    public final float mSpeed = 6f;
-
-    public boolean mMarkScored;
+    private boolean mMarkScored;
 
     public Pipe(PointF mPosition) {
         this.mPosition = mPosition;
@@ -24,37 +22,40 @@ public class Pipe {
     }
 
     public void update() {
-        mPosition.x -= mSpeed;
+        mPosition.x -= GameConstants.PIPE_SPEED;
     }
 
-    // --- setter ---
-
-    /**
-     * set mark pipe as scored
-     * @param mark true if scored
-     */
-    public void setMarkScored(boolean mark) {
-        this.mMarkScored = mark;
+    public void update(float deltaTime) {
+        mPosition.x -= GameConstants.PIPE_SPEED * deltaTime;
     }
 
-    // --- getter ---
+    // --- getter/setter ---
     public PointF getPosition() {
         return mPosition;
     }
 
     public float getTopPipeBottomY() {
-        return mPosition.y;
+        return mPosition.y - (GameConstants.PIPE_GAP / 2f);
     }
 
     public float getBottomPipeTopY() {
-        return mPosition.y + PIPE_HEIGHT;
+        return mPosition.y + (GameConstants.PIPE_GAP / 2f);
     }
 
-    public float getPipeWidth() {
-        return PIPE_WIDTH;
+    public float getRightX() {
+        return mPosition.x + GameConstants.PIPE_WIDTH;
     }
 
     public boolean isMarkScored() {
         return mMarkScored;
+    }
+
+    /**
+     * set mark pipe as scored
+     *
+     * @param mark true if scored
+     */
+    public void setMarkScored(boolean mark) {
+        this.mMarkScored = mark;
     }
 }

@@ -16,16 +16,15 @@ public final class GameUtil {
 
     // TAG
     public static final String TAG = "GameUtil";
-    public static final String GAME_TAG= "FlappyBird";
+    public static final String GAME_TAG = "FlappyBird";
 
-    // --- Constants ---
-    public static final int COLLISION_RANGE= 40;
-
-    private GameUtil() {}
+    private GameUtil() {
+    }
 
     /**
      * log message
-     * @param title title
+     *
+     * @param title   title
      * @param message message
      */
     public static void info(String title, String message) {
@@ -34,11 +33,39 @@ public final class GameUtil {
 
     /**
      * log error
-     * @param title title
+     *
+     * @param title   title
      * @param message message
      */
     public static void error(String title, String message) {
         Log.e(TAG, title + " : " + message);
+    }
+
+    /**
+     * show dialog
+     *
+     * @param context        context
+     * @param title          title
+     * @param message        message
+     * @param positiveButton positive button
+     * @param negativeButton negative button
+     */
+    public static void showDialog(Context context,
+                                  String title,
+                                  String message,
+                                  ButtonContent positiveButton,
+                                  ButtonContent negativeButton) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setCancelable(false);
+        if (positiveButton != null) {
+            builder.setPositiveButton(positiveButton.getLabel(), positiveButton.getOnClickListener());
+        }
+        if (negativeButton != null) {
+            builder.setNegativeButton(negativeButton.getLabel(), negativeButton.getOnClickListener());
+        }
+        builder.show();
     }
 
     /**
@@ -64,32 +91,6 @@ public final class GameUtil {
             return mOnClickListener;
         }
 
-    }
-
-    /**
-     * show dialog
-     * @param context context
-     * @param title title
-     * @param message message
-     * @param positiveButton positive button
-     * @param negativeButton negative button
-     */
-    public static void showDialog(Context context,
-                                  String title,
-                                  String message,
-                                  ButtonContent positiveButton,
-                                  ButtonContent negativeButton) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(title);
-        builder.setMessage(message);
-        builder.setCancelable(false);
-        if (positiveButton != null) {
-            builder.setPositiveButton(positiveButton.getLabel(), positiveButton.getOnClickListener());
-        }
-        if (negativeButton != null) {
-            builder.setNegativeButton(negativeButton.getLabel(), negativeButton.getOnClickListener());
-        }
-        builder.show();
     }
 
 }

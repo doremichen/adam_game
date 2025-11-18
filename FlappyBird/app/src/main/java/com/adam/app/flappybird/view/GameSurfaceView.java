@@ -12,7 +12,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -20,6 +19,7 @@ import android.view.SurfaceView;
 import androidx.annotation.NonNull;
 
 import com.adam.app.flappybird.model.Pipe;
+import com.adam.app.flappybird.util.GameConstants;
 import com.adam.app.flappybird.util.GameUtil;
 import com.adam.app.flappybird.viewmodel.GameViewModel;
 
@@ -36,6 +36,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     // executor service
     private final ExecutorService mService;
     private Future<?> mFuture;
+
+    private long mLastTimesNs;
 
     // surface holder
     private SurfaceHolder mSurfaceHolder;
@@ -83,8 +85,15 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             }
 
             if (!this.mSurfaceHolder.getSurface().isValid()) continue;
+
+            long now = System.nanoTime();
+            float deltaSec = (now - mLastTimesNs) / 1_000_000_000f;
+            mLastTimesNs = now;
+
+            if (deltaSec > GameConstants.MAX_DELTA) deltaSec = GameConstants.MAX_DELTA;
+
             // update the game
-            this.mViewModel.update();
+            this.mViewModel.update(deltaSec);
             // draw
             Canvas canvas = this.mSurfaceHolder.lockCanvas();
             if (canvas != null) {
@@ -125,7 +134,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             canvas.drawRect(
                     pipe.getPosition().x,
                     0,
-                    pipe.getPosition().x + pipe.getPipeWidth(),
+                    pipe.getRightX(),
                     pipe.getTopPipeBottomY(),
                     mPipePaint
             );
@@ -134,7 +143,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             canvas.drawRect(
                     pipe.getPosition().x,
                     pipe.getBottomPipeTopY(),
-                    pipe.getPosition().x + pipe.getPipeWidth(),
+                    pipe.getRightX(),
                     2000,
                     mPipePaint
             );
@@ -148,7 +157,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         canvas.drawCircle(
                 mViewModel.getBirdPosition().x,
                 mViewModel.getBirdPosition().y,
-                (float) GameUtil.COLLISION_RANGE,
+                (float) GameConstants.COLLISION_RANGE,
                 mBirdPaint
         );
     }
@@ -166,7 +175,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         // start the game
-        mViewModel.startGame();
+        mLastTimesNs = System.nanoTime();
         mFuture = mService.submit(this);
     }
 

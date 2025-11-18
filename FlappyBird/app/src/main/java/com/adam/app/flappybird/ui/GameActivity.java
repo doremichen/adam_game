@@ -39,6 +39,14 @@ public class GameActivity extends AppCompatActivity {
         // set the view model to the view
         mBinding.gameSurface.setViewModel(mViewModel);
 
+        mBinding.gameSurface.post(() -> {
+            // get the width and height of the view
+            int width = mBinding.gameSurface.getWidth();
+            int height = mBinding.gameSurface.getHeight();
+            mViewModel.init(width, height);
+            mViewModel.startGame();
+        });
+
         // set touch listener
         mBinding.gameSurface.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -49,10 +57,10 @@ public class GameActivity extends AppCompatActivity {
 
         // observer
         mViewModel.getGameState().observe(this, gameState -> {
-                // show game over dialog
-                if (gameState == GameState.GAME_OVER) {
-                    showGameOverDialog();
-                }
+            // show game over dialog
+            if (gameState == GameState.GAME_OVER) {
+                showGameOverDialog();
+            }
         });
         mViewModel.getScore().observe(this, score -> {
             // update score

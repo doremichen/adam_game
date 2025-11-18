@@ -9,11 +9,11 @@ package com.adam.app.flappybird.model;
 
 import android.graphics.PointF;
 
+import com.adam.app.flappybird.util.GameConstants;
+
 public class Bird {
     private final PointF mPosition;
-    private float mVelocity;
-    private final float mGravity = 0.6f;
-    private float mLift = -12f;
+    private float mVelocityY;
 
     /**
      * Bird constructor
@@ -27,8 +27,18 @@ public class Bird {
      * Update bird position
      */
     public void update() {
-        mVelocity += mGravity;
-        mPosition.y += mVelocity;
+        mVelocityY += GameConstants.GRAVITY;
+        mPosition.y += mVelocityY;
+    }
+
+    /**
+     * Update bird position
+     *
+     * @param deltaSec delta time
+     */
+    public void update(float deltaSec) {
+        mVelocityY += GameConstants.GRAVITY * deltaSec;
+        mPosition.y += mVelocityY * deltaSec;
     }
 
     /**
@@ -36,7 +46,7 @@ public class Bird {
      *
      */
     public void flap() {
-        mVelocity = mLift;
+        mVelocityY = GameConstants.FLAP_VELOCITY;
     }
 
     /**
@@ -52,6 +62,6 @@ public class Bird {
      * @return float
      */
     public float getVelocity() {
-        return mVelocity;
+        return mVelocityY;
     }
 }

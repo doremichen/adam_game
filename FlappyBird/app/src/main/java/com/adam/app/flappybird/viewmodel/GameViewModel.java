@@ -16,54 +16,61 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.adam.app.flappybird.manager.PipesManager;
 import com.adam.app.flappybird.model.Bird;
 import com.adam.app.flappybird.model.GameState;
 import com.adam.app.flappybird.model.Pipe;
+import com.adam.app.flappybird.util.GameConstants;
 import com.adam.app.flappybird.util.GameUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class GameViewModel extends AndroidViewModel {
+    // TAG
+    private static final String TAG = GameViewModel.class.getSimpleName();
+
     // Live data: game state
     private final MutableLiveData<GameState> mGameState = new MutableLiveData<>(GameState.READY);
     private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
 
-    private int lastScoredPipeIndex = -1;
-
-
     private Bird mBird;
-    private List<Pipe> mPipes = new ArrayList<>();
-
-
-    private Random mRandom = new Random();
-    private float mPipeSpawnX = 1200f;
-    private float mPipeSpawnInterval = 600f;
+    private PipesManager mPipesManager;
+    private float mScreenWidth = GameConstants.SCREEN_WIDTH;
+    private float mScreenHeight = GameConstants.SCREEN_HEIGHT;
 
     // Constructor
     public GameViewModel(@NonNull Application application) {
         super(application);
-        resetGame();
 
     }
 
-    /**
-     * reset game
-     */
-    private void resetGame() {
-        this.mBird = new Bird(new PointF(200f, 300f));
-        this.mPipes.clear();
-        this.mPipes.add(new Pipe(new PointF(mPipeSpawnX, mRandom.nextInt(400) + 200)));
+    public void init(float screenWidth, float screenHeight) {
+        // init width and height
+        mScreenWidth = screenWidth;
+        mScreenHeight = screenHeight;
+
+        mBird = new Bird(new PointF(200f, 300f));
+        mPipesManager = new PipesManager(screenWidth);
+
         // set game state as ready
         this.mGameState.postValue(GameState.READY);
+        this.mScore.postValue(0);
     }
+
 
     /**
      * start game
      */
     public void startGame() {
+        initPipes();
         this.mGameState.postValue(GameState.RUNNING);
+    }
+
+    private void initPipes() {
+        if (!validCheck()) return;
+        // reset pipes
+        this.mPipesManager.initInitialPipes();
     }
 
     /**
@@ -75,35 +82,68 @@ public class GameViewModel extends AndroidViewModel {
 
     /**
      * update
+     *
+     * @param deltaSec delta seconds
      */
-    public void update() {
-        if (mGameState.getValue() == GameState.RUNNING) {
-            // update bird
-            mBird.update();
-            // update pipes
-            handlePipes();
-            // update game status
-            updateGameStatus();
-        }
-    }
+    public void update(float deltaSec) {
+        if (!validCheck()) return;
 
+        if (mGameState.getValue() != GameState.RUNNING) {
+            GameUtil.info(TAG, "Game is not running");
+            return;
+        }
+
+        // cap delta
+        if (deltaSec > GameConstants.MAX_DELTA) deltaSec = GameConstants.MAX_DELTA;
+
+        // update bird
+        mBird.update(deltaSec);
+        // update pipes
+        mPipesManager.update(deltaSec);
+        // update game status
+        updateGameStatus();
+
+    }
 
     /**
      * update game status
      */
     private void updateGameStatus() {
-        // boundary
-        if (isCollidingWithBounds()) return;
-        // pipe
-        for (int i = 0; i < mPipes.size(); i++) {
-            Pipe pipe = mPipes.get(i);
-            if (isCollidingWithPipes(pipe)) return;
 
-            // check if bird passed pipe
-            updateScore(pipe);
-
+        // check collision
+        if (checkCollision()) {
+            mGameState.postValue(GameState.GAME_OVER);
+            return;
         }
 
+    }
+
+    private boolean checkCollision() {
+        // bounds
+        if (mBird.getPosition().y - GameConstants.BIRD_RADIUS < 0 ||
+                mBird.getPosition().y + GameConstants.BIRD_RADIUS > mScreenHeight) {
+            return true;
+        }
+
+        float birdX = mBird.getPosition().x;
+        float birdY = mBird.getPosition().y;
+
+        // pipes
+        for (Pipe p : mPipesManager.getPipesSnapshot()) {
+            float pipeX = p.getPosition().x;
+            boolean inXrange = birdX + GameConstants.BIRD_RADIUS > pipeX &&
+                    birdX - GameConstants.BIRD_RADIUS < p.getRightX();
+            boolean inYrange = birdY - GameConstants.BIRD_RADIUS < p.getTopPipeBottomY() ||
+                    birdY + GameConstants.BIRD_RADIUS > p.getBottomPipeTopY();
+
+            if (inXrange && inYrange) {
+                updateScore(p);
+                return true;
+            }
+
+            updateScore(p);
+        }
+        return false;
     }
 
     /**
@@ -112,73 +152,21 @@ public class GameViewModel extends AndroidViewModel {
      * @param pipe pipe
      */
     private void updateScore(Pipe pipe) {
-        if (!pipe.isMarkScored() && mBird.getPosition().x > pipe.getPosition().x + pipe.getPipeWidth()) {
+        if (!pipe.isMarkScored() && mBird.getPosition().x > pipe.getRightX()) {
             addScore();
             // mark pipe as scored
             pipe.setMarkScored(true);
         }
     }
 
-    /**
-     * check if colliding with pipes
-     * @param pipe pipe
-     * @return true if colliding with pipes otherwise false
-     */
-    private boolean isCollidingWithPipes(Pipe pipe) {
-        boolean inXrange = mBird.getPosition().x + GameUtil.COLLISION_RANGE > pipe.getPosition().x
-                && mBird.getPosition().x - GameUtil.COLLISION_RANGE < pipe.getPosition().x + pipe.getPipeWidth();
-        boolean inYrange = mBird.getPosition().y + GameUtil.COLLISION_RANGE > pipe.getBottomPipeTopY()
-                || mBird.getPosition().y - GameUtil.COLLISION_RANGE < pipe.getTopPipeBottomY();
-        if (inXrange && inYrange) {
-            mGameState.postValue(GameState.GAME_OVER);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * check if colliding with bounds
-     * @return true if colliding with bounds otherwise false
-     */
-    private boolean isCollidingWithBounds() {
-        if (mBird.getPosition().y < 0 || mBird.getPosition().y > 2000) {
-            mGameState.postValue(GameState.GAME_OVER);
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * produce new pipe and move
-     */
-    private void handlePipes() {
-        List<Pipe> newPipes = new ArrayList<>();
-        for (Pipe pipe : mPipes) {
-            pipe.update();
-            if (pipe.getPosition().x + pipe.getPipeWidth() > 0) {
-                newPipes.add(pipe);
-            }
-        }
-        // update list of pipes
-        mPipes.clear();
-        this.mPipes = newPipes;
-        // add new pipe
-        Pipe lastPipe = mPipes.get(mPipes.size() - 1);
-        if (lastPipe.getPosition().x < mPipeSpawnX  - mPipeSpawnInterval) {
-            mPipes.add(new Pipe(new PointF(mPipeSpawnX, mRandom.nextInt(400) + 200)));
-        }
-    }
 
     /**
      * flap
      */
     public void flap() {
+        if (!validCheck()) return;
         if (mGameState.getValue() == GameState.RUNNING) {
             mBird.flap();
-        }
-
-        if (mGameState.getValue() == GameState.GAME_OVER) {
-            resetGame();
         }
     }
 
@@ -191,15 +179,16 @@ public class GameViewModel extends AndroidViewModel {
         mScore.postValue(mScore.getValue() + 5);
     }
 
-
-
     // --- getter ---
     public PointF getBirdPosition() {
-        return mBird.getPosition();
+        PointF position = (validCheck()) ? mBird.getPosition() : new PointF(0, 0);
+        return position;
     }
 
+
     public List<Pipe> getPipes() {
-        return mPipes;
+        List<Pipe> pipes = (validCheck()) ? mPipesManager.getPipesSnapshot() : new ArrayList<>();
+        return pipes;
     }
 
     public LiveData<GameState> getGameState() {
@@ -212,5 +201,13 @@ public class GameViewModel extends AndroidViewModel {
 
     public boolean isGameOver() {
         return mGameState.getValue() == GameState.GAME_OVER;
+    }
+
+    private boolean validCheck() {
+        if (mBird == null || mPipesManager == null) {
+            GameUtil.info(TAG, "Please check initialization!!!");
+            return false;
+        }
+        return true;
     }
 }
