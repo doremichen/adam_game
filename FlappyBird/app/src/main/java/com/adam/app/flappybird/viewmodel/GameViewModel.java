@@ -10,6 +10,10 @@ package com.adam.app.flappybird.viewmodel;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
@@ -17,6 +21,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.adam.app.flappybird.R;
 import com.adam.app.flappybird.manager.PipesManager;
 import com.adam.app.flappybird.model.Bird;
 import com.adam.app.flappybird.model.GameState;
@@ -35,21 +40,19 @@ public class GameViewModel extends AndroidViewModel {
     // Live data: game state
     private final MutableLiveData<GameState> mGameState = new MutableLiveData<>(GameState.READY);
     private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
-
+    private final SoundPlayer mPlayer;
     private Bird mBird;
     private PipesManager mPipesManager;
-    private SoundPlayer mPlayer;
-
-
-
     private float mScreenWidth = GameConstants.SCREEN_WIDTH;
     private float mScreenHeight = GameConstants.SCREEN_HEIGHT;
+
+    private Context mContext;
 
     // Constructor
     public GameViewModel(@NonNull Application application) {
         super(application);
-        Context context = application.getApplicationContext();
-        mPlayer = new SoundPlayer(context, true);
+        mContext = application.getApplicationContext();
+        mPlayer = new SoundPlayer(mContext, true);
     }
 
     public void init(float screenWidth, float screenHeight) {
@@ -186,12 +189,21 @@ public class GameViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * draw
+     * @param canvas canvas
+     * @param paint paint
+     */
+    public void draw(Canvas canvas, Paint paint) {
+        // draw bird
+        Bitmap birdBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bird);
+        birdBitmap = Bitmap.createScaledBitmap(birdBitmap, GameConstants.BIRD_WIDTH, GameConstants.BIRD_HEIGHT, false);
+        mBird.draw(birdBitmap, canvas, paint);
+    }
+
     public void release() {
         mPlayer.release();
     }
-
-
-    // --- setter ---
 
     /**
      * add score
@@ -200,12 +212,10 @@ public class GameViewModel extends AndroidViewModel {
         mScore.postValue(mScore.getValue() + 5);
     }
 
-    // --- getter ---
     public PointF getBirdPosition() {
         PointF position = (validCheck()) ? mBird.getPosition() : new PointF(0, 0);
         return position;
     }
-
 
     public List<Pipe> getPipes() {
         List<Pipe> pipes = (validCheck()) ? mPipesManager.getPipesSnapshot() : new ArrayList<>();

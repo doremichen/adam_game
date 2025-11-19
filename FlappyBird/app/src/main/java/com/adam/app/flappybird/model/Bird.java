@@ -7,6 +7,9 @@
  */
 package com.adam.app.flappybird.model;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.PointF;
 
 import com.adam.app.flappybird.util.GameConstants;
@@ -64,4 +67,21 @@ public class Bird {
     public float getVelocity() {
         return mVelocityY;
     }
+
+    /**
+     * draw
+     * draw bird
+     *
+     * @param bitmap
+     * @param canvas
+     * @param paint
+     */
+    public void draw(Bitmap bitmap, Canvas canvas, Paint paint) {
+
+        canvas.drawBitmap(bitmap,
+                mPosition.x - bitmap.getWidth() / 2f,
+                mPosition.y - bitmap.getHeight() / 2f,
+                paint);
+    }
+
 }

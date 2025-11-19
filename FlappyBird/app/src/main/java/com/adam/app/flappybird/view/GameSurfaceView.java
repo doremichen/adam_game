@@ -150,8 +150,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         //canvas.drawColor(Color.CYAN);
 
+        // set yellow
+        mBirdPaint.setColor(Color.YELLOW);
+        mViewModel.draw(canvas, mBirdPaint);
+
         drawPipes(canvas);
-        drawBird(canvas);
+        //drawBird(canvas);
         drawText(canvas);
 
     }
