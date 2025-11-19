@@ -64,8 +64,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.mSurfaceHolder.setFormat(PixelFormat.TRANSLUCENT);
 
         this.mBirdPaint = new Paint();
-        this.mBirdPaint.setColor(Color.RED);
-        this.mBirdPaint.setTextSize(48f);
 
         this.mPipePaint = new Paint();
         this.mPipePaint.setColor(Color.GREEN);
@@ -75,8 +73,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
         mService = Executors.newSingleThreadExecutor();
-        
-        initBg();
     }
 
     private void initBg() {
@@ -151,11 +147,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         //canvas.drawColor(Color.CYAN);
 
         // set yellow
-        mBirdPaint.setColor(Color.YELLOW);
         mViewModel.draw(canvas, mBirdPaint);
-
         drawPipes(canvas);
-        //drawBird(canvas);
         drawText(canvas);
 
     }
@@ -204,19 +197,28 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
     @Override
-    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
-
+    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int format, int width, int height) {
+        GameUtil.info(TAG, "surfaceChanged");
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-        // start the game
+        GameUtil.info(TAG, "surfaceCreated");
+        GameUtil.info(TAG, "Width: " + getWidth() + ", Height: " + getHeight() + ".");
+        // init background
+        initBg();
+
+        // init
+        mViewModel.init(getWidth(), getHeight());
+        // start game
         mLastTimesNs = System.nanoTime();
+        mViewModel.startGame();
         mFuture = mService.submit(this);
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
+        GameUtil.info(TAG, "surfaceDestroyed");
         // stop the game
         try {
             mFuture.cancel(true);

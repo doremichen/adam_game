@@ -24,8 +24,8 @@ public final class GameConstants {
     public static final int SOUND_WING = 1;
     public static final int SOUND_HIT = 2;
     public static final int SOUND_POINT = 3;
-    public static final int BIRD_WIDTH = 80;
-    public static final int BIRD_HEIGHT = 80;
+    public static final int BIRD_WIDTH = 100;
+    public static final int BIRD_HEIGHT = 100;
 
 
 

@@ -18,12 +18,17 @@ public class Bird {
     private final PointF mPosition;
     private float mVelocityY;
 
+    private final Bitmap mScaleBmp;
+
     /**
      * Bird constructor
      * @param mPosition - initial position
      */
-    public Bird(PointF mPosition) {
+    public Bird(Bitmap bitmap, PointF mPosition) {
         this.mPosition = mPosition;
+
+        // scale
+        this.mScaleBmp = Bitmap.createScaledBitmap(bitmap, GameConstants.BIRD_WIDTH, GameConstants.BIRD_HEIGHT, false);
     }
 
     /**
@@ -72,15 +77,14 @@ public class Bird {
      * draw
      * draw bird
      *
-     * @param bitmap
      * @param canvas
      * @param paint
      */
-    public void draw(Bitmap bitmap, Canvas canvas, Paint paint) {
+    public void draw(Canvas canvas, Paint paint) {
 
-        canvas.drawBitmap(bitmap,
-                mPosition.x - bitmap.getWidth() / 2f,
-                mPosition.y - bitmap.getHeight() / 2f,
+        canvas.drawBitmap(this.mScaleBmp,
+                mPosition.x - this.mScaleBmp.getWidth() / 2f,
+                mPosition.y - this.mScaleBmp.getHeight() / 2f,
                 paint);
     }
 

@@ -59,8 +59,9 @@ public class GameViewModel extends AndroidViewModel {
         // init width and height
         mScreenWidth = screenWidth;
         mScreenHeight = screenHeight;
-
-        mBird = new Bird(new PointF(200f, 300f));
+        // get bird bmp
+        Bitmap birdBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bird);
+        mBird = new Bird(birdBitmap, new PointF(200f, 300f));
         mPipesManager = new PipesManager(screenWidth);
 
         // set game state as ready
@@ -145,10 +146,10 @@ public class GameViewModel extends AndroidViewModel {
             float pipeX = p.getPosition().x;
             boolean inXrange = birdX + GameConstants.BIRD_RADIUS > pipeX &&
                     birdX - GameConstants.BIRD_RADIUS < p.getRightX();
-            boolean inYrange = birdY - GameConstants.BIRD_RADIUS < p.getTopPipeBottomY() ||
+            boolean outOfGap = birdY - GameConstants.BIRD_RADIUS < p.getTopPipeBottomY() ||
                     birdY + GameConstants.BIRD_RADIUS > p.getBottomPipeTopY();
 
-            if (inXrange && inYrange) {
+            if (inXrange && outOfGap) {
                 // play hit short sound
                 mPlayer.playHitSound();
                 updateScore(p);
@@ -196,9 +197,7 @@ public class GameViewModel extends AndroidViewModel {
      */
     public void draw(Canvas canvas, Paint paint) {
         // draw bird
-        Bitmap birdBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bird);
-        birdBitmap = Bitmap.createScaledBitmap(birdBitmap, GameConstants.BIRD_WIDTH, GameConstants.BIRD_HEIGHT, false);
-        mBird.draw(birdBitmap, canvas, paint);
+        mBird.draw(canvas, paint);
     }
 
     public void release() {

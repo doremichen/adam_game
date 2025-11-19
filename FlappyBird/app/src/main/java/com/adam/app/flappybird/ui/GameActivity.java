@@ -39,14 +39,6 @@ public class GameActivity extends AppCompatActivity {
         // set the view model to the view
         mBinding.gameSurface.setViewModel(mViewModel);
 
-        mBinding.gameSurface.post(() -> {
-            // get the width and height of the view
-            int width = mBinding.gameSurface.getWidth();
-            int height = mBinding.gameSurface.getHeight();
-            mViewModel.init(width, height);
-            mViewModel.startGame();
-        });
-
         // set touch listener
         mBinding.gameSurface.setOnTouchListener((v, event) -> {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
