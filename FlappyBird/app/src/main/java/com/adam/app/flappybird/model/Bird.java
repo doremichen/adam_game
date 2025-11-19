@@ -88,4 +88,13 @@ public class Bird {
                 paint);
     }
 
+    /**
+     * release
+     */
+    public void release() {
+        if (mScaleBmp != null && !mScaleBmp.isRecycled()) {
+            mScaleBmp.recycle();
+        }
+    }
+
 }

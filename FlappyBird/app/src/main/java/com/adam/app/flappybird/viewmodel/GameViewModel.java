@@ -202,6 +202,7 @@ public class GameViewModel extends AndroidViewModel {
 
     public void release() {
         mPlayer.release();
+        mBird.release();
     }
 
     /**

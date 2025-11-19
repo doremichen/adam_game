@@ -229,5 +229,23 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         }
 
         mService.shutdown();
+
+        // release resources
+        release();
+    }
+
+    /**
+     * Release the resources.
+     */
+    private void release() {
+        if (mBgFar != null) {
+            mBgFar.release();
+            mBgFar = null;
+        }
+
+        if (mBgNear != null) {
+            mBgNear.release();
+            mBgNear = null;
+        }
     }
 }

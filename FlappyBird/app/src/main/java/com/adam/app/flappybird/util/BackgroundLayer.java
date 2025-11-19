@@ -56,4 +56,13 @@ public class BackgroundLayer {
         canvas.drawBitmap(mBitmap, mX2, y, paint);
     }
 
+    /**
+     * release the bitmap
+     */
+    public void release() {
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+        }
+    }
+
 }
