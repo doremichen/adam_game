@@ -18,8 +18,8 @@ import android.widget.Toast;
 public final class GameUtil {
 
     // TAG
-    public static final String TAG = "GameUtil";
-    public static final String GAME_TAG = "FlappyBird";
+    public static final String TAG = "FlappyBird";
+    public static final String GAME_TAG = "GameUtil";
 
     private GameUtil() {
     }
@@ -110,4 +110,33 @@ public final class GameUtil {
 
     }
 
+    public static class SCALE {
+        public static final float SCALE_X = 1f;
+        public static final float SCALE_Y = 1f;
+
+        private static float sScaleX = SCALE_X;
+        private static float sScaleY = SCALE_Y;
+
+        public static void setScale(float origX, float origY) {
+            sScaleX = origX/GameConstants.SCREEN_WIDTH;
+            sScaleY = origY/GameConstants.SCREEN_HEIGHT;
+        }
+
+        public static float wX(float worldX) {
+            return worldX * ((sScaleX == SCALE_X)? SCALE_X: sScaleX);
+        }
+
+        public static float wY(float worldY) {
+            return worldY * ((sScaleY == SCALE_Y)? SCALE_Y: sScaleY);
+        }
+
+        public static float getScaleX() {
+            return sScaleX;
+        }
+
+        public static float getScaleY() {
+            return sScaleY;
+        }
+
+    }
 }

@@ -131,6 +131,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 e.printStackTrace();
             }
 
+            // update game status
+            mViewModel.updateGameStatus();
+
         }
     }
 
@@ -156,24 +159,30 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private void drawPipes(Canvas canvas) {
         // set green
         mPipePaint.setColor(Color.GREEN);
+
         // get pipes
         List<Pipe> pipes = mViewModel.getPipes();
         for (Pipe pipe : pipes) {
+            float left = GameUtil.SCALE.wX(pipe.getPosition().x);
+            float right = GameUtil.SCALE.wX(pipe.getRightX());
+            float top = GameUtil.SCALE.wY(pipe.getTopPipeBottomY());
+            float bottom = GameUtil.SCALE.wY(pipe.getBottomPipeTopY());
+
             // top pipe
             canvas.drawRect(
-                    pipe.getPosition().x,
+                    left,
                     0,
-                    pipe.getRightX(),
-                    pipe.getTopPipeBottomY(),
+                    right,
+                    top,
                     mPipePaint
             );
 
             // bottom pipe
             canvas.drawRect(
-                    pipe.getPosition().x,
-                    pipe.getBottomPipeTopY(),
-                    pipe.getRightX(),
-                    2000,
+                    left,
+                    bottom,
+                    right,
+                    GameUtil.SCALE.wY(canvas.getHeight()),
                     mPipePaint
             );
         }
@@ -205,11 +214,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         GameUtil.info(TAG, "surfaceCreated");
         GameUtil.info(TAG, "Width: " + getWidth() + ", Height: " + getHeight() + ".");
+        int w = getWidth();
+        int h = getHeight();
+
+        //SCALE.setScale((float) w / GameConstants.SCREEN_WIDTH, (float) h / GameConstants.SCREEN_HEIGHT);
+        GameUtil.info(TAG, "Scale: " + GameUtil.SCALE.getScaleX() + ", " + GameUtil.SCALE.getScaleY());
+
         // init background
         initBg();
 
         // init
-        mViewModel.init(getWidth(), getHeight());
+        mViewModel.init(w, h);
         // start game
         mLastTimesNs = System.nanoTime();
         mViewModel.startGame();
@@ -248,4 +263,5 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             mBgNear = null;
         }
     }
+
 }

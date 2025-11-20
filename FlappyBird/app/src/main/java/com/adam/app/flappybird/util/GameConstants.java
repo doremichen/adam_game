@@ -13,7 +13,9 @@ public final class GameConstants {
     public static final int SCREEN_WIDTH = 1080;
     public static final int SCREEN_HEIGHT = 1920;
     public static final int COLLISION_RANGE = 40;
-    public static final float BIRD_RADIUS = 40f;
+    public static final int BIRD_WIDTH = 100;
+    public static final int BIRD_HEIGHT = 100;
+    public static final float BIRD_RADIUS = Math.min(BIRD_WIDTH, BIRD_HEIGHT) / 2f * 0.8f;;
     public static final float PIPE_WIDTH = 200f;
     public static final float PIPE_GAP = 300f;
     public static final float PIPE_SPEED = 400f; // px / second
@@ -24,8 +26,7 @@ public final class GameConstants {
     public static final int SOUND_WING = 1;
     public static final int SOUND_HIT = 2;
     public static final int SOUND_POINT = 3;
-    public static final int BIRD_WIDTH = 100;
-    public static final int BIRD_HEIGHT = 100;
+
 
 
 

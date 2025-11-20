@@ -26,13 +26,15 @@ public class PipesManager {
     private final Random mRandom = new Random();
     // screen width
     private float mScreenWidth;
+    private float mScreenHeight;
     private float mSpawnX;  // initial spawn x coordinate
     private float mSpawnInterval; // px interval between pipes
 
 
     // Constructor
-    public PipesManager(float screenWidth) {
+    public PipesManager(float screenWidth, float screenHeight) {
         mScreenWidth = screenWidth;
+        mScreenHeight = screenHeight;
         mSpawnX = screenWidth + 200f;
         mSpawnInterval = GameConstants.SPAWN_INTERVAL;
 
@@ -51,7 +53,7 @@ public class PipesManager {
         // keep gap center inside reasonable bounds
         float margin = 200f;
         float min = margin + GameConstants.PIPE_GAP / 2f;
-        float max = 1200f - margin - GameConstants.PIPE_GAP / 2f; // assume screen height ~1200; fine to clamp at runtime
+        float max = mScreenHeight - margin - GameConstants.PIPE_GAP / 2f; // assume screen height ~1200; fine to clamp at runtime
         return min + mRandom.nextFloat() * (max - min);
     }
 

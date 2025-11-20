@@ -62,7 +62,7 @@ public class GameViewModel extends AndroidViewModel {
         // get bird bmp
         Bitmap birdBitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.bird);
         mBird = new Bird(birdBitmap, new PointF(200f, 300f));
-        mPipesManager = new PipesManager(screenWidth);
+        mPipesManager = new PipesManager(screenWidth, screenHeight);
 
         // set game state as ready
         this.mGameState.postValue(GameState.READY);
@@ -112,14 +112,14 @@ public class GameViewModel extends AndroidViewModel {
         // update pipes
         mPipesManager.update(deltaSec);
         // update game status
-        updateGameStatus();
+        //updateGameStatus();
 
     }
 
     /**
      * update game status
      */
-    private void updateGameStatus() {
+    public void updateGameStatus() {
 
         // check collision
         if (checkCollision()) {
@@ -130,36 +130,46 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     private boolean checkCollision() {
+        // get bird position
+        PointF birdPosition = mBird.getPosition();
+        float birdRadius = GameConstants.BIRD_RADIUS;
         // bounds
-        if (mBird.getPosition().y - GameConstants.BIRD_RADIUS < 0 ||
-                mBird.getPosition().y + GameConstants.BIRD_RADIUS > mScreenHeight) {
+        if (birdPosition.y - birdRadius < 0 ||
+                birdPosition.y + birdRadius > mScreenHeight) {
             // play hit short sound
             mPlayer.playHitSound();
             return true;
         }
 
-        float birdX = mBird.getPosition().x;
-        float birdY = mBird.getPosition().y;
+        float birdLeft = birdPosition.x - birdRadius;
+        float birdRight = birdPosition.x + birdRadius;
+        float birdTop = birdPosition.y - birdRadius;
+        float birdBottom = birdPosition.y + birdRadius;
 
-        // pipes
-        for (Pipe p : mPipesManager.getPipesSnapshot()) {
-            float pipeX = p.getPosition().x;
-            boolean inXrange = birdX + GameConstants.BIRD_RADIUS > pipeX &&
-                    birdX - GameConstants.BIRD_RADIUS < p.getRightX();
-            boolean outOfGap = birdY - GameConstants.BIRD_RADIUS < p.getTopPipeBottomY() ||
-                    birdY + GameConstants.BIRD_RADIUS > p.getBottomPipeTopY();
+        // check pipe collision
+        for (Pipe pipe : mPipesManager.getPipesSnapshot()) {
+            float pipeLeft = pipe.getPosition().x;
+            float pipeRight = pipe.getRightX();
+            float gapTop = pipe.getTopPipeBottomY();
+            float gapBottom = pipe.getBottomPipeTopY();
 
+            // x range
+            boolean inXrange = birdLeft < pipeRight && birdRight > pipeLeft;
+            // y range
+            boolean outOfGap = birdTop < gapTop || birdBottom > gapBottom;
             if (inXrange && outOfGap) {
                 // play hit short sound
                 mPlayer.playHitSound();
-                updateScore(p);
+                // update score
+                updateScore(pipe);
                 return true;
             }
 
-            updateScore(p);
+            updateScore(pipe);
         }
         return false;
     }
+
 
     /**
      * update score
@@ -192,8 +202,9 @@ public class GameViewModel extends AndroidViewModel {
 
     /**
      * draw
+     *
      * @param canvas canvas
-     * @param paint paint
+     * @param paint  paint
      */
     public void draw(Canvas canvas, Paint paint) {
         // draw bird

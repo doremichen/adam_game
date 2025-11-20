@@ -13,8 +13,7 @@
         android:theme="@style/Theme.FlappyBird">
         <activity
             android:name=".ui.GameActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
