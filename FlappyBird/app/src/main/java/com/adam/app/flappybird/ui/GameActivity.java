@@ -10,6 +10,7 @@ package com.adam.app.flappybird.ui;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,34 +41,14 @@ public class GameActivity extends AppCompatActivity {
         mBinding.gameSurface.setViewModel(mViewModel);
 
         // set touch listener
-        mBinding.gameSurface.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                mViewModel.flap();
-            }
-            return true;
-        });
+        mBinding.gameSurface.setOnTouchListener(this::onTouch);
 
         // observer
-        mViewModel.getGameState().observe(this, gameState -> {
-            // show game over dialog
-            if (gameState == GameState.GAME_OVER) {
-                showGameOverDialog();
-            }
-        });
-        mViewModel.getScore().observe(this, score -> {
-            // update score
-            String scoreString = String.valueOf(score);
-            mBinding.tvScore.setText(getString(R.string.flappy_bird_score_tv, scoreString));
-        });
-
+        mViewModel.getGameState().observe(this, this::onGameStateChanged);
+        mViewModel.getScore().observe(this, this::onScore);
 
         // exit button click listener
-        mBinding.btnExit.setOnClickListener(v -> {
-            // stop game
-            mViewModel.stopGame();
-            // finish activity
-            finish();
-        });
+        mBinding.btnExit.setOnClickListener(this::onExitClick);
     }
 
 
@@ -88,5 +69,32 @@ public class GameActivity extends AppCompatActivity {
         // show
         GameUtil.showDialog(this, getString(R.string.flappy_bird_game_over_dlg_title), getString(R.string.flappy_bird_dlg_message), positiveButton, null);
 
+    }
+
+    private boolean onTouch(View view, MotionEvent event) {
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            mViewModel.flap();
+        }
+        return true;
+    }
+
+    private void onGameStateChanged(GameState gameState) {
+        // show game over dialog
+        if (gameState == GameState.GAME_OVER) {
+            showGameOverDialog();
+        }
+    }
+
+    private void onScore(Integer score) {
+        // update score
+        String scoreString = String.valueOf(score);
+        mBinding.tvScore.setText(getString(R.string.flappy_bird_score_tv, scoreString));
+    }
+
+    private void onExitClick(View v) {
+        // stop game
+        mViewModel.stopGame();
+        // finish activity
+        finish();
     }
 }
