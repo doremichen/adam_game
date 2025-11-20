@@ -47,8 +47,6 @@ public class GameActivity extends AppCompatActivity {
         mViewModel.getGameState().observe(this, this::onGameStateChanged);
         mViewModel.getScore().observe(this, this::onScore);
 
-        // exit button click listener
-        mBinding.btnExit.setOnClickListener(this::onExitClick);
     }
 
 
