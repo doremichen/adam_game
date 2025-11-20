@@ -25,6 +25,7 @@ import com.adam.app.flappybird.model.Pipe;
 import com.adam.app.flappybird.util.BackgroundLayer;
 import com.adam.app.flappybird.util.GameConstants;
 import com.adam.app.flappybird.util.GameUtil;
+import com.adam.app.flappybird.util.PipeRenderUtil;
 import com.adam.app.flappybird.viewmodel.GameViewModel;
 
 import java.util.List;
@@ -48,9 +49,12 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     // surface holder
     private SurfaceHolder mSurfaceHolder;
+
     private Paint mBirdPaint;
     private Paint mPipePaint;
     private Paint mBgPaint;
+
+    private PipeRenderUtil mPipeRender;
 
     // view model
     private GameViewModel mViewModel;
@@ -71,6 +75,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         this.mBgPaint = new Paint();
         this.mBgPaint.setColor(Color.CYAN);
 
+        this.mPipeRender = new PipeRenderUtil(getContext(), false);
 
         mService = Executors.newSingleThreadExecutor();
     }
@@ -168,23 +173,32 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             float top = GameUtil.SCALE.wY(pipe.getTopPipeBottomY());
             float bottom = GameUtil.SCALE.wY(pipe.getBottomPipeTopY());
 
-            // top pipe
-            canvas.drawRect(
+            // draw
+            this.mPipeRender.drawPipe(
+                    canvas,
                     left,
-                    0,
                     right,
                     top,
-                    mPipePaint
-            );
+                    bottom);
 
-            // bottom pipe
-            canvas.drawRect(
-                    left,
-                    bottom,
-                    right,
-                    GameUtil.SCALE.wY(canvas.getHeight()),
-                    mPipePaint
-            );
+
+//            // top pipe
+//            canvas.drawRect(
+//                    left,
+//                    0,
+//                    right,
+//                    top,
+//                    mPipePaint
+//            );
+//
+//            // bottom pipe
+//            canvas.drawRect(
+//                    left,
+//                    bottom,
+//                    right,
+//                    GameUtil.SCALE.wY(canvas.getHeight()),
+//                    mPipePaint
+//            );
         }
     }
 

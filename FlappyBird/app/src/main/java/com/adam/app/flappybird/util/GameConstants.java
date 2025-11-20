@@ -27,9 +27,6 @@ public final class GameConstants {
     public static final int SOUND_HIT = 2;
     public static final int SOUND_POINT = 3;
 
-
-
-
     private GameConstants() {
         // avoid to instance
     }
