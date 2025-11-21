@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openSetting(View view) {
-        showUnImplemented();
+        // start setting activity
+        startActivity(SettingsActivity.createIntent(this));
     }
 
     private void startGame(View view) {

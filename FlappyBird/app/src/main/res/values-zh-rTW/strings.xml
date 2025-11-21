@@ -15,4 +15,9 @@
     <string name="flappy_bird_setting_item">設定</string>
     <string name="flappy_bird_leader_bord_item">排行榜</string>
     <string name="flappy_bird_about_item">關於</string>
+    <string name="title_activity_settings">設定頁面</string>
+    <string name="flappy_bird_common_setting">一般</string>
+    <string name="flappy_bird_sound_effect_title">音效</string>
+    <string name="flappy_bird_sound_effect_summary_off">關</string>
+    <string name="flappy_bird_sound_effect_summary_on">開</string>
 </resources>

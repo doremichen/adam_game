@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/flappy_bird_common_setting">
+
+        <SwitchPreferenceCompat
+            app:key="sound_effect"
+            app:title="@string/flappy_bird_sound_effect_title"
+            app:summaryOff="@string/flappy_bird_sound_effect_summary_off"
+            app:summaryOn="@string/flappy_bird_sound_effect_summary_on"
+            app:defaultValue="false"
+            app:icon="@drawable/ic_sound"
+            app:layout="@layout/custom_preference"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

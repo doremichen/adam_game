@@ -15,4 +15,9 @@
     <string name="flappy_bird_setting_item">Setting</string>
     <string name="flappy_bird_leader_bord_item">Leader Bord</string>
     <string name="flappy_bird_about_item">About</string>
+    <string name="title_activity_settings">Settings Activity</string>
+    <string name="flappy_bird_common_setting">Common</string>
+    <string name="flappy_bird_sound_effect_title">Sound effect</string>
+    <string name="flappy_bird_sound_effect_summary_off">Off</string>
+    <string name="flappy_bird_sound_effect_summary_on">On</string>
 </resources>

@@ -23,6 +23,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.flappybird.R;
 import com.adam.app.flappybird.manager.PipesManager;
+import com.adam.app.flappybird.manager.SettingsManager;
 import com.adam.app.flappybird.model.Bird;
 import com.adam.app.flappybird.model.GameState;
 import com.adam.app.flappybird.model.Pipe;
@@ -52,7 +53,9 @@ public class GameViewModel extends AndroidViewModel {
     public GameViewModel(@NonNull Application application) {
         super(application);
         mContext = application.getApplicationContext();
-        mPlayer = new SoundPlayer(mContext, true);
+        // get sound enable setting from shared preferences
+        boolean soundEnable = SettingsManager.getInstance(mContext).isSoundEffect();
+        mPlayer = new SoundPlayer(mContext, soundEnable);
     }
 
     public void init(float screenWidth, float screenHeight) {

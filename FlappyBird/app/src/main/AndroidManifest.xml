@@ -12,16 +12,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FlappyBird">
         <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_settings" />
+        <activity
             android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.GameActivity"
-            android:exported="false"/>
+            android:exported="false" />
     </application>
 
 </manifest>
