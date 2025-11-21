@@ -1,5 +1,5 @@
 /**
- * This class is the main activity of the Flappy Bird game.
+ * This class is the Flappy Bird game view.
  *
  * @author Adam Chen
  * @version 1.0
@@ -7,7 +7,9 @@
  */
 package com.adam.app.flappybird.ui;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,7 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.flappybird.R;
-import com.adam.app.flappybird.databinding.ActivityMainBinding;
+import com.adam.app.flappybird.databinding.ActivityGameBinding;
 import com.adam.app.flappybird.model.GameState;
 import com.adam.app.flappybird.util.GameUtil;
 import com.adam.app.flappybird.viewmodel.GameViewModel;
@@ -24,15 +26,19 @@ import com.adam.app.flappybird.viewmodel.GameViewModel;
 public class GameActivity extends AppCompatActivity {
 
     // view binding
-    private ActivityMainBinding mBinding;
+    private ActivityGameBinding mBinding;
     // view model
     private GameViewModel mViewModel;
+
+    public static Intent createIntent(Activity activity) {
+        return new Intent(activity, GameActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // view binding
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
