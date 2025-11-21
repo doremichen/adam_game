@@ -5,4 +5,14 @@
     <string name="flappy_bird_game_over_dlg_title">遊戲結束</string>
     <string name="flappy_bird_dlg_message">遊戲結束！請按確定鍵退出遊戲！</string>
     <string name="flappy_bird_score_tv">分數: %1$s</string>
+    <string name="flappy_bird_about_description">這是一款簡單但具有挑戰性的躲避遊戲。操控小鳥穿越水管並獲得高分。</string>
+    <string name="flappy_bird_about_operation">🎮 操作方式：\n- 點擊螢幕：小鳥向上飛\n- 避免碰撞水管或地面</string>
+    <string name="flappy_bird_about_author">👨‍💻 開發者：Adam Chen</string>
+    <string name="flappy_bird_about_freesound">🔊 音效與素材：\n- 小鳥圖片由作者提供\n- 音效來源：自製／FreeSound</string>
+    <string name="flappy_bird_about_private">本遊戲不會收集或儲存任何個人資料。</string>
+    <string name="flappy_bird_about_dialog_title">關於</string>
+    <string name="flappy_bird_start_game_item">開始遊戲</string>
+    <string name="flappy_bird_setting_item">設定</string>
+    <string name="flappy_bird_leader_bord_item">排行榜</string>
+    <string name="flappy_bird_about_item">關於</string>
 </resources>

@@ -13,12 +13,15 @@ import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.adam.app.flappybird.databinding.ActivityMainBinding;
+import com.adam.app.flappybird.ui.dialog.AboutDialogFragment;
 import com.adam.app.flappybird.util.GameUtil;
 
 public class MainActivity extends AppCompatActivity {
 
     // view binding
     private ActivityMainBinding mBinding;
+
+    private static final String TAG_ABOUT_FRAGMENT = "AboutDialog";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openAbout(View view) {
-        showUnImplemented();
+        // show about dialog
+        new AboutDialogFragment().show(getSupportFragmentManager(), TAG_ABOUT_FRAGMENT);
     }
 
     private void openSetting(View view) {

@@ -5,4 +5,14 @@
     <string name="flappy_bird_game_over_dlg_title">Game Over</string>
     <string name="flappy_bird_dlg_message">Game over! Please press ok button to exit this game!</string>
     <string name="flappy_bird_score_tv">Score: %1$s</string>
+    <string name="flappy_bird_about_description">This is a simple yet challenging dodging game. Control the bird to navigate through pipes and score high marks.</string>
+    <string name="flappy_bird_about_operation">🎮 Operation mode：\n- Tap the screen: The bird flies upwards\n- Avoid collisions with water pipes or the ground.</string>
+    <string name="flappy_bird_about_author">👨‍💻 Developer：Adam Chen</string>
+    <string name="flappy_bird_about_freesound">🔊 Sound effects and materials：\n- The bird image was provided by the author.\n- Sound effects source: Self-made／FreeSound</string>
+    <string name="flappy_bird_about_private">This game does not collect or store any personal data.</string>
+    <string name="flappy_bird_about_dialog_title">About</string>
+    <string name="flappy_bird_start_game_item">Start Game</string>
+    <string name="flappy_bird_setting_item">Setting</string>
+    <string name="flappy_bird_leader_bord_item">Leader Bord</string>
+    <string name="flappy_bird_about_item">About</string>
 </resources>
