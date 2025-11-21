@@ -66,7 +66,7 @@ public class SoundPlayer {
      */
     public void playShortSound(int soundId, boolean isLooping) {
         if (!mEnabled) {
-            GameUtil.showToast(mContext, "Sound is disabled");
+            //GameUtil.showToast(mContext, "Sound is disabled");
             return;
         }
         // sound id
@@ -85,7 +85,7 @@ public class SoundPlayer {
      */
     public void playBgm(@RawRes int resId, boolean isLooping) {
         if (!mEnabled) {
-            GameUtil.showToast(mContext, "Sound is disabled");
+            //GameUtil.showToast(mContext, "Sound is disabled");
             return;
         }
         // stop bgm
@@ -112,7 +112,7 @@ public class SoundPlayer {
      */
     public void resumeBgm() {
         if (!mEnabled) {
-            GameUtil.showToast(mContext, "Sound is disabled");
+            //GameUtil.showToast(mContext, "Sound is disabled");
             return;
         }
 

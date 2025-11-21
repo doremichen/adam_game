@@ -12,8 +12,8 @@
     <!-- icon -->
     <ImageView
         android:id="@android:id/icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="16dp"/>
 
     <!-- text block -->

@@ -48,8 +48,11 @@ public class SettingsActivity extends AppCompatActivity {
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
         private SettingsManager mSettingsManager;
+        private Context mContext;
+
 
         public SettingsFragment(Context context) {
+            mContext = context;
             mSettingsManager = SettingsManager.getInstance(context);
         }
 
@@ -75,7 +78,9 @@ public class SettingsActivity extends AppCompatActivity {
             mSettingsManager.setSoundEffect(value);
 
             // show toast
-            GameUtil.showToast(getContext(), "Sound Effect: " + (value ? "On" : "Off"));
+            String msg = value ? mContext.getString(R.string.flappy_bird_sound_effect_summary_on)
+                    : mContext.getString(R.string.flappy_bird_sound_effect_summary_off);
+            GameUtil.showToast(getContext(), mContext.getString(R.string.flappy_bird_sound_effect_toast, msg));
 
             return true; // save
         }

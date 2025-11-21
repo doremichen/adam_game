@@ -20,4 +20,5 @@
     <string name="flappy_bird_sound_effect_title">音效</string>
     <string name="flappy_bird_sound_effect_summary_off">關</string>
     <string name="flappy_bird_sound_effect_summary_on">開</string>
+    <string name="flappy_bird_sound_effect_toast">音效: %1$s</string>
 </resources>
