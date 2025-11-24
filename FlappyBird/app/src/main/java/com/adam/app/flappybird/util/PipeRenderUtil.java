@@ -1,5 +1,5 @@
 /**
- *
+ * This class is used to provide draw pipe methods
  *
  * @author Adam Chen
  * @version 1.0
