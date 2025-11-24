@@ -15,6 +15,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -22,6 +24,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.flappybird.R;
+import com.adam.app.flappybird.data.repository.FlappyBirdRepository;
 import com.adam.app.flappybird.manager.PipesManager;
 import com.adam.app.flappybird.manager.SettingsManager;
 import com.adam.app.flappybird.model.Bird;
@@ -47,11 +50,19 @@ public class GameViewModel extends AndroidViewModel {
     private float mScreenWidth = GameConstants.SCREEN_WIDTH;
     private float mScreenHeight = GameConstants.SCREEN_HEIGHT;
 
+    // thread safe game over flag
+    private volatile boolean mIsGameOver = false;
+
     private Context mContext;
+
+    // flappy bird repository
+    private final FlappyBirdRepository mRepository;
+
 
     // Constructor
     public GameViewModel(@NonNull Application application) {
         super(application);
+        mRepository = new FlappyBirdRepository(application);
         mContext = application.getApplicationContext();
         // get sound enable setting from shared preferences
         boolean soundEnable = SettingsManager.getInstance(mContext).isSoundEffect();
@@ -77,8 +88,9 @@ public class GameViewModel extends AndroidViewModel {
      * start game
      */
     public void startGame() {
+        mIsGameOver = false;
         initPipes();
-        this.mGameState.postValue(GameState.RUNNING);
+        new Handler(Looper.getMainLooper()).post(() -> this.mGameState.setValue(GameState.RUNNING));
     }
 
     private void initPipes() {
@@ -91,7 +103,7 @@ public class GameViewModel extends AndroidViewModel {
      * stop game
      */
     public void stopGame() {
-        this.mGameState.postValue(GameState.READY);
+        new Handler(Looper.getMainLooper()).post(() -> this.mGameState.setValue(GameState.READY));
     }
 
     /**
@@ -123,22 +135,34 @@ public class GameViewModel extends AndroidViewModel {
      * update game status
      */
     public void updateGameStatus() {
+        GameUtil.info(TAG, "update game status");
 
         // check collision
         if (checkCollision()) {
-            mGameState.postValue(GameState.GAME_OVER);
-            return;
+            GameUtil.info(TAG, "Game over");
+            // save score in database
+            int score = (mScore.getValue() == null)? 0 : mScore.getValue();
+            mRepository.addScore(score);
+            happenGameOver();
         }
 
     }
 
+    private void happenGameOver() {
+        // set game over flag
+        mIsGameOver = true;
+        new Handler(Looper.getMainLooper()).post(() -> this.mGameState.setValue(GameState.GAME_OVER));
+    }
+
     private boolean checkCollision() {
+        GameUtil.info(TAG, "check collision");
         // get bird position
         PointF birdPosition = mBird.getPosition();
         float birdRadius = GameConstants.BIRD_RADIUS;
         // bounds
         if (birdPosition.y - birdRadius < 0 ||
                 birdPosition.y + birdRadius > mScreenHeight) {
+            GameUtil.info(TAG, "Bird collision");
             // play hit short sound
             mPlayer.playHitSound();
             return true;
@@ -161,6 +185,7 @@ public class GameViewModel extends AndroidViewModel {
             // y range
             boolean outOfGap = birdTop < gapTop || birdBottom > gapBottom;
             if (inXrange && outOfGap) {
+                GameUtil.info(TAG, "Pipe collision");
                 // play hit short sound
                 mPlayer.playHitSound();
                 // update score
@@ -181,10 +206,10 @@ public class GameViewModel extends AndroidViewModel {
      */
     private void updateScore(Pipe pipe) {
         if (!pipe.isMarkScored() && mBird.getPosition().x > pipe.getRightX()) {
-            // play point short sound
-            mPlayer.playPointSound();
 
             addScore();
+            // play point short sound
+            mPlayer.playPointSound();
             // mark pipe as scored
             pipe.setMarkScored(true);
         }
@@ -240,12 +265,13 @@ public class GameViewModel extends AndroidViewModel {
         return mGameState;
     }
 
+
     public LiveData<Integer> getScore() {
         return mScore;
     }
 
     public boolean isGameOver() {
-        return mGameState.getValue() == GameState.GAME_OVER;
+        return mIsGameOver;
     }
 
     private boolean validCheck() {

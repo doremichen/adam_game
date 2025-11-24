@@ -15,6 +15,9 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public final class GameUtil {
 
     // TAG
@@ -138,5 +141,12 @@ public final class GameUtil {
             return sScaleY;
         }
 
+    }
+
+
+    public static String formateDate(long timeStamp) {
+        Date date = new Date(timeStamp);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
     }
 }

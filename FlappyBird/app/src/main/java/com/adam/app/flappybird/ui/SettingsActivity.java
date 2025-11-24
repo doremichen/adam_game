@@ -7,7 +7,6 @@
  */
 package com.adam.app.flappybird.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,7 +23,7 @@ import com.adam.app.flappybird.util.GameUtil;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    public static Intent createIntent(Activity activity) {
+    public static Intent createIntent(AppCompatActivity activity) {
         return new Intent(activity, SettingsActivity.class);
     }
 

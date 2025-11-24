@@ -180,25 +180,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                     right,
                     top,
                     bottom);
-
-
-//            // top pipe
-//            canvas.drawRect(
-//                    left,
-//                    0,
-//                    right,
-//                    top,
-//                    mPipePaint
-//            );
-//
-//            // bottom pipe
-//            canvas.drawRect(
-//                    left,
-//                    bottom,
-//                    right,
-//                    GameUtil.SCALE.wY(canvas.getHeight()),
-//                    mPipePaint
-//            );
         }
     }
 

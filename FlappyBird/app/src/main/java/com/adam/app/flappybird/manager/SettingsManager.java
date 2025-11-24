@@ -8,8 +8,8 @@ import androidx.preference.PreferenceManager;
 public class SettingsManager {
     // --- Key ---
     private static final String KEY_SOUND_EFFECT = "sound_effect";
-    private static SettingsManager mIstance;
-    private SharedPreferences mPreferences;
+    private static volatile SettingsManager sInstance;
+    private final SharedPreferences mPreferences;
 
     private SettingsManager(Context context) {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
@@ -22,14 +22,13 @@ public class SettingsManager {
      * @return SettingsManager
      */
     public static SettingsManager getInstance(Context context) {
-        synchronized (SettingsManager.class) {
-            if (mIstance == null) {
-                synchronized (SettingsManager.class) {
-                    mIstance = new SettingsManager(context);
-                }
+        if (sInstance == null) {
+            synchronized (SettingsManager.class) {
+                if (sInstance == null)
+                    sInstance = new SettingsManager(context);
             }
         }
-        return mIstance;
+        return sInstance;
     }
 
     public boolean isSoundEffect() {

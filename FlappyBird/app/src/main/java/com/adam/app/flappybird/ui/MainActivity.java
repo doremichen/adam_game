@@ -39,7 +39,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openLeaderBord(View view) {
-        showUnImplemented();
+        // show leader board activity
+        startActivity(LeaderBoardActivity.createIntent(this));
     }
 
     private void exitGame(View view) {

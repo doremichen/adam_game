@@ -25,6 +25,9 @@ import com.adam.app.flappybird.viewmodel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity {
 
+    private static final String TAG = "GameActivity";
+
+
     // view binding
     private ActivityGameBinding mBinding;
     // view model
@@ -83,6 +86,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void onGameStateChanged(GameState gameState) {
+        GameUtil.info(TAG, "onGameStateChanged: " + gameState.name());
         // show game over dialog
         if (gameState == GameState.GAME_OVER) {
             showGameOverDialog();
