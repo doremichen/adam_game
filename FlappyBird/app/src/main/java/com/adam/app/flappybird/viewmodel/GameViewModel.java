@@ -126,15 +126,13 @@ public class GameViewModel extends AndroidViewModel {
         mBird.update(deltaSec);
         // update pipes
         mPipesManager.update(deltaSec);
-        // update game status
-        //updateGameStatus();
 
     }
 
     /**
-     * update game status
+     * handle collision and game over
      */
-    public void updateGameStatus() {
+    public void handleCollisionAndGameOver() {
         GameUtil.info(TAG, "update game status");
 
         // check collision
@@ -143,12 +141,12 @@ public class GameViewModel extends AndroidViewModel {
             // save score in database
             int score = (mScore.getValue() == null)? 0 : mScore.getValue();
             mRepository.addScore(score);
-            happenGameOver();
+            triggerGameOver();
         }
 
     }
 
-    private void happenGameOver() {
+    private void triggerGameOver() {
         // set game over flag
         mIsGameOver = true;
         new Handler(Looper.getMainLooper()).post(() -> this.mGameState.setValue(GameState.GAME_OVER));

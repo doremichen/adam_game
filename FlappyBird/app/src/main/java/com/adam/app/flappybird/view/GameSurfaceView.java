@@ -130,14 +130,17 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 drawGame(canvas);
                 this.mSurfaceHolder.unlockCanvasAndPost(canvas);
             }
+
+            // handle collision and game over
+            mViewModel.handleCollisionAndGameOver();
+
             try {
                 Thread.sleep(GAME_FPS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            // update game status
-            mViewModel.updateGameStatus();
+
 
         }
     }
