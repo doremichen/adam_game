@@ -9,7 +9,7 @@
             type="com.adam.app.lottogame.viewmodel.LotteryViewModel" />
     </data>
 
-    <!-- 根佈局: 使用 ConstraintLayout，並添加漸層背景 -->
+    <!-- Root layout: Use ConstraintLayout and add a gradient background. -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
@@ -18,7 +18,7 @@
         android:fitsSystemWindows="true"
         tools:context=".MainActivity">
 
-        <!-- 標題 -->
+        <!-- Title -->
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="0dp"
@@ -37,64 +37,67 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="RtlHardcoded" />
 
-        <!-- 結果顯示區塊: 使用 CardView 包裹，增加立體感 -->
+        <!-- The resulting display area is wrapped with a CardView to enhance its 3D effect. -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_results"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:background="@android:color/darker_gray"
             android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
+            android:layout_marginBottom="8dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_title">
+            app:layout_constraintTop_toBottomOf="@id/tv_title"
+            app:layout_constraintBottom_toTopOf="@id/btn_vs_ai">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:padding="20dp">
 
-                <!-- 開獎號碼 -->
+                <!-- Prize number -->
                 <TextView
                     android:id="@+id/tv_drawn_numbers"
                     style="@style/ResultTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="8dp"
                     app:numbersText="@{vm.drawnNumber2}"
                     tools:text="@string/tv_show_lottery_number" />
 
-                <!-- 你的選號 -->
+                <!-- player number -->
                 <TextView
                     android:id="@+id/tv_selected_numbers"
                     style="@style/ResultTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginBottom="8dp"
                     app:numbersText="@{vm.selectedNumber}"
                     tools:text="@string/tv_select_your_number" />
 
-                <!-- AI 選號 -->
+                <!-- AI number -->
                 <TextView
                     android:id="@+id/tv_ai_numbers"
                     style="@style/ResultTextViewStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="8dp"
                     app:numbersText="@{vm.AINumbers}"
                     tools:text="@string/loto_game_show_ai_number" />
 
-                <!-- 分隔線 -->
+                <!-- divide -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?android:attr/listDivider"
                     android:layout_marginBottom="16dp"/>
 
-                <!-- AI 對戰結果 -->
+                <!-- AI vs result -->
                 <TextView
                     android:id="@+id/tv_vs_result"
                     android:layout_width="match_parent"
@@ -105,13 +108,13 @@
                     android:layout_marginBottom="8dp"
                     tools:text="@string/loto_game_show_vs_result" />
 
-                <!-- 中獎結果 -->
+                <!-- prize result -->
                 <TextView
                     android:id="@+id/tv_result"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@{vm.result}"
-                    android:textColor="@color/design_default_color_primary"
+                    android:textColor="@color/white"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     tools:text="@string/loto_game_prize_result" />
@@ -120,7 +123,7 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 按鈕區塊: 使用 Chain 將按鈕約束在底部 -->
+        <!-- Button Block: Use Chain to constrain buttons to the bottom -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_vs_ai"
             style="@style/LottoButtonStyle"

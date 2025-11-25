@@ -82,6 +82,9 @@ public class LotteryViewModel extends AndroidViewModel {
      * Draw random number
      */
     public void draw() {
+        // clear ai vs player result
+        mVsResult.setValue("");
+
         List<Integer> selectedNumbers = mSelectedNumbers.getValue();
         if (selectedNumbers == null || selectedNumbers.isEmpty()) {
             mResult.setValue("Please select numbers first");

@@ -19,8 +19,8 @@
     <string name="loto_game_show_vs_result">Win！</string>
     <string name="loto_game_vs_btn">Player vs. AI battle!</string>
     <string name="loto_game_prize_result">No result!</string>
-    <string name="loto_game_palyer_win_result">You win! (Payer：%1$s pieces，AI：%2$s pieces)</string>
-    <string name="loto_game_ai_win_result">AI wins! (Payer：%1$s pieces，AI：%2$s pieces)</string>
+    <string name="loto_game_palyer_win_result">You win!\n(Payer：%1$s pieces，AI：%2$s pieces)</string>
+    <string name="loto_game_ai_win_result">AI wins!\n(Payer：%1$s pieces，AI：%2$s pieces)</string>
     <string name="loto_game_tie_result">Tie!</string>
 
 
