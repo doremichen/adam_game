@@ -1,14 +1,24 @@
+/**
+ * Copyright (C) 2025 Adam. All rights reserved.
+ *
+ * This class is the main activity of loto game
+ *
+ * @Author: Adam Chen
+ * @Date: 2025-11-24
+ */
 package com.adam.app.lottogame;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
-import com.adam.app.lottogame.R;
 import com.adam.app.lottogame.databinding.ActivityMainBinding;
 import com.adam.app.lottogame.strategy.IResultStrategy;
 import com.adam.app.lottogame.strategy.ResultStrategyFactory;
+import com.adam.app.lottogame.viewmodel.LotteryViewModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,99 +28,42 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
+    // TAG
+    private static final String TAG = MainActivity.class.getSimpleName();
+
     private ActivityMainBinding mBinding;
     // Select numbers list
     private List<Integer> mSelectedNumbers = new ArrayList<>();
     // Lottery numbers list
     private List<Integer> mDrawnNumbers = new ArrayList<>();
 
+    // view model
+    private LotteryViewModel mViewModel;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+        // init view model
+        mViewModel = new ViewModelProvider(this).get(LotteryViewModel.class);
 
-        // set button click listener
-        mBinding.btnGenerate.setOnClickListener(v -> {
-            mSelectedNumbers.clear();
-            mSelectedNumbers.addAll(generateRandomNumbers());
-            String selectedNumbers = formateNumbers(mSelectedNumbers);
-            String selectedText = getString(R.string.tv_select_your_number, selectedNumbers);
-            mBinding.tvSelectedNumbers.setText(selectedText);
-        });
-        mBinding.btnDraw.setOnClickListener(v -> {
-            // check mSelectedNumbers is empty
-            if (mSelectedNumbers.isEmpty()) {
-                // show please select number first in result text view
-                mBinding.tvResult.setText(getStringById(R.string.info_please_select_number_first));
-                return;
-            }
+        mBinding.setVm(mViewModel);
+        mBinding.setLifecycleOwner(this);
 
-            mDrawnNumbers.clear();
-            mDrawnNumbers.addAll(generateRandomNumbers());
-            String drawnNumbers = formateNumbers(mDrawnNumbers);
-            mBinding.tvDrawnNumbers.setText(getString(R.string.tv_show_lottery_number, drawnNumbers));
+        mBinding.btnGenerate.setOnClickListener(this::generateRandomNumbers);
+        mBinding.btnDraw.setOnClickListener(this::drawLotteryNumbers);
+        mBinding.btnExit.setOnClickListener(v -> finish());
 
-            // count match
-            int matchCount = countMatch(mSelectedNumbers, mDrawnNumbers);
-            Utils.log("matchCount: " + matchCount);
-            // show result
-            IResultStrategy strategy = ResultStrategyFactory.getStrategy(matchCount);
-            Utils.log("strategy: " + strategy.getClass().getSimpleName());
-            String resultText = strategy.getResultText(this);
-            mBinding.tvResult.setText(getString(R.string.tv_prize_result, resultText));
-
-        });
-
-        mBinding.btnExit.setOnClickListener(v -> {
-            finish();
-        });
     }
 
-    /**
-     * Generate random int numbers to list, there are six numbers in the list
-     * which are generated randomly from 1 to 49.
-     */
-    private List<Integer> generateRandomNumbers() {
-        List<Integer> numbers = new ArrayList<>();
-        Random random = new Random();
-
-        while (numbers.size() < 6) {
-            int number = random.nextInt(49) + 1;
-            if (!numbers.contains(number)) {
-                numbers.add(number);
-            }
-        }
-
-        // sort
-        Collections.sort(numbers);
-        return numbers;
+    private void drawLotteryNumbers(View view) {
+        mViewModel.draw();
     }
 
-    /**
-     * Count match from list 1 and list 2
-     */
-    private int countMatch(List<Integer> list1, List<Integer> list2) {
-        int count = 0;
-        for (int i = 0; i < list1.size(); i++) {
-            if (list2.contains(list1.get(i))) {
-                count++;
-            }
-        }
-        return count;
+    private void generateRandomNumbers(View view) {
+        mViewModel.generateNumber();
     }
 
-    /**
-     * get string by resource string id
-     */
-    private String getStringById(int id) {
-        return getResources().getString(id);
-    }
-
-    /**
-     * format number as string
-     */
-    private String formateNumbers(List<Integer> numbers) {
-        return TextUtils.join(", ", numbers);
-    }
 }
