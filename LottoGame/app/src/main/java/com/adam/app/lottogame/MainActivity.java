@@ -54,8 +54,13 @@ public class MainActivity extends AppCompatActivity {
 
         mBinding.btnGenerate.setOnClickListener(this::generateRandomNumbers);
         mBinding.btnDraw.setOnClickListener(this::drawLotteryNumbers);
+        mBinding.btnVsAi.setOnClickListener(this::vsAi);
         mBinding.btnExit.setOnClickListener(v -> finish());
 
+    }
+
+    private void vsAi(View view) {
+        mViewModel.playVsAI();
     }
 
     private void drawLotteryNumbers(View view) {

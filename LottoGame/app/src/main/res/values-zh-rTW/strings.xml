@@ -15,4 +15,11 @@
     <string name="info_you_win_500000_prize">你中了 500,000 元！</string>
     <string name="info_you_lose">未中獎</string>
     <string name="btn_exit">離開</string>
+    <string name="loto_game_show_ai_number">AI 選號：%1$s</string>
+    <string name="loto_game_show_vs_result">對戰結果！</string>
+    <string name="loto_game_vs_btn">玩家和AI對戰!</string>
+    <string name="loto_game_prize_result">沒有結果!</string>
+    <string name="loto_game_palyer_win_result">你贏! (玩家：%1$s 顆，AI：%2$s 顆)</string>
+    <string name="loto_game_ai_win_result">AI 贏! (玩家：%1$s 顆，AI：%2$s 顆)</string>
+    <string name="loto_game_tie_result">平手</string>
 </resources>

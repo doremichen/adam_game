@@ -37,6 +37,8 @@ public class LotteryViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Integer>> mSelectedNumbers = new MutableLiveData<>(null);
     private final MutableLiveData<List<Integer>> mDrawnNumbers = new MutableLiveData<>(null);
     private final MutableLiveData<String> mResult = new MutableLiveData<>("");
+    private final MutableLiveData<List<Integer>> mAINumbers = new MutableLiveData<>(null);
+    private final MutableLiveData<String> mVsResult = new MutableLiveData<>("");
 
     private final Context mContext;
 
@@ -57,6 +59,15 @@ public class LotteryViewModel extends AndroidViewModel {
     public LiveData<String> getResult() {
         return mResult;
     }
+
+    public LiveData<List<Integer>> getAINumbers() {
+        return mAINumbers;
+    }
+
+    public LiveData<String> getVsResult() {
+        return mVsResult;
+    }
+
 
     /**
      * generate random number
@@ -86,6 +97,48 @@ public class LotteryViewModel extends AndroidViewModel {
 
         mResult.setValue(result);
     }
+
+    /**
+     * playVsAI
+     */
+    public void playVsAI() {
+        // clear result
+        mResult.setValue("");
+        mDrawnNumbers.setValue(null);
+        mAINumbers.setValue(null);
+        mVsResult.setValue("");
+
+        // step 1：玩家若未選號 → 自動選
+        List<Integer> selectedNumbers = mSelectedNumbers.getValue();
+        if (selectedNumbers == null || selectedNumbers.isEmpty()) {
+            selectedNumbers = generateRandomNumbers();
+            mSelectedNumbers.setValue(selectedNumbers);
+        }
+
+        // step 2：AI 選號
+        List<Integer> aiNumbers = generateRandomNumbers();
+        mAINumbers.setValue(aiNumbers);
+
+        // step 3：開獎
+        List<Integer> drawn = generateRandomNumbers();
+        mDrawnNumbers.setValue(drawn);
+
+        int playerMatchCount = countMatch(selectedNumbers, drawn);
+        int aiMatchCount = countMatch(aiNumbers, drawn);
+
+        // step 4：產生結果文字
+        String result;
+        if (playerMatchCount > aiMatchCount) {
+            result = mContext.getString(R.string.loto_game_palyer_win_result, String.valueOf(playerMatchCount), String.valueOf(aiMatchCount));
+        } else if (playerMatchCount < aiMatchCount) {
+            result = mContext.getString(R.string.loto_game_ai_win_result, String.valueOf(playerMatchCount), String.valueOf(aiMatchCount));
+        } else {
+            result = mContext.getString(R.string.loto_game_tie_result);
+        }
+        mVsResult.setValue(result);
+    }
+
+
 
     // --- private method ---
     private List<Integer> generateRandomNumbers() {
@@ -122,11 +175,13 @@ public class LotteryViewModel extends AndroidViewModel {
 
         String formatted = LotteryViewModel.formatNumbers(numbers);
 
-        // 判斷 TextView 是哪一個，再用不同字串
+        //
         if (tv.getId() == R.id.tv_selected_numbers) {
             tv.setText(tv.getContext().getString(R.string.tv_select_your_number, formatted));
         } else if (tv.getId() == R.id.tv_drawn_numbers) {
             tv.setText(tv.getContext().getString(R.string.tv_show_lottery_number, formatted));
+        } else if (tv.getId() == R.id.tv_ai_numbers) {
+            tv.setText(tv.getContext().getString(R.string.loto_game_show_ai_number, formatted));
         }
     }
 
