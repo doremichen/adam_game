@@ -20,6 +20,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.lottogame.R;
+import com.adam.app.lottogame.data.LottoHistoryFactory;
+import com.adam.app.lottogame.repository.LottoHistoryRepository;
 import com.adam.app.lottogame.strategy.IResultStrategy;
 import com.adam.app.lottogame.strategy.ResultStrategyFactory;
 
@@ -40,11 +42,19 @@ public class LotteryViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Integer>> mAINumbers = new MutableLiveData<>(null);
     private final MutableLiveData<String> mVsResult = new MutableLiveData<>("");
 
+    // loto repository
+    private final LottoHistoryRepository mRepository;
+
     private final Context mContext;
+
+    // draw id
+    private int mDrawId = 0;
+
 
     public LotteryViewModel(@NonNull Application application) {
         super(application);
         mContext = application.getApplicationContext();
+        mRepository = new LottoHistoryRepository(mContext);
     }
 
     // --- get live data ---
@@ -52,7 +62,7 @@ public class LotteryViewModel extends AndroidViewModel {
         return mSelectedNumbers;
     }
 
-    public LiveData<List<Integer>> getDrawnNumber2() {
+    public LiveData<List<Integer>> getDrawnNumber() {
         return mDrawnNumbers;
     }
 
@@ -91,14 +101,23 @@ public class LotteryViewModel extends AndroidViewModel {
             return;
         }
 
-        List<Integer> drawnNumbers = generateRandomNumbers();
-        mDrawnNumbers.setValue(drawnNumbers);
+        drawnNumbers();
 
-        int matchCount = countMatch(selectedNumbers, drawnNumbers);
+        int matchCount = countMatch(selectedNumbers, mDrawnNumbers.getValue());
         IResultStrategy strategy = ResultStrategyFactory.getStrategy(matchCount);
         String result = strategy.getResultText(mContext);
 
         mResult.setValue(result);
+    }
+
+    @NonNull
+    private void drawnNumbers() {
+        List<Integer> drawnNumbers = generateRandomNumbers();
+        mDrawnNumbers.setValue(drawnNumbers);
+        // update id
+        mDrawId++;
+        // save to database
+        mRepository.add(LottoHistoryFactory.create(mDrawId, drawnNumbers));
     }
 
     /**
@@ -123,11 +142,10 @@ public class LotteryViewModel extends AndroidViewModel {
         mAINumbers.setValue(aiNumbers);
 
         // step 3：開獎
-        List<Integer> drawn = generateRandomNumbers();
-        mDrawnNumbers.setValue(drawn);
+        drawnNumbers();
 
-        int playerMatchCount = countMatch(selectedNumbers, drawn);
-        int aiMatchCount = countMatch(aiNumbers, drawn);
+        int playerMatchCount = countMatch(selectedNumbers, mDrawnNumbers.getValue());
+        int aiMatchCount = countMatch(aiNumbers, mDrawnNumbers.getValue());
 
         // step 4：產生結果文字
         String result;

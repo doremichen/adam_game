@@ -1,6 +1,7 @@
 /**
  * Copyright (C) 2025 Adam. All rights reserved.
  *
+ * This class is the strategy of Ai pick number.
  *
  * @Author: Adam Chen
  * @Date: 2025-11-26
