@@ -33,6 +33,7 @@
     <string name="no_record">No record</string>
     <string name="title_ranking_list">Ranking list</string>
     <string name="progress_loading">Loading...</string>
+    <string name="tetris_logo_desc">Tetris Game logo</string>
 
     <string-array name="speed_array">
         <item>@string/speed_slow</item>

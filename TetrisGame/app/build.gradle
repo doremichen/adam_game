@@ -38,6 +38,7 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.cardview
 
     implementation(libs.room.runtime.v272)
     annotationProcessor(libs.room.compiler.v272)
