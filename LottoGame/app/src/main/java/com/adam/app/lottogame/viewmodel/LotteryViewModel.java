@@ -10,6 +10,8 @@ package com.adam.app.lottogame.viewmodel;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.lottogame.R;
+import com.adam.app.lottogame.core.LottoAIEngine;
 import com.adam.app.lottogame.data.LottoHistoryFactory;
 import com.adam.app.lottogame.repository.LottoHistoryRepository;
 import com.adam.app.lottogame.strategy.IResultStrategy;
@@ -45,6 +48,10 @@ public class LotteryViewModel extends AndroidViewModel {
     // loto repository
     private final LottoHistoryRepository mRepository;
 
+    // lotto ai engine
+    private final LottoAIEngine mEngine;
+
+
     private final Context mContext;
 
     // draw id
@@ -55,6 +62,7 @@ public class LotteryViewModel extends AndroidViewModel {
         super(application);
         mContext = application.getApplicationContext();
         mRepository = new LottoHistoryRepository(mContext);
+        mEngine = new LottoAIEngine(mRepository, 49);
     }
 
     // --- get live data ---
@@ -94,6 +102,11 @@ public class LotteryViewModel extends AndroidViewModel {
     public void draw() {
         // clear ai vs player result
         mVsResult.setValue("");
+        // clear ai number
+        mAINumbers.setValue(null);
+        // clear result
+        mResult.setValue("");
+
 
         List<Integer> selectedNumbers = mSelectedNumbers.getValue();
         if (selectedNumbers == null || selectedNumbers.isEmpty()) {
@@ -138,13 +151,21 @@ public class LotteryViewModel extends AndroidViewModel {
         }
 
         // step 2：AI 選號
-        List<Integer> aiNumbers = generateRandomNumbers();
+        // training
+        mEngine.trainBestStrategy(6, 3);
+        aiPick();
+    }
+
+    private void aiPick() {
+        // select numbers
+        List<Integer> aiNumbers = this.mEngine.selectNumbers(6);
+        //List<Integer> aiNumbers = generateRandomNumbers();
         mAINumbers.setValue(aiNumbers);
 
         // step 3：開獎
         drawnNumbers();
 
-        int playerMatchCount = countMatch(selectedNumbers, mDrawnNumbers.getValue());
+        int playerMatchCount = countMatch(mSelectedNumbers.getValue(), mDrawnNumbers.getValue());
         int aiMatchCount = countMatch(aiNumbers, mDrawnNumbers.getValue());
 
         // step 4：產生結果文字
@@ -159,7 +180,9 @@ public class LotteryViewModel extends AndroidViewModel {
         mVsResult.setValue(result);
     }
 
-
+    public void onClear() {
+        mRepository.shutdown();
+    }
 
     // --- private method ---
     private List<Integer> generateRandomNumbers() {

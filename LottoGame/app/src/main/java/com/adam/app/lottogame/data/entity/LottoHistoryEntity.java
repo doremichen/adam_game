@@ -8,6 +8,7 @@
  */
 package com.adam.app.lottogame.data.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -21,7 +22,7 @@ public class LottoHistoryEntity {
     private int mId;
 
     @ColumnInfo(name = "draw_id")
-    private String mDrawId;
+    private int mDrawId;
 
     @ColumnInfo(name = "draw_date")
     private String mDrawDate;
@@ -32,7 +33,7 @@ public class LottoHistoryEntity {
     /**
      * Constructor
      */
-    public LottoHistoryEntity(String drawId, String drawDate, List<Integer> numbers) {
+    public LottoHistoryEntity(int drawId, String drawDate, List<Integer> numbers) {
         this.mDrawId = drawId;
         this.mDrawDate = drawDate;
         this.mNumbers = numbers;
@@ -47,10 +48,10 @@ public class LottoHistoryEntity {
         this.mId = id;
     }
 
-    public String getDrawId() {
+    public int getDrawId() {
         return mDrawId;
     }
-    public void setDrawId(String drawId) {
+    public void setDrawId(int drawId) {
         this.mDrawId = drawId;
     }
     public String getDrawDate() {
@@ -64,6 +65,20 @@ public class LottoHistoryEntity {
     }
     public void setNumbers(List<Integer> numbers) {
         this.mNumbers = numbers;
+    }
+
+    /**
+     * toString
+     */
+    @NonNull
+    @Override
+    public String toString() {
+        return "LottoHistoryEntity{" + "\n" +
+                "mId=" + mId + "\n" +
+                ", mDrawId=" + mDrawId + "\n" +
+                ", mDrawDate='" + mDrawDate + '\'' + "\n" +
+                ", mNumbers=" + mNumbers + "\n" +
+                '}';
     }
 
 }

@@ -59,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mViewModel.onClear();
+    }
+
     private void vsAi(View view) {
         mViewModel.playVsAI();
     }

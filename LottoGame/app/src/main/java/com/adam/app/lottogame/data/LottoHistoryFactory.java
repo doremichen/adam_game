@@ -24,7 +24,7 @@ public final class LottoHistoryFactory {
         Date date = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String dateString = dateFormat.format(date);
-        return new LottoHistoryEntity(String.valueOf(drawnId), dateString, numbers);
+        return new LottoHistoryEntity(drawnId, dateString, numbers);
     }
 
 

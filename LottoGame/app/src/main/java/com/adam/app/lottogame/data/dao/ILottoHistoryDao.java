@@ -8,6 +8,7 @@
  */
 package com.adam.app.lottogame.data.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -21,6 +22,9 @@ import java.util.List;
 public interface ILottoHistoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void upsert(LottoHistoryEntity entity);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<LottoHistoryEntity> list);
 
     @Query("SELECT * FROM lotto_history ORDER BY id DESC LIMIT 1")
     LottoHistoryEntity getLatest();

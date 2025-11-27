@@ -8,6 +8,8 @@
  */
 package com.adam.app.lottogame.strategy;
 
+import com.adam.app.lottogame.Utils;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -22,6 +24,7 @@ public enum LottoAIStrategy {
     RANDOM_PICK {
         @Override
         List<Integer> pickNumbers(List<Integer> historyNumbers, int pickCount, int maxNumber) {
+            Utils.log(TAG, "RANDOM_PICK");
 
             if (pickCount > maxNumber) {
                 throw new IllegalArgumentException("pickCount cannot > maxNumber");
@@ -38,6 +41,8 @@ public enum LottoAIStrategy {
     HOT_PICK {
         @Override
         List<Integer> pickNumbers(List<Integer> historyNumbers, int pickCount, int maxNumber) {
+            Utils.log(TAG, "HOT_PICK");
+
             Map<Integer, Integer> freq = countFrequencyFull(historyNumbers, maxNumber);
 
             return freq.entrySet()
@@ -52,6 +57,8 @@ public enum LottoAIStrategy {
     COLD_PICK {
         @Override
         List<Integer> pickNumbers(List<Integer> historyNumbers, int pickCount, int maxNumber) {
+            Utils.log(TAG, "COLD_PICK");
+
             Map<Integer, Integer> freq = countFrequencyFull(historyNumbers, maxNumber);
 
             return freq.entrySet()
@@ -66,6 +73,7 @@ public enum LottoAIStrategy {
     HOT_WEIGHTED_PICK {
         @Override
         List<Integer> pickNumbers(List<Integer> historyNumbers, int pickCount, int maxNumber) {
+            Utils.log(TAG, "HOT_WEIGHTED_PICK");
             Map<Integer, Integer> freq = countFrequencyFull(historyNumbers, maxNumber);
 
             List<Integer> weightedList = new ArrayList<>();
@@ -89,6 +97,8 @@ public enum LottoAIStrategy {
     TREND_PICK {
         @Override
         List<Integer> pickNumbers(List<Integer> historyNumbers, int pickCount, int maxNumber) {
+            Utils.log(TAG, "TREND_PICK");
+
 
             if (historyNumbers.isEmpty()) {
                 return RANDOM_PICK.pickNumbers(historyNumbers, pickCount, maxNumber);
@@ -114,6 +124,8 @@ public enum LottoAIStrategy {
 
         @Override
         List<Integer> pickNumbers(List<Integer> historyNumbers, int pickCount, int maxNumber) {
+            Utils.log(TAG, "HYBRID_PICK");
+
             double p = mRandom.nextDouble();
 
             if (p < HOT_RATE) {
@@ -127,6 +139,9 @@ public enum LottoAIStrategy {
             }
         }
     };
+
+    // TAG
+    protected static final String TAG = LottoAIStrategy.class.getSimpleName();
 
     protected final Random mRandom = new Random();
 
