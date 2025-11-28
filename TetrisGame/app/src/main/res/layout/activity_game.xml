@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="12dp"
-        android:background="#AA000000"
+        android:background="@drawable/panel_bg"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
             android:layout_weight="1"
             android:text="@string/btn_control_left"
             android:textColor="@color/android:white"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:background="@drawable/button_bg" />
 
         <Button
             android:id="@+id/btn_right"
@@ -130,7 +130,7 @@
             android:layout_weight="1"
             android:text="@string/btn_control_right"
             android:textColor="@color/android:white"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:background="@drawable/button_bg" />
 
         <Button
             android:id="@+id/btn_down"
@@ -139,7 +139,7 @@
             android:layout_weight="1"
             android:text="@string/btn_control_down"
             android:textColor="@color/android:white"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:background="@drawable/button_bg" />
 
         <Button
             android:id="@+id/btn_rotate"
@@ -148,7 +148,7 @@
             android:layout_weight="1"
             android:text="@string/btn_control_rotate"
             android:textColor="@color/android:white"
-            style="?android:attr/buttonBarButtonStyle" />
+            android:background="@drawable/button_bg" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
