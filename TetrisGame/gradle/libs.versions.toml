@@ -12,6 +12,7 @@ roomCompiler = "2.7.2"
 roomRuntime = "2.7.2"
 roomVersion = "2.6.1"
 cardviewVersion = "1.0.0"
+preference = "1.2.1"
 
 [libraries]
 annotations = { module = "org.jetbrains:annotations", version.ref = "annotations" }
@@ -26,6 +27,7 @@ cardview = { group = "androidx.cardview", name = "cardview", version.ref = "card
 room-compiler-v272 = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 room-runtime-v272 = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 room-testing = { module = "androidx.room:room-testing", version.ref = "roomVersion" }
+preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

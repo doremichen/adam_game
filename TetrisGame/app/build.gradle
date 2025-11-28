@@ -41,6 +41,7 @@ dependencies {
     implementation libs.cardview
 
     implementation(libs.room.runtime.v272)
+    implementation libs.preference
     annotationProcessor(libs.room.compiler.v272)
     androidTestImplementation(libs.room.testing)
 

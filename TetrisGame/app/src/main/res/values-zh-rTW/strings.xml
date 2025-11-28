@@ -34,6 +34,7 @@
     <string name="title_ranking_list">排行榜</string>
     <string name="progress_loading">載入中</string>
     <string name="tetris_logo_desc">Tetris 遊戲標誌</string>
+    <string name="tetris_game_play_effect_setting_title">播放音效</string>
 
     <string-array name="speed_array">
         <item>@string/speed_slow</item>
