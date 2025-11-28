@@ -52,7 +52,7 @@ public class GameActivity extends AppCompatActivity {
         mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
 
-        mSoundManager = GameSoundManager.getInstance();
+        mSoundManager = new GameSoundManager();
 
         mTetrisView = mBinding.tetrisView;
 
@@ -220,11 +220,11 @@ public class GameActivity extends AppCompatActivity {
         // Log on destroy
         Utils.log("GameActivity onDestroy");
 
-
         // release sound manager
         if (mSoundManager != null) {
             mSoundManager.stopMusic();
             mSoundManager.release();
+            mSoundManager = null;
         }
         // view binding
         mBinding = null;

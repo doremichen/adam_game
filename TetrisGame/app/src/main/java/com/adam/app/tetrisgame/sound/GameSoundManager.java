@@ -22,7 +22,8 @@ import java.util.Map;
 
 public class GameSoundManager {
 
-    private GameSoundManager() {
+    public GameSoundManager() {
+        Utils.log("GameSoundManager constructor");
         AudioAttributes attrs = new AudioAttributes.Builder()
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .setUsage(AudioAttributes.USAGE_GAME)
@@ -60,14 +61,6 @@ public class GameSoundManager {
         return mSoundMap.containsKey(rawId);
     }
 
-
-    private static class Helper {
-        private static final GameSoundManager INSTANCE = new GameSoundManager();
-    }
-
-    public static GameSoundManager getInstance() {
-        return Helper.INSTANCE;
-    }
 
     // sound pool
     private SoundPool mSoundPool;
@@ -137,6 +130,7 @@ public class GameSoundManager {
      * release all resources
      */
     public void release() {
+        Utils.log("release");
         if (mSoundPool != null) {
             mSoundPool.release();
             mSoundPool = null;
