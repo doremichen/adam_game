@@ -10,10 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -25,18 +24,15 @@ import com.adam.app.tetrisgame.viewmodel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity {
 
-    // view binding
-    private ActivityGameBinding mBinding;
-
-    // Tetris view
-    private TetrisView mTetrisView;
-
     // Game View model
     GameViewModel mViewModel;
-
-
+    // view binding
+    private ActivityGameBinding mBinding;
+    // Tetris view
+    private TetrisView mTetrisView;
     // Hanlder
-    private Handler mHandler = new Handler(Looper.getMainLooper());;
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    ;
     // Runnable
     private Runnable mUpdateRunnable;
     // Runnig flag
@@ -153,50 +149,62 @@ public class GameActivity extends AppCompatActivity {
      * show game exit dialog
      */
     private void showGameExitDlg() {
-        // Ok Button
-        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok), (dialog, which) -> {
-            // Exit game
-            finish();
-        });
-        // Cancel Button
-        Utils.DialogButton cancelButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_cancel), (dialog, which) -> {
-            // restart game
-            mViewModel.setRunning(true);
-            mHandler.post(mUpdateRunnable);
-        });
-        // title
-        String title = getResources().getString(R.string.dialog_title_exit);
-        // message
-        String message = getResources().getString(R.string.dialog_message_exit);
-        // show dialog
-        Utils.showAlertDialog(this, title, message, okButton, cancelButton);
 
+        // Ok Button
+        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok), this::onExitDLGOkButtonClick);
+        // Cancel Button
+        Utils.DialogButton cancelButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_cancel), this::onExitDlgCancelButtonClick);
+        // show exit dialog
+        Utils.showAlertDialog(this, getResources().getString(R.string.dialog_title_exit), getResources().getString(R.string.dialog_message_exit), okButton, cancelButton);
+
+
+    }
+
+    private void onExitDlgCancelButtonClick(AlertDialog alertDialog) {
+        // dismiss dialog
+        alertDialog.dismiss();
+        // restart game
+        mViewModel.setRunning(true);
+        mHandler.post(mUpdateRunnable);
+    }
+
+    private void onExitDLGOkButtonClick(AlertDialog alertDialog) {
+        // dismiss dialog
+        alertDialog.dismiss();
+        // exit game
+        finish();
     }
 
 
     private void showGameOverDlg() {
         Utils.log("showGameOverDlg");
+        // Ok button
+        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok), this::onGameOverDLGOkButtonClick);
+        // Exit button
+        Utils.DialogButton exitButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_exit), this::onGameOverDlgExitButtonClick);
 
-        // Ok Button
-        Utils.DialogButton restartButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_restart), (dialog, which) -> {
-            // reset score
-            mViewModel.resetScore();
-            // Restart game
-            mViewModel.setRunning(true);
-            mViewModel.reset();
-            mHandler.post(mUpdateRunnable);
-        });
-        // Cancel Button
-        Utils.DialogButton exitButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_exit), (dialog, which) -> {
-            // Exit game
-            finish();
-        });
-        // title
-        String title = getResources().getString(R.string.dialog_title_gameover);
-        // message
-        String message = getResources().getString(R.string.dialog_message_gameover);
-        // show dialog
-        Utils.showAlertDialog(this, title, message, restartButton, exitButton);
+        // show game over dislog
+        Utils.showAlertDialog(this, getResources().getString(R.string.dialog_title_gameover), getResources().getString(R.string.dialog_message_gameover), okButton, exitButton);
+
+    }
+
+    private void onGameOverDlgExitButtonClick(AlertDialog alertDialog) {
+        // dissmiss dialog
+        alertDialog.dismiss();
+        // Exit game
+        finish();
+    }
+
+    private void onGameOverDLGOkButtonClick(AlertDialog alertDialog) {
+        // dismiss dialog
+        alertDialog.dismiss();
+        // reset score
+        mViewModel.resetScore();
+        // Restart game
+        mViewModel.setRunning(true);
+        mViewModel.reset();
+        mHandler.post(mUpdateRunnable);
+
     }
 
     @Override
@@ -247,6 +255,7 @@ public class GameActivity extends AppCompatActivity {
 
     /**
      * playSound
+     *
      * @param rawId raw id
      */
     public void playSound(int rawId) {

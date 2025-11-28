@@ -8,10 +8,9 @@ package com.adam.app.tetrisgame;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.window.OnBackInvokedCallback;
-import android.window.OnBackInvokedDispatcher;
+import android.view.View;
 
-import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.adam.app.tetrisgame.databinding.ActivityMainBinding;
@@ -57,19 +56,30 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set listener for about button
-        mBinding.buttonAbout.setOnClickListener(v -> {
-            // start instruction dialog
-            String title = getString(R.string.dialog_title_instruction);
-            String message = getString(R.string.dialog_message_instruction);
-            // Ok button
-            Utils.DialogButton okButton = new Utils.DialogButton(getString(R.string.dialog_button_ok), null);
-            // show dialog
-            Utils.showAlertDialog(MainActivity.this, title, message, okButton, null);
-        });
+        mBinding.buttonAbout.setOnClickListener(this::showAboutDialog);
         // set listener for exit button
         mBinding.buttonExit.setOnClickListener(v -> {
             // exit application
             finish();
         });
     }
+
+    private void showAboutDialog(View view) {
+        // Ok button
+        Utils.DialogButton okButton = new Utils.DialogButton(getString(R.string.dialog_button_ok),
+                this::onOkButtonClick);
+
+        String title = getString(R.string.dialog_title_instruction);
+        String message = getString(R.string.dialog_message_instruction);
+        // show dialog
+        Utils.showAlertDialog(MainActivity.this, title, message, okButton, null);
+
+    }
+
+    private void onOkButtonClick(AlertDialog dialog) {
+        // dismiss
+        dialog.dismiss();
+    }
+
+
 }
