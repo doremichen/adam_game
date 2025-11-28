@@ -151,16 +151,19 @@ public class GameActivity extends AppCompatActivity {
     private void showGameExitDlg() {
 
         // Ok Button
-        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok), this::onExitDLGOkButtonClick);
+        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok),
+                this::confirmExit);
         // Cancel Button
-        Utils.DialogButton cancelButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_cancel), this::onExitDlgCancelButtonClick);
+        Utils.DialogButton cancelButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_cancel),
+                this::cancelExit);
         // show exit dialog
-        Utils.showAlertDialog(this, getResources().getString(R.string.dialog_title_exit), getResources().getString(R.string.dialog_message_exit), okButton, cancelButton);
-
+        String title = getResources().getString(R.string.dialog_title_exit);
+        String message = getResources().getString(R.string.dialog_message_exit);
+        Utils.showAlertDialog(this, title, message, okButton, cancelButton);
 
     }
 
-    private void onExitDlgCancelButtonClick(AlertDialog alertDialog) {
+    private void cancelExit(AlertDialog alertDialog) {
         // dismiss dialog
         alertDialog.dismiss();
         // restart game
@@ -168,7 +171,7 @@ public class GameActivity extends AppCompatActivity {
         mHandler.post(mUpdateRunnable);
     }
 
-    private void onExitDLGOkButtonClick(AlertDialog alertDialog) {
+    private void confirmExit(AlertDialog alertDialog) {
         // dismiss dialog
         alertDialog.dismiss();
         // exit game
@@ -179,23 +182,27 @@ public class GameActivity extends AppCompatActivity {
     private void showGameOverDlg() {
         Utils.log("showGameOverDlg");
         // Ok button
-        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok), this::onGameOverDLGOkButtonClick);
+        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok),
+                this::playAgain);
         // Exit button
-        Utils.DialogButton exitButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_exit), this::onGameOverDlgExitButtonClick);
+        Utils.DialogButton exitButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_exit),
+                this::exitGame);
 
-        // show game over dislog
-        Utils.showAlertDialog(this, getResources().getString(R.string.dialog_title_gameover), getResources().getString(R.string.dialog_message_gameover), okButton, exitButton);
+        // show game over dialog
+        String title = getResources().getString(R.string.dialog_title_gameover);
+        String message = getResources().getString(R.string.dialog_message_gameover);
+        Utils.showAlertDialog(this, title, message, okButton, exitButton);
 
     }
 
-    private void onGameOverDlgExitButtonClick(AlertDialog alertDialog) {
+    private void exitGame(AlertDialog alertDialog) {
         // dissmiss dialog
         alertDialog.dismiss();
         // Exit game
         finish();
     }
 
-    private void onGameOverDLGOkButtonClick(AlertDialog alertDialog) {
+    private void playAgain(AlertDialog alertDialog) {
         // dismiss dialog
         alertDialog.dismiss();
         // reset score

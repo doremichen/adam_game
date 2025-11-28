@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private void showAboutDialog(View view) {
         // Ok button
         Utils.DialogButton okButton = new Utils.DialogButton(getString(R.string.dialog_button_ok),
-                this::onOkButtonClick);
+                this::dismissDialog);
 
         String title = getString(R.string.dialog_title_instruction);
         String message = getString(R.string.dialog_message_instruction);
@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void onOkButtonClick(AlertDialog dialog) {
+    private void dismissDialog(AlertDialog dialog) {
         // dismiss
         dialog.dismiss();
     }
