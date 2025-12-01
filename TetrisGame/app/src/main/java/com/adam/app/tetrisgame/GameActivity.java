@@ -18,7 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.tetrisgame.databinding.ActivityGameBinding;
 import com.adam.app.tetrisgame.model.TetrisBoard;
-import com.adam.app.tetrisgame.sound.GameSoundManager;
+import com.adam.app.tetrisgame.manager.GameSoundManager;
 import com.adam.app.tetrisgame.view.TetrisView;
 import com.adam.app.tetrisgame.viewmodel.GameViewModel;
 
@@ -58,6 +58,7 @@ public class GameActivity extends AppCompatActivity {
 
         // get view model and initial tetrisbord
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+        mViewModel.loadSettings(this);
         // load high score
         mViewModel.loadHighScore(GameActivity.this);
 
@@ -104,7 +105,7 @@ public class GameActivity extends AppCompatActivity {
 
                 mViewModel.updateTetrisBoard();
                 mViewModel.applyToView(mTetrisView);
-                int speed = mViewModel.getSpeedInt(GameActivity.this); // 0=slow, 1=normal, 2=fast
+                int speed = mViewModel.getSpeedInt(); // 0=slow, 1=normal, 2=fast
                 long interval = (speed == 0 ? 1000L : speed == 1 ? 700L : 400L);
                 mHandler.postDelayed(this, interval);
             }
@@ -256,7 +257,8 @@ public class GameActivity extends AppCompatActivity {
         });
         // setting button
         mBinding.btnSettings.setOnClickListener(v -> {
-            startActivity(Utils.createIntent(this, SettingsActivity.class));
+            // change activity to settings activity2
+            startActivity(Utils.createIntent(this, SettingsActivity2.class));
         });
     }
 

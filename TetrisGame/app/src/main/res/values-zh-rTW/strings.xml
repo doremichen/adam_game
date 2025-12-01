@@ -35,6 +35,11 @@
     <string name="progress_loading">載入中</string>
     <string name="tetris_logo_desc">Tetris 遊戲標誌</string>
     <string name="tetris_game_play_effect_setting_title">播放音效</string>
+    <string name="tetris_game_sound_effect_off">關</string>
+    <string name="tetris_game_sound_effect_on">開</string>
+    <string name="tetris_game_speed_changed">速度: %1$s</string>
+    <string name="tetris_game_sound_effect_changed">聲音特效: %1$s</string>
+    <string name="title_activity_settings2">設定</string>
 
     <string-array name="speed_array">
         <item>@string/speed_slow</item>

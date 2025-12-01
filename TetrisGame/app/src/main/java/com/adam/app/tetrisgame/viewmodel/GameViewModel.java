@@ -1,8 +1,8 @@
 /**
  * Copyright 2025 Adam
- *
+ * <p>
  * Description: GameViewModel is the viewmodel of the game.
- *
+ * <p>
  * Author: Adam Chen
  * Date: 2025/08/15
  */
@@ -16,56 +16,27 @@ import androidx.lifecycle.ViewModel;
 
 import com.adam.app.tetrisgame.Utils;
 import com.adam.app.tetrisgame.data.ScoreDatabase;
+import com.adam.app.tetrisgame.manager.SettingsManager;
 import com.adam.app.tetrisgame.model.ScoreDao;
 import com.adam.app.tetrisgame.model.ScoreRecord;
 import com.adam.app.tetrisgame.model.TetrisBoard;
 import com.adam.app.tetrisgame.view.TetrisView;
 
-public class GameViewModel extends ViewModel{
+public class GameViewModel extends ViewModel {
     public static final int MAX_NUM = 100;
     public static final int RESERVE_NUM = 99;
-    //    public static final String GAME_PREFS = "game_prefs";
-//    public static final String HIGH_SCORE_KEY = "high_score";
-//    public static final String GAME_SETTINGS = "game_settings";
-//    public static final String SPEED_KEY = "speed";
-//    public static final String SOUND_KEY = "sound";
-
-    /**
-     * interface GAME_PREFS
-     * fileName: string
-     * highScorekey: string
-     */
-    private interface GAME_PREFS {
-        String fileName = "game_prefs";
-        String highScorekey = "high_score";
-    }
-
-    /**
-     * interface GAME_SETTINGS
-     * fileName: string
-     * speedKey: string
-     * soundKey: string
-     */
-    private interface GAME_SETTINGS {
-        String fileName = "game_settings";
-        String speedKey = "speed";
-        String soundKey = "sound";
-    }
-
-
-
+    // MutableLiveData currentScore and highScore
+    private final MutableLiveData<Integer> mCurrentScore = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> mHighScore = new MutableLiveData<>(0);
+    // speed and sound setting live data
+    private final MutableLiveData<Integer> mSpeedLiveData = new MutableLiveData<>(0);
+    private final MutableLiveData<Boolean> mSoundLiveData = new MutableLiveData<>(true);
     // TetrisBord
     private TetrisBoard mTetrisBoard;
     // running flag
     private boolean mRunning = true;
 
-    // MutableLiveData currentScore and highScore
-    private final MutableLiveData<Integer> mCurrentScore = new MutableLiveData<>(0);
-    private final MutableLiveData<Integer> mHighScore = new MutableLiveData<>(0);
-
-    // speed and sound setting live data
-    private final MutableLiveData<Integer> mSpeedLiveData = new MutableLiveData<>(0);
-    private final MutableLiveData<Boolean> mSoundLiveData = new MutableLiveData<>(true);
+    private SettingsManager mSettingMgr;
 
     // init tetrisbord method
     public void initTetrisBoard(TetrisBoard.GameListener listener) {
@@ -117,14 +88,14 @@ public class GameViewModel extends ViewModel{
         this.mTetrisBoard.reset();
     }
 
-    // set running flag
-    public void setRunning(boolean running) {
-        this.mRunning = running;
-    }
-
     // is running
     public boolean isRunning() {
         return this.mRunning;
+    }
+
+    // set running flag
+    public void setRunning(boolean running) {
+        this.mRunning = running;
     }
 
     // get current score
@@ -137,7 +108,7 @@ public class GameViewModel extends ViewModel{
         return mHighScore;
     }
 
-   // get speed
+    // get speed
     public MutableLiveData<Integer> getSpeed() {
         return mSpeedLiveData;
     }
@@ -147,17 +118,24 @@ public class GameViewModel extends ViewModel{
         mSpeedLiveData.setValue(speed);
     }
 
-
     // get integer speed from sharedeferences
-    public int getSpeedInt(Context context) {
-        // get speed from shared preferences
-        SharedPreferences prefs = context.getSharedPreferences(GAME_SETTINGS.fileName, Context.MODE_PRIVATE);
-        return prefs.getInt(GAME_SETTINGS.speedKey, 0);
-    }
+    public int getSpeedInt() {
+        if (mSettingMgr == null) {
+            throw new ExceptionInInitializerError("mSettingMgr is null");
+        }
 
-    // set sound
-    public void setSound(boolean sound) {
-        mSoundLiveData.setValue(sound);
+        String speed = mSettingMgr.getSpeed();
+        try {
+            return Integer.parseInt(speed);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            Utils.log("NumberFormatException", e);
+        }
+
+        return 0;
+        // get speed from shared preferences
+//        SharedPreferences prefs = context.getSharedPreferences(GAME_SETTINGS.fileName, Context.MODE_PRIVATE);
+//        return prefs.getInt(GAME_SETTINGS.speedKey, 0);
     }
 
     // get sound
@@ -165,13 +143,22 @@ public class GameViewModel extends ViewModel{
         return mSoundLiveData;
     }
 
-    // get sound switch setting from sharedeferences
-    public boolean isSoundEffectEnabled(Context context) {
-        // get speed from shared preferences
-        SharedPreferences prefs = context.getSharedPreferences(GAME_SETTINGS.fileName, Context.MODE_PRIVATE);
-        return prefs.getBoolean(GAME_SETTINGS.soundKey, true);
+    // set sound
+    public void setSound(boolean sound) {
+        mSoundLiveData.setValue(sound);
     }
 
+    // get sound switch setting from sharedeferences
+    public boolean isSoundEffectEnabled(Context context) {
+        if (mSettingMgr == null) {
+            throw new ExceptionInInitializerError("mSettingMgr is null");
+        }
+
+        return mSettingMgr.isSoundEffect();
+        // get speed from shared preferences
+//        SharedPreferences prefs = context.getSharedPreferences(GAME_SETTINGS.fileName, Context.MODE_PRIVATE);
+//        return prefs.getBoolean(GAME_SETTINGS.soundKey, true);
+    }
 
     public void increaseScore(int value) {
         int newScore = (mCurrentScore.getValue() != null ? mCurrentScore.getValue() : 0) + value;
@@ -213,8 +200,6 @@ public class GameViewModel extends ViewModel{
         dao.insert(record);
     }
 
-
-
     public void saveHighScore(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(GAME_PREFS.fileName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -225,6 +210,9 @@ public class GameViewModel extends ViewModel{
 
     // load speed and sound from shared preferences: game_settings
     public void loadSettings(Context context) {
+        // get setting manager
+        mSettingMgr = SettingsManager.getInstance(context);
+
         SharedPreferences prefs = context.getSharedPreferences(GAME_SETTINGS.fileName, Context.MODE_PRIVATE);
         mSpeedLiveData.setValue(prefs.getInt(GAME_SETTINGS.speedKey, 0));
         mSoundLiveData.setValue(prefs.getBoolean(GAME_SETTINGS.soundKey, true));
@@ -239,6 +227,28 @@ public class GameViewModel extends ViewModel{
         editor.putInt(GAME_SETTINGS.speedKey, speed);
         editor.putBoolean(GAME_SETTINGS.soundKey, sound);
         editor.apply();
+    }
+
+    /**
+     * interface GAME_PREFS
+     * fileName: string
+     * highScorekey: string
+     */
+    private interface GAME_PREFS {
+        String fileName = "game_prefs";
+        String highScorekey = "high_score";
+    }
+
+    /**
+     * interface GAME_SETTINGS
+     * fileName: string
+     * speedKey: string
+     * soundKey: string
+     */
+    private interface GAME_SETTINGS {
+        String fileName = "game_settings";
+        String speedKey = "speed";
+        String soundKey = "sound";
     }
 
 }

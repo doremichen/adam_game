@@ -7,15 +7,21 @@
             app:entryValues="@array/speed_values"
             app:key="speed"
             app:title="@string/tv_setting_select_game_speed"
-            app:useSimpleSummaryProvider="true" />
-
+            app:defaultValue="1"
+            app:useSimpleSummaryProvider="true"
+            app:layout="@layout/custom_preference"/>
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/switch_setting_enable_sound">
 
         <SwitchPreferenceCompat
             app:key="sound_effect"
-            app:title="@string/tetris_game_play_effect_setting_title" />
+            app:title="@string/tetris_game_play_effect_setting_title"
+            app:summaryOff="@string/tetris_game_sound_effect_off"
+            app:summaryOn="@string/tetris_game_sound_effect_on"
+            app:defaultValue="false"
+            app:useSimpleSummaryProvider="true"
+            app:layout="@layout/custom_preference"/>
 
     </PreferenceCategory>
 

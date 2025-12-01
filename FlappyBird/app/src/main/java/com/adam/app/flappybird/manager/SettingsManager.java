@@ -1,3 +1,10 @@
+/**
+ * This class is the settings manager.
+ *
+ * @author Adam Chen
+ * @version 1.0
+ * @since 2025-11-17
+ */
 package com.adam.app.flappybird.manager;
 
 import android.content.Context;
