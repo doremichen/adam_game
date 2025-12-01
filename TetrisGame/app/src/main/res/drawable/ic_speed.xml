@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Cube-like grid (2x2) -->
+    <path
+        android:fillColor="#29B6F6"
+        android:pathData="M8,8 h14 v14 h-14 z" />
+
+    <path
+        android:fillColor="#FF7043"
+        android:pathData="M26,8 h14 v14 h-14 z" />
+
+    <path
+        android:fillColor="#FFEE58"
+        android:pathData="M8,26 h14 v14 h-14 z" />
+
+    <path
+        android:fillColor="#66BB6A"
+        android:pathData="M26,26 h14 v14 h-14 z" />
+
+    <!-- Grid lines -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="1.2"
+        android:fillColor="@android:color/transparent"
+        android:pathData="M8,8 h32 v32 h-32 z M22,8 v32 M8,22 h32" />
+
+    <!-- Downward speed arrow -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,14 L28,18 H25 V30 H23 V18 H20 Z" />
+
+    <!-- Speed motion lines (top) -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M16,6 L32,6" />
+
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:pathData="M18,2 L30,2" />
+
+</vector>

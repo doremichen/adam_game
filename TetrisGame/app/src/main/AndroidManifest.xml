@@ -16,7 +16,7 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:label="@string/title_activity_settings" />
+            android:label="@string/tetris_game_activity_settings_title" />
         <activity
             android:name=".LeaderboardActivity"
             android:exported="false"
