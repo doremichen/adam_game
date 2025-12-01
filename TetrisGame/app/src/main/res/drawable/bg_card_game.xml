@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- outer line-->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#30FFFFFF"/>
+            <corners android:radius="16dp"/>
+        </shape>
+    </item>
+
+    <!-- main background -->
+    <item android:top="2dp" android:bottom="2dp" android:left="2dp" android:right="2dp">
+        <shape android:shape="rectangle">
+
+            <!-- game style -->
+            <gradient
+                android:type="linear"
+                android:angle="90"
+                android:startColor="#222831"
+                android:endColor="#393E46"/>
+
+            <corners android:radius="14dp"/>
+
+            <!-- UI effect -->
+            <padding android:left="0dp" android:top="0dp" android:right="0dp" android:bottom="0dp"/>
+
+        </shape>
+    </item>
+
+</layer-list>
