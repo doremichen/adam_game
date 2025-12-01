@@ -1,79 +1,94 @@
 /**
- * Copyright 2025 Adam
  * Description: SettingsActivity is the activity of the settings.
- * Author: Adam
- * Date: 2025/06/24
+ * Author: Adam Chen
+ * Date: 2025/11/28
  */
 package com.adam.app.tetrisgame;
 
+import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 
-import com.adam.app.tetrisgame.databinding.ActivitySettingsBinding;
-import com.adam.app.tetrisgame.viewmodel.GameViewModel;
+import com.adam.app.tetrisgame.manager.SettingsManager;
 
 public class SettingsActivity extends AppCompatActivity {
-
-    // game viewModel
-    private GameViewModel mGameViewModel;
-
-    // view binding
-    private ActivitySettingsBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // view binding
-        mBinding = ActivitySettingsBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
-
-        // init game viewModel
-        mGameViewModel = new ViewModelProvider(this).get(GameViewModel.class);
-        mGameViewModel.loadSettings(this);
-
-        // setup speed option
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.speed_array,
-                R.layout.spinner_item_left);
-        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item_left);
-        mBinding.spinnerSpeed.setAdapter(adapter);
-
-        // observer and update speed
-        mGameViewModel.getSpeed().observe(this, speed -> {
-            mBinding.spinnerSpeed.setSelection(speed);
-        });
-
-        // observer and update sound
-        mGameViewModel.getSound().observe(this, sound -> {
-            mBinding.switchSound.setChecked(sound);
-        });
-
-        // set control listener
-        mBinding.spinnerSpeed.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mGameViewModel.setSpeed(position);
-
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-        mBinding.switchSound.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            mGameViewModel.setSound(isChecked);
-        });
-
-        // save settings
-        mBinding.btnSaveSettings.setOnClickListener(v -> {
-            mGameViewModel.saveSettings(this);
-            finish();
-        });
-
+        setContentView(R.layout.activity_settings);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.settings, new SettingsFragment(getApplicationContext()))
+                    .commit();
+        }
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
     }
+
+    public static class SettingsFragment extends PreferenceFragmentCompat {
+
+        private SettingsManager mSettingMgr;
+        private Context mContext;
+
+        public SettingsFragment(Context context) {
+            mSettingMgr = SettingsManager.getInstance(context);
+            mContext = context;
+        }
+
+
+        @Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.root_preferences, rootKey);
+            // get setting item
+            SwitchPreferenceCompat soundEffect = findPreference(SettingsManager.KEY_SOUND_EFFECT);
+            ListPreference speed = findPreference(SettingsManager.KEY_SPEED);
+
+            if (soundEffect != null) {
+                boolean isSoundEffect = mSettingMgr.isSoundEffect();
+                soundEffect.setChecked(isSoundEffect);
+                // set listener
+                soundEffect.setOnPreferenceChangeListener(this::onSoundEffectChanged);
+            }
+
+            if (speed != null) {
+                String speedValue = mSettingMgr.getSpeed();
+                speed.setValue(String.valueOf(speedValue));
+                // set listener
+                speed.setOnPreferenceChangeListener(this::onSpeedChanged);
+            }
+        }
+
+        private boolean onSpeedChanged(Preference preference, Object o) {
+            // get value
+            String value = (String) o;
+            // set value
+            mSettingMgr.setSpeed(value);
+            String message = mContext.getString(R.string.tetris_game_speed_changed, value);
+            Utils.showToast(mContext, message);
+            return true; // save setting
+        }
+
+        private boolean onSoundEffectChanged(Preference preference, Object o) {
+            // get value
+            boolean value = (boolean) o;
+            // set value
+            mSettingMgr.setSoundEffect(value);
+            String message = value ?
+                    mContext.getString(R.string.tetris_game_sound_effect_on) : mContext.getString(R.string.tetris_game_sound_effect_off);
+            Utils.showToast(mContext, mContext.getString(R.string.tetris_game_sound_effect_changed, message));
+            // save setting
+            return true; // save setting
+        }
+    }
+
 }

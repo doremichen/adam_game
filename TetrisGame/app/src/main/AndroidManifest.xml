@@ -13,16 +13,12 @@
         android:theme="@style/Theme.TetrisGame"
         tools:targetApi="31">
         <activity
-            android:name=".SettingsActivity2"
+            android:name=".SettingsActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:label="@string/title_activity_settings2" />
+            android:label="@string/title_activity_settings" />
         <activity
             android:name=".LeaderboardActivity"
-            android:exported="false"
-            android:screenOrientation="nosensor" />
-        <activity
-            android:name=".SettingsActivity"
             android:exported="false"
             android:screenOrientation="nosensor" />
         <activity

@@ -15,6 +15,8 @@ public class SettingsManager {
 
     public static final String KEY_SOUND_EFFECT = "sound_effect";
     public static final String KEY_SPEED = "speed";
+    public static final String KEY_HIGH_SCORE = "high_score";
+
 
     private static volatile SettingsManager sManager;
     private SharedPreferences mPreferences;
@@ -51,4 +53,11 @@ public class SettingsManager {
         mPreferences.edit().putString(KEY_SPEED, value).apply();
     }
 
+    public int getHighScore() {
+        return mPreferences.getInt(KEY_HIGH_SCORE, 0);
+    }
+
+    public void setHighScore(int value) {
+        mPreferences.edit().putInt(KEY_HIGH_SCORE, value).apply();
+    }
 }

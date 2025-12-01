@@ -258,7 +258,7 @@ public class GameActivity extends AppCompatActivity {
         // setting button
         mBinding.btnSettings.setOnClickListener(v -> {
             // change activity to settings activity2
-            startActivity(Utils.createIntent(this, SettingsActivity2.class));
+            startActivity(Utils.createIntent(this, SettingsActivity.class));
         });
     }
 

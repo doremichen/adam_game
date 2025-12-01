@@ -54,5 +54,5 @@
     <string name="tetris_game_sound_effect_on">On</string>
     <string name="tetris_game_speed_changed">Speed: %1$s</string>
     <string name="tetris_game_sound_effect_changed">Sound: %1$s</string>
-    <string name="title_activity_settings2">Setting</string>
+    <string name="title_activity_settings">Setting</string>
 </resources>
