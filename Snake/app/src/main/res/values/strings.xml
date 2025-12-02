@@ -43,4 +43,5 @@
     <string name="snake_game_special_food_score_double">Score double</string>
     <string name="snake_game_special_food_bomb">Bomb</string>
     <string name="snake_game_special_food_toast">Special Food: %1$s</string>
+    <string name="snake_game_icon_description">This is snake game</string>
 </resources>
