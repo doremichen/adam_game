@@ -18,64 +18,68 @@
         android:textColor="@android:color/white"
         android:textSize="28sp"
         android:textStyle="bold"
+        android:layout_marginTop="48dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="48dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btn_start"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="@string/racinggame2d_sart_btn"
+    <!-- LOGO (Vector) -->
+    <ImageView
+        android:id="@+id/img_logo"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_car_logo"
         app:layout_constraintTop_toBottomOf="@id/tv_title"
-        app:layout_constraintBottom_toTopOf="@id/btn_setting"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        android:layout_marginBottom="16dp"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <Button
-        android:id="@+id/btn_setting"
-        android:layout_width="200dp"
+    <!-- BUTTONS in LinearLayout -->
+    <LinearLayout
+        android:id="@+id/ll_buttons"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/racinggame2d_setting_btn"
-        app:layout_constraintTop_toBottomOf="@id/btn_start"
-        app:layout_constraintBottom_toTopOf="@id/btn_leaderboard"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/img_logo"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"/>
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <Button
-        android:id="@+id/btn_leaderboard"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="@string/racinggame2d_leader_board_btn"
-        app:layout_constraintTop_toBottomOf="@id/btn_setting"
-        app:layout_constraintBottom_toTopOf="@id/btn_about"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"/>
+        <Button
+            android:id="@+id/btn_start"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_sart_btn"
+            android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/btn_about"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="@string/racinggame2d_about_btn"
-        app:layout_constraintTop_toBottomOf="@id/btn_leaderboard"
-        app:layout_constraintBottom_toTopOf="@id/btn_exit"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="16dp"/>
+        <Button
+            android:id="@+id/btn_setting"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_setting_btn"
+            android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/btn_exit"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:text="@string/racinggame2d_exit_btn"
-        app:layout_constraintTop_toBottomOf="@id/btn_about"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        <Button
+            android:id="@+id/btn_leaderboard"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_leader_board_btn"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btn_about"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_about_btn"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/btn_exit"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/racinggame2d_exit_btn" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
