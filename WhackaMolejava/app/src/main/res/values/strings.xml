@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Whack-a-Mole(java)</string>
+    <string name="whack_a_mole_title">Whack A Mole</string>
+    <string name="whack_a_mole_logo">logo</string>
+    <string name="whack_a_mole_start_game_btn">Start Game</string>
+    <string name="whack_a_mole_setting_btn">Setting</string>
+    <string name="whack_a_mole_about_btn">About</string>
+    <string name="whack_a_mole_exit_btn">Exit</string>
+    <string name="whack_a_mole_unimplemented_toast">UnImplemented yet!!!</string>
+    <string name="whack_a_mole_score_tv">Score: %1$s</string>
+    <string name="whack_a_mole_time_tv">Time: %1$d sec</string>
+    <string name="whack_a_mole_exit_title">Exit</string>
+    <string name="whack_a_mole_exit_message">Are you sure to exit?</string>
+    <string name="whack_a_mole_exit_ok_btn">Ok</string>
+    <string name="whack_a_mole_exit_cancel_btn">Cancel</string>
+</resources>

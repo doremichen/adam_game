@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">打地鼠</string>
+    <string name="whack_a_mole_title">打地鼠</string>
+    <string name="whack_a_mole_logo">打地鼠標籤</string>
+    <string name="whack_a_mole_start_game_btn">開始遊戲</string>
+    <string name="whack_a_mole_setting_btn">設定</string>
+    <string name="whack_a_mole_about_btn">關於</string>
+    <string name="whack_a_mole_exit_btn">離開</string>
+    <string name="whack_a_mole_unimplemented_toast">還沒實作!!!</string>
+    <string name="whack_a_mole_score_tv">分數: %1$s</string>
+    <string name="whack_a_mole_time_tv">時間: %1$d 秒</string>
+    <string name="whack_a_mole_exit_title">離開</string>
+    <string name="whack_a_mole_exit_message">確定要離開嗎?</string>
+    <string name="whack_a_mole_exit_ok_btn">確認</string>
+    <string name="whack_a_mole_exit_cancel_btn">取消</string>
+</resources>

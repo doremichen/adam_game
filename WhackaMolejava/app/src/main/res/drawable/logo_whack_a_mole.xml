@@ -1,0 +1,63 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="150dp"
+    android:height="150dp"
+    android:viewportWidth="150"
+    android:viewportHeight="150">
+
+    <!-- 電光外框 -->
+    <path
+        android:fillColor="#00FFFFFF"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="4"
+        android:pathData="M10,20 L140,20 L140,130 L10,130z
+                          M10,20 L30,10 L120,10 L140,20
+                          M10,130 L30,140 L120,140 L140,130" />
+
+    <!-- 地鼠洞圓 -->
+    <path
+        android:fillColor="#222222"
+        android:pathData="M45,90
+                          a30,18 0 1,0 60,0
+                          a30,18 0 1,0 -60,0" />
+
+    <!-- 地鼠身體 -->
+    <path
+        android:fillColor="#8E5A3A"
+        android:pathData="M60,70
+                          a15,18 0 1,0 30,0
+                          a15,18 0 1,0 -30,0" />
+
+    <!-- 地鼠眼睛左 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M75,63
+                          a4,4 0 1,0 8,0
+                          a4,4 0 1,0 -8,0" />
+
+    <!-- 地鼠眼睛右 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M93,63
+                          a4,4 0 1,0 8,0
+                          a4,4 0 1,0 -8,0" />
+
+    <!-- 地鼠鼻子 -->
+    <path
+        android:fillColor="#FF4444"
+        android:pathData="M88,72
+                          a5,3 0 1,0 10,0
+                          a5,3 0 1,0 -10,0" />
+
+    <!-- 槌子 -->
+    <path
+        android:fillColor="#CCCCCC"
+        android:strokeColor="#00E5FF"
+        android:strokeWidth="2"
+        android:pathData="M110,40 L135,20 L140,25 L115,45z" />
+
+    <!-- 槌子把手 -->
+    <path
+        android:fillColor="#8E5A3A"
+        android:pathData="M115,45 L105,55 L100,50 L110,40z" />
+
+</vector>
