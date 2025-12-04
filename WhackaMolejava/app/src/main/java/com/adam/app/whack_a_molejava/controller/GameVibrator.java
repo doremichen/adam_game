@@ -3,6 +3,20 @@
  * <p>
  * This class is the Game vibrator that handle the vibration of the game.
  *
+ * GameVibrator vibrator = new GameVibrator(this);
+ *
+ * // Short vibration
+ * vibrator.vibrateShort();
+ *
+ * // Long vibration
+ * vibrator.vibrateLong();
+ *
+ * // Custom vibration pattern
+ * vibrator.startVibration(new long[]{0, 150, 80, 200});
+ *
+ * // Stop vibration
+ * vibrator.stopVibration();
+ *
  * @author Adam Chen
  * @version 1.0
  * @since 2025-12-04

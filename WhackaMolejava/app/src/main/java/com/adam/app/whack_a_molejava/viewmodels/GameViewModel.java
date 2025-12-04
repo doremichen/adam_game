@@ -41,7 +41,7 @@ public class GameViewModel extends AndroidViewModel {
         // init vibrator
         final GameVibrator vibrator = GameVibrator.getInstance(context);
         // init Game engine
-        mGameEngine = new GameEngine(30, new GameEngine.GameCallback() {
+        mGameEngine = new GameEngine(31, new GameEngine.GameCallback() {
 
             @Override
             public void onScoreChanged(int score) {
