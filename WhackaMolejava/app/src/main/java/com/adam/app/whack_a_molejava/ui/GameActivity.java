@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.whack_a_molejava.R;
-import com.adam.app.whack_a_molejava.controller.GameEngine;
 import com.adam.app.whack_a_molejava.databinding.ActivityGameBinding;
 import com.adam.app.whack_a_molejava.util.GameDialog;
 import com.adam.app.whack_a_molejava.util.GameUtils;
@@ -56,7 +55,7 @@ public class GameActivity extends AppCompatActivity {
                     mViewModel.pauseGame();
                     // show exit dialog
                     showExitDialog();
-        });
+                });
 
     }
 
@@ -101,9 +100,6 @@ public class GameActivity extends AppCompatActivity {
 
     private void handleGameOver(Boolean isGameOver) {
         if (!isGameOver) return;
-
-        // change game state
-        mViewModel.changeState(GameEngine.WAMGameState.GAME_OVER);
 
         // Show game over dialog
         String title = getString(R.string.whack_a_mole_game_over_title);

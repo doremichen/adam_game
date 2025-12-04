@@ -11,6 +11,7 @@
 package com.adam.app.whack_a_molejava.viewmodels;
 
 import android.app.Application;
+import android.content.Context;
 import android.graphics.PointF;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.whack_a_molejava.controller.GameEngine;
+import com.adam.app.whack_a_molejava.controller.GameVibrator;
 import com.adam.app.whack_a_molejava.model.Mole;
 
 import java.util.List;
@@ -35,11 +37,17 @@ public class GameViewModel extends AndroidViewModel {
 
     public GameViewModel(@NonNull Application application) {
         super(application);
+        Context context = application.getApplicationContext();
+        // init vibrator
+        final GameVibrator vibrator = GameVibrator.getInstance(context);
         // init Game engine
         mGameEngine = new GameEngine(30, new GameEngine.GameCallback() {
 
             @Override
             public void onScoreChanged(int score) {
+                // vibrator short
+                vibrator.vibrateShort();
+                // update score
                 mScore.postValue(score);
             }
 
@@ -50,6 +58,11 @@ public class GameViewModel extends AndroidViewModel {
 
             @Override
             public void onGameOver() {
+                // vibrator long
+                vibrator.vibrateLong();
+                //change game state
+                mGameEngine.changeState(GameEngine.WAMGameState.GAME_OVER);
+                // update game over
                 mGameOver.postValue(true);
             }
         });
