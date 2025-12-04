@@ -54,7 +54,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 GameUtils.startActivity(this, GameSettingsActivity.class);
                 break;
             case ABOUT:
-                GameUtils.showUnImplementedToast(this);
+                GameUtils.startActivity(this, AboutActivity.class);
                 break;
             case EXIT:
                 finish();

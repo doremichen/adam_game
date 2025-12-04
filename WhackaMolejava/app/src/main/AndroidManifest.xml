@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.WhackaMolejava">
         <activity
+            android:name=".ui.AboutActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.GameSettingsActivity"
             android:exported="false" />
         <activity

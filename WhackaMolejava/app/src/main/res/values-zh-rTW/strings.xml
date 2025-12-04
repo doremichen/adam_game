@@ -22,5 +22,29 @@
     <string name="whack_a_mole_setting_off">關</string>
     <string name="whack_a_mole_sound_setting_title">聲音</string>
     <string name="whack_a_mole_duration_time_setting_title">遊戲時間</string>
+    <string name="whack_a_mole_instruction">
+        🎮 打地鼠遊戲介紹\n\n
+    歡迎來到打地鼠遊戲！\n
+    這是一款節奏明快、反應力至上的休閒遊戲。目標很簡單：在時間內盡可能多地敲擊冒出來的地鼠！\n\n
+
+    📌 遊戲玩法\n
+    • 地鼠會從隨機洞口突然跳出\n
+    • 在地鼠消失前點擊它即可得分\n
+    • 地鼠冒出的速度會隨著時間提升\n
+    • 點越快，分數越高，反應越重要！\n\n
+
+    🎯 遊戲目標\n
+    • 挑戰你的極限反應速度\n
+    • 刷新最高分紀錄\n
+    • 訓練手眼協調能力\n\n
+
+    💡 小技巧\n
+    • 專注在畫面中央區域比較容易反應\n
+    • 不要連點同一個洞，多觀察四周\n
+    • 保持節奏、避免慌亂\n\n
+
+    🔥 挑戰自己、突破極限，看看你能打到多少分！\n
+    祝你遊戲愉快！
+    </string>
 
 </resources>

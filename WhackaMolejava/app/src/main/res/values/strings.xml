@@ -23,4 +23,29 @@
     <string name="whack_a_mole_setting_off">Off</string>
     <string name="whack_a_mole_sound_setting_title">Sound</string>
     <string name="whack_a_mole_duration_time_setting_title">Duration Time</string>
+    <string name="whack_a_mole_instruction">
+        🎮 Whack-a-Mole Game Introduction\n\n
+    Welcome to the Whack-a-Mole game!\n
+    This is a fast-paced, reaction-focused casual game.\n
+    The goal is simple: hit as many moles as you can before they disappear!\n\n
+
+    📌 How to Play\n
+    • Moles will randomly pop out from different holes\n
+    • Tap the mole before it disappears to score points\n
+    • The speed increases over time, making the game more challenging\n
+    • The faster you react, the higher your score!\n\n
+
+    🎯 Game Objectives\n
+    • Test and improve your reaction speed\n
+    • Beat your highest score\n
+    • Train your hand-eye coordination\n\n
+
+    💡 Tips for Better Performance\n
+    • Focus on the center area for quicker reactions\n
+    • Avoid tapping the same hole repeatedly — stay aware of the entire board\n
+    • Maintain a good rhythm and don’t panic\n\n
+
+    🔥 Challenge yourself, break your limits, and see how many points you can achieve!\n
+    Enjoy the game!
+    </string>
 </resources>
