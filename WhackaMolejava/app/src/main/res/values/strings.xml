@@ -16,4 +16,11 @@
     <string name="whack_a_mole_game_over_title">Game Over</string>
     <string name="whack_a_mole_game_over_message">Time is up! Do you want to play game again?</string>
     <string name="whack_a_mole_game_over_restart_btn">Restart</string>
+    <!-- Game settings Preferences -->
+    <string name="whack_a_mole_settings_header">Game Settings</string>
+    <string name="whack_a_mole_vibrator_setting_title">Vibrator</string>
+    <string name="whack_a_mole_setting_on">On</string>
+    <string name="whack_a_mole_setting_off">Off</string>
+    <string name="whack_a_mole_sound_setting_title">Sound</string>
+    <string name="whack_a_mole_duration_time_setting_title">Duration Time</string>
 </resources>

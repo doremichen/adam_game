@@ -16,4 +16,11 @@
     <string name="whack_a_mole_game_over_title">遊戲結束</string>
     <string name="whack_a_mole_game_over_message">時間到！你想再玩一次嗎？</string>
     <string name="whack_a_mole_game_over_restart_btn">確認</string>
+    <string name="whack_a_mole_settings_header">遊戲設定</string>
+    <string name="whack_a_mole_vibrator_setting_title">震動</string>
+    <string name="whack_a_mole_setting_on">開</string>
+    <string name="whack_a_mole_setting_off">關</string>
+    <string name="whack_a_mole_sound_setting_title">聲音</string>
+    <string name="whack_a_mole_duration_time_setting_title">遊戲時間</string>
+
 </resources>

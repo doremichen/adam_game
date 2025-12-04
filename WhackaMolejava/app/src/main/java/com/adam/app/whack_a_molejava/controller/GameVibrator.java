@@ -35,7 +35,7 @@ public class GameVibrator {
     private Vibrator mVibrator;
     private VibratorManager mVibratorMgr;
 
-    private static GameVibrator sInstance;
+    private static volatile GameVibrator sInstance;
 
     private GameVibrator(Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

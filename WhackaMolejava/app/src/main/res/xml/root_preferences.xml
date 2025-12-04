@@ -1,0 +1,36 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/whack_a_mole_settings_header"
+        app:layout="@layout/custom_preference_category">
+
+        <SwitchPreference
+            app:key="vibrator_on"
+            app:title="@string/whack_a_mole_vibrator_setting_title"
+            app:summaryOn="@string/whack_a_mole_setting_on"
+            app:summaryOff="@string/whack_a_mole_setting_off"
+            app:layout="@layout/custom_preference"
+            app:icon="@drawable/ic_vibrator"
+            app:defaultValue="true"
+            app:useSimpleSummaryProvider="true"/>
+
+        <SwitchPreference
+            app:key="sound_on"
+            app:title="@string/whack_a_mole_sound_setting_title"
+            app:summaryOn="@string/whack_a_mole_setting_on"
+            app:summaryOff="@string/whack_a_mole_setting_off"
+            app:layout="@layout/custom_preference"
+            app:icon="@drawable/ic_sound"
+            app:defaultValue="true"
+            app:useSimpleSummaryProvider="true"/>
+
+        <EditTextPreference
+            app:key="duration_time"
+            app:title="@string/whack_a_mole_duration_time_setting_title"
+            app:layout="@layout/custom_preference"
+            app:icon="@drawable/ic_duration_time"
+            app:defaultValue="10"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
