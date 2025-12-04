@@ -201,8 +201,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         canvas.drawColor(Color.BLACK);
 
         // compute sizes and centers once or when size changes
-        float topReserve = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100f, getResources().getDisplayMetrics());
-        float gridTop = topReserve;
+        float gridTop = 0f;
         float gridHeight = height - gridTop;
         mCellW = width / 3f;
         mCellH = gridHeight / 3f;
