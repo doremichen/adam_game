@@ -13,4 +13,7 @@
     <string name="whack_a_mole_exit_message">確定要離開嗎?</string>
     <string name="whack_a_mole_exit_ok_btn">確認</string>
     <string name="whack_a_mole_exit_cancel_btn">取消</string>
+    <string name="whack_a_mole_game_over_title">遊戲結束</string>
+    <string name="whack_a_mole_game_over_message">時間到！你想再玩一次嗎？</string>
+    <string name="whack_a_mole_game_over_restart_btn">確認</string>
 </resources>

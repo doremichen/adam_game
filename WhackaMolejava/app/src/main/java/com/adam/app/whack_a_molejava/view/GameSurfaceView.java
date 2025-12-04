@@ -74,10 +74,24 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         setFocusableInTouchMode(true);
         setKeepScreenOn(true);
 
-        mMoleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mole);
+        // load resource safely
+        try {
+            mMoleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.mole);
+        } catch (Exception e) {
+            GameUtils.log(TAG, "mole bitmap load failed: " + e.getMessage());
+            mMoleBitmap = null;
+        }
         // default touch radius 48dp
         mTouchRadiusPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, getResources().getDisplayMetrics());
 
+    }
+
+    // Ensure centers recalculated when view size changes (more reliable than lazily at draw time)
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        mCentersComputed = false; // force recompute on next draw
+        GameUtils.log(TAG, "onSizeChanged -> force compute centers");
     }
 
     @Override
@@ -92,7 +106,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         // schedule run at fixed rate (60ms tick)
         if (mFuture == null || mFuture.isCancelled()) {
             GameUtils.log(TAG, "schedule run");
-            mFuture = mScheduledExecutorService.scheduleAtFixedRate(this, 0L, 60L, TimeUnit.MILLISECONDS);
+            mFuture = mScheduledExecutorService.scheduleWithFixedDelay(this, 0L, 60L, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -110,18 +124,28 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            // forward touch to view model (or to engine via viewmodel)
-            // but convert touch radius usage in engine; here we pass raw coordinates
-            mGameViewModel.hitMole(event.getX(), event.getY());
+            // if not RUN, ignore touches (prevent hitting while paused)
+            if (isGameRunning()) {
+                // forward touch to view model (or to engine via viewmodel)
+                // but convert touch radius usage in engine; here we pass raw coordinates
+                mGameViewModel.hitMole(event.getX(), event.getY());
+            }
         }
         return true;
+    }
+
+    private boolean isGameRunning() {
+        return mGameViewModel != null && mGameViewModel.getState() == GameEngine.WAMGameState.RUN;
     }
 
     @Override
     public void run() {
         GameUtils.log(TAG, "run");
+        logState();
         // check game status
-        if (mGameViewModel == null || mGameViewModel.getState() != GameEngine.WAMGameState.RUN) {
+        // We always draw the static UI. If game is running we update+animate moles.
+        boolean running = isGameRunning();
+        if (!running) {
             GameUtils.log(TAG, "game not running");
             return;
         }
@@ -154,6 +178,15 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             GameUtils.log(TAG, "run exception: " + e.getMessage());
         }
 
+    }
+
+    private void logState() {
+        if (mGameViewModel == null) {
+            GameUtils.log(TAG, "mGameViewModel is null");
+            return;
+        }
+
+        GameUtils.log(TAG,"state: " + mGameViewModel.getState());
     }
 
     private void drawFrame(Canvas canvas) {
@@ -203,15 +236,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             float bottom = center.y + holeRadiusY;
             canvas.drawOval(left, top, right, bottom, mPaint);
         }
-
-        // draw score/time via viewmodel LiveData (safe read)
-//        mPaint.setColor(Color.WHITE);
-//        mPaint.setTextSize(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 18f, getResources().getDisplayMetrics()));
-//        int score = 0, time = 0;
-//        if (mGameViewModel != null && mGameViewModel.getScore().getValue() != null) score = mGameViewModel.getScore().getValue();
-//        if (mGameViewModel != null && mGameViewModel.getRemainingTime().getValue() != null) time = mGameViewModel.getRemainingTime().getValue();
-//        canvas.drawText(String.format("分數: %03d", score), 20f, 40f, mPaint);
-//        canvas.drawText(String.format("時間: %02d 秒", time), width - 220f, 40f, mPaint);
 
         // draw moles (use scaling based on visibleFrom/visibleUntil for pop animation)
         if (mGameViewModel == null) {
@@ -275,22 +299,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         // push positions to engine via viewModel if possible
         if (mGameViewModel != null) {
+            // backup cell positions
+            mGameViewModel.backupCellPositions(mCellCenters);
+            // set cell positions
             mGameViewModel.setMolePositions(mCellCenters);
-            // prefer engine API if exists
-//            try {
-//                if (mGameViewModel.getEngine() != null) {
-//                    mGameViewModel.getEngine().setMolePositions(new ArrayList<>(mCellCenters));
-//                    return;
-//                }
-//            } catch (Exception ignored) {}
-            // fallback: set directly on Mole objects
-//            List<Mole> moles = mGameViewModel.getMoles();
-//            if (moles != null) {
-//                int count = Math.min(moles.size(), mCellCenters.size());
-//                for (int i = 0; i < count; i++) {
-//                    moles.get(i).setPosition(mCellCenters.get(i));
-//                }
-//            }
         }
     }
 

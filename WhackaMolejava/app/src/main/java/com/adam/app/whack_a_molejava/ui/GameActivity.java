@@ -53,9 +53,8 @@ public class GameActivity extends AppCompatActivity {
         // back button listener
         getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT,
                 () -> {
-                    // show toast
-                    GameUtils.showToast(this, getString(R.string.whack_a_mole_exit_btn));
-                    // finish activity
+                    mViewModel.pauseGame();
+                    // show exit dialog
                     showExitDialog();
         });
 
@@ -65,10 +64,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         GameUtils.log(TAG, "onResume");
         super.onResume();
-        // check game state
-        if (mViewModel.getState() == GameEngine.WAMGameState.IDLE) {
-            mViewModel.changeState(GameEngine.WAMGameState.RUN);
-        }
+        mViewModel.startGame();
 
     }
 
@@ -76,10 +72,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         GameUtils.log(TAG, "onPause");
         super.onPause();
-        // check game state
-        if (mViewModel.getState() == GameEngine.WAMGameState.RUN) {
-            mViewModel.changeState(GameEngine.WAMGameState.IDLE);
-        }
+        mViewModel.pauseGame();
     }
 
     private void showExitDialog() {
@@ -89,7 +82,8 @@ public class GameActivity extends AppCompatActivity {
             finish();
         });
         GameDialog.DialogButtonContent negativeBtn = new GameDialog.DialogButtonContent(getString(R.string.whack_a_mole_exit_cancel_btn), () -> {
-            // do nothing
+            // start game
+            mViewModel.startGame();
         });
         GameDialog.showDialog(this, title, message, positiveBtn, negativeBtn);
     }
@@ -107,6 +101,22 @@ public class GameActivity extends AppCompatActivity {
 
     private void handleGameOver(Boolean isGameOver) {
         if (!isGameOver) return;
+
+        // change game state
+        mViewModel.changeState(GameEngine.WAMGameState.GAME_OVER);
+
         // Show game over dialog
+        String title = getString(R.string.whack_a_mole_game_over_title);
+        String message = getString(R.string.whack_a_mole_game_over_message);
+        GameDialog.DialogButtonContent positiveBtn = new GameDialog.DialogButtonContent(getString(R.string.whack_a_mole_game_over_restart_btn), () -> {
+            // restart game
+            mViewModel.restartGame();
+        });
+        GameDialog.DialogButtonContent negativeBtn = new GameDialog.DialogButtonContent(getString(R.string.whack_a_mole_exit_cancel_btn), () -> {
+            // finish activity
+            finish();
+        });
+        GameDialog.showDialog(this, title, message, positiveBtn, negativeBtn);
+
     }
 }

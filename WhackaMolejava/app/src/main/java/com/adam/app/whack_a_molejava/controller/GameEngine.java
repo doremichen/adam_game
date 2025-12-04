@@ -19,12 +19,17 @@ import java.util.List;
 import java.util.Random;
 
 public class GameEngine {
+
+    private final long mGameDurationMs;
+
     // end time
-    private final long mGameEndTime;
+    private long mGameEndTime;
     // game callback
     private final GameCallback mGameCallback;
     // list of moles
     private final List<Mole> mMoles = new ArrayList<>(9);
+    // list of position
+    private final List<PointF> mBackupPositions = new ArrayList<>(9);
 
     // random
     private final Random mRandom = new Random();
@@ -33,7 +38,7 @@ public class GameEngine {
     private int mScore;
 
     // game state
-    private WAMGameState mGameState = WAMGameState.IDLE;
+    private volatile WAMGameState mGameState = WAMGameState.IDLE;
 
 
     // spawn control
@@ -48,10 +53,22 @@ public class GameEngine {
      */
     public GameEngine(int durationSec, GameCallback callback) {
         // duration time
-        long mGameDurationMs = durationSec * 1000L;
+        mGameDurationMs = durationSec * 1000L;
         mGameEndTime = System.currentTimeMillis() + mGameDurationMs;
         mGameCallback = callback;
         initMoles();
+    }
+
+
+    /**
+     * backup cell positions
+     * @param list list of points
+     */
+    public void backupCellPositions(List<PointF> list) {
+        if (list == null) return;
+        for (int i = 0; i < list.size(); i++) {
+            mBackupPositions.add(list.get(i));
+        }
     }
 
 
@@ -161,6 +178,25 @@ public class GameEngine {
     public WAMGameState getState() {
         return mGameState;
     }
+
+    public void reset() {
+        // 1. Reset end time for the new game
+        mGameEndTime = System.currentTimeMillis() + mGameDurationMs;
+
+        // 2. Reset score
+        mScore = 0;
+
+        // 3. Re-initialize the moles for the new game
+        initMoles();
+
+        // 4. set mole positions
+        setMolePositions(mBackupPositions);
+
+
+        // 5. Reset game state to running
+        changeState(WAMGameState.RUN);
+    }
+
 
 
     /**

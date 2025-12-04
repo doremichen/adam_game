@@ -57,6 +57,28 @@ public class GameViewModel extends AndroidViewModel {
         mGameEngine.changeState(GameEngine.WAMGameState.RUN);
     }
 
+    public void startGame() {
+        if (mGameEngine.getState() != GameEngine.WAMGameState.RUN) {
+            mGameEngine.changeState(GameEngine.WAMGameState.RUN);
+        }
+    }
+
+    public void pauseGame() {
+        if (mGameEngine.getState() != GameEngine.WAMGameState.IDLE) {
+            mGameEngine.changeState(GameEngine.WAMGameState.IDLE);
+        }
+    }
+
+    public void restartGame() {
+        // reset live data
+        mScore.postValue(0);
+        mRemainingTime.postValue(0);
+        mGameOver.postValue(false);
+        // reset game engine
+        mGameEngine.reset();
+    }
+
+
     /**
      * hit mole
      * @param x x position
@@ -72,6 +94,10 @@ public class GameViewModel extends AndroidViewModel {
      */
     public List<Mole> getMoles() {
         return mGameEngine.getMoles();
+    }
+
+    public void backupCellPositions(List<PointF> list) {
+        mGameEngine.backupCellPositions(list);
     }
 
     /**
