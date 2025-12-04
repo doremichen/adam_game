@@ -34,7 +34,7 @@ public class GameVibrator {
 
     private Vibrator mVibrator;
     private VibratorManager mVibratorMgr;
-    private SettingsManager mSettingManager;
+    private final SettingsManager mSettingManager;
 
 
     private static volatile GameVibrator sInstance;

@@ -17,7 +17,7 @@ public class SettingsManager {
     // --- Key ---
     public static final String KEY_SOUND_ON = "sound_on";
     public static final String KEY_DURATION_TIME = "duration_time";
-    public static final String KEY_VIBRATION_ON = "vibration_on";
+    public static final String KEY_VIBRATION_ON = "vibrator_on";
     public static final String KEY_DIFFICULTY = "difficulty";
 
     private static SettingsManager sInstance;
