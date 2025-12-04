@@ -21,6 +21,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.whack_a_molejava.controller.GameEngine;
 import com.adam.app.whack_a_molejava.controller.GameVibrator;
+import com.adam.app.whack_a_molejava.controller.SettingsManager;
 import com.adam.app.whack_a_molejava.model.Mole;
 
 import java.util.List;
@@ -40,8 +41,12 @@ public class GameViewModel extends AndroidViewModel {
         Context context = application.getApplicationContext();
         // init vibrator
         final GameVibrator vibrator = GameVibrator.getInstance(context);
+        // init settings manager
+        final SettingsManager settingsManager = SettingsManager.getInstance(context);
+        int duration = settingsManager.getDurationTime() + 1;  // one is for countdown
+
         // init Game engine
-        mGameEngine = new GameEngine(31, new GameEngine.GameCallback() {
+        mGameEngine = new GameEngine(duration, new GameEngine.GameCallback() {
 
             @Override
             public void onScoreChanged(int score) {

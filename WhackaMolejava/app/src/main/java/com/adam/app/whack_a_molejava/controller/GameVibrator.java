@@ -34,6 +34,8 @@ public class GameVibrator {
 
     private Vibrator mVibrator;
     private VibratorManager mVibratorMgr;
+    private SettingsManager mSettingManager;
+
 
     private static volatile GameVibrator sInstance;
 
@@ -43,6 +45,8 @@ public class GameVibrator {
         } else {
             mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         }
+
+        mSettingManager = SettingsManager.getInstance(context);
     }
 
     public static GameVibrator getInstance(Context context) {
@@ -79,6 +83,9 @@ public class GameVibrator {
     }
 
     private void vibrate(long duration) {
+        boolean isVibOn = mSettingManager.isVibrationOn();
+        if (!isVibOn) return;
+
         Vibrator vibrator = getVibrator();
         if (vibrator == null) return;
 
@@ -94,6 +101,9 @@ public class GameVibrator {
      * @param pattern
      */
     public void startVibration(long[] pattern) {
+        boolean isVibOn = mSettingManager.isVibrationOn();
+        if (!isVibOn) return;
+
         Vibrator vibrator = getVibrator();
         if (vibrator == null) return;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
