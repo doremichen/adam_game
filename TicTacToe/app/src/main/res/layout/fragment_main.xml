@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.adam.app.tic_tac_toe.viewmodels.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".views.fragments.MenuFragment">
+
+        <TextView
+            android:id="@+id/text_view_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tic-Tac-Toe"
+            android:textSize="34sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/button_start_game"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <Button
+            android:id="@+id/button_start_game"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Start Game"
+            android:onClick="@{() -> viewModel.onStartGameClicked()}"
+            app:layout_constraintBottom_toTopOf="@+id/button_settings"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_title"
+            app:layout_constraintWidth_percent="0.6" />
+
+        <Button
+            android:id="@+id/button_settings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Settings"
+            android:onClick="@{() -> viewModel.onSettingsClicked()}"
+            app:layout_constraintBottom_toTopOf="@+id/button_about"
+            app:layout_constraintEnd_toEndOf="@+id/button_start_game"
+            app:layout_constraintStart_toStartOf="@+id/button_start_game"
+            app:layout_constraintTop_toBottomOf="@+id/button_start_game" />
+
+        <Button
+            android:id="@+id/button_about"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="About"
+            android:onClick="@{() -> viewModel.onAboutClicked()}"
+            app:layout_constraintBottom_toTopOf="@+id/button_exit"
+            app:layout_constraintEnd_toEndOf="@+id/button_settings"
+            app:layout_constraintStart_toStartOf="@+id/button_settings"
+            app:layout_constraintTop_toBottomOf="@+id/button_settings" />
+
+        <Button
+            android:id="@+id/button_exit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Exit"
+            android:onClick="@{() -> viewModel.onExitClicked()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/button_about"
+            app:layout_constraintStart_toStartOf="@+id/button_about"
+            app:layout_constraintTop_toBottomOf="@+id/button_about" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

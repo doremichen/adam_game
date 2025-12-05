@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- define data binding variables -->
+    <data>
+        <variable
+            name="viewModel"
+            type="com.adam.app.tic_tac_toe.viewmodels.GameViewModel" />
+    </data>
+
+    <!-- UI layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.fragments.GameFragment">
+
+        <TextView
+            android:id="@+id/text_view_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/table_layout_board"
+            tools:text="Player X's Turn" />
+
+        <TableLayout
+            android:id="@+id/table_layout_board"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_status">
+
+            <!-- Row 1 -->
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/button_00"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(0, 0)}"
+                    android:textSize="48sp"
+                    tools:text="X" />
+
+                <Button
+                    android:id="@+id/button_01"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(0, 1)}"
+                    android:textSize="48sp"
+                    tools:text="O" />
+
+                <Button
+                    android:id="@+id/button_02"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(0, 2)}"
+                    android:textSize="48sp" />
+            </TableRow>
+
+            <!-- Row 2 -->
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/button_10"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(1, 0)}"
+                    android:textSize="48sp" />
+
+                <Button
+                    android:id="@+id/button_11"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(1, 1)}"
+                    android:textSize="48sp"
+                    tools:text="X" />
+
+                <Button
+                    android:id="@+id/button_12"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(1, 2)}"
+                    android:textSize="48sp" />
+            </TableRow>
+
+            <!-- Row 3 -->
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/button_20"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(2, 0)}"
+                    android:textSize="48sp" />
+
+                <Button
+                    android:id="@+id/button_21"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(2, 1)}"
+                    android:textSize="48sp" />
+
+                <Button
+                    android:id="@+id/button_22"
+                    style="?android:attr/button"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:onClick="@{() -> viewModel.onCellClicked(2, 2)}"
+                    android:textSize="48sp"
+                    tools:text="O" />
+            </TableRow>
+
+        </TableLayout>
+
+        <Button
+            android:id="@+id/button_reset"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="Reset Game"
+            android:onClick="@{() -> viewModel.resetGame()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/table_layout_board" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
