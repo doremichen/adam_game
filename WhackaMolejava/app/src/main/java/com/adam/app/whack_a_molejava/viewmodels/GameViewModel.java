@@ -19,7 +19,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.adam.app.whack_a_molejava.R;
 import com.adam.app.whack_a_molejava.controller.GameEngine;
+import com.adam.app.whack_a_molejava.controller.GameSoundManager;
 import com.adam.app.whack_a_molejava.controller.GameVibrator;
 import com.adam.app.whack_a_molejava.controller.SettingsManager;
 import com.adam.app.whack_a_molejava.model.Mole;
@@ -43,6 +45,10 @@ public class GameViewModel extends AndroidViewModel {
         final GameVibrator vibrator = GameVibrator.getInstance(context);
         // init settings manager
         final SettingsManager settingsManager = SettingsManager.getInstance(context);
+
+        // init sound manager
+        final GameSoundManager soundManager = new GameSoundManager(context);
+
         int duration = settingsManager.getDurationTime() + 1;  // one is for countdown
 
         // init Game engine
@@ -50,6 +56,8 @@ public class GameViewModel extends AndroidViewModel {
 
             @Override
             public void onScoreChanged(int score) {
+                // play sound effect
+                soundManager.playShortSound(context, R.raw.hit_mole);
                 // vibrator short
                 vibrator.vibrateShort();
                 // update score
