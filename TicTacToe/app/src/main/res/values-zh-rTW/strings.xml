@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">井字棋</string>
+    <string name="tic_tac_toe_game_setting_category">遊戲設定</string>
+    <string name="tic_tac_toe_pve_setting">人機對戰模式 (PVE)</string>
+    <string name="tic_tac_toe_pve_ai_enable">已啟用，將與 AI 對戰</string>
+    <string name="tic_tac_toe_pvp_enable">已停用，為雙人對戰模式 (PVP)</string>
+    <string name="tic_tac_toe_ai_setting_category">AI 設定</string>
+    <string name="tic_tac_toe_ai_hard_mode">困難模式 AI</string>
+    <string name="tic_tac_toe_ai_best_strategy">AI 將使用最佳策略（無法戰勝）</string>
+    <string name="tic_tac_toe_ai_random">AI 將隨機下棋</string>
+    <string name="tic_tac_toe_start_game_btn">開始</string>
+    <string name="tic_tac_toe_settings_btn">設定</string>
+    <string name="tic_tac_toe_about_btn">關於</string>
+    <string name="tic_tac_toe_exit_btn">離開</string>
+    <string name="tic_tac_toe_reset_game_btn">重新開始</string>
+</resources>

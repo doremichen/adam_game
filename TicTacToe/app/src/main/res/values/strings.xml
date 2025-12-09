@@ -1,17 +1,16 @@
 <resources>
     <string name="app_name">Tic-Tac-Toe</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="tic_tac_toe_game_setting_category">Game Settings</string>
+    <string name="tic_tac_toe_pve_setting">Player vs AI Mode (PVE)</string>
+    <string name="tic_tac_toe_pve_ai_enable">Enabled — You will play against the AI</string>
+    <string name="tic_tac_toe_pvp_enable">Disabled — Two-player mode (PVP)</string>
+    <string name="tic_tac_toe_ai_setting_category">AI Settings</string>
+    <string name="tic_tac_toe_ai_hard_mode">Hard Mode AI</string>
+    <string name="tic_tac_toe_ai_best_strategy">AI will use the best strategy (unbeatable)</string>
+    <string name="tic_tac_toe_ai_random">AI will play randomly</string>
+    <string name="tic_tac_toe_start_game_btn">Start Game</string>
+    <string name="tic_tac_toe_settings_btn">Settings</string>
+    <string name="tic_tac_toe_about_btn">About</string>
+    <string name="tic_tac_toe_exit_btn">Exit</string>
+    <string name="tic_tac_toe_reset_game_btn">Reset Game</string>
 </resources>
