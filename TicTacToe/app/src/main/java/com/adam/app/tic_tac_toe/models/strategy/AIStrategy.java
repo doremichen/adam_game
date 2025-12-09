@@ -12,6 +12,8 @@ import android.graphics.Point;
 import com.adam.app.tic_tac_toe.models.Board;
 import com.adam.app.tic_tac_toe.models.Cell;
 import com.adam.app.tic_tac_toe.models.Player;
+import com.adam.app.tic_tac_toe.utils.GameUtils;
+import com.adam.app.tic_tac_toe.utils.WinnerPattern;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,76 +47,56 @@ public enum AIStrategy {
 
     },
     HardAIStrategy {
-
         @Override
         public Point findBestMove(Board board, Player aiPlayer) {
-            int bestScore = Integer.MIN_VALUE;
-            Point bestMove = null;
-
+            // get cells
             Cell[][] cells = board.getCells();
+            // get opponent
+            Player opponent = aiPlayer == Player.X ? Player.O : Player.X;
 
-            for (int i = 0; i < Board.BOARD_SIZE; i++) {
-                for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                    if (cells[i][j].getPlayer() == null) {
-                        cells[i][j].setPlayer(aiPlayer);
-                        // 開始遞迴，從深度 0 開始，下一步是輪到對手 (isMaximizing = false)
-                        int score = minimax(board, 0, false, aiPlayer);
-                        cells[i][j].setPlayer(null); // 恢復棋盤狀態
-
-                        if (score > bestScore) {
-                            bestScore = score;
-                            bestMove = new Point(i, j);
-                        }
-                    }
-                }
+            // Ai winners?
+            Point winningMove = findPatternMove(cells, aiPlayer);
+            if (winningMove != null) {
+                return winningMove;
             }
-            return bestMove;
+
+            // block opponent
+            Point blockMove = findPatternMove(cells, opponent);
+            if (blockMove != null) {
+                return blockMove;
+            }
+
+            // random move
+            return EasyAIStrategy.findBestMove(board, aiPlayer);
         }
 
-        private int minimax(Board board, int depth, boolean isMaximizing, Player aiPlayer) {
-            Player opponent = (aiPlayer == Player.X) ? Player.O : Player.X;
+        private Point findPatternMove(Cell[][] cells, Player player) {
+            for (List<Cell> pattern : WinnerPattern.WIN_PATTERNS) {
+                int count = 0;
+                Point empty = null;
 
-            // 終止條件：檢查是否有贏家或平局
-            if (board.hasWinner()) {
-                if (board.getWinner() == aiPlayer) {
-                    return 10 - depth; // AI 獲勝，分數越高越好，且越快贏分數越高
-                } else {
-                    return depth - 10; // 對手獲勝，分數越低越好，且越晚輸分數越高
-                }
-            }
-            if (board.isDraw()) {
-                return 0; // 平局
-            }
+                for (Cell cell : pattern) {
+                    int r = cell.getPosition().x;
+                    int c = cell.getPosition().y;
 
-
-            if (isMaximizing) { // AI 的回合 (最大化分數)
-                int bestScore = Integer.MIN_VALUE;
-                for (int i = 0; i < Board.BOARD_SIZE; i++) {
-                    for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                        if (board.getCells()[i][j].getPlayer() == null) {
-                            board.getCells()[i][j].setPlayer(aiPlayer);
-                            int score = minimax(board, depth + 1, false, aiPlayer);
-                            board.getCells()[i][j].setPlayer(null);
-                            bestScore = Math.max(score, bestScore);
-                        }
+                    Player owner = cells[r][c].getPlayer();
+                    if (owner == player) {
+                        count++;
+                    } else if (owner == null) {
+                        empty = cell.getPosition();
+                    } else {
+                        break;
                     }
                 }
-                return bestScore;
-            } else { // 對手的回合 (最小化分數)
-                int bestScore = Integer.MAX_VALUE;
-                for (int i = 0; i < Board.BOARD_SIZE; i++) {
-                    for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                        if (board.getCells()[i][j].getPlayer() == null) {
-                            board.getCells()[i][j].setPlayer(opponent);
-                            int score = minimax(board, depth + 1, true, aiPlayer);
-                            board.getCells()[i][j].setPlayer(null);
-                            bestScore = Math.min(score, bestScore);
-                        }
-                    }
+
+                if (count == 2 && empty != null) {
+                    return empty;
+
                 }
-                return bestScore;
             }
+            return null;
         }
+
     };
 
 

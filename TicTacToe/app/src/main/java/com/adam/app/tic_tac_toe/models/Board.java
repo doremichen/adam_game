@@ -7,6 +7,8 @@
  */
 package com.adam.app.tic_tac_toe.models;
 
+import android.graphics.Point;
+
 public class Board {
 
     public static final int BOARD_SIZE = 3;
@@ -19,7 +21,7 @@ public class Board {
         // init cells
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
-                mCells[i][j] = new Cell(null);
+                mCells[i][j] = new Cell(null, new Point(i, j));
             }
         }
     }
@@ -34,7 +36,7 @@ public class Board {
      */
     public boolean placeMove(Player player, int row, int col) {
         if (isValidMove(row, col)) {
-            mCells[row][col].setPlayer(player);
+            mCells[row][col].setPlayer(player).setPosition(new Point(row, col));
             checkWinner(player, row, col);
             return true;
         }

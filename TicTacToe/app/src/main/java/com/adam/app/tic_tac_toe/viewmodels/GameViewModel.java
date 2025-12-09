@@ -45,7 +45,7 @@ public class GameViewModel extends AndroidViewModel {
         PVE   // player vs AI
     }
     private GameMode mGameMode = GameMode.PVP;
-    private Player mAiPlayer = Player.O; //default
+    private Player mAiPlayer = Player.O; //Fix
     private AIStrategy mAiStrategy = AIStrategy.EasyAIStrategy;
 
 
@@ -132,7 +132,7 @@ public class GameViewModel extends AndroidViewModel {
     private void startGame() {
         // reset game
         mBoard.reset();
-        mCurrentPlayer = Player.X;
+        mCurrentPlayer = Player.X;   //Fix
         updateUI();
     }
 

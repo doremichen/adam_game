@@ -15,12 +15,12 @@ import android.widget.Toast;
 
 public final class GameUtils {
 
+    private static final String TAG = "TICTACTOE";
+    private static final String TAG_UTIL = "GameUtils";
+
     private GameUtils() {
         // avoid to be instantiated
     }
-
-    private static final String TAG = "TICTACTOE";
-    private static final String TAG_UTIL = "GameUtils";
 
     /**
      * log
@@ -34,6 +34,7 @@ public final class GameUtils {
 
     /**
      * show toast
+     *
      * @param context Context
      * @param message String
      */

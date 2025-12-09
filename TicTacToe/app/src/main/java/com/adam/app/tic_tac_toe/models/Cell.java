@@ -7,18 +7,31 @@
  */
 package com.adam.app.tic_tac_toe.models;
 
+import android.graphics.Point;
+
 public class Cell {
     private Player mPlayer;
+    private Point mPosition;
 
-    public Cell(Player player) {
+    public Cell(Player player, Point position) {
         mPlayer = player;
+        mPosition = position;
     }
 
     public Player getPlayer() {
         return mPlayer;
     }
 
-    public void setPlayer(Player player) {
+    public Point getPosition() {
+        return mPosition;
+    }
+
+    public Cell setPlayer(Player player) {
         mPlayer = player;
+        return this;
+    }
+
+    public void setPosition(Point position) {
+        mPosition = position;
     }
 }
