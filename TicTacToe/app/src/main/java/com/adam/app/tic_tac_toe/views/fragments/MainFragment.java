@@ -68,7 +68,7 @@ public class MainFragment extends Fragment {
                     break;
                 case SETTINGS:
                     // navigate to settings fragment
-                    GameUtils.unImplemented(requireContext());
+                    mNavCtl.navigate(R.id.action_mainFragment_to_settingsFragment);
                     break;
                 case ABOUT:
                     // navigate to about fragment

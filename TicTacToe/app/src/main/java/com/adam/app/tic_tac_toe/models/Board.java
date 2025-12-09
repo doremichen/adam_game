@@ -41,6 +41,54 @@ public class Board {
         return false;
     }
 
+    public Player checkForWinner() {
+        // column check
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (mCells[0][i].getPlayer() == null) {
+                continue;
+            }
+            if (mCells[0][i].getPlayer() == mCells[1][i].getPlayer() && mCells[1][i].getPlayer() == mCells[2][i].getPlayer()) {
+                return mCells[0][i].getPlayer();
+            }
+        }
+
+        // row check
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (mCells[i][0].getPlayer() == null) {
+                continue;
+            }
+            if (mCells[i][0].getPlayer() == mCells[i][1].getPlayer() && mCells[i][1].getPlayer() == mCells[i][2].getPlayer()) {
+                return mCells[i][0].getPlayer();
+            }
+
+        }
+
+        // diagonal check: top-left to bottom-right
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (mCells[i][i].getPlayer() == null) {
+                continue;
+            }
+            if (mCells[i][i].getPlayer() == mCells[i + 1][i + 1].getPlayer() && mCells[i + 1][i + 1].getPlayer() == mCells[i + 2][i + 2].getPlayer()) {
+                return mCells[i][i].getPlayer();
+            }
+
+        }
+
+        // diagonal check: top-right to bottom-left
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if (mCells[i][BOARD_SIZE - 1 - i].getPlayer() == null) {
+                continue;
+            }
+            if (mCells[i][BOARD_SIZE - 1 - i].getPlayer() == mCells[i + 1][BOARD_SIZE - 2 - i].getPlayer() && mCells[i + 1][BOARD_SIZE - 2 - i].getPlayer() == mCells[i + 2][BOARD_SIZE - 3 - i].getPlayer()) {
+                return mCells[i][BOARD_SIZE - 1 - i].getPlayer();
+            }
+        }
+
+        // no winner
+        return null;
+    }
+
+
     private boolean isValidMove(int row, int col) {
         return mCells[row][col].getPlayer() == null;
     }
@@ -126,4 +174,7 @@ public class Board {
         return mCells;
     }
 
+    public boolean hasWinner() {
+        return mWinner != null;
+    }
 }

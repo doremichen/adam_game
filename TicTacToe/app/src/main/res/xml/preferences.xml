@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="遊戲設定"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="game_mode_pve"
+            app:title="人機對戰模式 (PVE)"
+            app:summaryOn="已啟用，將與 AI 對戰"
+            app:summaryOff="已停用，為雙人對戰模式 (PVP)"
+            app:defaultValue="false"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:title="AI 設定"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            app:key="ai_strategy_hard"
+            app:title="困難模式 AI"
+            app:summaryOn="AI 將使用最佳策略 (無法戰勝)"
+            app:summaryOff="AI 將隨機下棋"
+            app:defaultValue="true"
+            app:dependency="game_mode_pve"
+            app:iconSpaceReserved="false"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
