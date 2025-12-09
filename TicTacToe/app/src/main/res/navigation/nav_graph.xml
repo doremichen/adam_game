@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_mainFragment_to_settingsFragment"
             app:destination="@id/settingsFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
     </fragment>
     <fragment
         android:id="@+id/gameFragment"
@@ -32,4 +35,9 @@
         android:id="@+id/settingsFragment"
         android:name="com.adam.app.tic_tac_toe.views.fragments.SettingsFragment"
         android:label="SettingsFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.adam.app.tic_tac_toe.views.fragments.AboutFragment"
+        tools:layout="@layout/fragment_about"
+        android:label="AboutFragment" />
 </navigation>

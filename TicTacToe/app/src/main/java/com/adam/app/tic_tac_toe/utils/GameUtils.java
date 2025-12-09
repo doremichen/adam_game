@@ -13,10 +13,14 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.adam.app.tic_tac_toe.R;
+
 public final class GameUtils {
 
     private static final String TAG = "TICTACTOE";
     private static final String TAG_UTIL = "GameUtils";
+
+    public static final String VERSION_NAME = "1.0";
 
     private GameUtils() {
         // avoid to be instantiated
@@ -53,7 +57,7 @@ public final class GameUtils {
     }
 
     public static void unImplemented(Context context) {
-        showToast(context, "Not implemented yet");
+        showToast(context, context.getString(R.string.tic_tac_toe_not_implemented_yet_msg));
     }
 
 

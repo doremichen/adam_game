@@ -13,4 +13,9 @@
     <string name="tic_tac_toe_about_btn">About</string>
     <string name="tic_tac_toe_exit_btn">Exit</string>
     <string name="tic_tac_toe_reset_game_btn">Reset Game</string>
+    <string name="tic_tac_toe_privacy_policy_btn">Privacy Policy</string>
+    <string name="tic_tac_toe_visit_website_btn">Visit Website</string>
+    <string name="tic_tac_toe_about_instruction">Tic-Tac-Toe App \n A modern and stylish Tic-Tac-Toe game built with MVVM. \n Play PVP or challenge the AI with adjustable difficulty. \n Developed by AdamChen</string>
+    <string name="tic_tac_toe_version">Version: %1$s</string>
+    <string name="tic_tac_toe_not_implemented_yet_msg">Not implemented yet</string>
 </resources>

@@ -13,4 +13,9 @@
     <string name="tic_tac_toe_about_btn">關於</string>
     <string name="tic_tac_toe_exit_btn">離開</string>
     <string name="tic_tac_toe_reset_game_btn">重新開始</string>
+    <string name="tic_tac_toe_privacy_policy_btn">隱私權政策</string>
+    <string name="tic_tac_toe_visit_website_btn">造訪網站</string>
+    <string name="tic_tac_toe_about_instruction">井字棋應用\n一款採用MVVM架構的現代時尚井字棋遊戲。 \n可進行PVP對戰或挑戰AI，難度可調。 \n由AdamChen開發</string>
+    <string name="tic_tac_toe_version">版本: %1$s</string>
+    <string name="tic_tac_toe_not_implemented_yet_msg">尚未實現!!!</string>
 </resources>

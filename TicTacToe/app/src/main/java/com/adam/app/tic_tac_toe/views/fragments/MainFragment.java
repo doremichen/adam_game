@@ -72,7 +72,7 @@ public class MainFragment extends Fragment {
                     break;
                 case ABOUT:
                     // navigate to about fragment
-                    GameUtils.unImplemented(requireContext());
+                    mNavCtl.navigate(R.id.action_mainFragment_to_aboutFragment);
                     break;
                 case EXIT:
                     // finish activity
