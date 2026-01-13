@@ -29,22 +29,23 @@ public class SettingsManager {
 
     }
 
+    public boolean isGameModePve() {
+        return mSharedPreferences.getBoolean(KEY_GAME_MODE_PVE, false);
+    }
+
     // ---setter/getter ---
     public void setGameModePve(boolean value) {
         mSharedPreferences.edit().putBoolean(KEY_GAME_MODE_PVE, value).apply();
     }
-    public boolean isGameModePve() {
-        return mSharedPreferences.getBoolean(KEY_GAME_MODE_PVE, false);
+
+    public boolean isAiStrategyHard() {
+        return mSharedPreferences.getBoolean(KEY_AI_STRATEGY_HARD, false);
     }
 
     public void setAiStrategyHard(boolean value) {
         mSharedPreferences.edit().putBoolean(KEY_AI_STRATEGY_HARD, value).apply();
 
     }
-    public boolean isAiStrategyHard() {
-        return mSharedPreferences.getBoolean(KEY_AI_STRATEGY_HARD, false);
-    }
-
 
 
 }

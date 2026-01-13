@@ -22,13 +22,13 @@ public class Cell {
         return mPlayer;
     }
 
-    public Point getPosition() {
-        return mPosition;
-    }
-
     public Cell setPlayer(Player player) {
         mPlayer = player;
         return this;
+    }
+
+    public Point getPosition() {
+        return mPosition;
     }
 
     public void setPosition(Point position) {

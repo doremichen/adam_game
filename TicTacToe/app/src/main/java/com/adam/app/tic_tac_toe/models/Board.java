@@ -136,7 +136,6 @@ public class Board {
         if (row + col == BOARD_SIZE - 1) {
             List<Point> antiDiagonalPoints = Arrays.asList(new Point(0, 2), new Point(1, 1), new Point(2, 0));
             if (isWinningLine(player, antiDiagonalPoints)) {
-                return;
             }
         }
     }

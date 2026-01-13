@@ -10,9 +10,7 @@ package com.adam.app.tic_tac_toe.views;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
 
 import com.adam.app.tic_tac_toe.R;
 import com.adam.app.tic_tac_toe.databinding.ActivityMainBinding;
@@ -22,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
     // View binding
     private ActivityMainBinding mBinding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

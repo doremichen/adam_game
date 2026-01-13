@@ -18,10 +18,9 @@ import com.adam.app.tic_tac_toe.R;
 
 public final class GameUtils {
 
+    public static final String VERSION_NAME = "1.0";
     private static final String TAG = "TICTACTOE";
     private static final String TAG_UTIL = "GameUtils";
-
-    public static final String VERSION_NAME = "1.0";
 
     private GameUtils() {
         // avoid to be instantiated
@@ -83,7 +82,7 @@ public final class GameUtils {
                 dialog.dismiss();
             });
         }
-        
+
         AlertDialog dialog = dialogBuilder.create();
         dialog.show();
 
@@ -115,7 +114,7 @@ public final class GameUtils {
             return mListener;
         }
 
-        public static interface onPressListener {
+        public interface onPressListener {
             void onPress();
         }
 

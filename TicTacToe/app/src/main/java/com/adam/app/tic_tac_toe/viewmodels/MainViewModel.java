@@ -16,24 +16,16 @@ import androidx.lifecycle.MutableLiveData;
 
 public class MainViewModel extends AndroidViewModel {
 
-    // define NavigationDestination
-    public enum NavigationDestination {
-        START_GAME,
-        SETTINGS,
-        ABOUT,
-        EXIT,
-        NONE
-    }
-
     // --- live Data
     private final MutableLiveData<NavigationDestination> mNavigateTo = new MutableLiveData<>(NavigationDestination.NONE);
-    // --- get
-    public LiveData<NavigationDestination> getNavigateTo() {
-        return mNavigateTo;
-    }
 
     public MainViewModel(@NonNull Application application) {
         super(application);
+    }
+
+    // --- get
+    public LiveData<NavigationDestination> getNavigateTo() {
+        return mNavigateTo;
     }
 
     /**
@@ -69,6 +61,15 @@ public class MainViewModel extends AndroidViewModel {
      */
     public void onNavigationDone() {
         mNavigateTo.setValue(NavigationDestination.NONE);
+    }
+
+    // define NavigationDestination
+    public enum NavigationDestination {
+        START_GAME,
+        SETTINGS,
+        ABOUT,
+        EXIT,
+        NONE
     }
 
 }

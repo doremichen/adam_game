@@ -7,17 +7,15 @@
  */
 package com.adam.app.tic_tac_toe.views.fragments;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.tic_tac_toe.R;
 import com.adam.app.tic_tac_toe.databinding.FragmentAboutBinding;

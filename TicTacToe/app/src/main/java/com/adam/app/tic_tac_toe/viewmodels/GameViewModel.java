@@ -32,35 +32,24 @@ public class GameViewModel extends AndroidViewModel {
 
 
     private final Board mBoard;
-    private Player mCurrentPlayer;
-
     // --- Live Data ---
     private final MutableLiveData<Player[][]> mBoardState = new MutableLiveData<>(null);
     private final MutableLiveData<String> mStatusText = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> mIsGameOver = new MutableLiveData<>(false);
     private final MutableLiveData<List<Point>> mWinningCells = new MutableLiveData<>(new ArrayList<>());
-
-    public Player getBoardWinner() {
-        return mBoard.getWinner();
-    }
-
-    /**
-     * GameMode
-     */
-    public enum GameMode {
-        PVP,  // player vs player
-        PVE   // player vs AI
-    }
+    private Player mCurrentPlayer;
     private GameMode mGameMode = GameMode.PVP;
-    private Player mAiPlayer = Player.O; //Fix
+    private final Player mAiPlayer = Player.O; //Fix
     private AIStrategy mAiStrategy = AIStrategy.EasyAIStrategy;
-
-
     public GameViewModel(@NonNull Application application) {
         super(application);
         mBoard = new Board();
         updateSetting();
         startGame();
+    }
+
+    public Player getBoardWinner() {
+        return mBoard.getWinner();
     }
 
     private void updateSetting() {
@@ -74,6 +63,7 @@ public class GameViewModel extends AndroidViewModel {
 
     /**
      * onCellClicked (data binding)
+     *
      * @param row int
      * @param col int
      */
@@ -135,7 +125,6 @@ public class GameViewModel extends AndroidViewModel {
         mCurrentPlayer = mCurrentPlayer == Player.X ? Player.O : Player.X;
     }
 
-
     private void startGame() {
         // reset game
         mBoard.reset();
@@ -172,7 +161,6 @@ public class GameViewModel extends AndroidViewModel {
         }
     }
 
-
     // --- get ---
     public LiveData<Player[][]> getBoardState() {
         return mBoardState;
@@ -190,6 +178,13 @@ public class GameViewModel extends AndroidViewModel {
         return mWinningCells;
     }
 
+    /**
+     * GameMode
+     */
+    public enum GameMode {
+        PVP,  // player vs player
+        PVE   // player vs AI
+    }
 
 
 }

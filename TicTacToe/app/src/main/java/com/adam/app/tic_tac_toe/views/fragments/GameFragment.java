@@ -7,27 +7,25 @@
  */
 package com.adam.app.tic_tac_toe.views.fragments;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.fragment.NavHostFragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.adam.app.tic_tac_toe.R;
 import com.adam.app.tic_tac_toe.databinding.FragmentGameBinding;
 import com.adam.app.tic_tac_toe.models.Board;
 import com.adam.app.tic_tac_toe.models.Player;
 import com.adam.app.tic_tac_toe.utils.GameUtils;
 import com.adam.app.tic_tac_toe.viewmodels.GameViewModel;
-import com.adam.app.tic_tac_toe.R;
 
 public class GameFragment extends Fragment {
 

@@ -21,7 +21,6 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.adam.app.tic_tac_toe.R;
 import com.adam.app.tic_tac_toe.databinding.FragmentMainBinding;
-import com.adam.app.tic_tac_toe.utils.GameUtils;
 import com.adam.app.tic_tac_toe.viewmodels.MainViewModel;
 
 public class MainFragment extends Fragment {

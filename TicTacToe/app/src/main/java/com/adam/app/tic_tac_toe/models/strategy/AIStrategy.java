@@ -12,7 +12,6 @@ import android.graphics.Point;
 import com.adam.app.tic_tac_toe.models.Board;
 import com.adam.app.tic_tac_toe.models.Cell;
 import com.adam.app.tic_tac_toe.models.Player;
-import com.adam.app.tic_tac_toe.utils.GameUtils;
 import com.adam.app.tic_tac_toe.utils.WinnerPattern;
 
 import java.util.ArrayList;
@@ -21,7 +20,6 @@ import java.util.List;
 public enum AIStrategy {
 
     EasyAIStrategy {
-
         @Override
         public Point findBestMove(Board board, Player aiPlayer) {
             List<Point> availableMoves = getAvailableMoves(board);
@@ -98,6 +96,7 @@ public enum AIStrategy {
 
     /**
      * getAvailableMoves
+     *
      * @param board Board
      * @return List<Point>
      */
