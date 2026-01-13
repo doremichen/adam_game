@@ -7,6 +7,7 @@
  */
 package com.adam.app.tic_tac_toe.utils;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -56,8 +57,68 @@ public final class GameUtils {
         }
     }
 
+    /**
+     * show alert dialog
+     */
+    public static void showAlertDialog(Context context,
+                                       String title,
+                                       String message,
+                                       DialogButtonContent positiveButton,
+                                       DialogButtonContent negativeButton) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context)
+                .setTitle(title)
+                .setMessage(message)
+                .setCancelable(false);
+        // setup positive button
+        if (positiveButton != null) {
+            dialogBuilder.setPositiveButton(positiveButton.getLabel(), (dialog, which) -> {
+                positiveButton.getListener().onPress();
+                dialog.dismiss();
+            });
+        }
+
+        if (negativeButton != null) {
+            dialogBuilder.setNegativeButton(negativeButton.getLabel(), (dialog, which) -> {
+                negativeButton.getListener().onPress();
+                dialog.dismiss();
+            });
+        }
+        
+        AlertDialog dialog = dialogBuilder.create();
+        dialog.show();
+
+    }
+
+
     public static void unImplemented(Context context) {
         showToast(context, context.getString(R.string.tic_tac_toe_not_implemented_yet_msg));
+    }
+
+
+    public static class DialogButtonContent {
+        private final String mLabel;
+        private final onPressListener mListener;
+
+        /**
+         * constructor
+         */
+        public DialogButtonContent(String label, onPressListener listener) {
+            mLabel = label;
+            mListener = listener;
+        }
+
+        public String getLabel() {
+            return mLabel;
+        }
+
+        public onPressListener getListener() {
+            return mListener;
+        }
+
+        public static interface onPressListener {
+            void onPress();
+        }
+
     }
 
 

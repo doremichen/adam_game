@@ -9,15 +9,23 @@ package com.adam.app.tic_tac_toe.models;
 
 import android.graphics.Point;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class Board {
 
     public static final int BOARD_SIZE = 3;
-    private final Cell[][] mCells = new Cell[BOARD_SIZE][BOARD_SIZE];;
+    private final Cell[][] mCells = new Cell[BOARD_SIZE][BOARD_SIZE];
+
+    // Winning points
+    private List<Point> mWinningPoints = new ArrayList<>();
 
     private Player mWinner;
 
     public void reset() {
         this.mWinner = null;
+        this.mWinningPoints.clear();
         // init cells
         for (int i = 0; i < BOARD_SIZE; i++) {
             for (int j = 0; j < BOARD_SIZE; j++) {
@@ -97,62 +105,67 @@ public class Board {
 
     /**
      * checkWinner
+     *
      * @param player Player
-     * @param row int
-     * @param col int
+     * @param row    int
+     * @param col    int
      */
     private void checkWinner(Player player, int row, int col) {
         // row check
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (mCells[row][i].getPlayer() != player) {
-                break;
-            }
-
-            if (i == BOARD_SIZE - 1) {
-                mWinner = player;
-                return;
-            }
+        List<Point> rowPoints = Arrays.asList(new Point(row, 0), new Point(row, 1), new Point(row, 2));
+        if (isWinningLine(player, rowPoints)) {
+            return;
         }
+
         // col check
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (mCells[i][col].getPlayer() != player) {
-                break;
-            }
-            if (i == BOARD_SIZE - 1) {
-                mWinner = player;
-                return;
-            }
+        List<Point> colPoints = Arrays.asList(new Point(0, col), new Point(1, col), new Point(2, col));
+        if (isWinningLine(player, colPoints)) {
+            return;
         }
 
         // diagonal check: top-left to bottom-right
         if (row == col) {
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                if (mCells[i][i].getPlayer() != player) {
-                    break;
-                }
-                if (i == BOARD_SIZE - 1) {
-                    mWinner = player;
-                    return;
-                }
+            List<Point> diagonalPoints = Arrays.asList(new Point(0, 0), new Point(1, 1), new Point(2, 2));
+            if (isWinningLine(player, diagonalPoints)) {
+                return;
             }
         }
 
+
         // diagonal check: top-right to bottom-left
         if (row + col == BOARD_SIZE - 1) {
-            for (int i = 0; i < BOARD_SIZE; i++) {
-                if (mCells[i][BOARD_SIZE - 1 - i].getPlayer() != player) {
-                    break;
-                }
-                if (i == BOARD_SIZE - 1) {
-                    mWinner = player;
-                    return;
-                }
+            List<Point> antiDiagonalPoints = Arrays.asList(new Point(0, 2), new Point(1, 1), new Point(2, 0));
+            if (isWinningLine(player, antiDiagonalPoints)) {
+                return;
             }
         }
     }
 
+    private boolean isWinningLine(Player player, List<Point> points) {
+        for (Point point : points) {
+            if (mCells[point.x][point.y].getPlayer() != player) {
+                return false;
+            }
+        }
+        // update winner
+        mWinner = player;
+        mWinningPoints = new ArrayList<>(points); // change as the mutability
+        return true;
+    }
+
+
+    /**
+     * getWinningPoints
+     *
+     * @return List<Point>
+     */
+    public List<Point> getWinningPoints() {
+        return mWinningPoints;
+    }
+
     /**
      * isDraw
+     *
      * @return boolean
      */
     public boolean isDraw() {
@@ -165,7 +178,6 @@ public class Board {
         }
         return mWinner == null;
     }
-
 
 
     public Player getWinner() {

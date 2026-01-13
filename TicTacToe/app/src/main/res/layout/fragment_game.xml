@@ -49,6 +49,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(0, 0)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{0}"
+                    app:col="@{0}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp"
                     tools:text="X" />
 
@@ -58,6 +62,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(0, 1)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{0}"
+                    app:col="@{1}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp"
                     tools:text="O" />
 
@@ -67,6 +75,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(0, 2)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{0}"
+                    app:col="@{2}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp" />
             </TableRow>
 
@@ -81,6 +93,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(1, 0)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{1}"
+                    app:col="@{0}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp" />
 
                 <Button
@@ -89,6 +105,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(1, 1)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{1}"
+                    app:col="@{1}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp"
                     tools:text="X" />
 
@@ -98,6 +118,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(1, 2)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{1}"
+                    app:col="@{2}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp" />
             </TableRow>
 
@@ -112,6 +136,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(2, 0)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{2}"
+                    app:col="@{0}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp" />
 
                 <Button
@@ -120,6 +148,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(2, 1)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{2}"
+                    app:col="@{1}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp" />
 
                 <Button
@@ -128,6 +160,10 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:onClick="@{() -> viewModel.onCellClicked(2, 2)}"
+                    app:boardState="@{viewModel.boardState}"
+                    app:row="@{2}"
+                    app:col="@{2}"
+                    app:winningCells="@{viewModel.winningCells}"
                     android:textSize="48sp"
                     tools:text="O" />
             </TableRow>

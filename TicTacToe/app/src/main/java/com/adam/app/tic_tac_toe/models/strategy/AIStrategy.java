@@ -24,17 +24,7 @@ public enum AIStrategy {
 
         @Override
         public Point findBestMove(Board board, Player aiPlayer) {
-            List<Point> availableMoves = new ArrayList<>();
-            Cell[][] cells = board.getCells();
-
-            for (int i = 0; i < Board.BOARD_SIZE; i++) {
-                for (int j = 0; j < Board.BOARD_SIZE; j++) {
-                    if (cells[i][j].getPlayer() == null) {
-                        availableMoves.add(new Point(i, j));
-                    }
-                }
-            }
-
+            List<Point> availableMoves = getAvailableMoves(board);
             // check if there are available moves
             if (availableMoves.isEmpty()) {
                 return null;
@@ -66,14 +56,20 @@ public enum AIStrategy {
                 return blockMove;
             }
 
+            // occupied center first
+            if (cells[1][1].getPlayer() == null) {
+                return new Point(1, 1);
+            }
+
             // random move
             return EasyAIStrategy.findBestMove(board, aiPlayer);
         }
 
         private Point findPatternMove(Cell[][] cells, Player player) {
             for (List<Cell> pattern : WinnerPattern.WIN_PATTERNS) {
-                int count = 0;
-                Point empty = null;
+                int playerCount = 0;
+                Point emptyPoint = null;
+                boolean isPatternBlocked = false;
 
                 for (Cell cell : pattern) {
                     int r = cell.getPosition().x;
@@ -81,16 +77,17 @@ public enum AIStrategy {
 
                     Player owner = cells[r][c].getPlayer();
                     if (owner == player) {
-                        count++;
+                        playerCount++;
                     } else if (owner == null) {
-                        empty = cell.getPosition();
+                        emptyPoint = cell.getPosition();
                     } else {
+                        isPatternBlocked = true;
                         break;
                     }
                 }
 
-                if (count == 2 && empty != null) {
-                    return empty;
+                if (!isPatternBlocked && playerCount == 2 && emptyPoint != null) {
+                    return emptyPoint;
 
                 }
             }
@@ -98,6 +95,24 @@ public enum AIStrategy {
         }
 
     };
+
+    /**
+     * getAvailableMoves
+     * @param board Board
+     * @return List<Point>
+     */
+    protected List<Point> getAvailableMoves(Board board) {
+        List<Point> moves = new ArrayList<>();
+        Cell[][] cells = board.getCells();
+        for (int i = 0; i < Board.BOARD_SIZE; i++) {
+            for (int j = 0; j < Board.BOARD_SIZE; j++) {
+                if (cells[i][j].getPlayer() == null) {
+                    moves.add(new Point(i, j));
+                }
+            }
+        }
+        return moves;
+    }
 
 
     public abstract Point findBestMove(Board board, Player aiPlayer);

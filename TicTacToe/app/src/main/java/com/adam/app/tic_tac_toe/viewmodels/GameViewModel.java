@@ -23,6 +23,9 @@ import com.adam.app.tic_tac_toe.models.Player;
 import com.adam.app.tic_tac_toe.models.strategy.AIStrategy;
 import com.adam.app.tic_tac_toe.utils.GameUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameViewModel extends AndroidViewModel {
 
     private static final String TAG = "GameViewModel";
@@ -35,7 +38,11 @@ public class GameViewModel extends AndroidViewModel {
     private final MutableLiveData<Player[][]> mBoardState = new MutableLiveData<>(null);
     private final MutableLiveData<String> mStatusText = new MutableLiveData<>("");
     private final MutableLiveData<Boolean> mIsGameOver = new MutableLiveData<>(false);
+    private final MutableLiveData<List<Point>> mWinningCells = new MutableLiveData<>(new ArrayList<>());
 
+    public Player getBoardWinner() {
+        return mBoard.getWinner();
+    }
 
     /**
      * GameMode
@@ -148,6 +155,10 @@ public class GameViewModel extends AndroidViewModel {
         }
         mBoardState.setValue(currentBoardState);
 
+        // update winning cells
+        mWinningCells.setValue(mBoard.getWinningPoints());
+
+
         // update status text
         if (mBoard.getWinner() != null) {
             mStatusText.setValue("Player " + mBoard.getWinner() + " wins!");
@@ -173,6 +184,10 @@ public class GameViewModel extends AndroidViewModel {
 
     public LiveData<Boolean> getIsGameOver() {
         return mIsGameOver;
+    }
+
+    public LiveData<List<Point>> getWinningCells() {
+        return mWinningCells;
     }
 
 
