@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">點字遊戲</string>
+    <string name="tap_game_start_btn">開始</string>
+    <string name="tap_game_setting_btn">設定</string>
+    <string name="tap_game_about_btn">關於</string>
+    <string name="tap_game_exit_btn">離開</string>
+    <string name="tap_game_not_implement_yet_toast">此功能尚未實現。</string>
+</resources>

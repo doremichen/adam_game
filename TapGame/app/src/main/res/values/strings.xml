@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TapGame</string>
+    <string name="tap_game_start_btn">Start</string>
+    <string name="tap_game_setting_btn">Setting</string>
+    <string name="tap_game_about_btn">About</string>
+    <string name="tap_game_exit_btn">Exit</string>
+    <string name="tap_game_not_implement_yet_toast">This feature is not implemented yet.</string>
+</resources>
