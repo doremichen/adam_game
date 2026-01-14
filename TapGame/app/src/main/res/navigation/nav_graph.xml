@@ -9,6 +9,20 @@
         android:name="com.adam.app.tapgame.home.HomeFragment"
         android:label="MainFragment"
         tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_mainFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.adam.app.tapgame.game.GameFragment"
+        tools:layout="@layout/fragment_game"
+        android:label="GameFragment">
+        <action
+            android:id="@+id/action_gameFragment_to_menuFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

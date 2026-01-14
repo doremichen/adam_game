@@ -5,4 +5,9 @@
     <string name="tap_game_about_btn">關於</string>
     <string name="tap_game_exit_btn">離開</string>
     <string name="tap_game_not_implement_yet_toast">此功能尚未實現。</string>
+    <string name="tap_game_tap_btn">輕敲!</string>
+    <string name="tap_game_easy_mode_switch">難易模式</string>
+    <string name="tap_game_score_format">分數: %1$d</string>
+    <string name="tap_game_time_left_format">剩餘時間: %1$d</string>
+    <string name="tap_game_diable_function_toast">禁止</string>
 </resources>

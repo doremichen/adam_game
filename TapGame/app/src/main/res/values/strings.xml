@@ -5,4 +5,9 @@
     <string name="tap_game_about_btn">About</string>
     <string name="tap_game_exit_btn">Exit</string>
     <string name="tap_game_not_implement_yet_toast">This feature is not implemented yet.</string>
+    <string name="tap_game_tap_btn">TAP!</string>
+    <string name="tap_game_easy_mode_switch">easy mode\n</string>
+    <string name="tap_game_score_format">Score: %1$d</string>
+    <string name="tap_game_time_left_format">Time Left: %1$d</string>
+    <string name="tap_game_diable_function_toast">Disable function</string>
 </resources>

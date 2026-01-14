@@ -31,22 +31,33 @@ public final class GameUtils {
     }
 
     public static void showUnImplemented(Context context) {
+        showToast(context, R.string.tap_game_not_implement_yet_toast);
+
+    }
+
+    public static void showToast(Context context, int resId) {
         Context ctx = context.getApplicationContext();
         // check if main thread
         if (Thread.currentThread() != context.getMainLooper().getThread()) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(ctx, R.string.tap_game_not_implement_yet_toast, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ctx, resId, Toast.LENGTH_SHORT).show();
                 }
             });
             return;
         }
 
-        Toast.makeText(ctx, R.string.tap_game_not_implement_yet_toast, Toast.LENGTH_SHORT).show();
-
+        Toast.makeText(ctx, resId, Toast.LENGTH_SHORT).show();
     }
 
 
-
+    public enum NavigationDestination {
+        MAIN,
+        START_GAME,
+        SETTINGS,
+        ABOUT,
+        EXIT,
+        NONE
+    }
 }

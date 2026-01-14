@@ -11,13 +11,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.adam.app.tapgame.utils.GameUtils;
+
 public class HomeViewModel extends ViewModel {
 
     // live data
-    private MutableLiveData<NavigationDestination> mNavigateTo = new MutableLiveData<>(NavigationDestination.NONE);
+    private MutableLiveData<GameUtils.NavigationDestination> mNavigateTo = new MutableLiveData<>(GameUtils.NavigationDestination.NONE);
 
     // get live data
-    public LiveData<NavigationDestination> getNavigateTo() {
+    public LiveData<GameUtils.NavigationDestination> getNavigateTo() {
         return mNavigateTo;
     }
 
@@ -25,37 +27,28 @@ public class HomeViewModel extends ViewModel {
      * onStartGameClicked
      */
     public void onStartGameClicked() {
-        mNavigateTo.setValue(NavigationDestination.START_GAME);
+        mNavigateTo.setValue(GameUtils.NavigationDestination.START_GAME);
     }
 
     /**
      * onSettingsClicked
      */
     public void onSettingsClicked() {
-        mNavigateTo.setValue(NavigationDestination.SETTINGS);
+        mNavigateTo.setValue(GameUtils.NavigationDestination.SETTINGS);
     }
 
     /**
      * onAboutClicked
      */
     public void onAboutClicked() {
-        mNavigateTo.setValue(NavigationDestination.ABOUT);
+        mNavigateTo.setValue(GameUtils.NavigationDestination.ABOUT);
     }
 
     /**
      * onExitClicked
      */
     public void onExitClicked() {
-        mNavigateTo.setValue(NavigationDestination.EXIT);
+        mNavigateTo.setValue(GameUtils.NavigationDestination.EXIT);
     }
 
-
-
-    public enum NavigationDestination {
-        START_GAME,
-        SETTINGS,
-        ABOUT,
-        EXIT,
-        NONE
-    }
 }

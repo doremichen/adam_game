@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.adam.app.tapgame.game.GameViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp"
+        android:fitsSystemWindows="true"
+        tools:context=".game.GameFragment">
+
+        <!-- ===== Guideline ===== -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guide_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.4" />
+
+        <!-- Score -->
+        <TextView
+            android:id="@+id/txt_score"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{@string/tap_game_score_format(vm.score)}'
+            android:textSize="26sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/txt_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guide_center"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <!-- Time Left -->
+        <TextView
+            android:id="@+id/txt_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text='@{@string/tap_game_time_left_format(vm.timeLeft)}'
+            android:textSize="20sp"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/txt_score"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Switch Mode -->
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/tap_game_easy_mode_switch"
+            android:checked="@={vm.gameState}"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/txt_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/layout_bottom_buttons"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- TAP Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_tab"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:text="@string/tap_game_tap_btn"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:onClick="@{() -> vm.onTab()}" />
+
+            <!-- Exit Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_exit"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:text="@string/tap_game_exit_btn"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:onClick="@{() -> vm.onBack2Menu()}"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

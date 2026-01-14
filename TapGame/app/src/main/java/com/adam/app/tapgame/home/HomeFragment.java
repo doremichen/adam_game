@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import com.adam.app.tapgame.R;
 import com.adam.app.tapgame.databinding.FragmentHomeBinding;
 import com.adam.app.tapgame.utils.GameUtils;
 
@@ -64,15 +65,16 @@ public class HomeFragment extends Fragment {
 
     }
 
-    private void navigate(HomeViewModel.NavigationDestination destination) {
-        if (destination == HomeViewModel.NavigationDestination.NONE) {
+    private void navigate(GameUtils.NavigationDestination destination) {
+        if (destination == GameUtils.NavigationDestination.NONE) {
             return;
         }
 
         // dispatch
         switch (destination) {
             case START_GAME:
-                GameUtils.showUnImplemented(this.getContext());
+                // navigate to game fragment
+                mNavController.navigate(R.id.action_mainFragment_to_gameFragment);
                 break;
             case SETTINGS:
                 GameUtils.showUnImplemented(this.getContext());
