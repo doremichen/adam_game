@@ -1,0 +1,20 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:title="@string/tap_game_setting_header">
+
+        <SwitchPreferenceCompat
+            app:key="easy_mode"
+            app:title="@string/tap_game_easy_mode_setting_title"
+            app:summary="@string/tap_game_easy_mode_setting_summary"
+            app:iconSpaceReserved="false" />
+
+        <EditTextPreference
+            app:key="interval"
+            app:title="@string/tap_game_interval_setting_title"
+            app:useSimpleSummaryProvider="true"
+            app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -51,4 +51,8 @@ public class HomeViewModel extends ViewModel {
         mNavigateTo.setValue(GameUtils.NavigationDestination.EXIT);
     }
 
+    public void onNavigationDone() {
+        mNavigateTo.setValue(GameUtils.NavigationDestination.NONE);
+    }
+
 }

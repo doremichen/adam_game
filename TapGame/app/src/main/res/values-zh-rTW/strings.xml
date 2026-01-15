@@ -1,13 +1,34 @@
 <resources>
-    <string name="app_name">點字遊戲</string>
-    <string name="tap_game_start_btn">開始</string>
+    <string name="app_name">TapGame</string>
+    <string name="tap_game_start_btn">開始遊戲</string>
     <string name="tap_game_setting_btn">設定</string>
     <string name="tap_game_about_btn">關於</string>
     <string name="tap_game_exit_btn">離開</string>
-    <string name="tap_game_not_implement_yet_toast">此功能尚未實現。</string>
-    <string name="tap_game_tap_btn">輕敲!</string>
-    <string name="tap_game_easy_mode_switch">難易模式</string>
+    <string name="tap_game_not_implement_yet_toast">此功能尚未實作</string>
+    <string name="tap_game_tap_btn">點擊！</string>
+
+    <string name="tap_game_easy_mode_switch">簡易模式</string>
+
     <string name="tap_game_score_format">分數: %1$d</string>
     <string name="tap_game_time_left_format">剩餘時間: %1$d</string>
-    <string name="tap_game_diable_function_toast">禁止</string>
+    <string name="tap_game_diable_function_toast">功能已停用</string>
+    <string name="tap_game_about_title">關於此遊戲</string>
+
+    <string name="tap_game_instruction">
+        &lt;b&gt;本遊戲使用以下技術構建：&lt;/b&gt;\n\n
+        • MVVM 架構\n
+        • Android ViewModel 與 LiveData\n
+        • Data Binding 與 View Binding\n
+        • Navigation Component 導航組件\n
+        • Material Design 元件\n\n
+        Tap Game 展示了實時狀態管理、雙向數據綁定以及生命週期感知 UI 更新。
+    </string>
+
+    <string name="tap_game_setting_header">遊戲設定</string>
+    <string name="tap_game_interval_setting_title">輸入遊戲區間</string>
+    <string name="tap_game_easy_mode_setting_title">簡易模式</string>
+    <string name="tap_game_interval_invalid">請輸入 1 到 60 之間的秒數。</string>
+
+    <string name="tap_game_easy_mode_setting_summary">啟用此選項將降低遊戲難度 (Enabling this will reduce the game\'s difficulty).</string>
+
 </resources>

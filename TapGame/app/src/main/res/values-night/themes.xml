@@ -13,4 +13,11 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="Theme.TapGame.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
+
+        <item name="android:windowBackground">#121212</item>
+        <item name="colorPrimary">@color/purple_500</item>
+    </style>
 </resources>

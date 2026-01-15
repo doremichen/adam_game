@@ -10,4 +10,21 @@
     <string name="tap_game_score_format">Score: %1$d</string>
     <string name="tap_game_time_left_format">Time Left: %1$d</string>
     <string name="tap_game_diable_function_toast">Disable function</string>
+    <string name="tap_game_about_title">About This Game</string>
+    <string name="tap_game_instruction">
+    &lt;b&gt;This game is built using the following mechanisms:&lt;/b&gt;\n\n
+        • MVVM architecture\n
+        • Android ViewModel and LiveData\n
+        • Data Binding and View Binding\n
+        • Navigation Component\n
+        • Material Design components\n\n
+        The Tap Game demonstrates &lt;i&gt;state management&lt;/i&gt;,
+        two-way data binding, and lifecycle-aware UI updates.
+    </string>
+    <string name="tap_game_setting_header">Tap Game Settings</string>
+    <string name="tap_game_interval_setting_title">Input time interval</string>
+    <string name="tap_game_easy_mode_setting_title">Easy mode</string>
+    <string name="tap_game_interval_invalid">Please enter the number of seconds between 1 and 60.</string>
+    <string name="tap_game_easy_mode_setting_summary">Enabling this will reduce the game\'s difficulty.</string>
+
 </resources>

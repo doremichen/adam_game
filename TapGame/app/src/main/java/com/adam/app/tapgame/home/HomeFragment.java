@@ -77,10 +77,10 @@ public class HomeFragment extends Fragment {
                 mNavController.navigate(R.id.action_mainFragment_to_gameFragment);
                 break;
             case SETTINGS:
-                GameUtils.showUnImplemented(this.getContext());
+                mNavController.navigate(R.id.action_mainFragment_to_settingsFragment);
                 break;
             case ABOUT:
-                GameUtils.showUnImplemented(this.getContext());
+                mNavController.navigate(R.id.action_mainFragment_to_aboutFragment);
                 break;
             case EXIT:
                 // exit app
@@ -89,6 +89,17 @@ public class HomeFragment extends Fragment {
             default:
                 break;
         }
+
+        // consume live data
+        mViewModel.onNavigationDone();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinding = null;
+        mViewModel = null;
+        mNavController = null;
 
     }
 }

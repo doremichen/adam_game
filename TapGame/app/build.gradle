@@ -47,6 +47,8 @@ dependencies {
     implementation libs.androidx.legacy.support.v4
     implementation libs.androidx.lifecycle.livedata.ktx
     implementation libs.androidx.lifecycle.viewmodel.ktx
+    implementation libs.androidx.preference
+    implementation 'com.google.android.material:material:1.5.0'
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

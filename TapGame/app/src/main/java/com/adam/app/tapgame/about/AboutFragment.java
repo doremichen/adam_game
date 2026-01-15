@@ -1,47 +1,44 @@
 /**
- * File: GameFragment.java
- * Description: This class is Game Fragment
+ * File: AboutFragment.java
+ * Description: This class is About Fragment
  *
  * @author Adam Chen
  * @version 1.0 - 2026/01/14
  */
-package com.adam.app.tapgame.game;
-
-import androidx.activity.OnBackPressedCallback;
-import androidx.lifecycle.ViewModelProvider;
+package com.adam.app.tapgame.about;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.adam.app.tapgame.R;
-import com.adam.app.tapgame.databinding.FragmentGameBinding;
+import com.adam.app.tapgame.databinding.FragmentAboutBinding;
 import com.adam.app.tapgame.utils.GameUtils;
 
-public class GameFragment extends Fragment {
+public class AboutFragment extends Fragment {
 
     // TAG
-    private static final String TAG = GameFragment.class.getSimpleName();
-
-    private GameViewModel mViewModel;
+    private static final String TAG = AboutFragment.class.getSimpleName();
 
     // view binding
-    private FragmentGameBinding mBinding;
+    private FragmentAboutBinding mBinding;
+
+    private AboutViewModel mViewModel;
 
     // Navigation controller
     private NavController mNavController;
 
-
-    public static GameFragment newInstance() {
-        return new GameFragment();
+    public static AboutFragment newInstance() {
+        return new AboutFragment();
     }
 
     @Override
@@ -49,10 +46,9 @@ public class GameFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         GameUtils.log(TAG + ": onCreateView");
         // view binding
-        mBinding = FragmentGameBinding.inflate(inflater, container, false);
+        mBinding = FragmentAboutBinding.inflate(inflater, container, false);
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
         return mBinding.getRoot();
-
     }
 
     @Override
@@ -62,37 +58,17 @@ public class GameFragment extends Fragment {
         // init navigation controller
         mNavController = Navigation.findNavController(view);
 
+
         // init view model
-        mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(AboutViewModel.class);
         // data binding view
         mBinding.setVm(mViewModel);
+
         // observer navigation
         mViewModel.getNavigateTo().observe(getViewLifecycleOwner(), this::navigate);
 
 //        disableBackPressed();
-        
-    }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        GameUtils.log(TAG + ": onDestroyView");
-        mBinding = null;
-        mViewModel = null;
-        mNavController = null;
-        GameUtils.log(TAG + ": onDestroyView done");
-    }
-
-    private void disableBackPressed() {
-        requireActivity()
-                .getOnBackPressedDispatcher()
-                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        // Do nothing → back button disabled
-                        GameUtils.showToast(getContext(), R.string.tap_game_diable_function_toast);
-                    }
-                });
     }
 
     private void navigate(GameUtils.NavigationDestination destination) {
@@ -108,4 +84,28 @@ public class GameFragment extends Fragment {
             mNavController.popBackStack();
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        GameUtils.log(TAG + ": onDestroyView");
+        mBinding = null;
+        mViewModel = null;
+        mNavController = null;
+        GameUtils.log(TAG + ": onDestroyView done");
+    }
+
+
+    //    private void disableBackPressed() {
+//        requireActivity()
+//                .getOnBackPressedDispatcher()
+//                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+//                    @Override
+//                    public void handleOnBackPressed() {
+//                        // Do nothing → back button disabled
+//                        GameUtils.showToast(getContext(), R.string.tap_game_diable_function_toast);
+//                    }
+//                });
+//
+//    }
 }
