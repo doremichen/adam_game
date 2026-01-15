@@ -8,7 +8,9 @@
 package com.adam.app.tapgame.setting;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,10 +54,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // set background color and space
+        //
+        TypedValue typedValue = new TypedValue();
+        requireContext().getTheme().resolveAttribute(android.R.attr.windowBackground, typedValue, true);
+        int bgColor = typedValue.data;
+
+        //
+        view.setBackgroundColor(bgColor);
+
+        //
         final RecyclerView listView = getListView();
-        listView.setBackgroundColor(ContextCompat.getColor(requireContext(), android.R.color.transparent));
-        listView.setPadding(0, 16, 0, 16);
+        if (listView != null) {
+            listView.setBackgroundColor(Color.TRANSPARENT);
+
+            int topPadding = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
+            listView.setPadding(0, topPadding, 0, 16);
+            listView.setClipToPadding(false);
+        }
 
     }
 

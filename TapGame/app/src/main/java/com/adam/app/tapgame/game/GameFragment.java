@@ -68,10 +68,31 @@ public class GameFragment extends Fragment {
         mBinding.setVm(mViewModel);
         // observer navigation
         mViewModel.getNavigateTo().observe(getViewLifecycleOwner(), this::navigate);
+        mViewModel.getTimeLeft().observe(getViewLifecycleOwner(), this::onTimeLeftChanged);
 
 //        disableBackPressed();
         
     }
+
+    private void onTimeLeftChanged(Integer timeLeft) {
+        if (timeLeft == -1) {
+            GameUtils.log(TAG + ": time left = -1");
+            // show game over dialog
+            GameUtils.DialogButton positive = new GameUtils.DialogButton(
+                    getString(R.string.tap_game_dialog_positive_btn),
+                    () -> {
+                        // back to main
+                        mViewModel.onBack2Menu();
+                    }
+            );
+            String title = getString(R.string.tap_game_game_over_title);
+            String message = getString(R.string.tap_game_game_over_message, mViewModel.getScore().getValue());
+
+            // show dialog
+            GameUtils.showAlertDialog(getContext(), title, message, positive, null);
+        }
+    }
+
 
     @Override
     public void onDestroyView() {
@@ -83,17 +104,17 @@ public class GameFragment extends Fragment {
         GameUtils.log(TAG + ": onDestroyView done");
     }
 
-    private void disableBackPressed() {
-        requireActivity()
-                .getOnBackPressedDispatcher()
-                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        // Do nothing → back button disabled
-                        GameUtils.showToast(getContext(), R.string.tap_game_diable_function_toast);
-                    }
-                });
-    }
+//    private void disableBackPressed() {
+//        requireActivity()
+//                .getOnBackPressedDispatcher()
+//                .addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+//                    @Override
+//                    public void handleOnBackPressed() {
+//                        // Do nothing → back button disabled
+//                        GameUtils.showToast(getContext(), R.string.tap_game_diable_function_toast);
+//                    }
+//                });
+//    }
 
     private void navigate(GameUtils.NavigationDestination destination) {
         GameUtils.log(TAG + ": navigate");
@@ -105,7 +126,9 @@ public class GameFragment extends Fragment {
         // back to menu page
         if (destination == GameUtils.NavigationDestination.MAIN) {
             GameUtils.log(TAG + ": back to main");
-            mNavController.popBackStack();
+            // reflash
+            mNavController.navigate(R.id.action_gameFragment_to_menuFragment);
+            //mNavController.popBackStack();
         }
     }
 }

@@ -17,7 +17,10 @@
     <style name="Theme.TapGame.Settings" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
 
-        <item name="android:windowBackground">#121212</item>
+        <item name="android:windowBackground">#2C3E50</item>
+        <item name="android:colorBackground">#2C3E50</item>
+
+        <item name="colorAccent">#FF9800</item>
         <item name="colorPrimary">@color/purple_500</item>
     </style>
 </resources>

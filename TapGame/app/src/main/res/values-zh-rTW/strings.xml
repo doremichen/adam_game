@@ -30,5 +30,8 @@
     <string name="tap_game_interval_invalid">請輸入 1 到 60 之間的秒數。</string>
 
     <string name="tap_game_easy_mode_setting_summary">啟用此選項將降低遊戲難度 (Enabling this will reduce the game\'s difficulty).</string>
+    <string name="tap_game_dialog_positive_btn">確定</string>
+    <string name="tap_game_game_over_title">遊戲結束</string>
+    <string name="tap_game_game_over_message">目前分數: %1$d</string>
 
 </resources>

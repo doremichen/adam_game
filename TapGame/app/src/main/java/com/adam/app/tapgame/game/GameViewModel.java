@@ -16,16 +16,19 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.tapgame.utils.GameUtils;
+import com.adam.app.tapgame.utils.SettingsManager;
 
 
 public class GameViewModel extends AndroidViewModel {
 
-    private static final int TOTAL_TIME = 10;
+    // TAG
+    private static final String TAG = GameViewModel.class.getSimpleName();
+
+    private final SettingsManager mSettingMgr;
 
     // live data
     private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> mTimeLeft = new MutableLiveData<>(10);
-    private final MutableLiveData<Boolean> mGameState = new MutableLiveData<>(false);
     private final MutableLiveData<GameUtils.NavigationDestination> mNavigateTo = new MutableLiveData<>(GameUtils.NavigationDestination.NONE);
 
 
@@ -40,10 +43,6 @@ public class GameViewModel extends AndroidViewModel {
         return mTimeLeft;
     }
 
-    // two way data binding
-    public MutableLiveData<Boolean> getGameState() {
-        return mGameState;
-    }
 
     public LiveData<GameUtils.NavigationDestination> getNavigateTo() {
         return mNavigateTo;
@@ -52,19 +51,28 @@ public class GameViewModel extends AndroidViewModel {
     // --- constructor ---
     public GameViewModel(@NonNull Application application) {
         super(application);
+
+        mSettingMgr = SettingsManager.getInstance(application);
+
         startTimer();
     }
 
     private void startTimer() {
-        mTimer = new CountDownTimer(TOTAL_TIME * 1000L, 1000L) {
+
+        int totalTime = mSettingMgr.getInterval();
+
+        mTimer = new CountDownTimer(totalTime * 1000L, 1000L) {
             @Override
             public void onTick(long millisUntilFinished) {
-                mTimeLeft.setValue((int) (millisUntilFinished / 1000));
+                int displayTime = (int) (millisUntilFinished / 1000);
+                GameUtils.log(TAG + ": onTick: " + String.valueOf(displayTime));
+                mTimeLeft.setValue(displayTime);
             }
 
             @Override
             public void onFinish() {
-                mTimeLeft.setValue(0);
+                GameUtils.log(TAG + ": onFinish");
+                mTimeLeft.setValue(-1);
             }
         };
         // start timer
@@ -80,10 +88,15 @@ public class GameViewModel extends AndroidViewModel {
     }
 
     public void onTab() {
+        if (mScore == null) {
+            throw new NullPointerException("mScore is null");
+        }
+
         int current = mScore.getValue();
-        mScore.setValue((Boolean.TRUE.equals(mGameState.getValue()))
+        boolean gameState = mSettingMgr.isEasyMode();
+        mScore.setValue((gameState)
                 ? current + 1
-                : current + 2);
+                : current + 20);
     }
 
     public void onBack2Menu() {
