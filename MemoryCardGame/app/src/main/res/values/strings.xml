@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Memory Card Game</string>
+    <string name="memory_card_game_not_implemented">Not implemented</string>
+    <string name="memory_card_game_title">Memory Card Game</string>
+    <string name="memory_card_game_start_game_btn">Start Game</string>
+    <string name="memory_card_game_setting_btn">Setting</string>
+    <string name="memory_card_game_about_btn">About</string>
+    <string name="memory_card_game_exit_btn">Exit</string>
+</resources>

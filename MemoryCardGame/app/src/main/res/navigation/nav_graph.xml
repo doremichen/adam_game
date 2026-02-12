@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.adam.app.memorycardgame.ui.main.MainFragment"
+        android:label="Main" >
+        <action
+            android:id="@+id/action_mainFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_settingFragment"
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.adam.app.memorycardgame.ui.game.GameFragment"
+        android:label="Game"/>
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.adam.app.memorycardgame.ui.setting.SettingFragment"
+        android:label="Setting" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.adam.app.memorycardgame.ui.about.AboutFragment"
+        android:label="About"/>
+
+
+</navigation>

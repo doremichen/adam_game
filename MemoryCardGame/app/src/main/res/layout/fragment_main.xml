@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="vm"
+            type="com.adam.app.memorycardgame.ui.main.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="24dp">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/memory_card_game_title"
+            android:textSize="28sp"
+            android:gravity="center"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/memory_card_game_start_game_btn"
+            android:onClick="@{()-> vm.onStartClicked()}"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="37dp"/>
+
+        <Button
+            android:id="@+id/btnSetting"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/memory_card_game_setting_btn"
+            android:onClick="@{()-> vm.onSettingClicked()}"
+            app:layout_constraintTop_toBottomOf="@id/btnStart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <Button
+            android:id="@+id/btnAbout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/memory_card_game_about_btn"
+            android:onClick="@{()-> vm.onAboutClicked()}"
+            app:layout_constraintTop_toBottomOf="@id/btnSetting"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <Button
+            android:id="@+id/btnExit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/memory_card_game_exit_btn"
+            android:onClick="@{()-> vm.onExitClicked()}"
+            app:layout_constraintTop_toBottomOf="@id/btnAbout"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
