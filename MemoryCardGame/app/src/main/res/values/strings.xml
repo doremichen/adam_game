@@ -6,4 +6,6 @@
     <string name="memory_card_game_setting_btn">Setting</string>
     <string name="memory_card_game_about_btn">About</string>
     <string name="memory_card_game_exit_btn">Exit</string>
+    <string name="memory_game_card_game_title">Memory Game</string>
+    <string name="memory_crad_game_restart_btn">Restart</string>
 </resources>

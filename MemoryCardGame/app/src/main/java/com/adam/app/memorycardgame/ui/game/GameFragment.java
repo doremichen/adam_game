@@ -15,20 +15,26 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.adam.app.memorycardgame.R;
+import com.adam.app.memorycardgame.data.model.Card;
 import com.adam.app.memorycardgame.databinding.FragmentGameBinding;
+import com.adam.app.memorycardgame.ui.game.adapter.CardAdapter;
 
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements CardClickListener {
 
     private GameViewModel mViewModel;
 
     // view binding
     private FragmentGameBinding mBinding;
+
+    // card adapter
+    private CardAdapter mCardAdapter;
 
 
     public static GameFragment newInstance() {
@@ -40,7 +46,19 @@ public class GameFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         mBinding = FragmentGameBinding.inflate(inflater, container, false);
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
+
         return mBinding.getRoot();
+    }
+
+    private void observeCards() {
+        mViewModel.getCards().observe(getViewLifecycleOwner(), cards -> {
+            mCardAdapter = new CardAdapter(cards, this);
+            mBinding.rvCards.setAdapter(mCardAdapter);
+        });
+    }
+
+    private void setupRecycler() {
+        mBinding.rvCards.setLayoutManager(new GridLayoutManager(requireContext(), 4));
     }
 
     @Override
@@ -50,5 +68,13 @@ public class GameFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         // set view model
         mBinding.setVm(mViewModel);
+
+        setupRecycler();
+        observeCards();
+    }
+
+    @Override
+    public void onCardClicked(Card card) {
+        mViewModel.onCardClicked(card);
     }
 }

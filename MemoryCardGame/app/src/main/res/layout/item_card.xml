@@ -1,0 +1,26 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="card"
+            type="com.adam.app.memorycardgame.data.model.Card"/>
+        <variable
+            name="listener"
+            type="com.adam.app.memorycardgame.ui.game.CardClickListener"/>
+    </data>
+
+    <FrameLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:padding="4dp">
+
+        <ImageView
+            android:id="@+id/imgCard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cardImage="@{card}"
+            android:onClick="@{()-> listener.onCardClicked(card)}"/>
+    </FrameLayout>
+
+</layout>
