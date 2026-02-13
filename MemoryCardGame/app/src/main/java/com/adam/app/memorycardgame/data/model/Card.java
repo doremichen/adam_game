@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2026 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is a card model
  *
  * @author Adam Chen
@@ -8,42 +8,59 @@
  */
 package com.adam.app.memorycardgame.data.model;
 
+import com.adam.app.memorycardgame.R;
+
 public class Card {
     // id
     private final int mId;
     // img resource id
     private final int mImgResId;
-    // check face up
-    private boolean mIsFaceUp;
-    // check matched
-    private boolean mIsMatched;
+    private CardState mCardState = CardState.FACE_DOWN;
+
 
     public Card(int id, int imgResId) {
         mId = id;
         mImgResId = imgResId;
-        mIsFaceUp = false;
-        mIsMatched = false;
-    }
-
-    // -- set --
-    public void setFaceUp(boolean isFaceUp) {
-        mIsFaceUp = isFaceUp;
-    }
-    public void setMatched(boolean isMatched) {
-        mIsMatched = isMatched;
     }
 
     // -- get --
     public int getId() {
         return mId;
     }
+
     public int getImgResId() {
         return mImgResId;
     }
-    public boolean isFaceUp() {
-        return mIsFaceUp;
+
+    public CardState getCardState() {
+        return mCardState;
     }
-    public boolean isMatched() {
-        return mIsMatched;
+
+    public void setCardState(CardState cardState) {
+        mCardState = cardState;
     }
+
+    public enum CardState {
+        FACE_UP {
+            @Override
+            public int getResId(Card card) {
+                return card.getImgResId();
+            }
+        },
+        FACE_DOWN {
+            @Override
+            public int getResId(Card card) {
+                return R.drawable.card_back;
+            }
+        },
+        MATCHED {
+            @Override
+            public int getResId(Card card) {
+                return R.drawable.card_empty;
+            }
+        };
+
+        public abstract int getResId(Card card);
+    }
+
 }

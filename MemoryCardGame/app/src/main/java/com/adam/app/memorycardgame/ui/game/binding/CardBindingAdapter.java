@@ -16,14 +16,6 @@ public class CardBindingAdapter {
      */
     @BindingAdapter("cardImage")
     public static void setCardImage(ImageView view, Card card) {
-        if (card.isMatched()) {
-            view.setImageResource(R.drawable.card_empty);
-        }
-        else if (card.isFaceUp()) {
-            view.setImageResource(card.getImgResId());
-        }
-        else {
-            view.setImageResource(R.drawable.card_back);
-        }
+        view.setImageResource(card.getCardState().getResId(card));
     }
 }

@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2021 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the game fragment for the memory card game.
  *
  * @author Adam Chen
@@ -8,20 +8,17 @@
  */
 package com.adam.app.memorycardgame.ui.game;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.adam.app.memorycardgame.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+
 import com.adam.app.memorycardgame.data.model.Card;
 import com.adam.app.memorycardgame.databinding.FragmentGameBinding;
 import com.adam.app.memorycardgame.ui.game.adapter.CardAdapter;

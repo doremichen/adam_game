@@ -1,7 +1,8 @@
 /**
  * Copyright (c) 2020 Adam Chen. ALL rights reserved.
- *
+ * <p>
  * Description: This is the GameViewModel class.
+ * </p>
  *
  * @author Adam Chen
  * @version 1.0 - 2026/02/12
@@ -50,12 +51,15 @@ public class GameViewModel extends ViewModel {
         if (mLockBoard) {
             return;
         }
-        if (mIsProcessing || card.isFaceUp() || card.isMatched()) {
+
+        Card.CardState cardState = card.getCardState();
+
+        if (mIsProcessing || cardState != Card.CardState.FACE_DOWN) {
             return;
         }
 
         // flip card
-        card.setFaceUp(true);
+        card.setCardState(Card.CardState.FACE_UP);
         // update live data
         mLiveDataCards.setValue(mRepo.getCards());
 
@@ -82,11 +86,11 @@ public class GameViewModel extends ViewModel {
             int secondImageRes = card.getImgResId();
 
             if (firstImageRes == secondImageRes) {
-                mFirstCard.setMatched(true);
-                card.setMatched(true);
+                mFirstCard.setCardState(Card.CardState.MATCHED);
+                card.setCardState(Card.CardState.MATCHED);
             } else {
-                mFirstCard.setFaceUp(false);
-                card.setFaceUp(false);
+                mFirstCard.setCardState(Card.CardState.FACE_DOWN);
+                card.setCardState(Card.CardState.FACE_DOWN);
             }
 
             mLockBoard = false;
