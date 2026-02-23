@@ -48,7 +48,7 @@ public class GameViewModel extends AndroidViewModel {
 
         restartGame();
     }
-    
+
     public LiveData<List<Card>> getCards() {
         return mLiveDataCards;
     }

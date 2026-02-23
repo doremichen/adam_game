@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">記憶翻牌遊戲</string>
+    <string name="memory_card_game_not_implemented">功能尚未實作</string>
+    <string name="memory_card_game_title">記憶翻牌遊戲</string>
+    <string name="memory_card_game_start_game_btn">開始遊戲</string>
+    <string name="memory_card_game_setting_btn">設定</string>
+    <string name="memory_card_game_about_btn">關於</string>
+    <string name="memory_card_game_exit_btn">離開</string>
+    <string name="memory_card_game_restart_btn">重新開始</string>
+    <string name="memory_card_game_about_intro">這是一款經典的記憶配對遊戲。\n翻轉卡片並找出成對的組合。</string>
+    <string name="memory_card_game_about_techs">=== 使用技術 ===\n• MVVM\n• Data Binding\n• View Binding\n• Navigation\n• RecyclerView + DiffUtil</string>
+    <string name="memory_card_game_about_patterns">設計模式：\n• Repository\n• Observer\n• Adapter</string>
+    <string name="memory_card_game_setting_title">設定</string>
+    <string name="title_activity_settings">設定介面</string>
+
+    <string name="memory_card_game_setting_sound">音效</string>
+    <string name="memory_card_game_setting_theme">主題模式</string>
+</resources>
