@@ -12,6 +12,7 @@ package com.adam.app.memorycardgame.ui.setting;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -51,6 +52,19 @@ public class SettingViewModel extends AndroidViewModel {
 
     public void updateTheme(String mode) {
         mSettingsManager.setThemeMode(mode);
+
+        switch (mode) {
+            case "dark":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case "light":
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            default:
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+        }
+
         mThemeMode.setValue(mode);
     }
 }

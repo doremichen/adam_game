@@ -45,30 +45,10 @@ public class GameViewModel extends AndroidViewModel {
     public GameViewModel(@NonNull Application application) {
         super(application);
         mSettingsManager = SettingsManager.getInstance(application);
-        setupTheme();
+
         restartGame();
     }
-
-    private void setupTheme() {
-        // get theme mode
-        String themeMode = mSettingsManager.getThemeMode();
-        // set theme
-        switch (themeMode) {
-            case "dark":
-                // set dark theme
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                break;
-            case "light":
-                // set light theme
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                break;
-            default:
-                // set system theme
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-                break;
-        }
-    }
-
+    
     public LiveData<List<Card>> getCards() {
         return mLiveDataCards;
     }
