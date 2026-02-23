@@ -6,6 +6,15 @@
     <string name="memory_card_game_setting_btn">Setting</string>
     <string name="memory_card_game_about_btn">About</string>
     <string name="memory_card_game_exit_btn">Exit</string>
-    <string name="memory_game_card_game_title">Memory Game</string>
-    <string name="memory_crad_game_restart_btn">Restart</string>
+    <string name="memory_card_game_restart_btn">Restart</string>
+    <string name="memory_card_game_about_intro">This is a classic memory matching game.\nFlip cards and match pairs.</string>
+    <string name="memory_card_game_about_techs">=== Technologies Used ===\n• MVVM\n• Data Binding\n• View Binding\n• Navigation\n• RecyclerView + DiffUtil</string>
+    <string name="memory_card_game_about_patterns">Design Patterns:\n• Repository\n• Observer\n• Adapter</string>
+    <string name="memory_card_game_setting_title">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="memory_card_game_setting_sound">Sound Effects</string>
+    <string name="memory_card_game_setting_theme">Theme Mode</string>
+
 </resources>

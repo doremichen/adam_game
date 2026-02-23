@@ -20,6 +20,11 @@ public class GameRepository {
         // avoid client applications to use constructor
     }
 
+    public void updateCards(List<Card> newList) {
+        mCards.clear();
+        mCards.addAll(newList);
+    }
+
     private static class Helper {
         private static final GameRepository sInstance = new GameRepository();
     }

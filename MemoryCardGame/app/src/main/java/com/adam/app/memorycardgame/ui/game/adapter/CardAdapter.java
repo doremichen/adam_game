@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2020 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the adapter for the card view.
  *
  * @author Adam Chen
@@ -12,25 +12,35 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.adam.app.memorycardgame.data.model.Card;
 import com.adam.app.memorycardgame.databinding.ItemCardBinding;
 import com.adam.app.memorycardgame.ui.game.CardClickListener;
 
-import java.util.List;
+public class CardAdapter extends ListAdapter<Card, CardAdapter.CardViewHolder> {
 
-public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder> {
+    private static final DiffUtil.ItemCallback<Card> DIFF_CALLBACK = new DiffUtil.ItemCallback<Card>() {
 
-    // list of cards
-    private final List<Card> mCards;
+        @Override
+        public boolean areItemsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
+            return oldItem.getId() == newItem.getId();
+        }
 
+        @Override
+        public boolean areContentsTheSame(@NonNull Card oldItem, @NonNull Card newItem) {
+            return oldItem.equals(newItem);
+        }
+    };
     // card click listener
     private final CardClickListener mListener;
 
+
     // constructor
-    public CardAdapter(List<Card> cards, CardClickListener listener) {
-        mCards = cards;
+    public CardAdapter(CardClickListener listener) {
+        super(DIFF_CALLBACK);
         mListener = listener;
     }
 
@@ -44,12 +54,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
-        holder.bind(mCards.get(position), mListener);
-    }
-
-    @Override
-    public int getItemCount() {
-        return mCards.size();
+        holder.bind(getItem(position), mListener);
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
@@ -69,6 +74,4 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.CardViewHolder
             mBinding.executePendingBindings();
         }
     }
-
-
 }

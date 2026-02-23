@@ -1,0 +1,13 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+    <SwitchPreferenceCompat
+        app:key="key_sound"
+        app:title="@string/memory_card_game_setting_sound"
+        app:defaultValue="true" />
+
+    <ListPreference
+        app:key="key_theme"
+        app:title="@string/memory_card_game_setting_theme"
+        app:entries="@array/theme_entries"
+        app:entryValues="@array/theme_values"
+        app:defaultValue="system" />
+</PreferenceScreen>

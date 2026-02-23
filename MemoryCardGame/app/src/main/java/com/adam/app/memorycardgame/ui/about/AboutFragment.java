@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2021 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the About Fragment.
  *
  * @author Adam Chen
@@ -8,17 +8,15 @@
  */
 package com.adam.app.memorycardgame.ui.about;
 
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.memorycardgame.R;
 import com.adam.app.memorycardgame.databinding.FragmentAboutBinding;
@@ -28,8 +26,6 @@ public class AboutFragment extends Fragment {
     private AboutViewModel mViewModel;
     // view binding
     private FragmentAboutBinding mBinding;
-
-
 
     public static AboutFragment newInstance() {
         return new AboutFragment();
@@ -51,5 +47,12 @@ public class AboutFragment extends Fragment {
         mViewModel = new ViewModelProvider(this).get(AboutViewModel.class);
         // set view model
         mBinding.setVm(mViewModel);
+
+        // about text
+        String text = getString(R.string.memory_card_game_title) + "\n\n" +
+                getString(R.string.memory_card_game_about_intro) + "\n\n" +
+                getString(R.string.memory_card_game_about_techs) + "\n\n" +
+                getString(R.string.memory_card_game_about_patterns);
+        mViewModel.setAboutText(text);
     }
 }

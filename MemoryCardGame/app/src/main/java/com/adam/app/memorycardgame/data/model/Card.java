@@ -8,13 +8,18 @@
  */
 package com.adam.app.memorycardgame.data.model;
 
+import androidx.annotation.Nullable;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+
 import com.adam.app.memorycardgame.R;
 
-public class Card {
+public class Card extends BaseObservable {
     // id
     private final int mId;
     // img resource id
     private final int mImgResId;
+    @Bindable
     private CardState mCardState = CardState.FACE_DOWN;
 
 
@@ -22,6 +27,20 @@ public class Card {
         mId = id;
         mImgResId = imgResId;
     }
+
+    // copy constructor
+    public Card(Card card) {
+        mId = card.getId();
+        mImgResId = card.getImgResId();
+        mCardState = card.getCardState();
+    }
+
+
+    // copy method
+    public Card copy() {
+        return new Card(this);
+    }
+
 
     // -- get --
     public int getId() {
@@ -32,6 +51,7 @@ public class Card {
         return mImgResId;
     }
 
+    @Bindable
     public CardState getCardState() {
         return mCardState;
     }
@@ -63,4 +83,11 @@ public class Card {
         public abstract int getResId(Card card);
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return obj instanceof Card &&
+                ((Card) obj).getId() == getId() &&
+                ((Card) obj).getImgResId() == getImgResId() &&
+                ((Card) obj).getCardState() == getCardState();
+    }
 }

@@ -9,66 +9,119 @@
  */
 package com.adam.app.memorycardgame.ui.game;
 
+import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.adam.app.memorycardgame.data.model.Card;
 import com.adam.app.memorycardgame.data.repository.GameRepository;
+import com.adam.app.memorycardgame.util.CommonUtils;
+import com.adam.app.memorycardgame.util.SettingsManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class GameViewModel extends ViewModel {
+public class GameViewModel extends AndroidViewModel {
+    // TAG
+    private static final String TAG = "GameViewModel";
 
     private final GameRepository mRepo = GameRepository.getInstance();
+    private final SettingsManager mSettingsManager;
+
 
     // live data: list of card
     private final MutableLiveData<List<Card>> mLiveDataCards = new MutableLiveData<>();
-    public LiveData<List<Card>> getCards() {
-        return mLiveDataCards;
-    }
 
     private Card mFirstCard;
     private boolean mLockBoard;
     private boolean mIsProcessing;
 
-    public GameViewModel() {
+    public GameViewModel(@NonNull Application application) {
+        super(application);
+        mSettingsManager = SettingsManager.getInstance(application);
+        setupTheme();
         restartGame();
     }
 
+    private void setupTheme() {
+        // get theme mode
+        String themeMode = mSettingsManager.getThemeMode();
+        // set theme
+        switch (themeMode) {
+            case "dark":
+                // set dark theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
+            case "light":
+                // set light theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            default:
+                // set system theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+                break;
+        }
+    }
+
+    public LiveData<List<Card>> getCards() {
+        return mLiveDataCards;
+    }
+
+
     public void restartGame() {
+        CommonUtils.log(TAG + "restartGame");
         List<Card> cards = mRepo.createNewGame();
-        mLiveDataCards.setValue(cards);
+        mLiveDataCards.setValue(new ArrayList<>(cards));
         mFirstCard = null;
         mLockBoard = false;
     }
 
     public void onCardClicked(Card card) {
+        CommonUtils.log(TAG + ": onCardClicked");
         // pre check
         if (mLockBoard) {
+            CommonUtils.log(TAG + ": lock board");
             return;
         }
 
         Card.CardState cardState = card.getCardState();
 
         if (mIsProcessing || cardState != Card.CardState.FACE_DOWN) {
+            CommonUtils.log(TAG + ": processing");
             return;
         }
 
-        // flip card
-        card.setCardState(Card.CardState.FACE_UP);
-        // update live data
-        mLiveDataCards.setValue(mRepo.getCards());
+        List<Card> oldCards = mLiveDataCards.getValue();
+        List<Card> newCards = new ArrayList<>();
 
-        if (mFirstCard == null) {
-            mFirstCard = card;
-        } else {
-            mIsProcessing = true;
-            checkMatchWithFirstCard(card);
+        assert oldCards != null;
+        for (Card oldCard : oldCards) {
+            if (oldCard.getId() == card.getId()) {
+                Card newCard = card.copy();
+                newCard.setCardState(Card.CardState.FACE_UP);
+                newCards.add(newCard);
+
+                if (mFirstCard == null) {
+                    mFirstCard = card;
+                } else {
+                    mIsProcessing = true;
+                    checkMatchWithFirstCard(card);
+                }
+
+            } else {
+                newCards.add(oldCard.copy());
+            }
         }
+
+        CommonUtils.log(TAG + ": update live data");
+        mLiveDataCards.setValue(newCards);
+
     }
 
     private void checkMatchWithFirstCard(Card card) {
@@ -79,24 +132,39 @@ public class GameViewModel extends ViewModel {
         }
 
         mLockBoard = true;
-        // aync delay 800ms
+        // asynch delay 800ms
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // compare image res with the first image
-            int firstImageRes = mFirstCard.getImgResId();
-            int secondImageRes = card.getImgResId();
+                    List<Card> currentCards = mRepo.getCards();
+                    List<Card> newList = new ArrayList<>();
 
-            if (firstImageRes == secondImageRes) {
-                mFirstCard.setCardState(Card.CardState.MATCHED);
-                card.setCardState(Card.CardState.MATCHED);
-            } else {
-                mFirstCard.setCardState(Card.CardState.FACE_DOWN);
-                card.setCardState(Card.CardState.FACE_DOWN);
-            }
+                    boolean isMatched = mFirstCard.getImgResId() == card.getImgResId();
 
-            mLockBoard = false;
-            mIsProcessing = false;
-            mFirstCard = null;
-            mLiveDataCards.postValue(mRepo.getCards());},
+                    // loop
+                    for (Card c : currentCards) {
+                        Card copyCard = c.copy();
+
+                        if (c.getId() == mFirstCard.getId() ||
+                            c.getId() == card.getId()) {
+
+                            if (isMatched) {
+                                copyCard.setCardState(Card.CardState.MATCHED);
+                            } else {
+                                copyCard.setCardState(Card.CardState.FACE_DOWN);
+                            }
+                        }
+
+                        newList.add(copyCard);
+                    }
+
+                    mLockBoard = false;
+                    mIsProcessing = false;
+                    mFirstCard = null;
+
+                    // update card list
+                    mRepo.updateCards(newList);
+
+                    mLiveDataCards.setValue(newList);
+                },
                 800L);
     }
 
