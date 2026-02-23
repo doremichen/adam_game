@@ -16,5 +16,7 @@
     <!-- Preference Titles -->
     <string name="memory_card_game_setting_sound">Sound Effects</string>
     <string name="memory_card_game_setting_theme">Theme Mode</string>
+    <string name="memory_card_game_sound_enable">Game sound effects enabled</string>
+    <string name="memory_card_game_sound_disable">Game sound effects disabled</string>
 
 </resources>

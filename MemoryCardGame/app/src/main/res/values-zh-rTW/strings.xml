@@ -15,4 +15,6 @@
 
     <string name="memory_card_game_setting_sound">音效</string>
     <string name="memory_card_game_setting_theme">主題模式</string>
+    <string name="memory_card_game_sound_enable">遊戲音效已開啟</string>
+    <string name="memory_card_game_sound_disable">遊戲音效已關閉</string>
 </resources>

@@ -1,13 +1,23 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
-    <SwitchPreferenceCompat
-        app:key="key_sound"
-        app:title="@string/memory_card_game_setting_sound"
-        app:defaultValue="true" />
+    <PreferenceCategory
+        app:title="@string/memory_card_game_setting_title"
+        app:iconSpaceReserved="false">
 
-    <ListPreference
-        app:key="key_theme"
-        app:title="@string/memory_card_game_setting_theme"
-        app:entries="@array/theme_entries"
-        app:entryValues="@array/theme_values"
-        app:defaultValue="system" />
+        <SwitchPreferenceCompat
+            app:key="key_sound"
+            app:title="@string/memory_card_game_setting_sound"
+            app:summaryOn="@string/memory_card_game_sound_enable"
+            app:summaryOff="@string/memory_card_game_sound_disable"
+            app:icon="@drawable/ic_volume_up"
+            app:defaultValue="true" />
+
+        <ListPreference
+            app:key="key_theme"
+            app:title="@string/memory_card_game_setting_theme"
+            app:icon="@drawable/ic_palette"
+            app:entries="@array/theme_entries"
+            app:entryValues="@array/theme_values"
+            app:defaultValue="system" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

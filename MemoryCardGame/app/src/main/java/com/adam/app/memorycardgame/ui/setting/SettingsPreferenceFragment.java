@@ -42,6 +42,7 @@ public class SettingsPreferenceFragment extends PreferenceFragmentCompat {
         assert soundSwitch != null;
         soundSwitch.setOnPreferenceChangeListener(this::onSoundPreferenceChange);
         assert themeList != null;
+        themeList.setSummaryProvider(ListPreference.SimpleSummaryProvider.getInstance());
         themeList.setOnPreferenceChangeListener(this::onThemePreferenceChange);
 
     }
