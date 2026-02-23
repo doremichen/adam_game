@@ -64,6 +64,7 @@ public class GameFragment extends Fragment implements CardClickListener {
         setupRecycler();
         observeCards();
     }
+
     private void setupRecycler() {
         mCardAdapter = new CardAdapter(this);
         mBinding.rvCards.setLayoutManager(new GridLayoutManager(requireContext(), 4));

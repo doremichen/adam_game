@@ -13,11 +13,15 @@ import java.util.List;
 public class GameRepository {
 
     // list of card
-    private List<Card> mCards = new ArrayList<>();
+    private final List<Card> mCards = new ArrayList<>();
 
 
     private GameRepository() {
         // avoid client applications to use constructor
+    }
+
+    public static GameRepository getInstance() {
+        return Helper.sInstance;
     }
 
     public void updateCards(List<Card> newList) {
@@ -25,22 +29,15 @@ public class GameRepository {
         mCards.addAll(newList);
     }
 
-    private static class Helper {
-        private static final GameRepository sInstance = new GameRepository();
-    }
-
-    public static GameRepository getInstance() {
-        return Helper.sInstance;
-    }
-
     /**
      * createNewGame
+     *
      * @return List<Card>
      */
     public List<Card> createNewGame() {
         mCards.clear();
         // pictures
-        int pictures[] = {R.drawable.card_1,
+        int[] pictures = {R.drawable.card_1,
                 R.drawable.card_2,
                 R.drawable.card_3,
                 R.drawable.card_4,
@@ -50,7 +47,7 @@ public class GameRepository {
                 R.drawable.card_8,};
 
         int id = 0;
-        for (int img: pictures) {
+        for (int img : pictures) {
             mCards.add(new Card(id++, img));
             mCards.add(new Card(id++, img));
         }
@@ -61,6 +58,10 @@ public class GameRepository {
 
     public List<Card> getCards() {
         return mCards;
+    }
+
+    private static class Helper {
+        private static final GameRepository sInstance = new GameRepository();
     }
 
 }

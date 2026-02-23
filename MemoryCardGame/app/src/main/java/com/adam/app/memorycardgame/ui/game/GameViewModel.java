@@ -15,7 +15,6 @@ import android.os.Handler;
 import android.os.Looper;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -23,8 +22,6 @@ import androidx.lifecycle.MutableLiveData;
 import com.adam.app.memorycardgame.data.model.Card;
 import com.adam.app.memorycardgame.data.repository.GameRepository;
 import com.adam.app.memorycardgame.util.CommonUtils;
-import com.adam.app.memorycardgame.util.SettingsManager;
-import com.adam.app.memorycardgame.util.SoundPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +34,10 @@ public class GameViewModel extends AndroidViewModel {
 
     // live data: list of card
     private final MutableLiveData<List<Card>> mLiveDataCards = new MutableLiveData<>();
-
+    private final Context mContext;
     private Card mFirstCard;
     private boolean mLockBoard;
     private boolean mIsProcessing;
-
-    private final Context mContext;
 
     public GameViewModel(@NonNull Application application) {
         super(application);
@@ -128,8 +123,8 @@ public class GameViewModel extends AndroidViewModel {
                         Card copyCard = c.copy();
 
                         if (c.getId() == mFirstCard.getId() ||
-                            c.getId() == card.getId()) {
-                            Card.CardState newCardState = (isMatched)? Card.CardState.MATCHED: Card.CardState.FACE_DOWN;
+                                c.getId() == card.getId()) {
+                            Card.CardState newCardState = (isMatched) ? Card.CardState.MATCHED : Card.CardState.FACE_DOWN;
                             newCardState.playSound(mContext);
                             copyCard.setCardState(newCardState);
                         }

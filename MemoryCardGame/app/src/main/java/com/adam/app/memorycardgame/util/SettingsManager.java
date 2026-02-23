@@ -1,8 +1,8 @@
 /**
  * Copyright (c) 2026 Adam Chen. All rights reserved.
  * Licensed under the MIT license. See LICENSE file in the project root for details.
- * <P>
- *     Description: This is the settings manager.
+ * <p>
+ * Description: This is the settings manager.
  * </P>
  *
  * @author Adam Chen
@@ -14,15 +14,14 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SettingsManager {
-    private static volatile SettingsManager sIinstance;
-    private SharedPreferences mPrefs;
-
     // setting: enable sound
     public static final String KEY_ENABLE_SOUND = "key_sound";
     // setting: theme
     public static final String KEY_THEME = "key_theme";
+    private static volatile SettingsManager sIinstance;
+    private final SharedPreferences mPrefs;
 
-    private SettingsManager (Context ctx) {
+    private SettingsManager(Context ctx) {
         this.mPrefs = ctx.getSharedPreferences("memory_card_game_settings", Context.MODE_PRIVATE);
     }
 
@@ -42,20 +41,22 @@ public class SettingsManager {
         return sIinstance;
     }
 
-    // -- setter --
-    public void setSoundEnabled(boolean enable) {
-        mPrefs.edit().putBoolean(KEY_ENABLE_SOUND, enable).apply();
-    }
-    public void setThemeMode(String mode) {
-        mPrefs.edit().putString(KEY_THEME, mode).apply();
-    }
-
     // -- getter --
     public boolean isSoundEnabled() {
         return mPrefs.getBoolean(KEY_ENABLE_SOUND, true);
     }
+
+    // -- setter --
+    public void setSoundEnabled(boolean enable) {
+        mPrefs.edit().putBoolean(KEY_ENABLE_SOUND, enable).apply();
+    }
+
     public String getThemeMode() {
         return mPrefs.getString(KEY_THEME, "system");
+    }
+
+    public void setThemeMode(String mode) {
+        mPrefs.edit().putString(KEY_THEME, mode).apply();
     }
 
 }

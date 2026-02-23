@@ -23,7 +23,6 @@ import androidx.navigation.Navigation;
 
 import com.adam.app.memorycardgame.R;
 import com.adam.app.memorycardgame.databinding.FragmentMainBinding;
-import com.adam.app.memorycardgame.util.CommonUtils;
 
 public class MainFragment extends Fragment {
 

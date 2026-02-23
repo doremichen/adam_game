@@ -64,12 +64,21 @@ public class Card extends BaseObservable {
         mCardState = cardState;
     }
 
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        return obj instanceof Card &&
+                ((Card) obj).getId() == getId() &&
+                ((Card) obj).getImgResId() == getImgResId() &&
+                ((Card) obj).getCardState() == getCardState();
+    }
+
     public enum CardState {
         FACE_UP {
             @Override
             public int getResId(Card card) {
                 return card.getImgResId();
             }
+
             @Override
             public void playSound(Context context) {
                 SettingsManager settings = SettingsManager.getInstance(context);
@@ -119,13 +128,5 @@ public class Card extends BaseObservable {
         public abstract int getResId(Card card);
 
         public abstract void playSound(Context context);
-    }
-
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        return obj instanceof Card &&
-                ((Card) obj).getId() == getId() &&
-                ((Card) obj).getImgResId() == getImgResId() &&
-                ((Card) obj).getCardState() == getCardState();
     }
 }

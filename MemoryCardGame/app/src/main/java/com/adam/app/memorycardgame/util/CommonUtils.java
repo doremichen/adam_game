@@ -26,6 +26,7 @@ public abstract class CommonUtils {
 
     /**
      * log message
+     *
      * @param msg message
      */
     public static void log(String msg) {
@@ -36,7 +37,7 @@ public abstract class CommonUtils {
      * show toast
      *
      * @param context Context
-     * @param msg message
+     * @param msg     message
      */
     public static void showToast(Context context, String msg) {
         // check main thread
@@ -53,6 +54,7 @@ public abstract class CommonUtils {
 
     /**
      * show unimplemented toast
+     *
      * @param context Context
      */
     public static void showUnImplementedToast(Context context) {

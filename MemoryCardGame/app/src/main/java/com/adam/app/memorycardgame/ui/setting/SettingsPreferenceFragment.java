@@ -49,13 +49,13 @@ public class SettingsPreferenceFragment extends PreferenceFragmentCompat {
 
     private boolean onThemePreferenceChange(Preference preference, Object newValue) {
         // update theme
-        mViewModel.updateTheme((String)newValue);
+        mViewModel.updateTheme((String) newValue);
         return true;
     }
 
     private boolean onSoundPreferenceChange(Preference preference, Object newValue) {
         // update sound
-        mViewModel.updateSound((Boolean)newValue);
+        mViewModel.updateSound((Boolean) newValue);
         return true;
     }
 }

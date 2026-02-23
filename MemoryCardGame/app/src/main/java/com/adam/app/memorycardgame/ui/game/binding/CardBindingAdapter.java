@@ -15,6 +15,7 @@ public class CardBindingAdapter {
 
     /**
      * Card <==> Boolean
+     *
      * @param view
      * @param card
      */

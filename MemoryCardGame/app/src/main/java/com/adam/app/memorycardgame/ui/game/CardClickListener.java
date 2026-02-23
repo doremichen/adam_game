@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2026 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the CardClickListener class.
  *
  * @author Adam Chen
