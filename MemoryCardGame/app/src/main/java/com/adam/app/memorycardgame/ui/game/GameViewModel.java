@@ -10,6 +10,7 @@
 package com.adam.app.memorycardgame.ui.game;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -23,6 +24,7 @@ import com.adam.app.memorycardgame.data.model.Card;
 import com.adam.app.memorycardgame.data.repository.GameRepository;
 import com.adam.app.memorycardgame.util.CommonUtils;
 import com.adam.app.memorycardgame.util.SettingsManager;
+import com.adam.app.memorycardgame.util.SoundPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +34,6 @@ public class GameViewModel extends AndroidViewModel {
     private static final String TAG = "GameViewModel";
 
     private final GameRepository mRepo = GameRepository.getInstance();
-    private final SettingsManager mSettingsManager;
-
 
     // live data: list of card
     private final MutableLiveData<List<Card>> mLiveDataCards = new MutableLiveData<>();
@@ -42,10 +42,11 @@ public class GameViewModel extends AndroidViewModel {
     private boolean mLockBoard;
     private boolean mIsProcessing;
 
+    private final Context mContext;
+
     public GameViewModel(@NonNull Application application) {
         super(application);
-        mSettingsManager = SettingsManager.getInstance(application);
-
+        mContext = application.getApplicationContext();
         restartGame();
     }
 
@@ -83,8 +84,11 @@ public class GameViewModel extends AndroidViewModel {
         assert oldCards != null;
         for (Card oldCard : oldCards) {
             if (oldCard.getId() == card.getId()) {
+                // flip card
                 Card newCard = card.copy();
-                newCard.setCardState(Card.CardState.FACE_UP);
+                Card.CardState newCardState = Card.CardState.FACE_UP;
+                newCardState.playSound(mContext);
+                newCard.setCardState(newCardState);
                 newCards.add(newCard);
 
                 if (mFirstCard == null) {
@@ -125,12 +129,9 @@ public class GameViewModel extends AndroidViewModel {
 
                         if (c.getId() == mFirstCard.getId() ||
                             c.getId() == card.getId()) {
-
-                            if (isMatched) {
-                                copyCard.setCardState(Card.CardState.MATCHED);
-                            } else {
-                                copyCard.setCardState(Card.CardState.FACE_DOWN);
-                            }
+                            Card.CardState newCardState = (isMatched)? Card.CardState.MATCHED: Card.CardState.FACE_DOWN;
+                            newCardState.playSound(mContext);
+                            copyCard.setCardState(newCardState);
                         }
 
                         newList.add(copyCard);

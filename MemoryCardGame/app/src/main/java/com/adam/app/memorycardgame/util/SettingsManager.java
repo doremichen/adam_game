@@ -14,7 +14,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 public class SettingsManager {
-    private static SettingsManager sIinstance;
+    private static volatile SettingsManager sIinstance;
     private SharedPreferences mPrefs;
 
     // setting: enable sound

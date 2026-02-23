@@ -8,11 +8,15 @@
  */
 package com.adam.app.memorycardgame.data.model;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
 import com.adam.app.memorycardgame.R;
+import com.adam.app.memorycardgame.util.SettingsManager;
+import com.adam.app.memorycardgame.util.SoundPlayer;
 
 public class Card extends BaseObservable {
     // id
@@ -66,21 +70,55 @@ public class Card extends BaseObservable {
             public int getResId(Card card) {
                 return card.getImgResId();
             }
+            @Override
+            public void playSound(Context context) {
+                SettingsManager settings = SettingsManager.getInstance(context);
+                if (!settings.isSoundEnabled()) {
+                    return;
+                }
+                // play flip sound
+                SoundPlayer.getInstance(context).playFlipSound();
+            }
         },
         FACE_DOWN {
             @Override
             public int getResId(Card card) {
                 return R.drawable.card_back;
             }
+
+            @Override
+            public void playSound(Context context) {
+                SettingsManager settings = SettingsManager.getInstance(context);
+                if (!settings.isSoundEnabled()) {
+                    return;
+                }
+                // play flip sound
+                SoundPlayer.getInstance(context).playFlipSound();
+            }
+
         },
         MATCHED {
             @Override
             public int getResId(Card card) {
                 return R.drawable.card_empty;
             }
+
+            @Override
+            public void playSound(Context context) {
+                SettingsManager settings = SettingsManager.getInstance(context);
+                if (!settings.isSoundEnabled()) {
+                    return;
+                }
+
+                // play match sound
+                SoundPlayer.getInstance(context).playMatchSound();
+            }
+
         };
 
         public abstract int getResId(Card card);
+
+        public abstract void playSound(Context context);
     }
 
     @Override
