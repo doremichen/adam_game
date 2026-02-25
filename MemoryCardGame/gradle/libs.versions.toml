@@ -30,4 +30,5 @@ preference = { group = "androidx.preference", name = "preference", version.ref =
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+navigation-safe-args = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationVersion" }
 

@@ -21,7 +21,11 @@
     <fragment
         android:id="@+id/gameFragment"
         android:name="com.adam.app.memorycardgame.ui.game.GameFragment"
-        android:label="Game"/>
+        android:label="Game">
+        <action
+            android:id="@+id/action_gameFragment_to_gameResultFragment"
+            app:destination="@id/gameResultFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.adam.app.memorycardgame.ui.setting.SettingFragment"
@@ -30,6 +34,18 @@
         android:id="@+id/aboutFragment"
         android:name="com.adam.app.memorycardgame.ui.about.AboutFragment"
         android:label="About"/>
-
-
+    <fragment
+        android:id="@+id/gameResultFragment"
+        android:name="com.adam.app.memorycardgame.ui.game.GameResultFragment"
+        android:label="Game Result">
+        <argument
+            android:name="playTime"
+            app:argType="long"/>
+        <argument
+            android:name="matchCount"
+            app:argType="integer"/>
+        <argument
+            android:name="theme"
+            app:argType="string"/>
+    </fragment>
 </navigation>

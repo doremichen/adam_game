@@ -18,5 +18,11 @@
     <string name="memory_card_game_setting_theme">Theme Mode</string>
     <string name="memory_card_game_sound_enable">Game sound effects enabled</string>
     <string name="memory_card_game_sound_disable">Game sound effects disabled</string>
+    <string name="memory_card_game_dlg_title">Exit Game</string>
+    <string name="memory_card_game_dlg_message">The game isn\'t over yet, are you sure you want to leave ?</string>
+    <string name="memory_card_game_label_time">Time: %1$d</string>
+    <string name="memory_card_game_label_matches">Matches: %1$d</string>
+    <string name="memory_card_game_label_theme_mode">Theme mode: %1$s</string>
+    <string name="memory_card_game_btn_exit_game">Exit Game</string>
 
 </resources>
