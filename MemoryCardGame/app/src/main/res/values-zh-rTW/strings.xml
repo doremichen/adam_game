@@ -19,10 +19,14 @@
     <string name="memory_card_game_sound_disable">遊戲音效已關閉</string>
     <string name="memory_card_game_dlg_title">離開遊戲</string>
     <string name="memory_card_game_dlg_message">遊戲尚未結束，確定要離開嗎？</string>
-    <string name="memory_card_game_label_time">時間: %1$d</string>
+    <string name="memory_card_game_label_time">時間: %1$d 秒</string>
     <string name="memory_card_game_label_matches">配對: %1$d</string>
     <string name="memory_card_game_label_theme_mode">主題: %1$s</string>
     <string name="memory_card_game_btn_exit_game">離開遊戲</string>
     <string name="memory_card_game_tv_version">版本 1.0.0</string>
     <string name="memory_card_game_about_title">關於</string>
+    <string name="memory_card_game_game_result">遊戲結果</string>
+    <string name="memory_card_game_play_time">遊戲時間</string>
+    <string name="memory_card_game_match_number">配對次數</string>
+    <string name="memory_card_game_theme_mode">主題模式</string>
 </resources>

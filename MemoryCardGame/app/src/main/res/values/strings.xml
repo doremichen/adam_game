@@ -20,11 +20,15 @@
     <string name="memory_card_game_sound_disable">Game sound effects disabled</string>
     <string name="memory_card_game_dlg_title">Exit Game</string>
     <string name="memory_card_game_dlg_message">The game isn\'t over yet, are you sure you want to leave ?</string>
-    <string name="memory_card_game_label_time">Time: %1$d</string>
+    <string name="memory_card_game_label_time">Time: %1$d sec</string>
     <string name="memory_card_game_label_matches">Matches: %1$d</string>
     <string name="memory_card_game_label_theme_mode">Theme mode: %1$s</string>
     <string name="memory_card_game_btn_exit_game">Exit Game</string>
     <string name="memory_card_game_tv_version">Version 1.0.0</string>
     <string name="memory_card_game_about_title">About</string>
+    <string name="memory_card_game_game_result">Game Result</string>
+    <string name="memory_card_game_play_time">Play Time</string>
+    <string name="memory_card_game_match_number">Match Number</string>
+    <string name="memory_card_game_theme_mode">Theme Mode</string>
 
 </resources>
