@@ -9,10 +9,13 @@ package com.adam.app.memorycardgame.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.graphics.shapes.Utils;
 
 import com.adam.app.memorycardgame.R;
 
@@ -20,6 +23,10 @@ public abstract class CommonUtils {
 
     // TAG
     private static final String TAG = "MemoryCardGame";
+    public static final long TOAST_SHOW_TIME = 2000L;
+    private static String sLastShowMsg;
+    private static long sLastShowTime;
+    private static Toast sToast;
 
     private CommonUtils() {
         throw new IllegalStateException("Utility class");
@@ -45,17 +52,56 @@ public abstract class CommonUtils {
      * @param msg     message
      */
     public static void showToast(Context context, String msg) {
-        // check main thread
-        if (Thread.currentThread() != Looper.getMainLooper().getThread()) {
+        // input null check
+        if (context == null || msg == null) {
+            return;
+        }
+
+        // get application context
+        Context appContext = context.getApplicationContext();
+
+        // check main looper
+        if (Looper.myLooper() != Looper.getMainLooper()) {
             // switch to main loop
             new Handler(Looper.getMainLooper()).post(() -> {
-                // show toast
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                executeShow(appContext, msg);
             });
             return;
         }
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+
+        executeShow(appContext, msg);
+
     }
+
+
+    /**
+     * execute show toast
+     *
+     * @param context Context
+     * @param msg message
+     */
+    private static void executeShow(Context context, String msg) {
+        synchronized (Utils.class) {
+            long currentTime = System.currentTimeMillis();
+            // do not show if the time is less than 2 seconds
+            if (msg.equals(sLastShowMsg) && currentTime - sLastShowTime < TOAST_SHOW_TIME) {
+                return;
+            }
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                if (sToast != null) {
+                    sToast.cancel();
+                    sToast = null;
+                }
+            }
+
+            sToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+            sToast.show();
+            sLastShowMsg = msg;
+            sLastShowTime = currentTime;
+        }
+    }
+
 
 
 
