@@ -65,7 +65,6 @@ public class GameViewModel extends AndroidViewModel {
     }
 
 
-
     public void restartGame() {
         CommonUtils.log(TAG + "restartGame");
         List<Card> cards = mRepo.createNewGame();

@@ -27,6 +27,7 @@ public class SettingsManager {
 
     /**
      * Singleton
+     *
      * @param ctx Context
      * @return SettingsManager
      */

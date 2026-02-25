@@ -24,7 +24,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.adam.app.memorycardgame.R;
@@ -35,11 +34,9 @@ import com.adam.app.memorycardgame.util.CommonUtils;
 
 public class GameFragment extends Fragment implements CardClickListener {
 
+    public static final String Key_ACTION_RESTART = "action_restart";
     //  TAG
     private static final String TAG = "GameFragment";
-
-    public static final String Key_ACTION_RESTART = "action_restart";
-
     private GameViewModel mViewModel;
 
     // view binding
@@ -76,7 +73,6 @@ public class GameFragment extends Fragment implements CardClickListener {
         setupBackPressedHandler();
         setupSaveState(view);
     }
-
 
 
     @Override

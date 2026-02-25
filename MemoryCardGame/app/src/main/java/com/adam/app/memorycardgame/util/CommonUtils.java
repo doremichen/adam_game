@@ -21,9 +21,9 @@ import com.adam.app.memorycardgame.R;
 
 public abstract class CommonUtils {
 
+    public static final long TOAST_SHOW_TIME = 2000L;
     // TAG
     private static final String TAG = "MemoryCardGame";
-    public static final long TOAST_SHOW_TIME = 2000L;
     private static String sLastShowMsg;
     private static long sLastShowTime;
     private static Toast sToast;
@@ -78,7 +78,7 @@ public abstract class CommonUtils {
      * execute show toast
      *
      * @param context Context
-     * @param msg message
+     * @param msg     message
      */
     private static void executeShow(Context context, String msg) {
         synchronized (Utils.class) {
@@ -101,36 +101,6 @@ public abstract class CommonUtils {
             sLastShowTime = currentTime;
         }
     }
-
-
-
-
-    public static class DialogButtonContent {
-        private final String mLabel;
-        private final onPressListener mListener;
-
-        /**
-         * constructor
-         */
-        public DialogButtonContent(String label, onPressListener listener) {
-            mLabel = label;
-            mListener = listener;
-        }
-
-        public String getLabel() {
-            return mLabel;
-        }
-
-        public onPressListener getListener() {
-            return mListener;
-        }
-
-        public interface onPressListener {
-            void onPress();
-        }
-
-    }
-
 
     /**
      * show alert dialog
@@ -171,6 +141,32 @@ public abstract class CommonUtils {
      */
     public static void showUnImplementedToast(Context context) {
         showToast(context, context.getString(R.string.memory_card_game_not_implemented));
+    }
+
+    public static class DialogButtonContent {
+        private final String mLabel;
+        private final onPressListener mListener;
+
+        /**
+         * constructor
+         */
+        public DialogButtonContent(String label, onPressListener listener) {
+            mLabel = label;
+            mListener = listener;
+        }
+
+        public String getLabel() {
+            return mLabel;
+        }
+
+        public onPressListener getListener() {
+            return mListener;
+        }
+
+        public interface onPressListener {
+            void onPress();
+        }
+
     }
 
 }

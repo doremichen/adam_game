@@ -9,24 +9,21 @@
  */
 package com.adam.app.memorycardgame.ui.game;
 
-import androidx.activity.OnBackPressedCallback;
-import androidx.lifecycle.SavedStateHandle;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavBackStackEntry;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.adam.app.memorycardgame.R;
+import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.SavedStateHandle;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+
 import com.adam.app.memorycardgame.databinding.FragmentGameResultBinding;
 import com.adam.app.memorycardgame.util.CommonUtils;
 
@@ -108,7 +105,7 @@ public class GameResultFragment extends Fragment {
 
                         SavedStateHandle savedStateHandle =
                                 previousBackStackEntry
-                                .getSavedStateHandle();
+                                        .getSavedStateHandle();
                         // set saved state true
                         savedStateHandle.set(GameFragment.Key_ACTION_RESTART, true);
                         // pop back stack

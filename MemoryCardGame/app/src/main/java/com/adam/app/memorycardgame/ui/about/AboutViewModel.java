@@ -24,6 +24,7 @@ public class AboutViewModel extends ViewModel {
 
     /**
      * set about text
+     *
      * @param text about text
      */
     public void setAboutText(String text) {
