@@ -75,7 +75,12 @@ This repository contains a complete educational-level architecture following:
 +---------------------------+
 |   Room Database Storage   |
 +---------------------------+
-📦 Project Structure
+
+# 📦 Architecture Overview
+
+## 📦 Project Structure
+
+```text
 ArenaMiniFight/
 └── app/
     ├── java/com/arena/app/
@@ -103,9 +108,9 @@ ArenaMiniFight/
         ├── xml/
         └── navigation/
 
-📘 Use Case Overview
+# 📘 Use Case Overview
 
-🟦 Version 1 — Basic UC
+## 🟦 Version 1 — Basic UC
 
 UC-01 Start Game
 
@@ -121,7 +126,7 @@ UC-06 Sync Other Players
 
 UC-07 Background Service Maintains Connection
 
-🟩 Version 2 — Battle UC
+## 🟩 Version 2 — Battle UC
 
 UC-08 Attack
 
@@ -131,7 +136,7 @@ UC-10 HP Reduction
 
 UC-11 End Game (Result Screen)
 
-🟥 Version 3 — Full Arena UC
+## 🟥 Version 3 — Full Arena UC
 
 UC-12 Create Room
 
@@ -143,8 +148,9 @@ UC-15 AI Movement (JNI)
 
 UC-16 Save Replay (Room DB)
 
-🧩 Domain Model (Entities)
+# 🧩 Domain Model (Entities)
 
+```text
 classDiagram
     class Player {
         +id: String
@@ -176,7 +182,8 @@ classDiagram
         +isBattleStarted: boolean
     }
 
-🧠 Analysis Model
+# 🧠 Analysis Model
+```text
 classDiagram
     class NetworkService {
         +connect()
@@ -200,8 +207,10 @@ classDiagram
         +calculatePath()
     }
 
-🏛 Design Model — Sample Sequence
-Attack → Projectile → Collision (JNI)
+# 🏛 Design Model — Sample Sequence
+
+## Attack → Projectile → Collision (JNI)
+```text
 sequenceDiagram
     actor Player
     Player ->> GameViewModel: onAttack()
@@ -214,51 +223,36 @@ sequenceDiagram
     JNIEngine ->> GameState: applyDamage()
     GameState ->> GameView: refresh UI
 
-🔧 Build & Run
-Android Studio Requirements
+# 🔧 Build & Run
+* Android Studio Requirements
+* Android Studio Giraffe / Hedgehog / Iguana 以上
+* NDK installed
+* CMake enabled
 
-Android Studio Giraffe / Hedgehog / Iguana 以上
+## Build Steps
 
-NDK installed
+1. git clone https://github.com/doremichen/adam_game.git
+2. open with Android Studio
+3. select ArenaMiniFight project
+4. Build > Make Project
+5. Run on device
 
-CMake enabled
+# 🗺 Roadmap
+## Version 1
+* Chat
+* Movement
+* WebSocket Service
+* Mini map
 
-Build Steps
-git clone https://github.com/doremichen/adam_game.git
-open with Android Studio
-select ArenaMiniFight project
-Build > Make Project
-Run on device
+## Version 2
+* Projectiles
+* JNI collision detection
+* HP
+* Result screen
 
-🗺 Roadmap
-Version 1
-
-Chat
-
-Movement
-
-WebSocket Service
-
-Mini map
-
-Version 2
-
-Projectiles
-
-JNI collision detection
-
-HP
-
-Result screen
-
-Version 3
-
-Matching
-
-AI bot (JNI)
-
-Replay DB
-
-Combat Skills
-
-Multi-room server
+## Version 3
+* Matching
+* AI bot (JNI)
+* Replay DB
+* Combat Skills
+* Multi-room server
