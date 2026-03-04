@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/lobbyFragment">
+
+    <fragment
+        android:id="@+id/lobbyFragment"
+        android:name="com.adam.app.arenaminifight.ui.lobby.LoobyFragment"
+        android:label="Lobby">
+        <action
+            android:id="@+id/action_lobbyFragment_to_roomFragment"
+            app:destination="@id/roomFragment"
+            app:popUpTo="@id/lobbyFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.adam.app.arenaminifight.ui.game.GameFragment"
+        android:label="Game">
+    </fragment>
+
+    <fragment
+        android:id="@+id/resultFragment"
+        android:name="com.adam.app.arenaminifight.ui.result.ResultFragment"
+        android:label="Result">
+    </fragment>
+
+    <fragment
+        android:id="@+id/roomFragment"
+        android:name="com.adam.app.arenaminifight.ui.room.RoomFragment"
+        android:label="Room">
+        <action
+            android:id="@+id/action_roomFragment_to_gameFragment"
+            app:destination="@id/gameFragment"
+            app:popUpTo="@id/roomFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+</navigation>

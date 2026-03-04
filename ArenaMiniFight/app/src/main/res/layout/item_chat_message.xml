@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="chatMessage" type="com.adam.app.arenaminifight.domain.model.ChatMessage" />
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{chatMessage.senderName}"
+            android:textStyle="bold"
+            android:textColor="?android:attr/textColorPrimary"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{chatMessage.message}"
+            android:textSize="16sp"
+            android:textColor="?android:attr/textColorPrimary"/>
+    </LinearLayout>
+</layout>

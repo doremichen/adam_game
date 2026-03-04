@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">ArenaMiniFight</string>
+    <string name="arenaminifight_game_unimplemented_info">Unimplemented</string>
+    <string name="arenaminifight">ArenaMiniFight</string>
+    <string name="arenaminifight_game_synching_data">Sych Data ...</string>
+    <string name="arenaminifight_game_lobby_title">Lobby</string>
+    <string name="arenaminifight_game_start_game">Start Game</string>
+    <string name="arenaminifight_game_hint_edit">Type a message...</string>
+    <string name="arenaminifight_game_send_btn">Send</string>
 </resources>
