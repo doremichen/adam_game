@@ -60,8 +60,7 @@ This repository contains a complete educational-level architecture following:
 +---------------------------+
 |  Service Layer (Java)     |
 |  - NetworkService         |
-|  - ChatService            |
-|  - MovementService        |
+|  - GameService            |
 +-------------+-------------+
               |
               v

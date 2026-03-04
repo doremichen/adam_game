@@ -49,6 +49,10 @@ public class GameRepository {
         return Helper.INSTANCE;
     }
 
+    public void doneCheckLogin() {
+        mIsBind.setValue(false);
+    }
+
     private static class Helper {
         private static final GameRepository INSTANCE = new GameRepository(GameApplication.Helper.getInstance().get());
     }
@@ -128,8 +132,6 @@ public class GameRepository {
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
 }

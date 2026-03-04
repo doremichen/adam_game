@@ -21,7 +21,7 @@ import java.util.List;
 public final class GameUtil {
 
     // TAG
-    private static final String TAG = "Debug";
+    private static final String TAG = "DebugGame";
 
     private GameUtil() {
         throw new AssertionError("No instances.");

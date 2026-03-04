@@ -65,7 +65,7 @@ public class LoobyFragment extends Fragment {
         mBinding.setVm(mViewModel);
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
 
-        observerReady();
+//        observerReady();
         observerChatList();
         observerNavigateToGame();
         observerInputEvent();
@@ -104,16 +104,16 @@ public class LoobyFragment extends Fragment {
         builder.show();
     }
 
-    private void observerReady() {
-        mViewModel.isReady().observe(getViewLifecycleOwner(), this::onGameReady);
-    }
+//    private void observerReady() {
+//        mViewModel.isReady().observe(getViewLifecycleOwner(), this::onGameReady);
+//    }
 
-    private void onGameReady(Boolean isReady) {
-        // update send button
-        mBinding.btnSendChat.setEnabled(isReady);
-        // update start button
-        mBinding.btnStartGame.setAlpha(isReady ? 1.0f : 0.5f);
-    }
+//    private void onGameReady(Boolean isReady) {
+//        // update send button
+//        mBinding.btnSendChat.setEnabled(isReady);
+//        // update start button
+//        mBinding.btnStartGame.setAlpha(isReady ? 1.0f : 0.5f);
+//    }
 
     private void observerNavigateToGame() {
         mViewModel.getNavigateToGame().observe(getViewLifecycleOwner(), this::navigateToGame);
@@ -121,7 +121,10 @@ public class LoobyFragment extends Fragment {
         mViewModel.doneNavigating();
     }
 
-    private void navigateToGame(Boolean aBoolean) {
+    private void navigateToGame(Boolean toGame) {
+        if (!toGame) {
+            return;
+        }
         // navigate to game view
         GameUtil.showUnImplementedToast(this.getContext());
     }

@@ -45,15 +45,15 @@ public class LoobyViewModel extends ViewModel {
     }
 
     public LoobyViewModel() {
-        // bind game service
-        mGameRepository.bindGameService();
+        // bind game service to welcome view
+        //mGameRepository.bindGameService();
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
         // unbind game service
-        mGameRepository.unbindGameService();
+        //mGameRepository.unbindGameService();
     }
 
     public LiveData<Boolean> isReady() {
