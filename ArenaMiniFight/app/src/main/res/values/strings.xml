@@ -10,4 +10,5 @@
     <string name="arenaminifight_game_connecting_to_arena_service">Connecting to Arena Service...</string>
     <string name="arenaminifight_game_login_failed">Login failed</string>
     <string name="arenaminifight_game_login_success">Login success</string>
+    <string name="arenaminifight_game_exit">Exit</string>
 </resources>

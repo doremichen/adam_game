@@ -19,6 +19,7 @@ import android.os.RemoteException;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.arenaminifight.data.service.NativeEngine;
 import com.adam.app.arenaminifight.domain.model.ChatMessage;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
@@ -30,7 +31,6 @@ public class GameService extends Service {
     public static final int UC_SEND_CHAT = 0;
     public static final int UC_SYNC_CHAT = 1;
     public static final int UC_MOVE_PLAYER = 2;
-
 
     private final Messenger mInComingHandler = new Messenger(new SvrHandler());
 
@@ -56,7 +56,6 @@ public class GameService extends Service {
     public void onDestroy() {
         super.onDestroy();
         GameUtil.log(TAG + ": onDestroy");
-
     }
 
     /**
@@ -71,8 +70,13 @@ public class GameService extends Service {
         private final NetworkService mNetworkService = NetworkService.getInstance();
         private Messenger mClientMessenger;
 
+        // native engine
+        private NativeEngine mNativeEngine;
+
+
         public SvrHandler() {
             super(Looper.getMainLooper());
+            mNativeEngine = new NativeEngine();
         }
 
         @Override
@@ -90,7 +94,11 @@ public class GameService extends Service {
                     mNetworkService.sentChatToServer(chat, this::onMessageReceived);
                     break;
                 case UC_MOVE_PLAYER:
-                    // TODO: 執行 UC-05: 同步座標
+                    // position
+                    float x = msg.arg1/100f;
+                    float y = msg.arg2/100f;
+                    // Call JNI Engine for collision detection and location update
+                    mNativeEngine.updatePlayerPosition("LOCAL_PLAYER", x, y);
                     break;
                 default:
                     super.handleMessage(msg);

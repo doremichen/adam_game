@@ -19,8 +19,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.adam.app.arenaminifight.R;
 import com.adam.app.arenaminifight.databinding.FragmentLoobyBinding;
 import com.adam.app.arenaminifight.domain.model.ChatMessage;
 import com.adam.app.arenaminifight.utils.GameUtil;
@@ -126,7 +128,7 @@ public class LoobyFragment extends Fragment {
             return;
         }
         // navigate to game view
-        GameUtil.showUnImplementedToast(this.getContext());
+        Navigation.findNavController(requireView()).navigate(R.id.action_lobby_to_game);
     }
 
     private void observerChatList() {

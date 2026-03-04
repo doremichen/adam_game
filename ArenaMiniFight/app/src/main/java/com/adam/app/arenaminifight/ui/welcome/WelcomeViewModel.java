@@ -29,8 +29,4 @@ public class WelcomeViewModel extends ViewModel {
     public LiveData<Boolean> getIsLoginSuccess() {
         return mRepository.isReady();
     }
-
-    public void doneCheckLogin() {
-        mRepository.doneCheckLogin();
-    }
 }

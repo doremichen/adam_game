@@ -19,8 +19,8 @@
         android:name="com.adam.app.arenaminifight.ui.lobby.LoobyFragment"
         android:label="Lobby">
         <action
-            android:id="@+id/action_lobbyFragment_to_roomFragment"
-            app:destination="@id/roomFragment"
+            android:id="@+id/action_lobby_to_game"
+            app:destination="@id/gameFragment"
             app:popUpTo="@id/lobbyFragment"
             app:popUpToInclusive="true"/>
     </fragment>
@@ -41,10 +41,5 @@
         android:id="@+id/roomFragment"
         android:name="com.adam.app.arenaminifight.ui.room.RoomFragment"
         android:label="Room">
-        <action
-            android:id="@+id/action_roomFragment_to_gameFragment"
-            app:destination="@id/gameFragment"
-            app:popUpTo="@id/roomFragment"
-            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

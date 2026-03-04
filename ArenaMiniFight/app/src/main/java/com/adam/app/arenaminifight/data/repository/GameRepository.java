@@ -49,10 +49,6 @@ public class GameRepository {
         return Helper.INSTANCE;
     }
 
-    public void doneCheckLogin() {
-        mIsBind.setValue(false);
-    }
-
     private static class Helper {
         private static final GameRepository INSTANCE = new GameRepository(GameApplication.Helper.getInstance().get());
     }
@@ -131,6 +127,27 @@ public class GameRepository {
             mGameServiceCallback = callback;
         } catch (RemoteException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * move player
+     * @param x
+     * @param y
+     */
+    public void movePlayer(float x, float y) {
+        // check service
+        if (Boolean.FALSE.equals(mIsBind.getValue())) {
+            throw new IllegalStateException("Service not connected");
+        }
+
+        try {
+            Message msg = Message.obtain(null, GameService.UC_MOVE_PLAYER);
+            msg.arg1 = (int) (x*100);
+            msg.arg2 = (int) (y*100);
+            mSvrMessenger.send(msg);
+        } catch (RemoteException e) {
+            GameUtil.log(TAG + ": move player failed");
         }
     }
 
