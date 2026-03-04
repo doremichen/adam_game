@@ -12,6 +12,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#000000"
         tools:context=".ui.game.GameFragment">
 
         <com.adam.app.arenaminifight.ui.game.GameSurfaceView
@@ -23,28 +24,70 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvPlayerStatus"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideHUD"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:background="#80000000"
-            android:padding="8dp"
-            android:text="@{vm.playerStatus}"
-            android:textColor="@android:color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Player: (100, 200)" />
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="40dp" />
 
-        <Button
-            android:id="@+id/btnExitGame"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/statusCard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="Exit"
+            android:layout_marginStart="16dp"
+            app:cardBackgroundColor="#AA222222"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#80BB86FC"
+            app:strokeWidth="1dp"
+            app:layout_constraintTop_toTopOf="@id/guideHUD"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="6dp">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:src="@android:drawable/presence_online"
+                    app:tint="#BB86FC" />
+
+                <TextView
+                    android:id="@+id/tvPlayerStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:fontFamily="monospace"
+                    android:text="@{vm.playerStatus}"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    tools:text="POS: 100, 200" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExitGame"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="EXIT"
+            android:textColor="#BB86FC"
+            android:textSize="12sp"
             android:onClick="@{() -> vm.onExitClicked()}"
+            app:cornerRadius="20dp"
+            app:strokeColor="#BB86FC"
+            app:strokeWidth="1dp"
+            app:layout_constraintBottom_toBottomOf="@id/statusCard"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@id/statusCard" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
