@@ -24,6 +24,7 @@ import com.adam.app.arenaminifight.ui.game.engine.GameLoopManager;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
@@ -41,7 +42,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
 
     // Players
-    private List<Player> mPlayers = new ArrayList<>();
+    private List<Player> mPlayers = Collections.synchronizedList(new ArrayList<>());
 
     public GameSurfaceView(Context context) {
         super(context);
@@ -89,27 +90,36 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void run() {
-        // surface holder valid check
-        if (!mSurfaceHolder.getSurface().isValid()) {
-            return;
-        }
 
-        // draw
-        Canvas canvas = null;
         try {
-            canvas = mSurfaceHolder.lockCanvas();
+            // surface holder valid check
+            if (!mSurfaceHolder.getSurface().isValid()) {
+                return;
+            }
+
             // draw
-            if (canvas != null) {
-                synchronized (SurfaceHolder.class) {
-                    // draw
-                    drawPlayers(canvas);
+            Canvas canvas = null;
+            try {
+                canvas = mSurfaceHolder.lockCanvas();
+                // draw
+                if (canvas != null) {
+                    canvas.drawColor(Color.BLACK); // clear screen
+                    synchronized (SurfaceHolder.class) {
+                        // draw
+                        drawPlayers(canvas);
+                    }
+                }
+            } finally {
+                if (canvas != null) {
+                    mSurfaceHolder.unlockCanvasAndPost(canvas);
                 }
             }
-        } finally {
-            if (canvas != null) {
-                mSurfaceHolder.unlockCanvasAndPost(canvas);
-            }
+        } catch (Exception e) {
+            // 重要：捕獲異常，防止 Executor 停止運作
+            GameUtil.log(TAG + ": Loop Error: " + e.getMessage());
         }
+
+
     }
 
     public void updatePlayers(List<Player> players) {
@@ -125,8 +135,16 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         // draw all player
         for (Player player : mPlayers) {
+
+            if (player == null) continue; // skip null player
+
             PointF pos = player.getPosition();
+            String name = player.getName();
             if (pos == null) continue;
+            if (name == null) name = "Loading..."; // set default name
+
+            // draw player
+            mPlayerPaint.setColor(Color.BLUE);
 
             // player paint
             canvas.drawCircle(pos.x, pos.y, 30f, mPlayerPaint);

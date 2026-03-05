@@ -26,6 +26,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.adam.app.arenaminifight.GameApplication;
 import com.adam.app.arenaminifight.domain.model.ChatMessage;
+import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.service.GameService;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
@@ -63,22 +64,42 @@ public class GameRepository {
         void onMessageReceived(ChatMessage chatMessage);
     }
 
+    public interface Callback<T> {
+        void onResult(T result);
+    }
+
+    private Callback<Player> mCallback;
+
+
     private GameServiceCallback mGameServiceCallback;
 
     private Messenger mSvrMessenger;
     private Messenger mClientMessenger = new Messenger(new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            if (msg.what == GameService.UC_SYNC_CHAT) {
-                if (mGameServiceCallback == null) {
-                    GameUtil.log(TAG + ": no callback!!!");
-                    return;
-                }
 
-                ChatMessage chatMessage = (ChatMessage) msg.obj;
-                mGameServiceCallback.onMessageReceived(chatMessage);
+            switch (msg.what) {
+                case GameService.UC_SYNC_CHAT:
+                    if (mGameServiceCallback == null) {
+                        GameUtil.log(TAG + ": no callback!!!");
+                        return;
+                    }
+
+                    ChatMessage chatMessage = (ChatMessage) msg.obj;
+                    mGameServiceCallback.onMessageReceived(chatMessage);
+                    break;
+                case GameService.UC_NEW_PLAYER:
+                    Player player = msg.getData().getParcelable("player_data", Player.class);
+                    GameUtil.log(TAG + ": new player: " + player.getName());
+                    // callback to game view model
+                    if (mCallback != null) {
+                        mCallback.onResult(player);
+                    }
+                    break;
+                default:
+                    super.handleMessage(msg);
             }
-            super.handleMessage(msg);
+
         }
     });
 
@@ -126,7 +147,29 @@ public class GameRepository {
             mSvrMessenger.send(msg);
             mGameServiceCallback = callback;
         } catch (RemoteException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Send chat failed");
+        }
+    }
+
+    public void spawnPlayer(String name, Callback<Player> callback) {
+
+        if (Boolean.FALSE.equals(mIsBind.getValue())) {
+            throw new IllegalStateException("Service not connected");
+        }
+
+        mCallback = callback;
+
+        // invoke service initial player
+        try {
+            Message msg = Message.obtain(null, GameService.UC_SPAWN_PLAYER);
+            Bundle data = new Bundle();
+            data.putString("name", name);
+            msg.setData(data);
+
+            msg.replyTo = mClientMessenger;
+            mSvrMessenger.send(msg);
+        } catch (RemoteException e) {
+            throw new RuntimeException("Spawn player failed");
         }
     }
 

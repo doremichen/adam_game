@@ -40,7 +40,7 @@ public class GameViewModel extends ViewModel {
         return mExitEvent;
     }
 
-    private final GameRepository nmRepository = GameRepository.getInstance();
+    private final GameRepository mRepository = GameRepository.getInstance();
 
     public void onExitClicked() {
         GameUtil.log(TAG + ": onExitClicked()");
@@ -50,12 +50,35 @@ public class GameViewModel extends ViewModel {
     public void updatePlayerMove(float x, float y) {
         GameUtil.log(TAG + ": updatePlayerMove(" + x + ", " + y + ")");
         mPlayerStatus.setValue(String.format("(%.1f, %.1f)", x, y));
-        nmRepository.movePlayer(x, y);
+        mRepository.movePlayer(x, y);
     }
 
     public void setPlayerStatus(String status) {
         GameUtil.log(TAG + ": setPlayerStatus(" + status + ")");
         mPlayerStatus.setValue(status);
+    }
+
+    public void initPlayerFromJni(String playerName) {
+        GameUtil.log(TAG + ": initPlayerFromJni(" + playerName + ")");
+        mRepository.spawnPlayer(playerName, this::onPlayerSpawned);
+    }
+
+    private void onPlayerSpawned(Player player) {
+        GameUtil.log(TAG + ": onPlayerSpawned(" + player + ")");
+        if (player == null) {
+            return;
+        }
+
+        // update players
+        List<Player> currentList = mPlayers.getValue();
+        if (currentList == null) {
+            currentList = new ArrayList<>();
+        }
+        currentList.add(player);
+        mPlayers.setValue(currentList);
+
+        // update player status
+        setPlayerStatus(String.format("(%.1f, .1%f)", player.getX(), player.getY()));
     }
 
 }

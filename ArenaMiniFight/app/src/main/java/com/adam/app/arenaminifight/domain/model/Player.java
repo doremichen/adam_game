@@ -88,4 +88,12 @@ public class Player implements Parcelable {
     public int getHp() {
         return mHp;
     }
+
+    public Float getX() {
+        return mPosition.x;
+    }
+
+    public Float getY() {
+        return mPosition.y;
+    }
 }

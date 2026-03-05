@@ -1,6 +1,6 @@
 /**
  * Copyright 2023 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the game bound service of the application.
  *
  * @author Adam Chen
@@ -10,6 +10,7 @@ package com.adam.app.arenaminifight.service;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -21,17 +22,18 @@ import androidx.annotation.NonNull;
 
 import com.adam.app.arenaminifight.data.service.NativeEngine;
 import com.adam.app.arenaminifight.domain.model.ChatMessage;
+import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
 public class GameService extends Service {
+    // request
+    public static final int UC_SPAWN_PLAYER = 0;
+    public static final int UC_NEW_PLAYER = 1;
+    public static final int UC_SEND_CHAT = 2;
+    public static final int UC_SYNC_CHAT = 3;
+    public static final int UC_MOVE_PLAYER = 4;
     // TAG
     private static final String TAG = "GameService";
-
-    // request
-    public static final int UC_SEND_CHAT = 0;
-    public static final int UC_SYNC_CHAT = 1;
-    public static final int UC_MOVE_PLAYER = 2;
-
     private final Messenger mInComingHandler = new Messenger(new SvrHandler());
 
     @Override
@@ -76,13 +78,34 @@ public class GameService extends Service {
 
         public SvrHandler() {
             super(Looper.getMainLooper());
-            mNativeEngine = new NativeEngine();
+            mNativeEngine = NativeEngine.getInstance();
         }
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             GameUtil.log(HANDLER_TAG + ": handleMessage");
+
+//            boolean result = GameActionType.executeFrom(msg.what, msg);
+//            if (!result) {
+//                super.handleMessage(msg);
+//            }
+
             switch (msg.what) {
+                case UC_SPAWN_PLAYER:
+                    String name = msg.getData().getString("name");
+                    Player player = mNativeEngine.nativeInitializePlayer(name);
+                    // reply to repository
+                    Message reply = Message.obtain(null, UC_NEW_PLAYER);
+                    // build bundle
+                    Bundle data = new Bundle();
+                    data.putParcelable("player_data", player);
+                    reply.setData(data);
+                    try {
+                        msg.replyTo.send(reply);
+                    } catch (RemoteException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
                 case UC_SEND_CHAT:
                     mClientMessenger = msg.replyTo;
                     // get data from bundle
@@ -95,8 +118,8 @@ public class GameService extends Service {
                     break;
                 case UC_MOVE_PLAYER:
                     // position
-                    float x = msg.arg1/100f;
-                    float y = msg.arg2/100f;
+                    float x = msg.arg1 / 100f;
+                    float y = msg.arg2 / 100f;
                     // Call JNI Engine for collision detection and location update
                     mNativeEngine.updatePlayerPosition("LOCAL_PLAYER", x, y);
                     break;

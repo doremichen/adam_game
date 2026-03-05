@@ -1,6 +1,6 @@
 /**
  * Copyright 2023 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the game fragment of the application.
  *
  * @author Adam Chen
@@ -8,24 +8,22 @@
  */
 package com.adam.app.arenaminifight.ui.game;
 
-import androidx.core.view.WindowCompat;
-import androidx.core.view.WindowInsetsControllerCompat;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.adam.app.arenaminifight.R;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.adam.app.arenaminifight.databinding.FragmentGameBinding;
+import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.utils.GameUtil;
+
+import java.util.List;
 
 public class GameFragment extends Fragment {
 
@@ -55,19 +53,17 @@ public class GameFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         GameUtil.log(TAG + ": onViewCreated");
 
-//        // 讓 Fragment 內容延伸到系統狀態欄下方
-//        WindowInsetsControllerCompat windowInsetsController =
-//                WindowCompat.getInsetsController(requireActivity().getWindow(), view);
-//        windowInsetsController.setSystemBarsBehavior(
-//                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-//        // 可選：隱藏狀態欄以達到全螢幕遊戲效果
-//        // windowInsetsController.hide(WindowInsetsCompat.Type.systemBars());
-
         // init view model
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         // data binding
         mBinding.setVm(mViewModel);
         mBinding.setLifecycleOwner(this);
+
+        // init player
+        mViewModel.initPlayerFromJni("abb");
+        // observer players
+        mViewModel.getPlayers().observe(getViewLifecycleOwner(), this::onPlayers);
+
 
         // set touch listener
         mBinding.gameSurfaceView.setOnTouchListener(this::onTouch);
@@ -75,6 +71,11 @@ public class GameFragment extends Fragment {
         // observer exit event
         mViewModel.getExitEvent().observe(getViewLifecycleOwner(), this::onExit);
 
+    }
+
+    private void onPlayers(List<Player> players) {
+        // update players
+        mBinding.gameSurfaceView.updatePlayers(players);
     }
 
     private void onExit(Boolean isExit) {
