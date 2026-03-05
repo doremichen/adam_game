@@ -109,43 +109,42 @@ ArenaMiniFight/
 
 # 📘 Use Case Overview
 
-## 🟦 Version 1 — Basic UC
+🟦 Version 1 — Basic UC
+UC-01 Start Game: 使用者點擊開始按鈕，初始化遊戲環境並進入遊戲流程。
 
-UC-01 Start Game
+UC-02 Auto Login (Guest): 系統自動為使用者建立遊客帳號，無需手動輸入帳密即可快速進入遊戲。
 
-UC-02 Auto Login (Guest)
+UC-03 Enter Lobby Chat: 使用者成功進入大廳，建立與伺服器的 WebSocket 或 Socket 連線。
 
-UC-03 Enter Lobby Chat
+UC-04 Send Chat Message: 使用者在大廳輸入文字並發送，其他在線玩家可即時看見。
 
-UC-04 Send Chat Message
+UC-05 Initialize Player & Spawn (新增): 進入遊戲畫面時，由 JNI 引擎分配初始座標（PointF）與屬性，並在 SurfaceView 繪製出玩家角色。
 
-UC-05 Move Player
+UC-06 Move Player: 點擊螢幕傳送目標座標給 JNI 引擎，計算位移並更新本地玩家位置。
 
-UC-06 Sync Other Players
+UC-07 Sync Other Players: 接收來自 Service 的遠端玩家數據，在畫面上即時繪製其他玩家的圓圈。
 
-UC-07 Background Service Maintains Connection
+UC-08 Background Service Maintains Connection: 當 App 切換至背景時，Android Service 持續維持連線狀態，避免斷線。
 
-## 🟩 Version 2 — Battle UC
+🟩 Version 2 — Battle UC
+UC-09 Attack: 玩家觸發攻擊指令（如點擊角色或攻擊鈕），產生攻擊判定範圍。
 
-UC-08 Attack
+UC-10 Hit Detection (JNI): 由 C++ 引擎高速計算兩個玩家座標是否重疊，判定是否擊中目標。
 
-UC-09 Hit Detection (JNI)
+UC-11 HP Reduction: 當被擊中時，同步更新 Player 物件中的 mHp 數值並反應在血條上。
 
-UC-10 HP Reduction
+UC-12 End Game (Result Screen): 當 HP 歸零或計時結束，結算比賽結果並顯示結算畫面。
 
-UC-11 End Game (Result Screen)
+🟥 Version 3 — Full Arena UC
+UC-13 Create Room: 使用者可以建立自定義房間，等待其他玩家加入。
 
-## 🟥 Version 3 — Full Arena UC
+UC-14 Matchmaking: 系統自動尋找程度相當的對手，並將兩者配對進同一場戰鬥。
 
-UC-12 Create Room
+UC-15 Enter Battle Arena: 切換場景至戰鬥專用競技場地，載入地圖邊界數據。
 
-UC-13 Matchmaking
+UC-16 AI Movement (JNI): 在無人填補空位時，由 JNI 引擎運算 AI 敵人的隨機移動與追逐邏輯。
 
-UC-14 Enter Battle Arena
-
-UC-15 AI Movement (JNI)
-
-UC-16 Save Replay (Room DB)
+UC-17 Save Replay (Room DB): 遊戲結束後將戰鬥軌跡存入 Room 資料庫，供日後回放檢視。
 
 # 🧩 Domain Model (Entities)
 

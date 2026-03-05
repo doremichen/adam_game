@@ -8,6 +8,7 @@
  */
 package com.adam.app.arenaminifight.domain.model;
 
+import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -17,13 +18,13 @@ public class Player implements Parcelable {
 
     private final String mName;
     private final String mPlayerId;
-    private final Float mPosition;
+    private final PointF mPosition;
     private final float mDirection;
     private final int mHp;
 
     public Player(String name,
                   String playerId,
-                  Float position,
+                  PointF position,
                   float direction,
                   int hp) {
         mName = name;
@@ -36,11 +37,7 @@ public class Player implements Parcelable {
     protected Player(Parcel in) {
         mName = in.readString();
         mPlayerId = in.readString();
-        if (in.readByte() == 0) {
-            mPosition = null;
-        } else {
-            mPosition = in.readFloat();
-        }
+        mPosition = in.readParcelable(PointF.class.getClassLoader(), PointF.class);
         mDirection = in.readFloat();
         mHp = in.readInt();
     }
@@ -49,12 +46,7 @@ public class Player implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mName);
         dest.writeString(mPlayerId);
-        if (mPosition == null) {
-            dest.writeByte((byte) 0);
-        } else {
-            dest.writeByte((byte) 1);
-            dest.writeFloat(mPosition);
-        }
+        dest.writeParcelable(mPosition, flags);
         dest.writeFloat(mDirection);
         dest.writeInt(mHp);
     }
@@ -85,7 +77,7 @@ public class Player implements Parcelable {
         return mPlayerId;
     }
 
-    public Float getPosition() {
+    public PointF getPosition() {
         return mPosition;
     }
 

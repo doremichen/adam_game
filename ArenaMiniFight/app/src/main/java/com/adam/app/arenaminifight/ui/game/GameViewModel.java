@@ -13,11 +13,26 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.arenaminifight.data.repository.GameRepository;
+import com.adam.app.arenaminifight.domain.model.Player;
+import com.adam.app.arenaminifight.utils.GameUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameViewModel extends ViewModel {
+    // TAG
+    private static final String TAG = GameViewModel.class.getSimpleName();
+
+    // live data: player status
     private final MutableLiveData<String> mPlayerStatus = new MutableLiveData<>("");
     public LiveData<String> getPlayerStatus() {
         return mPlayerStatus;
+    }
+
+    // live data: players
+    private final MutableLiveData<List<Player>> mPlayers = new MutableLiveData<>(new ArrayList<>());
+    public LiveData<List<Player>> getPlayers() {
+        return mPlayers;
     }
 
     private final MutableLiveData<Boolean> mExitEvent = new MutableLiveData<>(false);
@@ -27,12 +42,20 @@ public class GameViewModel extends ViewModel {
 
     private final GameRepository nmRepository = GameRepository.getInstance();
 
+    public void onExitClicked() {
+        GameUtil.log(TAG + ": onExitClicked()");
+        mExitEvent.setValue(true);
+    }
+
     public void updatePlayerMove(float x, float y) {
+        GameUtil.log(TAG + ": updatePlayerMove(" + x + ", " + y + ")");
         mPlayerStatus.setValue(String.format("(%.1f, %.1f)", x, y));
         nmRepository.movePlayer(x, y);
     }
 
-    public void onExitClicked() {
-        mExitEvent.setValue(true);
+    public void setPlayerStatus(String status) {
+        GameUtil.log(TAG + ": setPlayerStatus(" + status + ")");
+        mPlayerStatus.setValue(status);
     }
+
 }
