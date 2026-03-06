@@ -21,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.arenaminifight.databinding.FragmentGameBinding;
 import com.adam.app.arenaminifight.domain.model.Player;
+import com.adam.app.arenaminifight.utils.GameConstants;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class GameFragment extends Fragment {
         mBinding.setLifecycleOwner(this);
 
         // init player
-        mViewModel.initPlayerFromJni("abb");
+        mViewModel.initPlayerFromJni(GameConstants.DefaultPlayerName);
         // start game
         mViewModel.startGame();
 

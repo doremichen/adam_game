@@ -236,10 +236,12 @@ public class GameRepository {
 
     /**
      * move player
+     *
+     * @param player_id
      * @param x
      * @param y
      */
-    public void movePlayer(float x, float y) {
+    public void movePlayer(String playerId, float x, float y) {
         // check service
         if (Boolean.FALSE.equals(mIsBind.getValue())) {
             throw new IllegalStateException("Service not connected");
@@ -247,8 +249,11 @@ public class GameRepository {
 
         try {
             Message msg = Message.obtain(null, GameService.UC_MOVE_PLAYER);
-            msg.arg1 = (int) (x*100);
-            msg.arg2 = (int) (y*100);
+            Bundle data = new Bundle();
+            data.putString("id", playerId);
+            data.putFloat("x", x);
+            data.putFloat("y", y);
+            msg.setData(data);
             mSvrMessenger.send(msg);
         } catch (RemoteException e) {
             GameUtil.log(TAG + ": move player failed");

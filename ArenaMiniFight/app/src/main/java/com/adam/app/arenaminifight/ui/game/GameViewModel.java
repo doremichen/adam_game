@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.adam.app.arenaminifight.data.repository.GameRepository;
 import com.adam.app.arenaminifight.domain.model.Player;
+import com.adam.app.arenaminifight.utils.GameConstants;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ public class GameViewModel extends ViewModel {
 
     private final GameRepository mRepository = GameRepository.getInstance();
 
+    private String mMainPlayerId = "";
+
     public void onExitClicked() {
         GameUtil.log(TAG + ": onExitClicked()");
         mExitEvent.setValue(true);
@@ -55,8 +58,12 @@ public class GameViewModel extends ViewModel {
 
     public void updatePlayerMove(float x, float y) {
         GameUtil.log(TAG + ": updatePlayerMove(" + x + ", " + y + ")");
+        if (mMainPlayerId.isEmpty()) {
+            return;
+        }
+
         mPlayerStatus.setValue(String.format("(%.1f, %.1f)", x, y));
-        mRepository.movePlayer(x, y);
+        mRepository.movePlayer(mMainPlayerId, x, y);
     }
 
     public void setPlayerStatus(String status) {
@@ -94,6 +101,9 @@ public class GameViewModel extends ViewModel {
     private void onPlayerSpawned(Player player) {
         if (player == null) return;
         GameUtil.log(TAG + ": onPlayerSpawned(" + player.getName() + " @ " + player.getPlayerId() + ")");
+        if (GameConstants.DefaultPlayerName.equals(player.getName())) {
+            mMainPlayerId = player.getPlayerId();
+        }
         // update players
         List<Player> currentList = mPlayers.getValue();
         if (currentList == null) {

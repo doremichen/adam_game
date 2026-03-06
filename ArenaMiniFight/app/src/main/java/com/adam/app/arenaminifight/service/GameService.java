@@ -181,11 +181,12 @@ public class GameService extends Service {
                     mNetworkService.sentChatToServer(chat, this::onMessageReceived);
                     break;
                 case UC_MOVE_PLAYER:
-                    // position
-                    float x = msg.arg1 / 100f;
-                    float y = msg.arg2 / 100f;
+                    Bundle moveData = msg.getData();
+                    String id = moveData.getString("id");
+                    float targetX = moveData.getFloat("x");
+                    float targetY = moveData.getFloat("y");
                     // Call JNI Engine for collision detection and location update
-                    mNativeEngine.updatePlayerPosition("LOCAL_PLAYER", x, y);
+                    mNativeEngine.updatePlayerPosition(id, targetX, targetY);
                     break;
                 case UC_START_GAME:
                     mEngineLoopManager.start();
