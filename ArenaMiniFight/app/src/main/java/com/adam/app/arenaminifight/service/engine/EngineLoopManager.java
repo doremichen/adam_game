@@ -23,16 +23,21 @@ public class EngineLoopManager {
 
 
     public EngineLoopManager(Runnable updateTask) {
-        mExecutorService = Executors.newSingleThreadScheduledExecutor();;
         mUpdateTask = updateTask;
     }
 
 
-    public void start() {
+    public synchronized void start() {
         if (mIsRunning) {
             GameUtil.log(TAG + ": EngineLoopManager is already running");
             return;
         }
+
+        // check if executor service is null
+        if (mExecutorService == null || mExecutorService.isShutdown()) {
+            mExecutorService = Executors.newSingleThreadScheduledExecutor();
+        }
+
         // schedule by 16 ms
         mExecutorService.scheduleWithFixedDelay(mUpdateTask, 0, 16L, java.util.concurrent.TimeUnit.MILLISECONDS);
         mIsRunning = true;
@@ -52,10 +57,12 @@ public class EngineLoopManager {
 
         mExecutorService.shutdown();
         try {
-            if (!mExecutorService.awaitTermination(10, java.util.concurrent.TimeUnit.SECONDS)) {
+            if (!mExecutorService.awaitTermination(500, java.util.concurrent.TimeUnit.SECONDS)) {
                 mExecutorService.shutdownNow();
             }
         } catch (InterruptedException e) {
+            mExecutorService.shutdownNow();
+            Thread.currentThread().interrupt();
 
         }
         mExecutorService = null;

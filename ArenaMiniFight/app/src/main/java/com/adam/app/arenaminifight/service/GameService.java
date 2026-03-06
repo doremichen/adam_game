@@ -156,6 +156,7 @@ public class GameService extends Service {
                         mClientMessengerList.add(msg.replyTo);
 
                     String name = msg.getData().getString("name");
+                    // JNI
                     Player player = mNativeEngine.nativeInitializePlayer(name);
                     // reply to repository
                     Message reply = Message.obtain(null, UC_NEW_PLAYER);

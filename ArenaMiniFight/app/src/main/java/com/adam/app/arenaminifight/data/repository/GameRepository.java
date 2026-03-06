@@ -68,43 +68,49 @@ public class GameRepository {
         void onResult(T result);
     }
 
-    private Callback<Player> mPlayerCallback;
-
-    private Callback<ChatMessage> mGameServiceCallback;
-
+    private Callback<Player> mSpawnCallback;
+    private Callback<ChatMessage> mChatCallback;
     private Callback<List<Player>> mGameStateCallback;
 
     private Messenger mSvrMessenger;
     private Messenger mClientMessenger = new Messenger(new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
-
             switch (msg.what) {
                 case GameService.UC_SYNC_CHAT:
-                    if (mGameServiceCallback == null) {
+                    if (mChatCallback == null) {
                         GameUtil.log(TAG + ": no callback!!!");
                         return;
                     }
 
                     ChatMessage chatMessage = (ChatMessage) msg.obj;
-                    mGameServiceCallback.onResult(chatMessage);
+                    mChatCallback.onResult(chatMessage);
                     break;
                 case GameService.UC_NEW_PLAYER:
-                    Player player = msg.getData().getParcelable("player_data", Player.class);
-                    GameUtil.log(TAG + ": new player: " + player.getName());
-                    // callback to game view model
-                    if (mPlayerCallback != null) {
-                        mPlayerCallback.onResult(player);
+                    if (mSpawnCallback == null) {
+                        GameUtil.log(TAG + ": no callback!!!");
+                        return;
                     }
+                    Player player = msg.getData().getParcelable("player_data", Player.class);
+                    if (player == null) {
+                        GameUtil.log(TAG + ": no player!!!");
+                        return;
+                    }
+                    GameUtil.log(TAG + ": new player: " + player.getName());
+                    mSpawnCallback.onResult(player);
                     break;
                 case GameService.UC_GAME_STATE_UPDATE:
-                    String stateStr = msg.getData().getString("game_state_str");
-                    if (stateStr != null) {
-                        List<Player> updatedPlayers = parseStateString(stateStr);
-                        if (mGameStateCallback != null) {
-                            mGameStateCallback.onResult(updatedPlayers);
-                        }
+                    if (mGameStateCallback == null) {
+                        GameUtil.log(TAG + ": no callback!!!");
+                        return;
                     }
+                    String stateStr = msg.getData().getString("game_state_str");
+                    if (stateStr == null) {
+                       GameUtil.log(TAG + ": no state!!!");
+                       return;
+                    }
+                    List<Player> updatedPlayers = parseStateString(stateStr);
+                    mGameStateCallback.onResult(updatedPlayers);
                     break;
                 default:
                     super.handleMessage(msg);
@@ -169,7 +175,7 @@ public class GameRepository {
 
             msg.replyTo = mClientMessenger;
             mSvrMessenger.send(msg);
-            mGameServiceCallback = callback;
+            mChatCallback = callback;
         } catch (RemoteException e) {
             throw new RuntimeException("Send chat failed");
         }
@@ -181,7 +187,7 @@ public class GameRepository {
             throw new IllegalStateException("Service not connected");
         }
 
-        mPlayerCallback = callback;
+        mSpawnCallback = callback;
 
         // invoke service initial player
         try {

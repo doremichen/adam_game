@@ -11,4 +11,6 @@
     <string name="arenaminifight_game_login_failed">Login failed</string>
     <string name="arenaminifight_game_login_success">Login success</string>
     <string name="arenaminifight_game_exit">Exit</string>
+    <string name="add_ai_btn">add AI Player</string>
+    <string name="arenaminifight_game_exit_btn">Exit</string>
 </resources>

@@ -118,7 +118,7 @@ UC-03 Enter Lobby Chat: 使用者成功進入大廳，建立與伺服器的 WebS
 
 UC-04 Send Chat Message: 使用者在大廳輸入文字並發送，其他在線玩家可即時看見。
 
-UC-05 Initialize Player & Spawn (新增): 進入遊戲畫面時，由 JNI 引擎分配初始座標（PointF）與屬性，並在 SurfaceView 繪製出玩家角色。
+UC-05 Initialize Player & Spawn: 進入遊戲畫面時，由 JNI 引擎分配初始座標（PointF）與屬性，並在 SurfaceView 繪製出玩家角色。
 
 UC-06 Move Player: 點擊螢幕傳送目標座標給 JNI 引擎，計算位移並更新本地玩家位置。
 

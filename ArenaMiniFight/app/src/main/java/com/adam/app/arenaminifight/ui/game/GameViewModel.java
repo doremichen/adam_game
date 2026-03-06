@@ -47,6 +47,12 @@ public class GameViewModel extends ViewModel {
         mExitEvent.setValue(true);
     }
 
+    public void onAddAIClicked() {
+        String aiName = "AI_" + (int)(Math.random() * 1000);
+        GameUtil.log(TAG + ": onAddAIClicked -> " + aiName);
+        mRepository.spawnPlayer(aiName, this::onPlayerSpawned);
+    }
+
     public void updatePlayerMove(float x, float y) {
         GameUtil.log(TAG + ": updatePlayerMove(" + x + ", " + y + ")");
         mPlayerStatus.setValue(String.format("(%.1f, %.1f)", x, y));
@@ -86,11 +92,8 @@ public class GameViewModel extends ViewModel {
 
 
     private void onPlayerSpawned(Player player) {
-        GameUtil.log(TAG + ": onPlayerSpawned(" + player + ")");
-        if (player == null) {
-            return;
-        }
-
+        if (player == null) return;
+        GameUtil.log(TAG + ": onPlayerSpawned(" + player.getName() + " @ " + player.getPlayerId() + ")");
         // update players
         List<Player> currentList = mPlayers.getValue();
         if (currentList == null) {

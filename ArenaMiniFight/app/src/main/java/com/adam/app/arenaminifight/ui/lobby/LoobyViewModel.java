@@ -1,6 +1,6 @@
 /**
  * Copyright 2023 Adam Chen. All rights reserved.
- *
+ * <p>
  * Description: This is the lobby view model of the application.
  *
  * @author Adam Chen
@@ -21,32 +21,31 @@ import java.util.List;
 public class LoobyViewModel extends ViewModel {
     // TAG
     private static final String TAG = "LobbyViewModel";
-
-    private final GameRepository mGameRepository = GameRepository.getInstance();
-
-    // live data
-    private final MutableLiveData<List<ChatMessage>> mChatMessages = new MutableLiveData<>(new ArrayList<>());
-    public LiveData<List<ChatMessage>> getChatMessages() {
-        return mChatMessages;
-    }
-    // live data: notify to show input dialog
-    private final MutableLiveData<Boolean> mShowInputDialog = new MutableLiveData<>(false);
-    public LiveData<Boolean> getShowInputDialog() {
-        return mShowInputDialog;
-    }
-
     // current input message
     public final MutableLiveData<String> mInputMessage = new MutableLiveData<>("");
-
+    private final GameRepository mGameRepository = GameRepository.getInstance();
+    // live data
+    private final MutableLiveData<List<ChatMessage>> mChatMessages = new MutableLiveData<>(new ArrayList<>());
+    // live data: notify to show input dialog
+    private final MutableLiveData<Boolean> mShowInputDialog = new MutableLiveData<>(false);
     // navigate to game
     private final MutableLiveData<Boolean> mNavigateToGame = new MutableLiveData<>(false);
-    public LiveData<Boolean> getNavigateToGame() {
-        return mNavigateToGame;
-    }
 
     public LoobyViewModel() {
         // bind game service to welcome view
         //mGameRepository.bindGameService();
+    }
+
+    public LiveData<List<ChatMessage>> getChatMessages() {
+        return mChatMessages;
+    }
+
+    public LiveData<Boolean> getShowInputDialog() {
+        return mShowInputDialog;
+    }
+
+    public LiveData<Boolean> getNavigateToGame() {
+        return mNavigateToGame;
     }
 
     @Override

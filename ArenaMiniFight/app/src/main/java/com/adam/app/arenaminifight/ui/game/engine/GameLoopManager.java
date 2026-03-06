@@ -25,7 +25,6 @@ public class GameLoopManager {
 
     // constructor
     public GameLoopManager(Runnable gameTask) {
-        mExecutor = Executors.newSingleThreadScheduledExecutor();
         mGameTask = gameTask;
     }
 
@@ -34,6 +33,12 @@ public class GameLoopManager {
         if (mIsRunning) {
             return;
         }
+
+        // check if executor service is null
+        if (mExecutor == null || mExecutor.isShutdown()) {
+            mExecutor = Executors.newSingleThreadScheduledExecutor();
+        }
+
         // schedule the game loop
         mExecutor.scheduleWithFixedDelay(mGameTask, 0, FRAME_PERIOD_MS, TimeUnit.MILLISECONDS);
         mIsRunning = true;
@@ -49,11 +54,12 @@ public class GameLoopManager {
             // stop the game loop
             mExecutor.shutdown();
             try {
-                if (!mExecutor.awaitTermination(100, TimeUnit.SECONDS)) {
+                if (!mExecutor.awaitTermination(500, TimeUnit.SECONDS)) {
                     mExecutor.shutdownNow();
                 }
             } catch (InterruptedException e) {
                 mExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
             }
             mExecutor = null;
         }
