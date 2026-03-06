@@ -12,6 +12,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -29,6 +30,9 @@ import com.adam.app.arenaminifight.domain.model.ChatMessage;
 import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.service.GameService;
 import com.adam.app.arenaminifight.utils.GameUtil;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Singleton
@@ -60,18 +64,15 @@ public class GameRepository {
         return mIsBind;
     }
 
-    public interface GameServiceCallback {
-        void onMessageReceived(ChatMessage chatMessage);
-    }
-
     public interface Callback<T> {
         void onResult(T result);
     }
 
-    private Callback<Player> mCallback;
+    private Callback<Player> mPlayerCallback;
 
+    private Callback<ChatMessage> mGameServiceCallback;
 
-    private GameServiceCallback mGameServiceCallback;
+    private Callback<List<Player>> mGameStateCallback;
 
     private Messenger mSvrMessenger;
     private Messenger mClientMessenger = new Messenger(new Handler(Looper.getMainLooper()) {
@@ -86,20 +87,43 @@ public class GameRepository {
                     }
 
                     ChatMessage chatMessage = (ChatMessage) msg.obj;
-                    mGameServiceCallback.onMessageReceived(chatMessage);
+                    mGameServiceCallback.onResult(chatMessage);
                     break;
                 case GameService.UC_NEW_PLAYER:
                     Player player = msg.getData().getParcelable("player_data", Player.class);
                     GameUtil.log(TAG + ": new player: " + player.getName());
                     // callback to game view model
-                    if (mCallback != null) {
-                        mCallback.onResult(player);
+                    if (mPlayerCallback != null) {
+                        mPlayerCallback.onResult(player);
+                    }
+                    break;
+                case GameService.UC_GAME_STATE_UPDATE:
+                    String stateStr = msg.getData().getString("game_state_str");
+                    if (stateStr != null) {
+                        List<Player> updatedPlayers = parseStateString(stateStr);
+                        if (mGameStateCallback != null) {
+                            mGameStateCallback.onResult(updatedPlayers);
+                        }
                     }
                     break;
                 default:
                     super.handleMessage(msg);
             }
 
+        }
+
+        private List<Player> parseStateString(String stateStr) {
+            List<Player> list = new ArrayList<>();
+            String[] players = stateStr.split("\\|");
+            for (String p : players) {
+                String[] attrs = p.split(":");
+                if (attrs.length >= 5) {
+                    list.add(new Player(attrs[1], attrs[0],
+                            new PointF(Float.parseFloat(attrs[2]), Float.parseFloat(attrs[3])),
+                            0f, Integer.parseInt(attrs[4])));
+                }
+            }
+            return list;
         }
     });
 
@@ -131,7 +155,7 @@ public class GameRepository {
         }
     }
 
-    public void sendChat(ChatMessage chat, GameServiceCallback callback) {
+    public void sendChat(ChatMessage chat, Callback<ChatMessage> callback) {
         if (Boolean.FALSE.equals(mIsBind.getValue())) {
             throw new IllegalStateException("Service not connected");
         }
@@ -157,7 +181,7 @@ public class GameRepository {
             throw new IllegalStateException("Service not connected");
         }
 
-        mCallback = callback;
+        mPlayerCallback = callback;
 
         // invoke service initial player
         try {
@@ -172,6 +196,37 @@ public class GameRepository {
             throw new RuntimeException("Spawn player failed");
         }
     }
+
+    public void startGame(Callback<List<Player>> callback) {
+        GameUtil.log(TAG + ": startGame");
+        if (Boolean.FALSE.equals(mIsBind.getValue())) {
+            throw new IllegalStateException("Service not connected");
+        }
+
+        Message msg = Message.obtain(null, GameService.UC_START_GAME);
+        try {
+            mSvrMessenger.send(msg);
+            mGameStateCallback = callback;
+        } catch (RemoteException e) {
+            throw new RuntimeException("Start game failed");
+        }
+    }
+
+    public void stopGame() {
+        GameUtil.log(TAG + ": stopGame");
+        if (Boolean.FALSE.equals(mIsBind.getValue())) {
+            throw new IllegalStateException("Service not connected");
+        }
+
+        Message msg = Message.obtain(null, GameService.UC_STOP_GAME);
+        try {
+            mSvrMessenger.send(msg);
+        } catch (RemoteException e) {
+            throw new RuntimeException("Stop game failed");
+        }
+    }
+
+
 
     /**
      * move player

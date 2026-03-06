@@ -61,6 +61,9 @@ public class GameFragment extends Fragment {
 
         // init player
         mViewModel.initPlayerFromJni("abb");
+        // start game
+        mViewModel.startGame();
+
         // observer players
         mViewModel.getPlayers().observe(getViewLifecycleOwner(), this::onPlayers);
 

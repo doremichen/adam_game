@@ -63,6 +63,28 @@ public class GameViewModel extends ViewModel {
         mRepository.spawnPlayer(playerName, this::onPlayerSpawned);
     }
 
+    public void startGame() {
+        GameUtil.log(TAG + ": startGame");
+        mRepository.startGame(this::onPlayersData);
+    }
+
+    private void onPlayersData(List<Player> players) {
+        GameUtil.log(TAG + ": onPlayersData");
+        if (players == null || players.isEmpty()) {
+            GameUtil.log(TAG + ": players is null or empty");
+            return;
+        }
+
+        // update ui
+        mPlayers.setValue(players);
+    }
+
+    public void stopGame() {
+        GameUtil.log(TAG + ": stopGame");
+        mRepository.stopGame();
+    }
+
+
     private void onPlayerSpawned(Player player) {
         GameUtil.log(TAG + ": onPlayerSpawned(" + player + ")");
         if (player == null) {
@@ -81,4 +103,10 @@ public class GameViewModel extends ViewModel {
         setPlayerStatus(String.format("(%.1f, .1%f)", player.getX(), player.getY()));
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        // stop game
+        stopGame();
+    }
 }

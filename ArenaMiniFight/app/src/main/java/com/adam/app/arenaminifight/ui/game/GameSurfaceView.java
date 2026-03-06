@@ -123,7 +123,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
     public void updatePlayers(List<Player> players) {
-        mPlayers = players;
+        GameUtil.log(TAG + ": updatePlayers");
+        synchronized (mPlayers) {
+            mPlayers.clear();
+            mPlayers.addAll(players);
+        }
     }
 
     private void drawPlayers(Canvas canvas) {
@@ -133,33 +137,35 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             return;
         }
 
-        // draw all player
-        for (Player player : mPlayers) {
+        synchronized (mPlayers) {
+            // draw all player
+            for (Player player : mPlayers) {
 
-            if (player == null) continue; // skip null player
+                if (player == null) continue; // skip null player
 
-            PointF pos = player.getPosition();
-            String name = player.getName();
-            if (pos == null) continue;
-            if (name == null) name = "Loading..."; // set default name
+                PointF pos = player.getPosition();
+                String name = player.getName();
+                if (pos == null) continue;
+                if (name == null) name = "Loading..."; // set default name
 
-            // draw player
-            mPlayerPaint.setColor(Color.BLUE);
+                // draw player
+                mPlayerPaint.setColor(Color.BLUE);
 
-            // player paint
-            canvas.drawCircle(pos.x, pos.y, 30f, mPlayerPaint);
-            // player name
-            mTextPaint.setTextAlign(Paint.Align.CENTER);
-            canvas.drawText(player.getName(), pos.x, pos.y - 50f, mTextPaint);
-            // blood color
-            mPlayerPaint.setColor(Color.DKGRAY);
-            canvas.drawRect(pos.x - 40, pos.y + 40, pos.x + 40, pos.y + 50, mPlayerPaint);
-            // current blood color
-            mPlayerPaint.setColor(Color.RED);
-            float hpWidth = (player.getHp() / 100f) * 80f; // set full 100
-            canvas.drawRect(pos.x - 40, pos.y + 40, pos.x - 40 + hpWidth, pos.y + 50, mPlayerPaint);
-            // reset for next
-            mPlayerPaint.setColor(Color.BLUE);
+                // player paint
+                canvas.drawCircle(pos.x, pos.y, 30f, mPlayerPaint);
+                // player name
+                mTextPaint.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText(player.getName(), pos.x, pos.y - 50f, mTextPaint);
+                // blood color
+                mPlayerPaint.setColor(Color.DKGRAY);
+                canvas.drawRect(pos.x - 40, pos.y + 40, pos.x + 40, pos.y + 50, mPlayerPaint);
+                // current blood color
+                mPlayerPaint.setColor(Color.RED);
+                float hpWidth = (player.getHp() / 100f) * 80f; // set full 100
+                canvas.drawRect(pos.x - 40, pos.y + 40, pos.x - 40 + hpWidth, pos.y + 50, mPlayerPaint);
+                // reset for next
+                mPlayerPaint.setColor(Color.BLUE);
+            }
         }
     }
 }
