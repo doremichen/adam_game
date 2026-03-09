@@ -14,3 +14,4 @@
 .cxx
 local.properties
 dump.txt
+*_bak.*
