@@ -3,6 +3,24 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+
+            Properties properties = new Properties()
+            InputStream inputStream = project.rootProject.file('local.properties').newDataInputStream()
+            storeFile file("$rootDir/SignApk/SignedLotoGame.jks")
+            properties.load(inputStream)
+
+
+            def key_keyAlias = properties.getProperty('keystore.alias')
+            def key_keyPassword = properties.getProperty('keystore.password')
+            def key_storePassword = properties.getProperty('keystore.alias_password')
+
+            keyAlias key_keyAlias
+            keyPassword key_keyPassword
+            storePassword key_storePassword
+        }
+    }
     namespace 'com.adam.app.lottogame'
     compileSdk 35
 
@@ -14,12 +32,14 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
@@ -35,6 +55,7 @@ android {
         viewBinding true
         dataBinding true
     }
+    flavorDimensions 'phone'
 }
 
 dependencies {

@@ -14,3 +14,5 @@
 .cxx
 local.properties
 note.txt
+/app/release
+/app/debug
