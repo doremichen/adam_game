@@ -5,10 +5,14 @@ Each subfolder represents an independent game project built with **Java** or **K
 
 ## Project Structure
 
-game/
-├── loto-game/ # Lotto number draw game (Java)
-├── Tetris-game/ # Classic Tetris Game (Java)
-├── WhackAMole / # Simple whack a mole Game (Kotlin)
+game/  
+├── loto-game/           # Lotto number draw game (Java)  
+├── Tetris-game/         # Classic Tetris Game (Java)  
+├── WhackAMole/          # Simple Whack-a-Mole Game (Kotlin)  
+├── ArenaMiniFight/      # JNI-based game engine project  
+├── <ProjectName>/       # Placeholder for new game modules  
+└── ...                  # More projects to be added  
+
 
 
 ## Development Environment

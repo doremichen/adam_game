@@ -69,7 +69,7 @@ public class NativeEngine {
     public native String getGameState();
 
     /**
-     * 重置引擎狀態 (UC-08)
+     * 重置引擎狀態 (UC-05)
      */
     public native void resetEngine();
 }
