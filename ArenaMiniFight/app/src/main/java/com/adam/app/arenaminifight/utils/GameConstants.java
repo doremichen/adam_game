@@ -11,7 +11,7 @@ package com.adam.app.arenaminifight.utils;
 public final class GameConstants {
 
     private GameConstants() {
-        throw new RuntimeException("can not instance!!!");
+        throw new UnsupportedOperationException("Constant class; do not instantiate.");
     }
 
     // constants

@@ -95,6 +95,9 @@ public class GameViewModel extends ViewModel {
     public void stopGame() {
         GameUtil.log(TAG + ": stopGame");
         mRepository.stopGame();
+        // reset player status
+        setPlayerStatus("");
+        mPlayers.setValue(new ArrayList<>());
     }
 
 
@@ -119,6 +122,7 @@ public class GameViewModel extends ViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+        GameUtil.log(TAG + ": onClear");
         // stop game
         stopGame();
     }

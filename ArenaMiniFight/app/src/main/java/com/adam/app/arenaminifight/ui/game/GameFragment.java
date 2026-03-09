@@ -77,6 +77,24 @@ public class GameFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        GameUtil.log(TAG + ": onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        GameUtil.log(TAG + ": onPause");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        GameUtil.log(TAG + ":onDestroy");
+    }
+
     private void onPlayers(List<Player> players) {
         // update players
         mBinding.gameSurfaceView.updatePlayers(players);

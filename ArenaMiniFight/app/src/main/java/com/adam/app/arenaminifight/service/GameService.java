@@ -193,6 +193,8 @@ public class GameService extends Service {
                     break;
                 case UC_STOP_GAME:
                     mEngineLoopManager.stop();
+                    // reset engine
+                    mNativeEngine.resetEngine();
                     break;
                 default:
                     super.handleMessage(msg);

@@ -183,6 +183,15 @@ jstring _getGameState(JNIEnv *env, jobject thiz)
     return env->NewStringUTF(ss.str().c_str());
 }
 
+static
+void _resetEngine(JNIEnv *env, jobject thiz)
+{
+    LOGD("Engine: Reset engine");
+    g_players.clear();
+    g_player_count = 0;
+    LOGD("Engine: Reset engine complete");
+}
+
 /**
  * jni native method
  */
@@ -192,6 +201,7 @@ static const JNINativeMethod gMethods[] = {
         {"updateEngine", "(F)V", (void *) _updateEngine},
         {"updatePlayerPosition", "(Ljava/lang/String;FF)V", (void *) _updatePlayerPosition},
         {"getGameState", "()Ljava/lang/String;", (void *) _getGameState},
+        {"resetEngine", "()V", (void *) _resetEngine},
 };
 
 static

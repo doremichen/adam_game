@@ -72,6 +72,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         GameUtil.log(TAG + ": surfaceCreated");
+        // assure players is empty
+        synchronized (mPlayers) {
+            mPlayers.clear();
+        }
+
         // start game loop
         mGameLoopManager.start();
     }
@@ -81,6 +86,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         GameUtil.log(TAG + ": surfaceDestroyed");
         // stop game loop
         mGameLoopManager.stop();
+        mPlayers.clear();
     }
 
     @Override

@@ -24,7 +24,7 @@ public final class GameUtil {
     private static final String TAG = "DebugGame";
 
     private GameUtil() {
-        throw new AssertionError("No instances.");
+        throw new UnsupportedOperationException("Utility class; do not instantiate.");
     }
 
     public static void log(String msg) {
