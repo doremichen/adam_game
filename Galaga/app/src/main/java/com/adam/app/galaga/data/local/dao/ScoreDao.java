@@ -20,50 +20,22 @@
  * SOFTWARE.
  */
 
-package com.adam.app.galaga.data.local.entities;
+package com.adam.app.galaga.data.local.dao;
 
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
 
-/**
- * This class is used to represent a rank record.
- */
-@Entity(tableName = "rank_record")
-public class RankRecord {
+import com.adam.app.galaga.data.local.entities.ScoreRecord;
 
-    @PrimaryKey(autoGenerate = true)
-    private int mId;
+import java.util.List;
 
-    @ColumnInfo(name = "name")
-    private String mName;
+@Dao
+public interface ScoreDao {
+    @Insert
+    public void insertScore(ScoreRecord record);
 
-    @ColumnInfo(name = "score")
-    private int mScore;
-
-    @ColumnInfo(name = "date")
-    private String mDate;
-
-    public RankRecord(String name, int score, String date) {
-        mName = name;
-        mScore = score;
-        mDate = date;
-    }
-
-    // --- getter ---
-    public int getId() {
-        return mId;
-    }
-
-    public String getName() {
-        return mName;
-    }
-
-    public int getScore() {
-        return mScore;
-    }
-
-    public String getDate() {
-        return mDate;
-    }
+    @Query("SELECT * FROM leaderboard ORDER BY score DESC LIMIT 10")
+    public LiveData<List<ScoreRecord>> getTop10Scores();
 }

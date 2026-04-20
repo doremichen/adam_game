@@ -4,11 +4,7 @@ plugins {
 
 android {
     namespace 'com.adam.app.galaga'
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk 36
 
     defaultConfig {
         applicationId "com.adam.app.galaga"
@@ -41,14 +37,12 @@ android {
 dependencies {
     implementation libs.appcompat
     implementation libs.material
-    implementation libs.room.common.jvm
     implementation libs.room
     implementation libs.room.rxjava2
     implementation libs.activity
     implementation libs.constraintlayout
 
     annotationProcessor libs.room.compiler
-    annotationProcessor libs.room
 
     testImplementation libs.junit
     testImplementation libs.room.test

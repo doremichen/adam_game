@@ -22,11 +22,15 @@
 
 package com.adam.app.galaga.viewmodel;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
+import com.adam.app.galaga.data.local.entities.ScoreRecord;
 import com.adam.app.galaga.data.model.GameObject;
+import com.adam.app.galaga.data.repository.GameRepository;
 import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.engine.GameObjectManager;
 import com.adam.app.galaga.utils.GameUtils;
@@ -37,12 +41,16 @@ import java.util.List;
 /**
  * This is the view model for the game.
  */
-public class GameViewModel extends ViewModel implements GameEngine.EngineCallback {
+public class GameViewModel extends AndroidViewModel implements GameEngine.EngineCallback {
     // TAG
     private static final String TAG = GameViewModel.class.getSimpleName();
 
     // game engine
     private final GameEngine mGameEngine;
+
+    // game repository
+    private final GameRepository mGameRepository;
+
 
     // --- Live data ---
     private final MutableLiveData<List<GameObject>> mEntities = new MutableLiveData<>(new ArrayList<>());
@@ -50,10 +58,16 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
     private final MutableLiveData<GameEngine.State> mCurrentState = new MutableLiveData<>(GameEngine.State.READY);
 
 
+    private int mFinalScore;
+
+
     /**
      * Constructor
      */
-    public GameViewModel() {
+    public GameViewModel(Application application) {
+        super(application);
+        // init
+        mGameRepository = GameRepository.getInstance(application);
         mGameEngine = new GameEngine(this);
         // start game
         startGame();
@@ -75,6 +89,11 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
         return mScore;
     }
 
+    public int getFinalScore() {
+        return mFinalScore;
+    }
+
+
     public LiveData<GameEngine.State> getCurrentState() {
         return mCurrentState;
     }
@@ -88,15 +107,6 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
     public void pauseGame() {
         GameUtils.info(TAG, "stopGame");
         mGameEngine.pause();
-    }
-
-    /**
-     * just left and right
-     * @param direction float
-     */
-    public void movePlayer(float direction) {
-        GameUtils.info(TAG, "movePlayer");
-        mGameEngine.movePlayer(direction);
     }
 
     /**
@@ -118,17 +128,19 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
     }
 
     /**
-     * move player with direction: up, down, left, right
-     * @param direction Direction
+     * Save score
+     *
+     * @param name Player name
      */
-    public void movePlayer(GameObjectManager.Direction direction) {
-        GameUtils.info(TAG, "movePlayer");
-        mGameEngine.movePlayer(direction);
-    }
+    public void saveScore(String name) {
+        GameUtils.info(TAG, "saveScore");
+        String finalName = (name == null || name.isEmpty()) ? "Guest" : name;
+        // new record
+        ScoreRecord record = new ScoreRecord(finalName, mFinalScore, System.currentTimeMillis());
 
-    public void shoot() {
-        GameUtils.info(TAG, "shoot");
-        mGameEngine.shoot();
+        // save record
+        mGameRepository.insertScore(record);
+
     }
 
 
@@ -136,6 +148,7 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
     public void onScoreChanged(int currentScore) {
         GameUtils.info(TAG, "onScoreChanged");
         mScore.setValue(currentScore);
+        mFinalScore = currentScore;
     }
 
     @Override

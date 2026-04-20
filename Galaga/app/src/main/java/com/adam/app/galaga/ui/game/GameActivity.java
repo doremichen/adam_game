@@ -24,10 +24,14 @@ package com.adam.app.galaga.ui.game;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.galaga.databinding.ActivityGameBinding;
+import com.adam.app.galaga.databinding.DialogGameOverBinding;
+import com.adam.app.galaga.engine.GameEngine;
+import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.GameViewModel;
 
 public class GameActivity extends AppCompatActivity {
@@ -57,6 +61,53 @@ public class GameActivity extends AppCompatActivity {
         mViewModel.getEntities().observe(this, entities -> {
             mBinding.gameSurfaceView.updateEntities(entities);
         });
+        mViewModel.getCurrentState().observe(this, this::onState);
 
     }
+
+    private void onState(GameEngine.State state) {
+        // Game over state
+        if (state == GameEngine.State.GAME_OVER) {
+            showGameOverDialog();
+        }
+    }
+
+    /**
+     * show game over dialog
+     */
+    private void showGameOverDialog() {
+        GameUtils.info(TAG, "showGameOverDialog");
+        // view binding
+        DialogGameOverBinding dialogBinding = DialogGameOverBinding.inflate(getLayoutInflater());
+
+        // alert dialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialogBinding.getRoot());
+        builder.setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        // set score
+        int finalScore = mViewModel.getFinalScore();
+        dialogBinding.tvFinalScore.setText(String.valueOf(finalScore));
+
+        // set confirm button click listener
+        dialogBinding.btnConfirm.setOnClickListener(
+                v -> {
+                    // player name
+                    String name = dialogBinding.etPlayerName.getText().toString();
+                    // save score
+                    mViewModel.saveScore(name);
+                    // dismiss dialog
+                    dialog.dismiss();
+                    // return to main activity
+                    finish();
+                }
+        );
+
+        // show
+        dialog.show();
+    }
+
+
+
 }
