@@ -60,6 +60,10 @@ public class GameEngine {
     private int mTotalScore;
     private volatile State mCurrentState = State.READY;
 
+    // dircetion
+    private GameObjectManager.Direction mCurrentMovingDirection;
+
+
     /**
      * Construct
      *
@@ -224,6 +228,18 @@ public class GameEngine {
 
     }
 
+
+    /**
+     * set direction
+     *
+     * @param direction Direction direction
+     */
+    public void setMoveDirection(GameObjectManager.Direction direction) {
+        GameUtils.info(TAG, "setMoveDirection");
+        mCurrentMovingDirection = direction;
+    }
+
+
     /**
      * game loop
      */
@@ -241,6 +257,11 @@ public class GameEngine {
             if (mCurrentState == State.GAME_OVER || mCurrentState == State.PAUSED) {
                 GameUtils.info(TAG, "Game is over or paused");
                 return;
+            }
+
+            // update player direction
+            if (mCurrentMovingDirection != null && mCurrentState == State.RUNNING) {
+                mGameObjectManager.movePlayer(mCurrentMovingDirection);
             }
 
             updateLogic();

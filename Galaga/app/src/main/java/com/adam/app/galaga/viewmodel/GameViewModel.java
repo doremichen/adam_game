@@ -100,6 +100,15 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
     }
 
     /**
+     * set direction
+     * @param direction Direction direction
+     */
+    public  void setMoveDirection(GameObjectManager.Direction direction) {
+        GameUtils.info(TAG, "setMoveDirection");
+        mGameEngine.setMoveDirection(direction);
+    }
+
+    /**
      * move player with direction: up, down, left, right
      * @param direction Direction
      */

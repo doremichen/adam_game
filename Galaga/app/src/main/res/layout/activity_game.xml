@@ -49,7 +49,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="↑"
-            android:onClick="@{() -> viewModel.movePlayer(Direction.UP)}"
+            app:onTouchDirection="@{viewModel}"
             app:layout_constraintBottom_toTopOf="@+id/btnDown"
             app:layout_constraintStart_toStartOf="@+id/btnDown"
             app:layout_constraintEnd_toEndOf="@+id/btnDown" />
@@ -60,7 +60,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="↓"
-            android:onClick="@{() -> viewModel.movePlayer(Direction.DOWN)}"
+            app:onTouchDirection="@{viewModel}"
             android:layout_marginBottom="32dp"
             android:layout_marginStart="80dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -72,7 +72,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="←"
-            android:onClick="@{() -> viewModel.movePlayer(Direction.LEFT)}"
+            app:onTouchDirection="@{viewModel}"
             app:layout_constraintEnd_toStartOf="@+id/btnDown"
             app:layout_constraintTop_toTopOf="@+id/btnDown" />
 
@@ -82,7 +82,7 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:text="→"
-            android:onClick="@{() -> viewModel.movePlayer(Direction.RIGHT)}"
+            app:onTouchDirection="@{viewModel}"
             app:layout_constraintStart_toEndOf="@+id/btnDown"
             app:layout_constraintTop_toTopOf="@+id/btnDown" />
 

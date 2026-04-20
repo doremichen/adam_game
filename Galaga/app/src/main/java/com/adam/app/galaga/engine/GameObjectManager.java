@@ -22,6 +22,7 @@
 
 package com.adam.app.galaga.engine;
 
+import com.adam.app.galaga.R;
 import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.GameObject;
@@ -29,7 +30,9 @@ import com.adam.app.galaga.data.model.Plane;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameObjectManager {
@@ -218,10 +221,28 @@ public class GameObjectManager {
      * direction
      */
     public enum Direction {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT,
+        UP(R.id.btnUp),
+        DOWN(R.id.btnDown),
+        LEFT(R.id.btnLeft),
+        RIGHT(R.id.btnRight);
+
+        private final int mResId;
+
+        // Map: id -> Direction
+        private static Map<Integer, Direction> sResIdToDirection = new HashMap<>();
+        static {
+            for (Direction direction : Direction.values()) {
+                sResIdToDirection.put(direction.mResId, direction);
+            }
+        }
+        private Direction(int resId) {
+            mResId = resId;
+        }
+
+        public static Direction fromResId(int resId) {
+            return sResIdToDirection.get(resId);
+        }
+
     }
 
     private static class Helper {
