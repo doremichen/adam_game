@@ -109,6 +109,15 @@ public class GameViewModel extends ViewModel implements GameEngine.EngineCallbac
     }
 
     /**
+     * set shooting
+     * @param shooting boolean
+     */
+    public void setShooting(boolean shooting) {
+        GameUtils.info(TAG, "setShooting");
+        mGameEngine.setShooting(shooting);
+    }
+
+    /**
      * move player with direction: up, down, left, right
      * @param direction Direction
      */

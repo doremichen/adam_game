@@ -60,5 +60,29 @@ public class UIBinding {
         });
     }
 
+    @BindingAdapter("onTouchFire")
+    public static void setOnTouchFire(View view, GameViewModel viewModel) {
+        view.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        viewModel.setShooting(true);
+                        v.setPressed(true);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        viewModel.setShooting(false);
+                        v.setPressed(false);
+                        break;
+                    default:
+                        break;
+                }
+                return true;
+            }
+        });
+
+    }
 
 }

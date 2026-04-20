@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 public class GameEngine {
     // TAG
     private static final String TAG = GameEngine.class.getSimpleName();
-
+    private static final long SHOOT_INTERVAL_MS = 250L;
     // GameObjectManager
     private final GameObjectManager mGameObjectManager = GameObjectManager.getInstance();
     // scheduled executor service
@@ -59,9 +59,11 @@ public class GameEngine {
     // total score
     private int mTotalScore;
     private volatile State mCurrentState = State.READY;
-
-    // dircetion
+    // direction
     private GameObjectManager.Direction mCurrentMovingDirection;
+    // check if shooting
+    private boolean mIsShooting = false;
+    private long mLastShootTime = 0L;
 
 
     /**
@@ -239,6 +241,16 @@ public class GameEngine {
         mCurrentMovingDirection = direction;
     }
 
+    /**
+     * set shooting
+     *
+     * @param shooting boolean
+     */
+    public void setShooting(boolean shooting) {
+        GameUtils.info(TAG, "setShooting");
+        mIsShooting = shooting;
+    }
+
 
     /**
      * game loop
@@ -262,6 +274,16 @@ public class GameEngine {
             // update player direction
             if (mCurrentMovingDirection != null && mCurrentState == State.RUNNING) {
                 mGameObjectManager.movePlayer(mCurrentMovingDirection);
+            }
+
+            // update shooting
+            if (mIsShooting && mCurrentState == State.RUNNING) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - mLastShootTime >= SHOOT_INTERVAL_MS) {
+                    mGameObjectManager.spawnBullet();
+                    mLastShootTime = currentTime;
+                }
+
             }
 
             updateLogic();
