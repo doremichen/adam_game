@@ -28,6 +28,8 @@ import android.graphics.Paint;
 
 import com.adam.app.galaga.utils.GameUtils;
 
+import java.util.Random;
+
 /**
  * Bee class
  */
@@ -39,8 +41,18 @@ public class Bee extends GameObject{
 
     private boolean mIsDiving;
 
+    // angle
+    private float mAngle;
+    private final Random mRandom = new Random();
+    private long mLastTurnTime;
+    private static final int TURN_INTERVAL = 1000; // change angle every 1 sec
+
+
+
     public Bee(float x, float y, float speed, int width, int height) {
         super(x, y, speed, width, height);
+        // initial angle
+        this.mAngle = (float) (mRandom.nextFloat() * Math.PI * 2);
     }
 
     @Override
@@ -49,15 +61,53 @@ public class Bee extends GameObject{
         // is diving
         if (mIsDiving) {
             // move down
-            this.mPosition.y += this.mSpeed * 2;
+            this.mPosition.y += this.mSpeed * 2.5f;
             return;
         }
 
-        mPosition.x += (float) (Math.sin(System.currentTimeMillis() / 500.0) * mSpeed);
+        // random fly logic
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - mLastTurnTime >= TURN_INTERVAL) {
+            mAngle += (float) ((mRandom.nextFloat() - 0.5f) * (Math.PI / 2));
+            mLastTurnTime = currentTime;
+        }
+
+        // update position
+        float dx = (float) (Math.cos(mAngle) * mSpeed);
+        float dy = (float) (Math.sin(mAngle) * mSpeed);
+
+        float nextX = mPosition.x + dx;
+        float nextY = mPosition.y + dy;
+
+        // boundary check
+        if (nextX < 0 || nextX > 1080 - mWidth) {
+            mAngle = (float) (Math.PI - mAngle);
+            dx = (float) (Math.cos(mAngle) * mSpeed); // 轉向後重新計算增量
+        }
+
+        // 限制蜜蜂只在螢幕上半部 (0 ~ 1000) 亂飛，否則會飛到控制區
+        if (nextY < 0 || nextY > 1000 - mHeight) {
+            mAngle = -mAngle;
+            dy = (float) (Math.sin(mAngle) * mSpeed);
+        }
+
+        mPosition.x += dx;
+        mPosition.y += dy;
+
+        //mPosition.x += (float) (Math.sin(System.currentTimeMillis() / 500.0) * mSpeed);
     }
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
+        canvas.save();
+
+        // rotate
+        float centerX = mPosition.x + mWidth / 2f;
+        float centerY = mPosition.y + mHeight / 2f;
+
+        float degrees = (float) Math.toDegrees(mAngle);
+        canvas.rotate(degrees, centerX, centerY);
+
         // config paint
         paint.setStyle(Paint.Style.FILL);
 
@@ -80,6 +130,8 @@ public class Bee extends GameObject{
         // eyes
         paint.setColor(Color.RED);
         canvas.drawCircle(mPosition.x + mWidth * 0.8f, mPosition.y + mHeight * 0.3f, 4, paint);
+
+        canvas.restore();
 
     }
 

@@ -98,6 +98,11 @@ public class GameObjectManager {
 
         // update bees
         for (Bee bee : mBees) {
+
+            if (Math.random() < 0.005) {
+                bee.setDiving(true);
+            }
+
             bee.update();
         }
         mBullets.removeIf(Bullet::isOutOfBound);
