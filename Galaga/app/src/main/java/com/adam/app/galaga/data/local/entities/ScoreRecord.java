@@ -22,9 +22,12 @@
 
 package com.adam.app.galaga.data.local.entities;
 
+import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+import java.util.Objects;
 
 /**
  * This class is used to represent a rank record.
@@ -83,5 +86,24 @@ public class ScoreRecord {
 
     public long getDate() {
         return mDate;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        // check instance
+        if (this == obj) return true;
+        // check null or class info
+        if (obj == null || getClass() != obj.getClass()) return false;
+
+        ScoreRecord that = (ScoreRecord) obj;
+        if (mId != that.mId) return false;
+        if (mScore != that.mScore) return false;
+        if (mDate != that.mDate) return false;
+        return mName.equals(that.mName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mId, mName, mScore, mDate);
     }
 }

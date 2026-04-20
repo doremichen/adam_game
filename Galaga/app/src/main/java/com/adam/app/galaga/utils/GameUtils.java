@@ -89,4 +89,8 @@ public final class GameUtils {
         context.startActivity(intent);
     }
 
+    public static void showUnImplementedToast(Context context) {
+        showToast(context, "Not implemented yet");
+    }
+
 }

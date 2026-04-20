@@ -24,11 +24,15 @@ package com.adam.app.galaga.ui.adapter;
 
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
 import com.adam.app.galaga.engine.GameObjectManager;
 import com.adam.app.galaga.viewmodel.GameViewModel;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class UIBinding {
 
@@ -84,5 +88,17 @@ public class UIBinding {
         });
 
     }
+
+    @BindingAdapter("formattedDate")
+    public static void setFormattedDate(TextView view, long timestamp) {
+        if (timestamp < 0) {
+            return;
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+        String formattedDate = sdf.format(timestamp);
+        view.setText(formattedDate);
+    }
+
 
 }
