@@ -109,6 +109,13 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         mGameEngine.pause();
     }
 
+    public void resumeGame() {
+        GameUtils.info(TAG, "resumeGame");
+        if (mCurrentState.getValue() == GameEngine.State.PAUSED) {
+            mGameEngine.resume();
+        }
+    }
+
     /**
      * set direction
      * @param direction Direction direction

@@ -122,6 +122,17 @@ public class GameEngine {
         if (mCurrentState == State.RUNNING) {
             stopGameTask();
             updateState(State.PAUSED);
+            GameUtils.info(TAG, "Game paused");
+        }
+    }
+
+    /**
+     * resume
+     */
+    public synchronized void resume() {
+        if (mCurrentState == State.PAUSED) {
+            start();
+            GameUtils.info(TAG, "Game resumed");
         }
     }
 

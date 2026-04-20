@@ -24,12 +24,14 @@ package com.adam.app.galaga.ui.game;
 
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.galaga.databinding.ActivityGameBinding;
 import com.adam.app.galaga.databinding.DialogGameOverBinding;
+import com.adam.app.galaga.databinding.DialogPauseBinding;
 import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.GameViewModel;
@@ -62,6 +64,30 @@ public class GameActivity extends AppCompatActivity {
             mBinding.gameSurfaceView.updateEntities(entities);
         });
         mViewModel.getCurrentState().observe(this, this::onState);
+
+        // add back press dispatcher
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // check running state
+                if (mViewModel.getCurrentState().getValue() == GameEngine.State.RUNNING) {
+                    // pause game
+                    mViewModel.pauseGame();
+                    // show pause dialog
+                    showPauseDialog();
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mViewModel.pauseGame();
 
     }
 
@@ -109,5 +135,36 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * showPauseDialog
+     */
+    private void showPauseDialog() {
+        GameUtils.info(TAG, "showPauseDialog");
+        // view binding
+        DialogPauseBinding binding = DialogPauseBinding.inflate(getLayoutInflater());
 
+        // alert dialog builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(binding.getRoot());
+        builder.setCancelable(false);
+
+        AlertDialog dialog = builder.create();
+        // continue
+        binding.btnContinue.setOnClickListener(
+                v -> {
+                    mViewModel.resumeGame();
+                    dialog.dismiss();
+                }
+        );
+        // quit
+        binding.btnQuit.setOnClickListener(
+                v -> {
+                    dialog.dismiss();
+                    finish();
+                }
+        );
+
+        // show
+        dialog.show();
+    }
 }
