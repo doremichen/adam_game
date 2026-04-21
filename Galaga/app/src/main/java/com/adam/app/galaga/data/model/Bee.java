@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 
 import java.util.Random;
@@ -80,8 +81,8 @@ public class Bee extends GameObject{
         mPosition.x += dx;
         mPosition.y += dy;
 
-        float worldWidth = GameUtils.getScreenWidth(); //1080f;
-        float playAreaHeight = GameUtils.getScreenHeight(); //1000f;
+        float worldWidth = GameConstants.GAME_WIDTH; //1080f;
+        float playAreaHeight = GameConstants.GAME_HEIGHT; //1000f;
 
         // boundary check
         if (mPosition.x < 0) {
