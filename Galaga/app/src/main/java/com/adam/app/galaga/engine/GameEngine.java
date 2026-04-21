@@ -216,6 +216,22 @@ public class GameEngine {
 
 
     /**
+     * startNextLevel
+     * @param nextLevelId int
+     */
+    public void startNextLevel(int nextLevelId) {
+        GameUtils.info(TAG, "startNextLevel");
+        // early return
+        if (mCurrentState == State.RUNNING) {
+            GameUtils.info(TAG, "Game is running");
+            return;
+        }
+
+        mGameObjectManager.loadLevel(nextLevelId);
+        start();
+    }
+
+    /**
      * game loop
      */
     private void gameLoop() {
@@ -253,7 +269,8 @@ public class GameEngine {
             if (mGameObjectManager.areAllBeesDead()) {
                 // stop game
                 stopGameTask();
-                updateState(State.GAME_OVER);
+                updateState(State.CLEARED);
+                return;
             }
 
             updateLogic();
@@ -322,6 +339,7 @@ public class GameEngine {
         READY,
         RUNNING,
         PAUSED,
+        CLEARED,
         GAME_OVER
     }
 

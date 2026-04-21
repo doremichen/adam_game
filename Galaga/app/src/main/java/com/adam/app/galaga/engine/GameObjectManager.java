@@ -22,10 +22,13 @@
 
 package com.adam.app.galaga.engine;
 
+import android.system.ErrnoException;
+
 import com.adam.app.galaga.R;
 import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.GameObject;
+import com.adam.app.galaga.data.model.LevelConfig;
 import com.adam.app.galaga.data.model.Plane;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
@@ -46,8 +49,16 @@ public class GameObjectManager {
     private final List<Bullet> mBullets = new CopyOnWriteArrayList<>();
     // collision manager
     private final CollisionManager mCollisionManager = new CollisionManager();
+    // level manager
+    private final LevelManager mLevelManager = new LevelManager();
+    // level config
+    private LevelConfig mLevelConfig;
     // player
     private Plane mPlayerPlane;
+    // last spawn time
+    private long mLastSpawnTime = 0;
+    // spawned count
+    private int mSpawnedCount = 0;
 
     private GameObjectManager() {
     }
@@ -68,6 +79,45 @@ public class GameObjectManager {
         mBees.clear();
         mBullets.clear();
 
+        initPlayer();
+
+        loadLevel(1);
+
+    }
+
+    /**
+     * loadLevel
+     *
+     * @param levelId int
+     */
+    public void loadLevel(int levelId) {
+        // level config
+        mLevelConfig = mLevelManager.enterLevel(levelId);
+        if (mLevelConfig == null) {
+            throw new RuntimeException("Level config is null");
+        }
+
+        // clear bee/bullet
+        mBees.clear();
+        mBullets.clear();
+        mSpawnedCount = 0;
+        mLastSpawnTime = 0;
+        GameUtils.info(TAG, "Level " + levelId + " loaded: " + mLevelConfig.getMetadata().getTitle());
+    }
+
+    private void setupBeeFormation(int totalCount, float speed) {
+        int cols = 5; // 假設固定 5 欄
+        for (int i = 0; i < totalCount; i++) {
+            int row = i / cols;
+            int col = i % cols;
+            float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
+            float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
+
+            mBees.add(new Bee(x, y, speed, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
+        }
+    }
+
+    private void initPlayer() {
         mPlayerPlane = new Plane(
                 GameConstants.PLAYER_START_X,
                 GameConstants.PLAYER_START_Y,
@@ -75,16 +125,6 @@ public class GameObjectManager {
                 GameConstants.PLAYER_WIDTH,
                 GameConstants.PLAYER_HEIGHT
         );
-
-
-        // init bees
-        for (int row = 0; row < GameConstants.BEE_ROWS; row++) {
-            for (int col = 0; col < GameConstants.BEE_COLS; col++) {
-                float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
-                float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
-                mBees.add(new Bee(x, y, GameConstants.BEE_SPEED_BASE, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
-            }
-        }
     }
 
     /**
@@ -93,15 +133,35 @@ public class GameObjectManager {
      * @return boolean true if all bees are dead
      */
     public boolean areAllBeesDead() {
-        for (Bee bee : mBees) {
-            if (!bee.isDead()) {
-                return false;
-            }
-        }
-        return true;
+        return mSpawnedCount >= mLevelConfig.getEnemySettings().getTotalCount() && mBees.isEmpty();
     }
 
+    private void updateSpawning() {
+        if (mLevelConfig == null) return;
+        LevelConfig.EnemySettings settings = mLevelConfig.getEnemySettings();
+        if (mSpawnedCount < settings.getTotalCount()) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mLastSpawnTime >= settings.getSpawnIntervalMs()) {
+                // 執行生成一隻小蜜蜂
+                spawnSingleBee(mSpawnedCount, settings.getBaseSpeed());
+                mSpawnedCount++;
+                mLastSpawnTime = currentTime;
+            }
+        }
+    }
 
+    private void spawnSingleBee(int index, float speed) {
+        int cols = GameConstants.DEFAULT_BEES_COLS;
+        int row = index / cols;
+        int col = index % cols;
+
+        float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
+        float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
+
+        // 這裡可以加入 difficultyMultiplier 的計算
+        float difficulty = mLevelConfig.getMetadata().getDifficultyMultiplier();
+        mBees.add(new Bee(x, y, speed * difficulty, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
+    }
 
 
     /**
@@ -112,6 +172,8 @@ public class GameObjectManager {
         if (mPlayerPlane != null) {
             mPlayerPlane.update();
         }
+
+        updateSpawning();
 
         // update bees
         for (Bee bee : mBees) {
@@ -153,28 +215,6 @@ public class GameObjectManager {
      */
     public boolean isPlayerDead() {
         return mCollisionManager.isPlaneHit(mPlayerPlane, mBees);
-    }
-
-    /**
-     * movePlayer
-     *
-     * @param direction float
-     */
-    public void movePlayer(float direction) {
-        GameUtils.info(TAG, "movePlayer");
-        // early return
-        if (mPlayerPlane == null) {
-            return;
-        }
-
-        // left
-        if (direction < 0) {
-            mPlayerPlane.moveLeft();
-            return;
-        }
-
-        // right
-        mPlayerPlane.moveRight();
     }
 
     /**
@@ -236,6 +276,8 @@ public class GameObjectManager {
     public void clear() {
         mBees.clear();
         mBullets.clear();
+        mSpawnedCount = 0;
+        mLastSpawnTime = 0;
         mPlayerPlane = null;
     }
 
@@ -248,15 +290,17 @@ public class GameObjectManager {
         LEFT(R.id.btnLeft),
         RIGHT(R.id.btnRight);
 
-        private final int mResId;
-
         // Map: id -> Direction
         private static Map<Integer, Direction> sResIdToDirection = new HashMap<>();
+
         static {
             for (Direction direction : Direction.values()) {
                 sResIdToDirection.put(direction.mResId, direction);
             }
         }
+
+        private final int mResId;
+
         private Direction(int resId) {
             mResId = resId;
         }

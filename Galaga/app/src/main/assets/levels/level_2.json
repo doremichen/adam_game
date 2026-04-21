@@ -1,0 +1,15 @@
+{
+  "level_id": 2,
+  "metadata": {
+    "title": "哈哈身手",
+    "difficulty_multiplier": 2.0
+  },
+  "enemy_settings": {
+    "total_count": 2,
+    "base_speed": 7.5,
+    "spawn_interval_ms": 1000
+  },
+  "winning_condition": {
+    "type": "ELIMINATE_ALL"
+  }
+}

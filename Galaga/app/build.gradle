@@ -41,6 +41,8 @@ dependencies {
     implementation libs.room.rxjava2
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation libs.gson
+
 
     annotationProcessor libs.room.compiler
 

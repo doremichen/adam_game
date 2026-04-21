@@ -23,6 +23,8 @@
 package com.adam.app.galaga.viewmodel;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -150,6 +152,23 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
 
     }
 
+    private int mCurrentLevel = 1;
+
+    private void handleLevelTransition() {
+        mCurrentLevel++;
+        // delay 2 sec before start next level
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    // NEXT LEVEL
+                    mGameEngine.startNextLevel(mCurrentLevel);
+                } catch (RuntimeException e) {
+                    GameUtils.error(TAG, "handleLevelTransition error");
+                    GameUtils.error(TAG, e.getMessage());
+                    // Show game over screen
+                    mCurrentState.setValue(GameEngine.State.GAME_OVER);
+                }
+            }, 2000L);
+    }
 
     @Override
     public void onScoreChanged(int currentScore) {
@@ -168,5 +187,13 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     public void onGameStateChanged(GameEngine.State state) {
         // update state
         mCurrentState.setValue(state);
+
+        // handle level
+        if (state == GameEngine.State.CLEARED) {
+            handleLevelTransition();
+        }
+
     }
+
+
 }

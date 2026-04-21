@@ -1,0 +1,15 @@
+{
+  "level_id": 1,
+  "metadata": {
+    "title": "小試身手",
+    "difficulty_multiplier": 1.0
+  },
+  "enemy_settings": {
+    "total_count": 3,
+    "base_speed": 5.5,
+    "spawn_interval_ms": 1500
+  },
+  "winning_condition": {
+    "type": "ELIMINATE_ALL"
+  }
+}

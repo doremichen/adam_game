@@ -25,7 +25,7 @@ package com.adam.app.galaga.utils;
 public final class GameConstants {
 
     public static final float BULLET_SPEED = 20.0f;
-
+    public static final int DEFAULT_BEES_COLS = 5;
 
     private GameConstants() {
         throw new UnsupportedOperationException("This is Constants!!!");
