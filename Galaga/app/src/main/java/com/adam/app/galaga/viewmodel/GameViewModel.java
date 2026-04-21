@@ -58,7 +58,7 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     private final MutableLiveData<List<GameObject>> mEntities = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
     private final MutableLiveData<GameEngine.State> mCurrentState = new MutableLiveData<>(GameEngine.State.READY);
-
+    private final MutableLiveData<Integer> mCurrentLevelData = new MutableLiveData<>(1);
 
     private int mFinalScore;
 
@@ -99,6 +99,11 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     public LiveData<GameEngine.State> getCurrentState() {
         return mCurrentState;
     }
+
+    public LiveData<Integer> getCurrentLevelData() {
+        return mCurrentLevelData;
+    }
+
 
     // --- public method ---
     public void startGame() {

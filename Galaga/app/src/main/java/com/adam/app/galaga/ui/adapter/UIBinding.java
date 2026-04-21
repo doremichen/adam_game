@@ -24,10 +24,12 @@ package com.adam.app.galaga.ui.adapter;
 
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
+import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.engine.GameObjectManager;
 import com.adam.app.galaga.viewmodel.GameViewModel;
 
@@ -100,5 +102,31 @@ public class UIBinding {
         view.setText(formattedDate);
     }
 
+    @BindingAdapter("gameState")
+    public static void handleGameStateChange(View view, GameEngine.State state) {
+        if (state == GameEngine.State.CLEARED) {
+            view.setVisibility(View.VISIBLE);
+            view.setAlpha(0f);
+            view.setScaleX(0.8f);
+            view.setScaleY(0.8f);
+
+            // 播放簡單的縮放與淡入動畫
+            view.animate()
+                    .alpha(1f)
+                    .scaleX(1f)
+                    .scaleY(1f)
+                    .setDuration(500)
+                    .setInterpolator(new OvershootInterpolator())
+                    .start();
+
+            // 1.5 秒後淡出，配合你的 2 秒延遲
+            view.postDelayed(() -> {
+                view.animate().alpha(0f).setDuration(400).start();
+            }, 1500);
+
+        } else {
+            view.setVisibility(View.GONE);
+        }
+    }
 
 }
