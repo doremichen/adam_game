@@ -50,7 +50,7 @@ public class Plane extends GameObject{
 
     @Override
     public void update() {
-        GameUtils.info(TAG, "update");
+        //GameUtils.info(TAG, "update");
         updateAnimation();
         clampPosition();
     }

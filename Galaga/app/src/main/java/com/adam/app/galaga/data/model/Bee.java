@@ -57,42 +57,56 @@ public class Bee extends GameObject{
 
     @Override
     public void update() {
-        GameUtils.info(TAG, "update");
+        //GameUtils.info(TAG, "update");
+        float dx = 0;
+        float dy = 0;
+
         // is diving
         if (mIsDiving) {
             // move down
-            this.mPosition.y += this.mSpeed * 2.5f;
-            return;
-        }
-
-        // random fly logic
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - mLastTurnTime >= TURN_INTERVAL) {
-            mAngle += (float) ((mRandom.nextFloat() - 0.5f) * (Math.PI / 2));
-            mLastTurnTime = currentTime;
-        }
-
-        // update position
-        float dx = (float) (Math.cos(mAngle) * mSpeed);
-        float dy = (float) (Math.sin(mAngle) * mSpeed);
-
-        float nextX = mPosition.x + dx;
-        float nextY = mPosition.y + dy;
-
-        // boundary check
-        if (nextX < 0 || nextX > 1080 - mWidth) {
-            mAngle = (float) (Math.PI - mAngle);
-            dx = (float) (Math.cos(mAngle) * mSpeed); // 轉向後重新計算增量
-        }
-
-        // 限制蜜蜂只在螢幕上半部 (0 ~ 1000) 亂飛，否則會飛到控制區
-        if (nextY < 0 || nextY > 1000 - mHeight) {
-            mAngle = -mAngle;
+            dy = this.mSpeed * 2.5f;
+            dx = 0;
+        } else {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mLastTurnTime >= TURN_INTERVAL) {
+                mAngle += (float) ((mRandom.nextFloat() - 0.5f) * (Math.PI / 2));
+                mLastTurnTime = currentTime;
+            }
+            dx = (float) (Math.cos(mAngle) * mSpeed);
             dy = (float) (Math.sin(mAngle) * mSpeed);
         }
 
+
         mPosition.x += dx;
         mPosition.y += dy;
+
+        float worldWidth = GameUtils.getScreenWidth(); //1080f;
+        float playAreaHeight = GameUtils.getScreenHeight(); //1000f;
+
+        // boundary check
+        if (mPosition.x < 0) {
+            mPosition.x = 0;
+            mAngle = (float) (Math.PI - mAngle); // 反彈
+        } else if (mPosition.x > worldWidth - mWidth) {
+            mPosition.x = worldWidth - mWidth;
+            mAngle = (float) (Math.PI - mAngle); // 反彈
+        }
+
+        // 限制蜜蜂只在螢幕上半部 (0 ~ 1000) 亂飛，否則會飛到控制區
+        if (mPosition.y < 0) {
+            mPosition.y = 0;
+            mAngle = -mAngle; // 反彈
+        } else if (mPosition.y > playAreaHeight - mHeight) {
+            mPosition.y = playAreaHeight - mHeight;
+            if (mIsDiving) {
+                mIsDiving = false;
+                mAngle = (float) (-Math.PI / 4 - mRandom.nextFloat() * Math.PI / 2);
+            } else {
+                mAngle = -mAngle; // 反彈
+            }
+
+
+        }
 
         //mPosition.x += (float) (Math.sin(System.currentTimeMillis() / 500.0) * mSpeed);
     }

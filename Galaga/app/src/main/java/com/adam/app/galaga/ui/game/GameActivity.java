@@ -50,6 +50,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        GameUtils.info(TAG, "onCreate");
         // view binding
         mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
@@ -85,10 +86,26 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        GameUtils.info(TAG, "onResume");
+        mViewModel.resumeGame();
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
+        GameUtils.info(TAG, "onPause");
         mViewModel.pauseGame();
 
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        GameUtils.info(TAG, "onDestroy");
+        mBinding.gameSurfaceView.release();
     }
 
     private void onState(GameEngine.State state) {

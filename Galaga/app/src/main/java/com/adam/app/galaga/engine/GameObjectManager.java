@@ -88,6 +88,23 @@ public class GameObjectManager {
     }
 
     /**
+     * check if bees are live?
+     *
+     * @return boolean true if all bees are dead
+     */
+    public boolean areAllBeesDead() {
+        for (Bee bee : mBees) {
+            if (!bee.isDead()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+
+
+    /**
      * updateAll
      */
     public void updateAll() {

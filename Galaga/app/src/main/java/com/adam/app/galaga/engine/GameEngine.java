@@ -105,7 +105,7 @@ public class GameEngine {
         //Start Game
         mCurentTask = mScheduledExecutorService.scheduleWithFixedDelay(
                 this::gameLoop,
-                0,
+                1000L,  // delay 1 sec to start for view is ready
                 GameConstants.FRAME_PERIOD_MS,
                 TimeUnit.MILLISECONDS
         );
@@ -195,54 +195,6 @@ public class GameEngine {
     }
 
     /**
-     * move player
-     *
-     * @param direction Direction
-     */
-    public void movePlayer(float direction) {
-        GameUtils.info(TAG, "movePlayer");
-        // early return
-        if (mCurrentState == State.GAME_OVER) {
-            GameUtils.info(TAG, "Game is over");
-            return;
-        }
-
-        mGameObjectManager.movePlayer(direction);
-    }
-
-    /**
-     * move player
-     *
-     * @param direction Direction
-     */
-    public void movePlayer(GameObjectManager.Direction direction) {
-        GameUtils.info(TAG, "movePlayer");
-        // early return
-        if (mCurrentState == State.GAME_OVER) {
-            GameUtils.info(TAG, "Game is over");
-            return;
-        }
-
-        mGameObjectManager.movePlayer(direction);
-    }
-
-    /**
-     * shoot
-     */
-    public void shoot() {
-        GameUtils.info(TAG, "shoot");
-        // early return
-        if (mCurrentState == State.GAME_OVER) {
-            GameUtils.info(TAG, "Game is over");
-            return;
-        }
-
-        mGameObjectManager.spawnBullet();
-
-    }
-
-
-    /**
      * set direction
      *
      * @param direction Direction direction
@@ -267,7 +219,7 @@ public class GameEngine {
      * game loop
      */
     private void gameLoop() {
-        //GameUtils.info(TAG, "gameLoop");
+        GameUtils.info(TAG, "gameLoop");
         try {
 
             // check if game is paused
@@ -295,6 +247,13 @@ public class GameEngine {
                     mLastShootTime = currentTime;
                 }
 
+            }
+
+            // check bees
+            if (mGameObjectManager.areAllBeesDead()) {
+                // stop game
+                stopGameTask();
+                updateState(State.GAME_OVER);
             }
 
             updateLogic();

@@ -174,7 +174,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int format, int width, int height) {
-        GameUtils.info(TAG, "surfaceChanged");
+        GameUtils.info(TAG, "surfaceChanged: ");
+        GameUtils.info(TAG, "width=" + width + ", height=" + height);
+        GameUtils.setScreenSize(width, height);
         mScaleX = (float) width / GameConstants.GAME_WIDTH;
         mScaleY = (float) height / GameConstants.GAME_HEIGHT;
 

@@ -57,7 +57,7 @@ public class LeaderboardActivity extends AppCompatActivity {
         mAdapter = new LeaderboardAdapter();
         // linear manager
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        linearLayoutManager.setStackFromEnd(true);
+        //linearLayoutManager.setStackFromEnd(true);
 
         mBinding.rvLeaderboard.setLayoutManager(linearLayoutManager);
         mBinding.rvLeaderboard.setAdapter(mAdapter);

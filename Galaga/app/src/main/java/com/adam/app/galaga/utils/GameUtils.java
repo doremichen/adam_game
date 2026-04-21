@@ -33,6 +33,9 @@ public final class GameUtils {
 
     // Game Tag
     private static final String TAG = "Galaga";
+    // screen size:
+    private static int sScreenWidth = 0;
+    private static int sScreenHeight = 0;
 
 
     private GameUtils() {
@@ -49,7 +52,6 @@ public final class GameUtils {
         Log.i(TAG, tag + ": " + msg);
     }
 
-
     /**
      * erro log
      *
@@ -60,13 +62,12 @@ public final class GameUtils {
         Log.e(TAG, tag + ": " + msg);
     }
 
-
     /**
      *
      * Show toast message.
      *
      * @param context Context
-     * @param msg String
+     * @param msg     String
      */
     public static void showToast(Context context, String msg) {
         // check if main thread
@@ -81,8 +82,9 @@ public final class GameUtils {
 
     /**
      * start activity
+     *
      * @param context Context
-     * @param cls Class
+     * @param cls     Class
      */
     public static void startActivity(Context context, Class<?> cls) {
         Intent intent = new Intent(context, cls);
@@ -92,5 +94,35 @@ public final class GameUtils {
     public static void showUnImplementedToast(Context context) {
         showToast(context, "Not implemented yet");
     }
+
+    /**
+     * set screen size
+     *
+     * @param width  int
+     * @param height int
+     */
+    public static void setScreenSize(int width, int height) {
+        sScreenWidth = width;
+        sScreenHeight = height;
+    }
+
+    /**
+     * get screen width
+     *
+     * @return int
+     */
+    public static int getScreenWidth() {
+        return (sScreenWidth == 0)? 1080 : sScreenWidth;
+    }
+
+    /**
+     * get screen height
+     *
+     * @return int
+     */
+    public static int getScreenHeight() {
+        return (sScreenHeight == 0L)? 1333 : sScreenHeight;
+    }
+
 
 }
