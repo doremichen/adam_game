@@ -85,13 +85,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.65" />
+            app:layout_constraintGuide_percent="0.60" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/control_panel"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:padding="16dp"
             app:layout_constraintTop_toBottomOf="@id/control_guideline"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -106,71 +105,79 @@
                 android:src="@drawable/ic_fire"
                 app:tint="?attr/colorOnError"
                 app:fabCustomSize="80dp"
-                android:elevation="8dp"
+                android:elevation="12dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/shape_circle"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnUp"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="80dp"
-                android:layout_height="48dp"
+                android:layout_height="0dp"
                 android:text="↑"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
+                android:layout_marginBottom="0dp"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/btnFire"
                 app:layout_constraintEnd_toEndOf="@+id/btnFire"
                 app:layout_constraintStart_toStartOf="@+id/btnFire"
-                android:layout_marginBottom="8dp"/>
+                app:shapeAppearanceOverlay="@null"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnDown"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="80dp"
-                android:layout_height="48dp"
+                android:layout_height="0dp"
                 android:text="↓"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
+                android:layout_marginTop="0dp"
                 app:layout_constraintTop_toBottomOf="@+id/btnFire"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btnFire"
-                app:layout_constraintStart_toStartOf="@+id/btnFire"
-                android:layout_marginTop="8dp"/>
+                app:layout_constraintStart_toStartOf="@+id/btnFire"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLeft"
                 style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="64dp"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:text="←"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetLeft="0dp"
                 android:insetRight="0dp"
+                android:layout_marginEnd="0dp"
                 app:layout_constraintBottom_toBottomOf="@+id/btnFire"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/btnFire"
                 app:layout_constraintTop_toTopOf="@+id/btnFire"
-                android:layout_marginEnd="8dp" />
+                app:shapeAppearanceOverlay="@null"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRight"
                 style="@style/Widget.Material3.Button.TonalButton"
-                android:layout_width="64dp"
+                android:layout_width="0dp"
                 android:layout_height="80dp"
                 android:text="→"
-                android:textSize="24sp"
+                android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetLeft="0dp"
                 android:insetRight="0dp"
+                android:layout_marginStart="0dp"
                 app:layout_constraintBottom_toBottomOf="@+id/btnFire"
                 app:layout_constraintStart_toEndOf="@+id/btnFire"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/btnFire"
-                android:layout_marginStart="8dp" />
+                app:shapeAppearanceOverlay="@null" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
