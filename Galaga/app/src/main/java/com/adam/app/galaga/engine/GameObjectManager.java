@@ -22,8 +22,6 @@
 
 package com.adam.app.galaga.engine;
 
-import android.system.ErrnoException;
-
 import com.adam.app.galaga.R;
 import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
@@ -98,12 +96,41 @@ public class GameObjectManager {
         }
 
         // clear bee/bullet
-        mBees.clear();
-        mBullets.clear();
-        mSpawnedCount = 0;
-        mLastSpawnTime = 0;
+        resetLevelState();
         GameUtils.info(TAG, "Level " + levelId + " loaded: " + mLevelConfig.getMetadata().getTitle());
     }
+
+    /**
+     * get level id
+     * @return int
+     */
+    public int getCurrentLevelId() {
+        return mLevelManager.getCurrentLevelId();
+    }
+
+    /**
+     * next level
+     */
+    public void nextLevel() {
+        mLevelConfig = mLevelManager.nextLevel();
+        if (mLevelConfig == null) {
+            throw new RuntimeException("Level config is null");
+        }
+
+        resetLevelState();
+        GameUtils.info(TAG, "Level " + mLevelManager.getCurrentLevelId() + " loaded: " + mLevelConfig.getMetadata().getTitle());
+
+    }
+
+    private void resetLevelState() {
+        // clear bee/bullet
+        mBees.clear();
+        mBullets.clear();
+        // reset spawn state
+        mSpawnedCount = 0;
+        mLastSpawnTime = 0;
+    }
+
 
     private void initPlayer() {
         mPlayerPlane = new Plane(
@@ -272,10 +299,7 @@ public class GameObjectManager {
      * clear
      */
     public void clear() {
-        mBees.clear();
-        mBullets.clear();
-        mSpawnedCount = 0;
-        mLastSpawnTime = 0;
+        resetLevelState();
         mPlayerPlane = null;
     }
 

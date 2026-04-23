@@ -62,7 +62,6 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     private final MutableLiveData<String> mCurrentLevelTitle = new MutableLiveData<>("");
 
     private int mFinalScore;
-    private int mCurrentLevel = 1;
 
     /**
      * Constructor
@@ -164,17 +163,15 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     }
 
     private void handleLevelTransition() {
-        mCurrentLevel++;
-
         String title = mGameEngine.getMetadataTitle();
         mCurrentLevelTitle.setValue(title);
-        //mCurrentLevelData.setValue(mCurrentLevel);
+        mCurrentLevelData.setValue(mGameEngine.getCurrentLevelId());
 
         // delay 2 sec before start next level
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             try {
                 // NEXT LEVEL
-                mGameEngine.startNextLevel(mCurrentLevel);
+                mGameEngine.startNextLevel();
             } catch (RuntimeException e) {
                 GameUtils.error(TAG, "handleLevelTransition error");
                 GameUtils.error(TAG, e.getMessage());

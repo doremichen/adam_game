@@ -47,6 +47,7 @@ public class LevelManager {
      * @return LevelConfig
      */
     public LevelConfig enterLevel(int levelId) {
+        // update level id
         mCurrentLevelId = levelId;
         return mLevelRepository.getLevelConfig(levelId);
     }
@@ -55,8 +56,15 @@ public class LevelManager {
      * nextLevel
      * @return LevelConfig
      */
-    public LevelConfig nextLevel() {
+    public LevelConfig nextLevel() {;
         return enterLevel(mCurrentLevelId + 1);
     }
 
+    /**
+     * get level id
+     * @return int
+     */
+    public int getCurrentLevelId() {
+        return mCurrentLevelId;
+    }
 }

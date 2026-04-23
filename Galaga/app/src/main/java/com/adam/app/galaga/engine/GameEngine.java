@@ -217,9 +217,8 @@ public class GameEngine {
 
     /**
      * startNextLevel
-     * @param nextLevelId int
      */
-    public void startNextLevel(int nextLevelId) {
+    public void startNextLevel() {
         GameUtils.info(TAG, "startNextLevel");
         // early return
         if (mCurrentState == State.RUNNING) {
@@ -227,9 +226,19 @@ public class GameEngine {
             return;
         }
 
-        mGameObjectManager.loadLevel(nextLevelId);
+        mGameObjectManager.nextLevel();
+        //mGameObjectManager.loadLevel(nextLevelId);
         start();
     }
+
+    /**
+     * getCurrentLevelId
+     * @return int
+     */
+    public int getCurrentLevelId() {
+        return mGameObjectManager.getCurrentLevelId();
+    }
+
 
     /**
      * get metadata title
