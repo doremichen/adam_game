@@ -105,18 +105,6 @@ public class GameObjectManager {
         GameUtils.info(TAG, "Level " + levelId + " loaded: " + mLevelConfig.getMetadata().getTitle());
     }
 
-    private void setupBeeFormation(int totalCount, float speed) {
-        int cols = 5; // 假設固定 5 欄
-        for (int i = 0; i < totalCount; i++) {
-            int row = i / cols;
-            int col = i % cols;
-            float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
-            float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
-
-            mBees.add(new Bee(x, y, speed, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
-        }
-    }
-
     private void initPlayer() {
         mPlayerPlane = new Plane(
                 GameConstants.PLAYER_START_X,
@@ -134,6 +122,16 @@ public class GameObjectManager {
      */
     public boolean areAllBeesDead() {
         return mSpawnedCount >= mLevelConfig.getEnemySettings().getTotalCount() && mBees.isEmpty();
+    }
+
+
+    /**
+     * get metadata title
+     * @return String
+     */
+    public String getMetadataTitle() {
+        if (mLevelConfig == null) return "";
+        return mLevelConfig.getMetadata().getTitle();
     }
 
     private void updateSpawning() {

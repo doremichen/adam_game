@@ -232,6 +232,14 @@ public class GameEngine {
     }
 
     /**
+     * get metadata title
+     * @return String
+     */
+    public String getMetadataTitle() {
+        return mGameObjectManager.getMetadataTitle();
+    }
+
+    /**
      * game loop
      */
     private void gameLoop() {

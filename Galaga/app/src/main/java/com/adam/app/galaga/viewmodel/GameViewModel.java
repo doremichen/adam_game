@@ -59,9 +59,10 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
     private final MutableLiveData<GameEngine.State> mCurrentState = new MutableLiveData<>(GameEngine.State.READY);
     private final MutableLiveData<Integer> mCurrentLevelData = new MutableLiveData<>(1);
+    private final MutableLiveData<String> mCurrentLevelTitle = new MutableLiveData<>("");
 
     private int mFinalScore;
-
+    private int mCurrentLevel = 1;
 
     /**
      * Constructor
@@ -74,6 +75,7 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         // start game
         startGame();
     }
+
 
     @Override
     protected void onCleared() {
@@ -95,7 +97,6 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         return mFinalScore;
     }
 
-
     public LiveData<GameEngine.State> getCurrentState() {
         return mCurrentState;
     }
@@ -104,6 +105,9 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         return mCurrentLevelData;
     }
 
+    public LiveData<String> getCurrentLevelTitle() {
+        return mCurrentLevelTitle;
+    }
 
     // --- public method ---
     public void startGame() {
@@ -125,15 +129,17 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
 
     /**
      * set direction
+     *
      * @param direction Direction direction
      */
-    public  void setMoveDirection(GameObjectManager.Direction direction) {
+    public void setMoveDirection(GameObjectManager.Direction direction) {
         GameUtils.info(TAG, "setMoveDirection");
         mGameEngine.setMoveDirection(direction);
     }
 
     /**
      * set shooting
+     *
      * @param shooting boolean
      */
     public void setShooting(boolean shooting) {
@@ -157,22 +163,25 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
 
     }
 
-    private int mCurrentLevel = 1;
-
     private void handleLevelTransition() {
         mCurrentLevel++;
+
+        String title = mGameEngine.getMetadataTitle();
+        mCurrentLevelTitle.setValue(title);
+        //mCurrentLevelData.setValue(mCurrentLevel);
+
         // delay 2 sec before start next level
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                try {
-                    // NEXT LEVEL
-                    mGameEngine.startNextLevel(mCurrentLevel);
-                } catch (RuntimeException e) {
-                    GameUtils.error(TAG, "handleLevelTransition error");
-                    GameUtils.error(TAG, e.getMessage());
-                    // Show game over screen
-                    mCurrentState.setValue(GameEngine.State.GAME_OVER);
-                }
-            }, 2000L);
+            try {
+                // NEXT LEVEL
+                mGameEngine.startNextLevel(mCurrentLevel);
+            } catch (RuntimeException e) {
+                GameUtils.error(TAG, "handleLevelTransition error");
+                GameUtils.error(TAG, e.getMessage());
+                // Show game over screen
+                mCurrentState.setValue(GameEngine.State.GAME_OVER);
+            }
+        }, 2000L);
     }
 
     @Override
