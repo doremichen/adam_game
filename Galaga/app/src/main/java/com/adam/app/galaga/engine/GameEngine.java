@@ -282,17 +282,28 @@ public class GameEngine {
 
             }
 
-            // check bees
-            if (mGameObjectManager.areAllBeesDead()) {
+            updateLogic();
+            processCollisions();
+            sendFrameToView();
+
+            // check level cleared
+            if (mGameObjectManager.isLevelCleared()) {
                 // stop game
                 stopGameTask();
                 updateState(State.CLEARED);
                 return;
             }
 
-            updateLogic();
-            processCollisions();
-            sendFrameToView();
+
+            // check if player is dead
+            if (mGameObjectManager.isPlayerDead()) {
+                // stop game
+                stopGameTask();
+                updateState(State.GAME_OVER);
+                return;
+            }
+
+
 
         } catch (Exception e) {
             GameUtils.error(TAG, "gameLoop error");
@@ -314,15 +325,9 @@ public class GameEngine {
             notifyScoreChanged(mTotalScore);
         }
 
-        // check if player is dead
-        if (mGameObjectManager.isPlayerDead()) {
-            // stop game
-            stopGameTask();
-            updateState(State.GAME_OVER);
-
-        }
         // Sweep bees
         mGameObjectManager.cleanupEntities();
+
     }
 
     private void sendFrameToView() {

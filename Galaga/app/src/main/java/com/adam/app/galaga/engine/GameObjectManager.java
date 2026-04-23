@@ -49,6 +49,8 @@ public class GameObjectManager {
     private final CollisionManager mCollisionManager = new CollisionManager();
     // level manager
     private final LevelManager mLevelManager = new LevelManager();
+    // Winnings strategy
+    public WinningStrategy mWinningStrategy;
     // level config
     private LevelConfig mLevelConfig;
     // player
@@ -57,6 +59,8 @@ public class GameObjectManager {
     private long mLastSpawnTime = 0;
     // spawned count
     private int mSpawnedCount = 0;
+    // level start time
+    private long mLevelStartTime;
 
     private GameObjectManager() {
     }
@@ -78,9 +82,12 @@ public class GameObjectManager {
         mBullets.clear();
 
         initPlayer();
-
-        loadLevel(1);
-
+        try {
+            loadLevel(1);
+        } catch (RuntimeException e) {
+            GameUtils.error(TAG, "no config file!!!");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -95,13 +102,31 @@ public class GameObjectManager {
             throw new RuntimeException("Level config is null");
         }
 
+        mLevelStartTime = System.currentTimeMillis();
+
+        // winning strategy
+        buildWinningStrategy();
+
         // clear bee/bullet
         resetLevelState();
         GameUtils.info(TAG, "Level " + levelId + " loaded: " + mLevelConfig.getMetadata().getTitle());
     }
 
     /**
+     * isLevelCleared
+     * @return boolean true if level is cleared
+     */
+    public boolean isLevelCleared() {
+        if (mLevelConfig == null) {
+            GameUtils.error(TAG, "Level config is null");
+            return false;
+        }
+        return mWinningStrategy.validate(this);
+    }
+
+    /**
      * get level id
+     *
      * @return int
      */
     public int getCurrentLevelId() {
@@ -117,29 +142,22 @@ public class GameObjectManager {
             throw new RuntimeException("Level config is null");
         }
 
+        mLevelStartTime = System.currentTimeMillis();
+
+        buildWinningStrategy();
+
         resetLevelState();
         GameUtils.info(TAG, "Level " + mLevelManager.getCurrentLevelId() + " loaded: " + mLevelConfig.getMetadata().getTitle());
 
     }
 
-    private void resetLevelState() {
-        // clear bee/bullet
-        mBees.clear();
-        mBullets.clear();
-        // reset spawn state
-        mSpawnedCount = 0;
-        mLastSpawnTime = 0;
-    }
 
-
-    private void initPlayer() {
-        mPlayerPlane = new Plane(
-                GameConstants.PLAYER_START_X,
-                GameConstants.PLAYER_START_Y,
-                GameConstants.PLAYER_SPEED,
-                GameConstants.PLAYER_WIDTH,
-                GameConstants.PLAYER_HEIGHT
-        );
+    /**
+     * get level start time
+     * @return long the time when level start
+     */
+    public long getLevelStartTime() {
+        return mLevelStartTime;
     }
 
     /**
@@ -154,38 +172,12 @@ public class GameObjectManager {
 
     /**
      * get metadata title
+     *
      * @return String
      */
     public String getMetadataTitle() {
         if (mLevelConfig == null) return "";
         return mLevelConfig.getMetadata().getTitle();
-    }
-
-    private void updateSpawning() {
-        if (mLevelConfig == null) return;
-        LevelConfig.EnemySettings settings = mLevelConfig.getEnemySettings();
-        if (mSpawnedCount < settings.getTotalCount()) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - mLastSpawnTime >= settings.getSpawnIntervalMs()) {
-                // 執行生成一隻小蜜蜂
-                spawnSingleBee(mSpawnedCount, settings.getBaseSpeed());
-                mSpawnedCount++;
-                mLastSpawnTime = currentTime;
-            }
-        }
-    }
-
-    private void spawnSingleBee(int index, float speed) {
-        int cols = GameConstants.DEFAULT_BEES_COLS;
-        int row = index / cols;
-        int col = index % cols;
-
-        float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
-        float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
-
-        // 這裡可以加入 difficultyMultiplier 的計算
-        float difficulty = mLevelConfig.getMetadata().getDifficultyMultiplier();
-        mBees.add(new Bee(x, y, speed * difficulty, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
     }
 
 
@@ -332,6 +324,77 @@ public class GameObjectManager {
         }
 
     }
+
+    private void resetLevelState() {
+        // clear bee/bullet
+        mBees.clear();
+        mBullets.clear();
+        // reset spawn state
+        mSpawnedCount = 0;
+        mLastSpawnTime = 0;
+    }
+
+
+    private void initPlayer() {
+        mPlayerPlane = new Plane(
+                GameConstants.PLAYER_START_X,
+                GameConstants.PLAYER_START_Y,
+                GameConstants.PLAYER_SPEED,
+                GameConstants.PLAYER_WIDTH,
+                GameConstants.PLAYER_HEIGHT
+        );
+    }
+
+
+
+    /**
+     * build winnings strategy
+     */
+    private void buildWinningStrategy() {
+        String type = mLevelConfig.getWinningCondition().getType();
+        try {
+            mWinningStrategy = WinningStrategy.valueOf(type);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            mWinningStrategy = WinningStrategy.ELIMINATE_ALL;
+        }
+    }
+
+    private void updateSpawning() {
+        if (mLevelConfig == null) return;
+        // Surving strategy
+        if (mWinningStrategy == WinningStrategy.SURVIVAL) {
+            if (System.currentTimeMillis() - mLevelStartTime >= GameConstants.LEVEL_DURATION_MS) {
+                return;
+            }
+        }
+        LevelConfig.EnemySettings settings = mLevelConfig.getEnemySettings();
+        if (mSpawnedCount < settings.getTotalCount()) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mLastSpawnTime >= settings.getSpawnIntervalMs()) {
+                // spawn single bee
+                spawnSingleBee(mSpawnedCount, settings.getBaseSpeed());
+                mSpawnedCount++;
+                mLastSpawnTime = currentTime;
+            }
+        }
+    }
+
+    private void spawnSingleBee(int index, float speed) {
+        if (mLevelConfig == null) return;
+        int cols = GameConstants.DEFAULT_BEES_COLS;
+        int row = index / cols;
+        int col = index % cols;
+
+        float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
+        float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
+
+        // 這裡可以加入 difficultyMultiplier 的計算
+        float difficulty = mLevelConfig.getMetadata().getDifficultyMultiplier();
+        mBees.add(new Bee(x, y, speed * difficulty, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
+    }
+
+
+
 
     private static class Helper {
         private static final GameObjectManager INSTANCE = new GameObjectManager();

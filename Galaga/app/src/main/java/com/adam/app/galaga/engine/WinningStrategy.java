@@ -22,5 +22,22 @@
 
 package com.adam.app.galaga.engine;
 
-public interface WinValidator {
+import com.adam.app.galaga.utils.GameConstants;
+
+public enum WinningStrategy {
+    ELIMINATE_ALL {
+        @Override
+        public boolean validate(GameObjectManager gom) {
+            return gom.areAllBeesDead();
+        }
+    },
+    SURVIVAL {
+        @Override
+        public boolean validate(GameObjectManager gom) {
+            boolean timeOver = System.currentTimeMillis() - gom.getLevelStartTime() >= GameConstants.LEVEL_DURATION_MS;
+            boolean allDead = gom.areAllBeesDead();
+            return timeOver && allDead;
+        }
+    };
+    public abstract boolean validate(GameObjectManager gom);
 }

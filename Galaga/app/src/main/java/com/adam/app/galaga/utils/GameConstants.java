@@ -26,6 +26,7 @@ public final class GameConstants {
 
     public static final float BULLET_SPEED = 20.0f;
     public static final int DEFAULT_BEES_COLS = 5;
+    public static final long LEVEL_DURATION_MS = 30000L;
 
     private GameConstants() {
         throw new UnsupportedOperationException("This is Constants!!!");
