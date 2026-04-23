@@ -10,6 +10,6 @@
     "spawn_interval_ms": 1000
   },
   "winning_condition": {
-    "type": "ELIMINATE_ALL"
+    "type": "SURVIVAL"
   }
 }

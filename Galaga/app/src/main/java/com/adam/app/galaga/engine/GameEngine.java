@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit;
 public class GameEngine {
     // TAG
     private static final String TAG = GameEngine.class.getSimpleName();
-    private static final long SHOOT_INTERVAL_MS = 250L;
+    private static final long SHOOT_INTERVAL_MS = 50L;
     // GameObjectManager
     private final GameObjectManager mGameObjectManager = GameObjectManager.getInstance();
     // scheduled executor service
@@ -314,6 +314,11 @@ public class GameEngine {
     private void updateLogic() {
         //GameUtils.info(TAG, "updateLogic");
         mGameObjectManager.updateAll();
+        WinningStrategy strategy = mGameObjectManager.getStrategy();
+        if (strategy == WinningStrategy.SURVIVAL) {
+            long elapsed = System.currentTimeMillis() - mGameObjectManager.getLevelStartTime();
+            notifyRemainingTime(elapsed);
+        }
     }
 
     private void processCollisions() {
@@ -335,6 +340,12 @@ public class GameEngine {
         List<GameObject> entities = mGameObjectManager.getAllEntities();
         notifyFrameUpdate(entities);
     }
+
+    private void notifyRemainingTime(long elapsed) {
+        final EngineCallback callback = mEngineCallback;
+        if (callback != null) mMainHandler.post(() -> callback.onRemainingTime(elapsed));
+    }
+
 
     private void notifyScoreChanged(int score) {
         final EngineCallback callback = mEngineCallback;
@@ -377,6 +388,8 @@ public class GameEngine {
 
         // Trigger when game state is changed
         void onGameStateChanged(State state);
+
+        void onRemainingTime(long elapsed);
     }
 
 }

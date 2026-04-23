@@ -182,6 +182,15 @@ public class GameObjectManager {
 
 
     /**
+     * get strategy
+     *
+     * @return WinningStrategy
+     */
+    public WinningStrategy getStrategy() {
+        return (mWinningStrategy == null)? WinningStrategy.ELIMINATE_ALL : mWinningStrategy;
+    }
+
+    /**
      * updateAll
      */
     public void updateAll() {

@@ -35,6 +35,7 @@ import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.data.repository.GameRepository;
 import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.engine.GameObjectManager;
+import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 
 import java.util.ArrayList;
@@ -60,6 +61,7 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     private final MutableLiveData<GameEngine.State> mCurrentState = new MutableLiveData<>(GameEngine.State.READY);
     private final MutableLiveData<Integer> mCurrentLevelData = new MutableLiveData<>(1);
     private final MutableLiveData<String> mCurrentLevelTitle = new MutableLiveData<>("");
+    private final MutableLiveData<String> mRemainingTime = new MutableLiveData<>("");
 
     private int mFinalScore;
 
@@ -107,6 +109,11 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
     public LiveData<String> getCurrentLevelTitle() {
         return mCurrentLevelTitle;
     }
+
+    public LiveData<String> getRemainingTime() {
+        return mRemainingTime;
+    }
+
 
     // --- public method ---
     public void startGame() {
@@ -204,6 +211,13 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
             handleLevelTransition();
         }
 
+    }
+
+    @Override
+    public void onRemainingTime(long elapsed) {
+        long totalDuration = GameConstants.LEVEL_DURATION_MS;
+        long remaining = Math.max(0, totalDuration - elapsed);
+        mRemainingTime.postValue(String.format("Time: %ds", remaining / 1000));
     }
 
 
