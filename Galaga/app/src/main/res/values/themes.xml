@@ -13,6 +13,20 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+    <style name="PreferenceTheme.Galaga" parent="@style/PreferenceThemeOverlay.v14.Material">
+        <item name="preferenceCategoryStyle">@style/PreferenceCategory.Galaga</item>
+        <item name="android:textColorPrimary">#FFFFFF</item>
+        <item name="android:textColorSecondary">#AAAAAA</item>
+    </style>
+    <style name="Theme.Galaga.Settings" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowBackground">#121212</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Galaga</item>
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowNoTitle">false</item>
+    </style>
+    <style name="PreferenceCategory.Galaga" parent="Preference.Category.Material">
+        <item name="android:layout">@layout/custom_preference_category</item>
+    </style>
     <style name="shape_circle" parent="">
         <item name="cornerSize">50%</item>
     </style>

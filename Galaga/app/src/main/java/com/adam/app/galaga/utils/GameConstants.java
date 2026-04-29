@@ -27,6 +27,7 @@ public final class GameConstants {
     public static final float BULLET_SPEED = 20.0f;
     public static final int DEFAULT_BEES_COLS = 5;
     public static final long LEVEL_DURATION_MS = 30000L;
+    public static final String NOT_SUPPORT_INFO = "Not support!!!";
 
     private GameConstants() {
         throw new UnsupportedOperationException("This is Constants!!!");
@@ -53,7 +54,6 @@ public final class GameConstants {
     public static final int MAX_ANIM_FRAMES = 4; // assume fire animation has 4 frames
     public static final int ANIM_FRAME_DELAY = 5;// assume fire animation has 5 frames per second
 
-
     // bee
     public static final int BEE_ROWS = 3;
     public static final int BEE_COLS = 6;
@@ -63,5 +63,8 @@ public final class GameConstants {
     public static final int BEE_SPACING = 120;
     public static final int BEE_INITIAL_OFFSET_X = 150;
     public static final int BEE_INITIAL_OFFSET_Y = 200;
+
+    // setting
+    public static final long AUTO_FIRE_INTERVAL = 500;
 
 }

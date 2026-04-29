@@ -1,0 +1,23 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/galaga_settings_category_title">
+
+        <SwitchPreferenceCompat
+            app:defaultValue="false"
+            app:key="key.auto.fire"
+            app:title="@string/galaga_settings_auto_fire_title"
+            app:icon="@drawable/ic_auto_fire"
+            app:summary="@string/galaga_settings_auto_fire_summary" />
+
+        <ListPreference
+            app:defaultValue="STRAIGHT"
+            app:entries="@array/shot_style_entries"
+            app:entryValues="@array/shot_style_values"
+            app:key="key.shot.type"
+            app:title="@string/galaga_settings_shot_style_title"
+            app:icon="@drawable/ic_shot_style"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

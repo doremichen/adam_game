@@ -35,8 +35,10 @@ android {
 }
 
 dependencies {
+    implementation libs.activity.ktx
     implementation libs.appcompat
     implementation libs.material
+    implementation libs.preference
     implementation libs.room
     implementation libs.room.rxjava2
     implementation libs.activity

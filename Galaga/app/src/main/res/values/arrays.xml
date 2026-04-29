@@ -1,0 +1,15 @@
+<resources>
+    <string-array name="shot_style_entries">
+        <item>Straight</item>
+        <item>Spread</item>
+        <item>Circular</item>
+        <item>Backward</item>
+    </string-array>
+
+    <string-array name="shot_style_values">
+        <item>STRAIGHT</item>
+        <item>SPREAD</item>
+        <item>CIRCULAR</item>
+        <item>BACKWARD</item>
+    </string-array>
+</resources>

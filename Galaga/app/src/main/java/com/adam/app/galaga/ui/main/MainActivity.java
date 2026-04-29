@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.adam.app.galaga.databinding.ActivityMainBinding;
 import com.adam.app.galaga.ui.game.GameActivity;
 import com.adam.app.galaga.ui.leaderboard.LeaderboardActivity;
+import com.adam.app.galaga.ui.settings.SettingsActivity;
 import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.MainViewModel;
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case OPEN_SETTINGS:
                 // open settings
-                GameUtils.showUnImplementedToast(this);
+                GameUtils.startActivity(this, SettingsActivity.class);
                 break;
             case OPEN_LEADER_BOARD:
                 // open leader board

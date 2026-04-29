@@ -313,6 +313,7 @@ public class GameEngine {
 
     private void updateLogic() {
         //GameUtils.info(TAG, "updateLogic");
+        mGameObjectManager.handleAutoFiring();
         mGameObjectManager.updateAll();
         WinningStrategy strategy = mGameObjectManager.getStrategy();
         if (strategy == WinningStrategy.SURVIVAL) {

@@ -26,6 +26,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 
+import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 
 /**
@@ -36,15 +37,30 @@ public class Bullet extends GameObject{
     // TAG
     private static final String TAG = Bullet.class.getSimpleName();
 
+    // vector position
+    private final float mVx;
+    private final float mVy;
+
+
+    public Bullet(float x, float y, float vx, float vy) {
+        super(x, y, 0, 10, 20);
+        this.mVx = vx;
+        this.mVy = vy;
+    }
+
+
     public Bullet(float x, float y, float speed) {
         super(x, y, speed, 10, 20);
+        this.mVx = 0.0f;
+        this.mVy = 0.0f;
     }
 
     @Override
     public void update() {
         GameUtils.info(TAG, "update");
-        // move up
-        this.mPosition.y -= this.mSpeed;
+        // move
+        this.mPosition.x += this.mVx;
+        this.mPosition.y += this.mVy;
     }
 
     @Override
@@ -70,7 +86,10 @@ public class Bullet extends GameObject{
      */
     public boolean isOutOfBound() {
         GameUtils.info(TAG, "isOutOfBound");
-        return this.mPosition.y < -this.mHeight;
+        return mPosition.y < -mHeight ||
+                mPosition.y > GameConstants.GAME_HEIGHT ||
+                mPosition.x < -mWidth ||
+                mPosition.x > GameConstants.GAME_WIDTH;
     }
 
 }

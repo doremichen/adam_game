@@ -19,4 +19,10 @@
     <string name="dir_down">↓</string>
     <string name="dir_left">←</string>
     <string name="dir_right">→</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="galaga_settings_category_title"><![CDATA[Combat & Control]]></string>
+    <string name="galaga_settings_auto_fire_summary">Automatically fire bullets at fixed intervals</string>
+    <string name="galaga_settings_auto_fire_title">Auto Fire</string>
+    <string name="galaga_settings_shot_style_title">Shot Style</string>
+    <string name="galaga_show_not_support_toast">Not support!!!</string>
 </resources>

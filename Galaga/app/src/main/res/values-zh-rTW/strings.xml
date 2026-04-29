@@ -19,4 +19,10 @@
     <string name="dir_down">↓</string>
     <string name="dir_left">←</string>
     <string name="dir_right">→</string>
+    <string name="title_activity_settings">設定</string>
+    <string name="galaga_settings_category_title">戰鬥與控制</string>
+    <string name="galaga_settings_auto_fire_summary">以固定間隔自動發射子彈</string>
+    <string name="galaga_settings_auto_fire_title">自動開火</string>
+    <string name="galaga_settings_shot_style_title">發射格式</string>
+    <string name="galaga_show_not_support_toast">不支援!!!</string>
 </resources>

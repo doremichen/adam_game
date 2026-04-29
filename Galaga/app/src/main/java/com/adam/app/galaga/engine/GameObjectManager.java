@@ -23,6 +23,7 @@
 package com.adam.app.galaga.engine;
 
 import com.adam.app.galaga.R;
+import com.adam.app.galaga.data.local.prefs.GameSettings;
 import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.GameObject;
@@ -61,6 +62,8 @@ public class GameObjectManager {
     private int mSpawnedCount = 0;
     // level start time
     private long mLevelStartTime;
+    // last auto fire time
+    private long mLastAutoFireTime;
 
     private GameObjectManager() {
     }
@@ -194,14 +197,21 @@ public class GameObjectManager {
      * updateAll
      */
     public void updateAll() {
-        // update player
-        if (mPlayerPlane != null) {
-            mPlayerPlane.update();
-        }
-
+        updatePlayer();
         updateSpawning();
+        updateBees();
+        updateBullets();
+    }
 
-        // update bees
+    private void updateBullets() {
+        mBullets.removeIf(Bullet::isOutOfBound);
+        // update bullets
+        for (Bullet bullet : mBullets) {
+            bullet.update();
+        }
+    }
+
+    private void updateBees() {
         for (Bee bee : mBees) {
 
             if (Math.random() < 0.005) {
@@ -210,10 +220,11 @@ public class GameObjectManager {
 
             bee.update();
         }
-        mBullets.removeIf(Bullet::isOutOfBound);
-        // update bullets
-        for (Bullet bullet : mBullets) {
-            bullet.update();
+    }
+
+    private void updatePlayer() {
+        if (mPlayerPlane != null) {
+            mPlayerPlane.update();
         }
     }
 
@@ -278,9 +289,19 @@ public class GameObjectManager {
             return;
         }
 
-        float bulletX = mPlayerPlane.getPosition().x + mPlayerPlane.getRectOfCollision().width() / 2f;
-        float bulletY = mPlayerPlane.getPosition().y;
-        mBullets.add(new Bullet(bulletX, bulletY, GameConstants.BULLET_SPEED));
+        // shot type
+        GameSettings.ShotStyle shotStyle = GameSettings.getInstance().getShotStyle();
+        // spawn bullets
+        shotStyle.spawn(mBullets, mPlayerPlane);
+
+
+
+//        float bulletX = mPlayerPlane.getPosition().x + mPlayerPlane.getRectOfCollision().width() / 2f;
+//        float bulletY = mPlayerPlane.getPosition().y;
+//
+//
+//
+//        mBullets.add(new Bullet(bulletX, bulletY, GameConstants.BULLET_SPEED));
     }
 
     /**
@@ -302,6 +323,19 @@ public class GameObjectManager {
     public void clear() {
         resetLevelState();
         mPlayerPlane = null;
+    }
+
+    public void handleAutoFiring() {
+        boolean isAutoFire = GameSettings.getInstance().isAutoFire();
+        if (!isAutoFire) return;
+
+        // handle auto fire logic
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - mLastAutoFireTime >= GameConstants.AUTO_FIRE_INTERVAL) {
+            spawnBullet();
+            mLastAutoFireTime = currentTime;
+        }
+
     }
 
     /**
@@ -397,7 +431,6 @@ public class GameObjectManager {
         float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
         float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
 
-        // 這裡可以加入 difficultyMultiplier 的計算
         float difficulty = mLevelConfig.getMetadata().getDifficultyMultiplier();
         mBees.add(new Bee(x, y, speed * difficulty, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
     }
