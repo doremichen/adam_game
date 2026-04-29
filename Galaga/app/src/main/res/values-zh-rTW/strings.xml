@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">大蜜蜂</string>
+    <string name="galaga_leaderboard_title">排行榜</string>
+    <string name="galaga_exit_btn">離開</string>
+    <string name="galaga_main_start_game_btn">開始</string>
+    <string name="galaga_main_settings_btn">設定</string>
+    <string name="galaga_main_leaderboard_btn">排行榜</string>
+    <string name="galaga_main_about_btn">關於</string>
+    <string name="galaga_dlg_game_over_title">遊戲結束</string>
+    <string name="galaga_dlg_player_name_hint">玩家名字</string>
+    <string name="galaga_dlg_confirm_and_exit_btn"><![CDATA[確認 & 離開]]></string>
+    <string name="galaga_dlg_paused_title">停止</string>
+    <string name="galaga_dlg_continue_btn">繼續</string>
+    <string name="game_score">分數：%1$d</string>
+    <string name="game_next_level">下一關：第 %1$d 關</string>
+    <string name="game_level_cleared">成功過關</string>
+
+    <string name="dir_up">↑</string>
+    <string name="dir_down">↓</string>
+    <string name="dir_left">←</string>
+    <string name="dir_right">→</string>
+</resources>

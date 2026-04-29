@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="GAME OVER"
+                android:text="@string/galaga_dlg_game_over_title"
                 android:textAppearance="?attr/textAppearanceHeadlineMedium"
                 android:textColor="?attr/colorError"
                 android:textStyle="bold" />
@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:hint="Player Name"
+                android:hint="@string/galaga_dlg_player_name_hint"
                 app:endIconMode="clear_text"
                 app:helperText="Enter your name to save score">
 
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_marginTop="24dp"
-                android:text="CONFIRM &amp; EXIT"
+                android:text="@string/galaga_dlg_confirm_and_exit_btn"
                 app:cornerRadius="12dp" />
 
         </LinearLayout>

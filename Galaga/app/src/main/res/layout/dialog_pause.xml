@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="PAUSED"
+            android:text="@string/galaga_dlg_paused_title"
             android:textAppearance="?attr/textAppearanceHeadlineMedium"
             android:textColor="?attr/colorPrimary" />
 
@@ -25,14 +25,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="CONTINUE" />
+            android:text="@string/galaga_dlg_continue_btn" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnQuit"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="QUIT" />
+            android:text="@string/galaga_exit_btn" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

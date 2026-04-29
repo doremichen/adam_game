@@ -20,7 +20,7 @@
             android:id="@+id/tvScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text='@{"Score: " + viewModel.score}'
+            android:text='@{@string/game_score(viewModel.score)}'
             android:textColor="?attr/colorOnSurface"
             android:textAppearance="?attr/textAppearanceDisplayLarge"
             android:layout_marginTop="16dp"
@@ -78,7 +78,7 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="LEVEL CLEARED"
+                android:text="@string/game_level_cleared"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:letterSpacing="0.2" />
@@ -88,7 +88,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text='@{"Next: Level " + (viewModel.currentLevelData + 1)}'
+                android:text='@{@string/game_next_level(viewModel.currentLevelData + 1)}'
                 android:textColor="?attr/colorSecondary"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
                 tools:text="Next"/>
@@ -131,7 +131,7 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="80dp"
                 android:layout_height="0dp"
-                android:text="↑"
+                android:text="@string/dir_up"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetTop="0dp"
@@ -148,7 +148,7 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="80dp"
                 android:layout_height="0dp"
-                android:text="↓"
+                android:text="@string/dir_down"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetTop="0dp"
@@ -164,7 +164,7 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:text="←"
+                android:text="@string/dir_left"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetLeft="0dp"
@@ -181,7 +181,7 @@
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:text="→"
+                android:text="@string/dir_right"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetLeft="0dp"

@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">Galaga</string>
+    <string name="galaga_leaderboard_title">Leader Board</string>
+    <string name="galaga_exit_btn">EXIT</string>
+    <string name="galaga_main_start_game_btn">START GAME</string>
+    <string name="galaga_main_settings_btn">SETTINGS</string>
+    <string name="galaga_main_leaderboard_btn">LEADERBOARD</string>
+    <string name="galaga_main_about_btn">ABOUT</string>
+    <string name="galaga_dlg_game_over_title">GAME OVER</string>
+    <string name="galaga_dlg_player_name_hint">Player Name</string>
+    <string name="galaga_dlg_confirm_and_exit_btn"><![CDATA[CONFIRM & EXIT]]></string>
+    <string name="galaga_dlg_paused_title">PAUSED</string>
+    <string name="galaga_dlg_continue_btn">CONTINUE</string>
+    <string name="game_score">Score: %1$d</string>
+    <string name="game_next_level">Next: Level %1$d</string>
+    <string name="game_level_cleared">LEVEL CLEARED</string>
+
+    <string name="dir_up">↑</string>
+    <string name="dir_down">↓</string>
+    <string name="dir_left">←</string>
+    <string name="dir_right">→</string>
 </resources>
