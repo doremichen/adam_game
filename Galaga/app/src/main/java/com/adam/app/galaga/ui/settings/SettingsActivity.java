@@ -34,7 +34,7 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import com.adam.app.galaga.R;
 import com.adam.app.galaga.data.local.prefs.GameSettings;
-import com.adam.app.galaga.databinding.ActivitySettungsBinding;
+import com.adam.app.galaga.databinding.ActivitySettingsBinding;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.SettingsViewModel;
@@ -44,13 +44,13 @@ public class SettingsActivity extends AppCompatActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
 
     // view binding
-    private ActivitySettungsBinding mBinding;
+    private ActivitySettingsBinding mBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // view binding
-        mBinding = ActivitySettungsBinding.inflate(getLayoutInflater());
+        mBinding = ActivitySettingsBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
         if (savedInstanceState == null) {
             getSupportFragmentManager()

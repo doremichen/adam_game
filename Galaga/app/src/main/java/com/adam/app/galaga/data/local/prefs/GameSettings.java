@@ -58,8 +58,9 @@ public class GameSettings {
         CIRCULAR {
             @Override
             void handle(List<Bullet> bullets, float x, float y, float speed) {
-                for (int i = 0; i < 8; i++) {
-                    double angle = Math.toRadians(i * 45);
+                for (int i = 0; i < 12; i++) {
+                    // 360/12
+                    double angle = Math.toRadians(i * 30);
                     float vx = (float) (speed * Math.cos(angle));
                     float vy = (float) (speed * Math.sin(angle));
                     bullets.add(new Bullet(x, y, vx, vy));
