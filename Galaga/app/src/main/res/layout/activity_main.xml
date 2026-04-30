@@ -14,16 +14,38 @@
         android:fitsSystemWindows="true"
         android:background="?attr/colorSurface">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="280dp"
-            android:layout_height="180dp"
-            android:layout_marginTop="80dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/ic_game_logo"
+        <com.adam.app.galaga.ui.main.GamePreviewSurfaceView
+            android:id="@+id/gamePreview"
+            android:layout_width="0dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvMainTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/galaga_game_name"
+            android:textColor="#00E5FF"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toBottomOf="@id/gamePreview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="-20dp"/>
+
+<!--        <com.google.android.material.imageview.ShapeableImageView-->
+<!--            android:id="@+id/ivLogo"-->
+<!--            android:layout_width="280dp"-->
+<!--            android:layout_height="180dp"-->
+<!--            android:layout_marginTop="80dp"-->
+<!--            android:scaleType="centerInside"-->
+<!--            android:src="@drawable/ic_game_logo"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStart"
@@ -36,7 +58,7 @@
             app:layout_constraintBottom_toTopOf="@+id/btnSettings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ivLogo"
+            app:layout_constraintTop_toBottomOf="@+id/tvMainTitle"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.button.MaterialButton
