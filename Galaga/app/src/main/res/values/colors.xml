@@ -7,4 +7,15 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <!-- 太空黑色系 -->
+    <color name="galaga_bg_dark">#121212</color>
+    <color name="galaga_card_bg">#1E1E1E</color>
+    <color name="galaga_divider">#333333</color>
+
+    <!-- 強調色 -->
+    <color name="galaga_cyan_accent">#00E5FF</color>
+    <color name="galaga_text_primary">#FFFFFF</color>
+    <color name="galaga_text_secondary">#AAAAAA</color>
+    <color name="galaga_text_content">#DDDDDD</color>
+    <color name="galaga_text_footer">#666666</color>
 </resources>

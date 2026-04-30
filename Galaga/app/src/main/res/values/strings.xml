@@ -25,4 +25,27 @@
     <string name="galaga_settings_auto_fire_title">Auto Fire</string>
     <string name="galaga_settings_shot_style_title">Shot Style</string>
     <string name="galaga_show_not_support_toast">Not support!!!</string>
+    <string name="galaga_about_title">About Galaga</string>
+    <string name="galaga_game_name">GALAGA REVIVAL</string>
+    <string name="galaga_version_info">Version 2.0 (Engineering Edition)</string>
+
+    <string name="galaga_header_instruction">INSTRUCTION</string>
+    <string name="galaga_content_instruction">
+        • Slide to control the player plane.\n
+        • Bullets fire automatically in Engineering Mode.\n
+        • Defeat waves of Bees and avoid collisions.\n
+        • Toggle shot styles in Settings to optimize combat.
+    </string>
+
+    <string name="galaga_header_tech_stack">TECHNICAL STACK</string>
+    <string name="galaga_content_tech_stack">
+        • Framework: Android Jetpack (Activity, Fragment)\n
+        • Architecture: MVVM with Strategy Pattern\n
+        • Data Handling: View Binding &amp; Data Binding\n
+        • State Management: SingleLiveEvent (Lifecycle-aware)\n
+        • UI Components: Material 3 Design System\n
+        • Core Engine: Custom Game Loop with Vector Physics
+    </string>
+
+    <string name="galaga_designer_info">Designed by Adam\'s App Lab</string>
 </resources>

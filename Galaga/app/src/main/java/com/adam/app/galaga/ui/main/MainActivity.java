@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.adam.app.galaga.databinding.ActivityMainBinding;
+import com.adam.app.galaga.ui.about.AboutActivity;
 import com.adam.app.galaga.ui.game.GameActivity;
 import com.adam.app.galaga.ui.leaderboard.LeaderboardActivity;
 import com.adam.app.galaga.ui.settings.SettingsActivity;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case OPEN_ABOUT:
                 // open about
-                GameUtils.showUnImplementedToast(this);
+                GameUtils.startActivity(this, AboutActivity.class);
                 break;
             case EXIT:
                 // exit

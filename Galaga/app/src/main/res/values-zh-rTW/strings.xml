@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">大蜜蜂</string>
+    <string name="app_name">大黃蜂戰機</string>
     <string name="galaga_leaderboard_title">排行榜</string>
     <string name="galaga_exit_btn">離開</string>
     <string name="galaga_main_start_game_btn">開始</string>
@@ -24,5 +24,32 @@
     <string name="galaga_settings_auto_fire_summary">以固定間隔自動發射子彈</string>
     <string name="galaga_settings_auto_fire_title">自動開火</string>
     <string name="galaga_settings_shot_style_title">發射格式</string>
-    <string name="galaga_show_not_support_toast">不支援!!!</string>
+    <string name="galaga_show_not_support_toast">抱歉，目前暫不支援此射擊模式！</string>
+    <!-- title -->
+    <string name="galaga_about_title">關於大黃蜂戰機</string>
+    <string name="galaga_game_name">大黃蜂：復興戰線</string>
+    <string name="galaga_version_info">版本 2.0 (工程開發版)</string>
+
+    <!-- operation instruction block -->
+    <string name="galaga_header_instruction">作戰指南 (INSTRUCTION)</string>
+    <string name="galaga_content_instruction">
+        • 左右滑動螢幕即可控制戰機位移。\n
+        • 在工程模式下，戰機將會自動執行連發射擊。\n
+        • 殲滅成群襲來的大黃蜂敵機並閃避碰撞。\n
+        • 進入設定頁面切換射擊樣式，以優化戰場火力分布。
+    </string>
+
+    <!-- technonige stack instruction block -->
+    <string name="galaga_header_tech_stack">技術架構 (TECHNICAL STACK)</string>
+    <string name="galaga_content_tech_stack">
+        • 應用框架：Android Jetpack (Activity, Fragment)\n
+        • 核心架構：基於策略模式 (Strategy Pattern) 的 MVVM 架構\n
+        • 資料驅動：View Binding 與 Data Binding 雙向綁定\n
+        • 事件管理：生命週期感知的 SingleLiveEvent 模式\n
+        • 介面元件：Material 3 Design 系統規範\n
+        • 物理引擎：自研遊戲迴圈 (Game Loop) 與向量物理運算
+    </string>
+
+    <!-- 底部資訊 -->
+    <string name="galaga_designer_info">Designed by Adam\'s App Lab</string>
 </resources>

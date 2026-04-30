@@ -12,7 +12,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Galaga">
-
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
@@ -33,10 +32,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.settings.SettingsActivity"
-            android:theme="@style/Theme.Galaga.Settings"
             android:exported="false"
+            android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
-            android:label="@string/title_activity_settings" />
+            android:theme="@style/Theme.Galaga.Settings" />
+        <activity
+            android:name=".ui.about.AboutActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>
