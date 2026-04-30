@@ -1,28 +1,27 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="200dp"
     android:height="200dp"
-    android:viewportWidth="100"
-    android:viewportHeight="100">
+    android:viewportWidth="24"
+    android:viewportHeight="24">
 
+    <!-- 機身主體：白色像素區塊 -->
     <path
-        android:fillColor="?attr/colorPrimary"
-        android:alpha="0.2"
-        android:pathData="M50,5A45,45 0,1 1,50,95A45,45 0,1 1,50,5Z" />
+        android:fillColor="#FFFFFF"
+        android:pathData="M11,4h2v2h2v4h2v4h2v6h-2v-2h-2v2H9v-2H7v2H5v-6h2v-4h2V6h2z" />
 
-    <path
-        android:fillColor="?attr/colorPrimary"
-        android:pathData="M50,15 L65,45 L85,60 L65,60 L50,85 L35,60 L15,60 L35,45 Z" />
-
+    <!-- 標誌性紅點：機頭與雙翼飾色 -->
     <path
         android:fillColor="?attr/colorError"
-        android:pathData="M47,45 L53,45 L53,55 L47,55 Z" />
+        android:pathData="M11,2h2v2h-2z M5,14h2v2h-2z M17,14h2v2h-2z" />
 
+    <!-- 側翼藍色裝飾：增加層次感 -->
     <path
         android:fillColor="?attr/colorSecondary"
-        android:pathData="M35,45 L25,55 L35,55 Z M65,45 L75,55 L65,55 Z" />
+        android:pathData="M9,10h2v2h-2z M13,10h2v2h-2z M7,16h2v2h-2z M15,16h2v2h-2z" />
 
+    <!-- 底部推進器感：使用系統 Tertiary 色 -->
     <path
         android:fillColor="?attr/colorTertiary"
-        android:pathData="M20,20 L22,22 M80,20 L78,22 M50,5 L50,10 M20,80 L22,78 M80,80 L78,78" />
+        android:pathData="M11,18h2v2h-2z" />
 
 </vector>
