@@ -1,0 +1,15 @@
+{
+  "level_id": 5,
+  "metadata": {
+    "title": "小三身手",
+    "difficulty_multiplier": 3.0
+  },
+  "enemy_settings": {
+    "total_count": 50,
+    "base_speed": 10.5,
+    "spawn_interval_ms": 800
+  },
+  "winning_condition": {
+    "type": "ELIMINATE_ALL"
+  }
+}
