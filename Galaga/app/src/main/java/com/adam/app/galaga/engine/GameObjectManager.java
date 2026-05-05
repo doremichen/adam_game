@@ -85,11 +85,9 @@ public class GameObjectManager {
         mBullets.clear();
 
         initPlayer();
-        try {
-            loadLevel(1);
-        } catch (RuntimeException e) {
+
+        if (!loadLevel(1)) {
             GameUtils.error(TAG, "no config file!!!");
-            e.printStackTrace();
         }
     }
 
@@ -98,11 +96,11 @@ public class GameObjectManager {
      *
      * @param levelId int
      */
-    public void loadLevel(int levelId) {
+    public boolean loadLevel(int levelId) {
         // level config
         mLevelConfig = mLevelManager.enterLevel(levelId);
         if (mLevelConfig == null) {
-            throw new RuntimeException("Level config is null");
+            return false;
         }
 
         mLevelStartTime = System.currentTimeMillis();
@@ -113,6 +111,7 @@ public class GameObjectManager {
         // clear bee/bullet
         resetLevelState();
         GameUtils.info(TAG, "Level " + levelId + " loaded: " + mLevelConfig.getMetadata().getTitle());
+        return true;
     }
 
     /**
