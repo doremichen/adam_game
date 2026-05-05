@@ -51,7 +51,7 @@ public class GameEngine {
     // scheduled executor service
     private ScheduledExecutorService mScheduledExecutorService;
     // Future Task
-    private volatile ScheduledFuture<?> mCurentTask;
+    private volatile ScheduledFuture<?> mCurrentTask;
     // Handler
     private Handler mMainHandler;
     // Engine callback
@@ -75,8 +75,17 @@ public class GameEngine {
         GameUtils.info(TAG, "Construct");
         mEngineCallback = engineCallback;
         this.mMainHandler = new Handler(Looper.getMainLooper());
-        mScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
         initGame();
+    }
+
+    /**
+     * Ensure that the executor service is available
+     */
+    private void ensureExecutorAvailable() {
+        if (mScheduledExecutorService == null || mScheduledExecutorService.isShutdown()) {
+            GameUtils.info(TAG, "Creating new ScheduledExecutorService");
+            mScheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        }
     }
 
     /**
@@ -96,14 +105,15 @@ public class GameEngine {
     public synchronized void start() {
         GameUtils.info(TAG, "start");
         // early return
-        if (mCurentTask != null && !mCurentTask.isCancelled()) {
+        if (mCurrentTask != null && !mCurrentTask.isCancelled()) {
             GameUtils.info(TAG, "Game is already running");
             return;
         }
 
+        ensureExecutorAvailable();
 
         //Start Game
-        mCurentTask = mScheduledExecutorService.scheduleWithFixedDelay(
+        mCurrentTask = mScheduledExecutorService.scheduleWithFixedDelay(
                 this::gameLoop,
                 1000L,  // delay 1 sec to start for view is ready
                 GameConstants.FRAME_PERIOD_MS,
@@ -142,19 +152,19 @@ public class GameEngine {
     public synchronized void stopGameTask() {
         GameUtils.info(TAG, "stop");
         // early return
-        if (mCurentTask == null) {
+        if (mCurrentTask == null) {
             GameUtils.info(TAG, "Game is not running");
             return;
         }
 
-        if (mCurentTask.isCancelled()) {
+        if (mCurrentTask.isCancelled()) {
             GameUtils.info(TAG, "Game is already stopped");
             return;
         }
 
         // cancel task
-        mCurentTask.cancel(true);
-        mCurentTask = null;
+        mCurrentTask.cancel(true);
+        mCurrentTask = null;
         GameUtils.info(TAG, "Game stopped");
     }
 
@@ -164,7 +174,7 @@ public class GameEngine {
     public void clear() {
         GameUtils.info(TAG, "clear");
         // check if game is running
-        if (mCurentTask != null && !mCurentTask.isCancelled()) {
+        if (mCurrentTask != null && !mCurrentTask.isCancelled()) {
             stopGameTask();
             updateState(State.PAUSED);
         }
@@ -172,23 +182,25 @@ public class GameEngine {
         mGameObjectManager.clear();
 
         // shutdown executor service
-        mScheduledExecutorService.shutdown();
+        if (mScheduledExecutorService != null) {
+            mScheduledExecutorService.shutdown();
 
-        try {
-            if (!mScheduledExecutorService.awaitTermination(1000, java.util.concurrent.TimeUnit.MILLISECONDS)) {
-                // shutdown now
+            try {
+                if (!mScheduledExecutorService.awaitTermination(1000, java.util.concurrent.TimeUnit.MILLISECONDS)) {
+                    // shutdown now
+                    mScheduledExecutorService.shutdownNow();
+                    GameUtils.info(TAG, "Game cleared");
+
+                }
+            } catch (InterruptedException ie) {
                 mScheduledExecutorService.shutdownNow();
+                Thread.currentThread().interrupt();
                 GameUtils.info(TAG, "Game cleared");
-
             }
-        } catch (InterruptedException ie) {
-            mScheduledExecutorService.shutdownNow();
-            Thread.currentThread().interrupt();
-            GameUtils.info(TAG, "Game cleared");
+            mScheduledExecutorService = null;
         }
 
-        mScheduledExecutorService = null;
-        mCurentTask = null;
+        mCurrentTask = null;
         mEngineCallback = null;
 
         GameUtils.info(TAG, "Game cleared");
