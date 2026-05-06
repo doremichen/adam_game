@@ -33,7 +33,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.UUID
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 class GameViewModel : ViewModel() {
@@ -75,7 +74,7 @@ class GameViewModel : ViewModel() {
 
             val playerPos = Position(12f, 24f)
             val basePos = Position(12f, 25f)
-            
+
             // Clear area around player and base
             for (x in 11..13) {
                 for (y in 23..25) {
@@ -126,174 +125,177 @@ class GameViewModel : ViewModel() {
     private fun updateGameState() {
         _gameState.update { currentState ->
             val currentTime = System.currentTimeMillis()
-            
+
             // 1. Spawning Logic
-            var newEnemiesLeftToSpawn = currentState.enemiesLeftToSpawn
-            val currentEnemies = currentState.enemyTanks.toMutableList()
-            if (newEnemiesLeftToSpawn > 0 && currentEnemies.size < GameConstants.MAX_ENEMIES_ON_SCREEN) {
-                if (currentTime - lastSpawnTime > GameConstants.SPAWN_COOLDOWN_MS) {
-                    val spawnPoint = GameConstants.SPAWN_POINTS.random()
-                    // Check if spawn point is clear
-                    if (canMoveTo(spawnPoint, currentState.grid, currentState.base, currentEnemies + currentState.playerTank)) {
-                        val type = EnemyType.entries.random()
-                        currentEnemies.add(
-                            Tank(
-                                id = UUID.randomUUID().toString(),
-                                position = spawnPoint,
-                                direction = Direction.DOWN,
-                                isPlayer = false,
-                                health = type.health,
-                                speed = type.speed,
-                                type = type,
-                                lastFireTime = currentTime
-                            )
-                        )
-                        newEnemiesLeftToSpawn--
-                        lastSpawnTime = currentTime
-                    }
-                }
-            }
+            val (newEnemiesLeftToSpawn, enemiesAfterSpawn) = handleSpawning(currentState, currentTime)
 
             // 2. Update Player Movement
-            var newPlayerTank = currentState.playerTank
-            moveDirection?.let { dir ->
-                val nextPos = newPlayerTank.position.translate(dir.dx * newPlayerTank.speed, dir.dy * newPlayerTank.speed)
-                if (canMoveTo(nextPos, currentState.grid, currentState.base, currentEnemies)) {
-                    newPlayerTank = newPlayerTank.copy(position = nextPos, direction = dir)
-                } else {
-                    newPlayerTank = newPlayerTank.copy(direction = dir)
-                }
-            }
+            var newPlayerTank = handlePlayerMovement(currentState.playerTank, enemiesAfterSpawn, currentState)
 
-            // 3. Handle Projectiles
-            val newProjectiles = currentState.projectiles.toMutableList()
+            // 3. Handle Projectiles Firing
+            val (projectilesAfterFiring, enemiesAfterFiring) = handleFiring(currentState, enemiesAfterSpawn, newPlayerTank, currentTime)
+
+            // 4. Update Projectiles Movement & Collisions
+            val collisionResult = processProjectiles(projectilesAfterFiring, currentState, enemiesAfterFiring, newPlayerTank)
             
-            // Player Firing
-            if (isFiring) {
-                if (currentTime - lastPlayerFireTime > 500) {
-                    newProjectiles.add(
-                        Projectile(
-                            id = UUID.randomUUID().toString(),
-                            position = newPlayerTank.position,
-                            direction = newPlayerTank.direction,
-                            ownerId = "player"
-                        )
-                    )
-                    lastPlayerFireTime = currentTime
-                }
-                isFiring = false
-            }
-
-            // Enemy Firing AI
-            for (i in currentEnemies.indices) {
-                val enemy = currentEnemies[i]
-                val type = enemy.type ?: EnemyType.BASIC
-                if (currentTime - enemy.lastFireTime > type.fireCooldownMs) {
-                    // Simple firing AI: fire if facing player or base, or just random
-                    newProjectiles.add(
-                        Projectile(
-                            id = UUID.randomUUID().toString(),
-                            position = enemy.position,
-                            direction = enemy.direction,
-                            ownerId = enemy.id
-                        )
-                    )
-                    currentEnemies[i] = enemy.copy(lastFireTime = currentTime)
-                }
-            }
-
-            // 4. Update Projectiles Logic
-            val updatedProjectiles = mutableListOf<Projectile>()
-            val updatedGrid = currentState.grid.map { it.toMutableList() }
-            var updatedBase = currentState.base
-            val remainingEnemies = currentEnemies.toMutableList()
-            var playerHit = false
-
-            for (p in newProjectiles) {
-                val nextPos = p.position.translate(p.direction.dx * p.speed, p.direction.dy * p.speed)
-                
-                if (nextPos.x < 0 || nextPos.x >= GameConstants.GRID_SIZE || nextPos.y < 0 || nextPos.y >= GameConstants.GRID_SIZE) {
-                    continue
-                }
-
-                val gridX = nextPos.x.toInt()
-                val gridY = nextPos.y.toInt()
-                val tile = updatedGrid[gridX][gridY]
-                
-                var hit = false
-                if (tile == TileType.BRICK) {
-                    updatedGrid[gridX][gridY] = TileType.EMPTY
-                    hit = true
-                } else if (tile == TileType.STEEL) {
-                    hit = true
-                }
-
-                if (gridX == updatedBase.position.x.toInt() && gridY == updatedBase.position.y.toInt()) {
-                    updatedBase = updatedBase.copy(isDestroyed = true)
-                    hit = true
-                }
-
-                if (p.ownerId == "player") {
-                    val hitEnemyIndex = remainingEnemies.indexOfFirst { 
-                        isCollision(it.position, nextPos, 0.7f)
-                    }
-                    if (hitEnemyIndex != -1) {
-                        val enemy = remainingEnemies[hitEnemyIndex]
-                        if (enemy.health > 1) {
-                            remainingEnemies[hitEnemyIndex] = enemy.copy(health = enemy.health - 1)
-                        } else {
-                            remainingEnemies.removeAt(hitEnemyIndex)
-                        }
-                        hit = true
-                    }
-                } else {
-                    // Enemy projectile hitting player
-                    if (isCollision(newPlayerTank.position, nextPos, 0.7f)) {
-                        playerHit = true
-                        hit = true
-                    }
-                }
-
-                if (!hit) {
-                    updatedProjectiles.add(p.copy(position = nextPos))
-                }
-            }
-
-            if (playerHit) {
-                newPlayerTank = newPlayerTank.copy(health = newPlayerTank.health - 1)
-            }
+            newPlayerTank = if (collisionResult.playerHit) {
+                newPlayerTank.copy(health = newPlayerTank.health - 1)
+            } else newPlayerTank
 
             // 5. Update Enemies AI Movement
-            val updatedEnemies = remainingEnemies.map { enemy ->
-                val nextPos = enemy.position.translate(enemy.direction.dx * enemy.speed, enemy.direction.dy * enemy.speed)
-                val otherTanks = remainingEnemies.filter { it.id != enemy.id } + newPlayerTank
-                
-                if (canMoveTo(nextPos, updatedGrid, updatedBase, otherTanks) && Random.nextFloat() > 0.02f) {
-                    enemy.copy(position = nextPos)
-                } else {
-                    // Smart-ish turn: pick a direction that is clear
-                    val possibleDirs = Direction.entries.shuffled()
-                    val bestDir = possibleDirs.find { dir ->
-                        val p = enemy.position.translate(dir.dx * enemy.speed, dir.dy * enemy.speed)
-                        canMoveTo(p, updatedGrid, updatedBase, otherTanks)
-                    } ?: Direction.entries.random()
-                    enemy.copy(direction = bestDir)
-                }
-            }
+            val updatedEnemies = handleEnemyAI(collisionResult.remainingEnemies, newPlayerTank, collisionResult.updatedGrid, collisionResult.updatedBase)
 
             val isWin = newEnemiesLeftToSpawn == 0 && updatedEnemies.isEmpty()
-            val isGameOver = updatedBase.isDestroyed || newPlayerTank.health <= 0
+            val isGameOver = collisionResult.updatedBase.isDestroyed || newPlayerTank.health <= 0
 
             currentState.copy(
                 playerTank = newPlayerTank,
                 enemyTanks = updatedEnemies,
-                projectiles = updatedProjectiles,
-                grid = updatedGrid,
-                base = updatedBase,
+                projectiles = collisionResult.updatedProjectiles,
+                grid = collisionResult.updatedGrid,
+                base = collisionResult.updatedBase,
                 isGameOver = isGameOver,
                 isWin = isWin,
                 enemiesLeftToSpawn = newEnemiesLeftToSpawn
             )
+        }
+    }
+
+    private fun handleSpawning(state: GameState, currentTime: Long): Pair<Int, List<Tank>> {
+        var leftToSpawn = state.enemiesLeftToSpawn
+        val currentEnemies = state.enemyTanks.toMutableList()
+
+        if (leftToSpawn > 0 && currentEnemies.size < GameConstants.MAX_ENEMIES_ON_SCREEN) {
+            if (currentTime - lastSpawnTime > GameConstants.SPAWN_COOLDOWN_MS) {
+                val spawnPoint = GameConstants.SPAWN_POINTS.random()
+                if (canMoveTo(spawnPoint, state.grid, state.base, currentEnemies + state.playerTank)) {
+                    val type = EnemyType.entries.random()
+                    currentEnemies.add(
+                        Tank(
+                            id = UUID.randomUUID().toString(),
+                            position = spawnPoint,
+                            direction = Direction.DOWN,
+                            isPlayer = false,
+                            health = type.health,
+                            speed = type.speed,
+                            type = type,
+                            lastFireTime = currentTime
+                        )
+                    )
+                    leftToSpawn--
+                    lastSpawnTime = currentTime
+                }
+            }
+        }
+        return Pair(leftToSpawn, currentEnemies)
+    }
+
+    private fun handlePlayerMovement(player: Tank, enemies: List<Tank>, state: GameState): Tank {
+        var updatedPlayer = player
+        moveDirection?.let { dir ->
+            val nextPos = updatedPlayer.position.translate(dir.dx * updatedPlayer.speed, dir.dy * updatedPlayer.speed)
+            updatedPlayer = if (canMoveTo(nextPos, state.grid, state.base, enemies)) {
+                updatedPlayer.copy(position = nextPos, direction = dir)
+            } else {
+                updatedPlayer.copy(direction = dir)
+            }
+        }
+        return updatedPlayer
+    }
+
+    private fun handleFiring(state: GameState, enemies: List<Tank>, player: Tank, currentTime: Long): Pair<List<Projectile>, List<Tank>> {
+        val projectiles = state.projectiles.toMutableList()
+        val updatedEnemies = enemies.toMutableList()
+
+        // Player
+        if (isFiring) {
+            if (currentTime - lastPlayerFireTime > 500) {
+                projectiles.add(Projectile(UUID.randomUUID().toString(), player.position, player.direction, "player"))
+                lastPlayerFireTime = currentTime
+            }
+            isFiring = false
+        }
+
+        // Enemies
+        for (i in updatedEnemies.indices) {
+            val enemy = updatedEnemies[i]
+            val type = enemy.type ?: EnemyType.BASIC
+            if (currentTime - enemy.lastFireTime > type.fireCooldownMs) {
+                projectiles.add(Projectile(UUID.randomUUID().toString(), enemy.position, enemy.direction, enemy.id))
+                updatedEnemies[i] = enemy.copy(lastFireTime = currentTime)
+            }
+        }
+        return Pair(projectiles, updatedEnemies)
+    }
+
+    private data class CollisionResult(
+        val updatedProjectiles: List<Projectile>,
+        val updatedGrid: List<List<TileType>>,
+        val updatedBase: GameBase,
+        val remainingEnemies: List<Tank>,
+        val playerHit: Boolean
+    )
+
+    private fun processProjectiles(projectiles: List<Projectile>, state: GameState, enemies: List<Tank>, player: Tank): CollisionResult {
+        val updatedProjectiles = mutableListOf<Projectile>()
+        val updatedGrid = state.grid.map { it.toMutableList() }
+        var updatedBase = state.base
+        val remainingEnemies = enemies.toMutableList()
+        var playerHit = false
+
+        for (p in projectiles) {
+            val nextPos = p.position.translate(p.direction.dx * p.speed, p.direction.dy * p.speed)
+
+            if (nextPos.x < 0 || nextPos.x >= GameConstants.GRID_SIZE || nextPos.y < 0 || nextPos.y >= GameConstants.GRID_SIZE) continue
+
+            val gx = nextPos.x.toInt()
+            val gy = nextPos.y.toInt()
+            val tile = updatedGrid[gx][gy]
+            var hit = false
+
+            when (tile) {
+                TileType.BRICK -> { updatedGrid[gx][gy] = TileType.EMPTY; hit = true }
+                TileType.STEEL -> hit = true
+                else -> {}
+            }
+
+            if (gx == updatedBase.position.x.toInt() && gy == updatedBase.position.y.toInt()) {
+                updatedBase = updatedBase.copy(isDestroyed = true)
+                hit = true
+            }
+
+            if (p.ownerId == "player") {
+                val hitIdx = remainingEnemies.indexOfFirst { isCollision(it.position, nextPos, 0.7f) }
+                if (hitIdx != -1) {
+                    val enemy = remainingEnemies[hitIdx]
+                    if (enemy.health > 1) remainingEnemies[hitIdx] = enemy.copy(health = enemy.health - 1)
+                    else remainingEnemies.removeAt(hitIdx)
+                    hit = true
+                }
+            } else if (isCollision(player.position, nextPos, 0.7f)) {
+                playerHit = true
+                hit = true
+            }
+
+            if (!hit) updatedProjectiles.add(p.copy(position = nextPos))
+        }
+
+        return CollisionResult(updatedProjectiles, updatedGrid.map { it.toList() }, updatedBase, remainingEnemies, playerHit)
+    }
+
+    private fun handleEnemyAI(enemies: List<Tank>, player: Tank, grid: List<List<TileType>>, base: GameBase): List<Tank> {
+        return enemies.map { enemy ->
+            val nextPos = enemy.position.translate(enemy.direction.dx * enemy.speed, enemy.direction.dy * enemy.speed)
+            val others = enemies.filter { it.id != enemy.id } + player
+
+            if (canMoveTo(nextPos, grid, base, others) && Random.nextFloat() > 0.02f) {
+                enemy.copy(position = nextPos)
+            } else {
+                val bestDir = Direction.entries.shuffled().find { dir ->
+                    canMoveTo(enemy.position.translate(dir.dx * enemy.speed, dir.dy * enemy.speed), grid, base, others)
+                } ?: Direction.entries.random()
+                enemy.copy(direction = bestDir)
+            }
         }
     }
 
@@ -304,10 +306,8 @@ class GameViewModel : ViewModel() {
     }
 
     private fun canMoveTo(pos: Position, grid: List<List<TileType>>, base: GameBase, otherTanks: List<Tank>): Boolean {
-        if (pos.x < 0 || pos.x >= GameConstants.GRID_SIZE - 1 || pos.y < 0 || pos.y >= GameConstants.GRID_SIZE - 1) {
-            return false
-        }
-        
+        if (pos.x < 0 || pos.x >= GameConstants.GRID_SIZE - 1 || pos.y < 0 || pos.y >= GameConstants.GRID_SIZE - 1) return false
+
         val corners = listOf(
             Position(pos.x, pos.y),
             Position(pos.x + 0.9f, pos.y),
@@ -315,21 +315,15 @@ class GameViewModel : ViewModel() {
             Position(pos.x + 0.9f, pos.y + 0.9f)
         )
 
-        val gridClear = corners.all { corner ->
-            val gx = corner.x.toInt()
-            val gy = corner.y.toInt()
-            if (gx < 0 || gx >= GameConstants.GRID_SIZE || gy < 0 || gy >= GameConstants.GRID_SIZE) return@all false
+        val gridClear = corners.all { c ->
+            val gx = c.x.toInt()
+            val gy = c.y.toInt()
+            if (gx !in 0 until GameConstants.GRID_SIZE || gy !in 0 until GameConstants.GRID_SIZE) return@all false
             if (gx == base.position.x.toInt() && gy == base.position.y.toInt()) return@all false
             val tile = grid[gx][gy]
             tile == TileType.EMPTY || tile == TileType.BUSH
         }
 
-        if (!gridClear) return false
-
-        // Check collision with other tanks
-        return otherTanks.all { tank ->
-            !isCollision(pos, tank.position, 0.9f)
-        }
+        return gridClear && otherTanks.all { !isCollision(pos, it.position, 0.9f) }
     }
 }
-
