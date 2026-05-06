@@ -1,0 +1,4 @@
+<resources>
+
+    <style name="Theme.BattleCity" parent="Theme.MaterialComponents.Light" />
+</resources>
