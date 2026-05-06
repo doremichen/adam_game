@@ -46,7 +46,7 @@ public class Bee extends GameObject{
     private float mAngle;
     private final Random mRandom = new Random();
     private long mLastTurnTime;
-    private static final int TURN_INTERVAL = 1000; // change angle every 1 sec
+    private static final int TURN_INTERVAL = GameConstants.BEE_TURN_INTERVAL_MS; // change angle every 1 sec
 
 
 
@@ -58,6 +58,11 @@ public class Bee extends GameObject{
 
     @Override
     public void update() {
+        // Randomly trigger diving if not already diving
+        if (!mIsDiving && mRandom.nextFloat() < GameConstants.BEE_DIVE_PROBABILITY) {
+            setDiving(true);
+        }
+
         //GameUtils.info(TAG, "update");
         float dx = 0;
         float dy = 0;

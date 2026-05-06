@@ -32,6 +32,7 @@ import com.adam.app.galaga.data.model.Plane;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,9 @@ public class GameObjectManager {
     // level manager
     private final LevelManager mLevelManager = new LevelManager();
     // Winnings strategy
-    public WinningStrategy mWinningStrategy;
+    private WinningStrategy mWinningStrategy;
+    // Pre-allocated list for all entities to reduce GC pressure
+    private final List<GameObject> mAllEntities = new java.util.ArrayList<>();
     // level config
     private LevelConfig mLevelConfig;
     // player
@@ -212,11 +215,6 @@ public class GameObjectManager {
 
     private void updateBees() {
         for (Bee bee : mBees) {
-
-            if (Math.random() < 0.005) {
-                bee.setDiving(true);
-            }
-
             bee.update();
         }
     }
@@ -292,15 +290,6 @@ public class GameObjectManager {
         GameSettings.ShotStyle shotStyle = GameSettings.getInstance().getShotStyle();
         // spawn bullets
         shotStyle.spawn(mBullets, mPlayerPlane);
-
-
-
-//        float bulletX = mPlayerPlane.getPosition().x + mPlayerPlane.getRectOfCollision().width() / 2f;
-//        float bulletY = mPlayerPlane.getPosition().y;
-//
-//
-//
-//        mBullets.add(new Bullet(bulletX, bulletY, GameConstants.BULLET_SPEED));
     }
 
     /**
@@ -309,11 +298,11 @@ public class GameObjectManager {
      * @return List<GameObject>
      */
     public List<GameObject> getAllEntities() {
-        List<GameObject> entities = new CopyOnWriteArrayList<>();
-        if (mPlayerPlane != null) entities.add(mPlayerPlane);
-        entities.addAll(mBees);
-        entities.addAll(mBullets);
-        return entities;
+        mAllEntities.clear();
+        if (mPlayerPlane != null) mAllEntities.add(mPlayerPlane);
+        mAllEntities.addAll(mBees);
+        mAllEntities.addAll(mBullets);
+        return new ArrayList<>(mAllEntities);
     }
 
     /**

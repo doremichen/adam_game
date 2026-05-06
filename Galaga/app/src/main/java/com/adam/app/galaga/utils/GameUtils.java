@@ -112,7 +112,7 @@ public final class GameUtils {
      * @return int
      */
     public static int getScreenWidth() {
-        return (sScreenWidth == 0)? 1080 : sScreenWidth;
+        return (sScreenWidth == 0) ? GameConstants.GAME_WIDTH : sScreenWidth;
     }
 
     /**
@@ -121,7 +121,7 @@ public final class GameUtils {
      * @return int
      */
     public static int getScreenHeight() {
-        return (sScreenHeight == 0L)? 1333 : sScreenHeight;
+        return (sScreenHeight == 0) ? GameConstants.GAME_HEIGHT : sScreenHeight;
     }
 
 

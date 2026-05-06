@@ -25,6 +25,8 @@ package com.adam.app.galaga.utils;
 public final class GameConstants {
 
     public static final float BULLET_SPEED = 20.0f;
+    public static final int BULLET_WIDTH = 10;
+    public static final int BULLET_HEIGHT = 20;
     public static final int DEFAULT_BEES_COLS = 5;
     public static final long LEVEL_DURATION_MS = 30000L;
     public static final String NOT_SUPPORT_INFO = "Not support!!!";
@@ -63,6 +65,8 @@ public final class GameConstants {
     public static final int BEE_SPACING = 120;
     public static final int BEE_INITIAL_OFFSET_X = 150;
     public static final int BEE_INITIAL_OFFSET_Y = 200;
+    public static final float BEE_DIVE_PROBABILITY = 0.005f;
+    public static final int BEE_TURN_INTERVAL_MS = 1000;
 
     // setting
     public static final long AUTO_FIRE_INTERVAL = 500;

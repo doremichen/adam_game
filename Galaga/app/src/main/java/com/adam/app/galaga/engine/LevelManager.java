@@ -56,7 +56,7 @@ public class LevelManager {
      * nextLevel
      * @return LevelConfig
      */
-    public LevelConfig nextLevel() {;
+    public LevelConfig nextLevel() {
         return enterLevel(mCurrentLevelId + 1);
     }
 

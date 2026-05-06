@@ -27,15 +27,11 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.adam.app.galaga.utils.GameConstants;
-import com.adam.app.galaga.utils.GameUtils;
 
 /**
  * Bullet class
  */
 public class Bullet extends GameObject{
-
-    // TAG
-    private static final String TAG = Bullet.class.getSimpleName();
 
     // vector position
     private final float mVx;
@@ -43,21 +39,20 @@ public class Bullet extends GameObject{
 
 
     public Bullet(float x, float y, float vx, float vy) {
-        super(x, y, 0, 10, 20);
+        super(x, y, 0, GameConstants.BULLET_WIDTH, GameConstants.BULLET_HEIGHT);
         this.mVx = vx;
         this.mVy = vy;
     }
 
 
     public Bullet(float x, float y, float speed) {
-        super(x, y, speed, 10, 20);
+        super(x, y, speed, GameConstants.BULLET_WIDTH, GameConstants.BULLET_HEIGHT);
         this.mVx = 0.0f;
-        this.mVy = 0.0f;
+        this.mVy = -speed;
     }
 
     @Override
     public void update() {
-        GameUtils.info(TAG, "update");
         // move
         this.mPosition.x += this.mVx;
         this.mPosition.y += this.mVy;
@@ -85,7 +80,6 @@ public class Bullet extends GameObject{
      * Use to check out of range
      */
     public boolean isOutOfBound() {
-        GameUtils.info(TAG, "isOutOfBound");
         return mPosition.y < -mHeight ||
                 mPosition.y > GameConstants.GAME_HEIGHT ||
                 mPosition.x < -mWidth ||

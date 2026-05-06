@@ -94,8 +94,12 @@ public class Plane extends GameObject{
 
     private void clampPosition() {
         if (mPosition.x < 0) mPosition.x = 0;
-        if (mPosition.x > GameConstants.REFERENCE_SCREEN_WIDTH - mWidth) {
-            mPosition.x = GameConstants.REFERENCE_SCREEN_WIDTH - mWidth;
+        if (mPosition.x > GameConstants.GAME_WIDTH - mWidth) {
+            mPosition.x = GameConstants.GAME_WIDTH - mWidth;
+        }
+        if (mPosition.y < 0) mPosition.y = 0;
+        if (mPosition.y > GameConstants.GAME_HEIGHT - mHeight) {
+            mPosition.y = GameConstants.GAME_HEIGHT - mHeight;
         }
     }
 
@@ -105,10 +109,6 @@ public class Plane extends GameObject{
     public void moveLeft() {
         //GameUtils.info(TAG, "moveLeft");
         this.mPosition.x -= this.mSpeed;
-        // boundary check
-        if (this.mPosition.x < 0) {
-            this.mPosition.x = 0;
-        }
     }
 
     /**
@@ -117,10 +117,6 @@ public class Plane extends GameObject{
     public void moveRight() {
         //GameUtils.info(TAG, "moveRight");
         this.mPosition.x += this.mSpeed;
-        // boundary check
-        if (this.mPosition.x > GameConstants.REFERENCE_SCREEN_WIDTH - this.mWidth) {
-            this.mPosition.x = GameConstants.REFERENCE_SCREEN_WIDTH - this.mWidth;
-        }
     }
 
     /**
@@ -129,10 +125,6 @@ public class Plane extends GameObject{
     public void moveUp() {
         //GameUtils.info(TAG, "moveUp");
         this.mPosition.y -= this.mSpeed;
-        // boundary check
-        if (this.mPosition.y < 0) {
-            this.mPosition.y = 0;
-        }
     }
 
     /**
@@ -141,10 +133,6 @@ public class Plane extends GameObject{
     public void moveDown() {
         //GameUtils.info(TAG, "moveDown");
         this.mPosition.y += this.mSpeed;
-        // boundary check
-        if (this.mPosition.y > GameConstants.REFERENCE_SCREEN_HEIGHT - this.mHeight) {
-            this.mPosition.y = GameConstants.REFERENCE_SCREEN_HEIGHT - this.mHeight;
-        }
     }
 
 }
