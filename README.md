@@ -10,7 +10,7 @@ game/
 ├── Tetris-game/         # Classic Tetris Game (Java)  
 ├── WhackAMole/          # Simple Whack-a-Mole Game (Kotlin)  
 ├── ArenaMiniFight/      # JNI-based game engine project  
-├── BattleCity/          # Designed and Implemented by Google AI (Kotlin) 
+├── BattleCity/          # Designed and Implemented by Google AI (Kotlin)  
 └── ...                  # More projects to be added  
 
 
