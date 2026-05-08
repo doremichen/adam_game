@@ -38,9 +38,8 @@ public class SettingsManager {
     public static final String KEY_SOUND_ON = "sound_on";
     public static final String KEY_DURATION_TIME = "duration_time";
     public static final String KEY_VIBRATION_ON = "vibrator_on";
-    public static final String KEY_DIFFICULTY = "difficulty";
 
-    private static SettingsManager sInstance;
+    private static volatile SettingsManager sInstance;
     private final SharedPreferences mPreferences;
 
     private SettingsManager(Context context) {
@@ -51,7 +50,7 @@ public class SettingsManager {
         if (sInstance == null) {
             synchronized (SettingsManager.class) {
                 if (sInstance == null) {
-                    sInstance = new SettingsManager(context);
+                    sInstance = new SettingsManager(context.getApplicationContext());
                 }
             }
         }
@@ -78,12 +77,5 @@ public class SettingsManager {
     }
     public boolean isVibrationOn() {
         return mPreferences.getBoolean(KEY_VIBRATION_ON, true);
-    }
-
-    public void setDifficulty(int difficulty) {
-        mPreferences.edit().putInt(KEY_DIFFICULTY, difficulty).apply();
-    }
-    public int getDifficulty() {
-        return mPreferences.getInt(KEY_DIFFICULTY, 1);
     }
 }

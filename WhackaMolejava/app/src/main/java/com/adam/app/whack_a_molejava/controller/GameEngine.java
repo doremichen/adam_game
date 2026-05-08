@@ -63,7 +63,7 @@ public class GameEngine {
 
     // spawn control
     private long mLastGuaranteedSpawn = 0L;
-    private final long GUARANTEED_SPAWN_INTERVAL_MS = 800L; // at least every 800ms spawn one
+    private static final long GUARANTEED_SPAWN_INTERVAL_MS = 800L; // at least every 800ms spawn one
 
     /**
      * Constructor
@@ -86,9 +86,7 @@ public class GameEngine {
      */
     public void backupCellPositions(List<PointF> list) {
         if (list == null) return;
-        for (int i = 0; i < list.size(); i++) {
-            mBackupPositions.add(list.get(i));
-        }
+        mBackupPositions.addAll(list);
     }
 
 
@@ -164,11 +162,12 @@ public class GameEngine {
      * @param position position
      */
     public void hitMole(PointF position) {
+        final float hitRadius = 64f; // use dp-based radius
         for (Mole mole : mMoles) {
             if (mole.isVisible()) {
                 float dx = position.x - mole.getPosition().x;
                 float dy = position.y - mole.getPosition().y;
-                if (Math.sqrt(dx * dx + dy * dy) < dpToPx(64)) { // use dp-based radius
+                if (Math.sqrt(dx * dx + dy * dy) < hitRadius) {
                     mole.setVisible(false);
                     mScore++;
                     mGameCallback.onScoreChanged(mScore);
@@ -176,12 +175,6 @@ public class GameEngine {
                 }
             }
         }
-    }
-
-    // helper - adjust to device density if needed (fallback)
-    private float dpToPx(float dp) {
-        // can't access resources here; caller can translate. Keep 64 px fallback.
-        return dp;
     }
 
     /**

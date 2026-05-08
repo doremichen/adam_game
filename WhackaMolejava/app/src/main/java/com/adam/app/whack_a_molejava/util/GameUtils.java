@@ -43,7 +43,6 @@ import com.adam.app.whack_a_molejava.R;
 public final class GameUtils {
 
     private static final String TAG = "WHACKAMOLE";
-    private static final String TAG_GAME_UTIL = "GameUtil";
 
     private GameUtils() {
         throw new AssertionError("No instances.");
@@ -52,8 +51,8 @@ public final class GameUtils {
     /**
      * log
      *
-     * @param title
-     * @param message
+     * @param title the tag or title for the log
+     * @param message the message to log
      */
     public static void log(String title, String message) {
         Log.d(TAG, title + ": " + message);
@@ -62,27 +61,17 @@ public final class GameUtils {
     /**
      * show toast
      *
-     * @param context
-     * @param message
+     * @param context the context to show the toast
+     * @param message the message to show
      */
     public static void showToast(Context context, String message) {
         // check main looper
         if (android.os.Looper.myLooper() != android.os.Looper.getMainLooper()) {
-            new Handler(Looper.getMainLooper()).post(() -> {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            });
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, message, Toast.LENGTH_SHORT).show());
             return;
         }
 
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    /**
-     * show unimplemented toast message
-     */
-    public static void showUnImplementedToast(Context context) {
-        showToast(context, context.getString(R.string.whack_a_mole_unimplemented_toast));
     }
 
 

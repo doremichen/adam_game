@@ -38,18 +38,14 @@ import com.adam.app.whack_a_molejava.databinding.ActivityAboutBinding;
  */
 public class AboutActivity extends AppCompatActivity {
 
-    // view binding
-    private ActivityAboutBinding mBinding;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // view binding
-        mBinding = ActivityAboutBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
+        ActivityAboutBinding binding = ActivityAboutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         // exit button
-        mBinding.btnExit.setOnClickListener(v -> finish());
-
+        binding.btnExit.setOnClickListener(v -> finish());
     }
 }

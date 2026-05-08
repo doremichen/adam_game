@@ -23,7 +23,6 @@
  */
 package com.adam.app.whack_a_molejava.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
@@ -52,7 +51,7 @@ public class GameSettingsActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.settings, new SettingsFragment(getApplicationContext()))
+                    .replace(R.id.settings, new SettingsFragment())
                     .commit();
         }
         ActionBar actionBar = getSupportActionBar();
@@ -63,20 +62,13 @@ public class GameSettingsActivity extends AppCompatActivity {
 
     public static class SettingsFragment extends PreferenceFragmentCompat {
 
-        // settingsManager
-        private final SettingsManager mSettingManager;
-        private final Context mContext;
-
-
-        public SettingsFragment(Context context) {
-            mContext = context;
-            mSettingManager = SettingsManager.getInstance(context);
-        }
-
+        private SettingsManager mSettingManager;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            mSettingManager = SettingsManager.getInstance(requireContext().getApplicationContext());
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
+
             // vibrator
             SwitchPreference vibPreference = findPreference(SettingsManager.KEY_VIBRATION_ON);
             // sound
@@ -85,27 +77,27 @@ public class GameSettingsActivity extends AppCompatActivity {
             EditTextPreference durationPreference = findPreference(SettingsManager.KEY_DURATION_TIME);
 
             if (vibPreference != null) {
-                boolean isVibOn = mSettingManager.isVibrationOn();
-                vibPreference.setChecked(isVibOn);
+                vibPreference.setChecked(mSettingManager.isVibrationOn());
                 vibPreference.setOnPreferenceChangeListener(this::onVibPrefChange);
             }
             if (soundPreference != null) {
-                boolean isSoundOn = mSettingManager.isSoundOn();
-                soundPreference.setChecked(isSoundOn);
+                soundPreference.setChecked(mSettingManager.isSoundOn());
                 soundPreference.setOnPreferenceChangeListener(this::onSoundPrefChange);
             }
             if (durationPreference != null) {
-                int duration = mSettingManager.getDurationTime();
-                durationPreference.setText(String.valueOf(duration));
+                durationPreference.setText(String.valueOf(mSettingManager.getDurationTime()));
                 durationPreference.setOnPreferenceChangeListener(this::onDurationPrefChange);
             }
-
         }
 
         private boolean onDurationPrefChange(Preference preference, Object o) {
-            int duration = Integer.parseInt((String) o);
-            mSettingManager.setDurationTime(duration);
-            return true;
+            try {
+                int duration = Integer.parseInt((String) o);
+                mSettingManager.setDurationTime(duration);
+                return true;
+            } catch (NumberFormatException e) {
+                return false;
+            }
         }
 
         private boolean onSoundPrefChange(Preference preference, Object o) {

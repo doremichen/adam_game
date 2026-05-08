@@ -93,7 +93,9 @@ public final class GameDialog {
             btnNegative.setVisibility(View.GONE);
         }
 
-        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+        }
         dialog.show();
 
     }

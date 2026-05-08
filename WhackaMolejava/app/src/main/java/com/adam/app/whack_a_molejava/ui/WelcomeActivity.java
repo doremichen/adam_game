@@ -41,28 +41,22 @@ import com.adam.app.whack_a_molejava.viewmodels.WelcomeViewModel;
  */
 public class WelcomeActivity extends AppCompatActivity {
 
-    // view binding
-    private ActivityWelcomeBinding mBinding;
-
-    // view model
-    private WelcomeViewModel mViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBinding = ActivityWelcomeBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
+        ActivityWelcomeBinding binding = ActivityWelcomeBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         // init view model
-        mViewModel = new ViewModelProvider(this).get(WelcomeViewModel.class);
+        WelcomeViewModel viewModel = new ViewModelProvider(this).get(WelcomeViewModel.class);
 
         // set listener
-        mBinding.btnStart.setOnClickListener(v -> mViewModel.startGame());
-        mBinding.btnSetting.setOnClickListener(v -> mViewModel.setting());
-        mBinding.btnAbout.setOnClickListener(v -> mViewModel.about());
-        mBinding.btnExit.setOnClickListener(v -> mViewModel.exit());
+        binding.btnStart.setOnClickListener(v -> viewModel.startGame());
+        binding.btnSetting.setOnClickListener(v -> viewModel.setting());
+        binding.btnAbout.setOnClickListener(v -> viewModel.about());
+        binding.btnExit.setOnClickListener(v -> viewModel.exit());
 
         // observer event
-        mViewModel.getEvent().observe(this, this::handleEvent);
+        viewModel.getEvent().observe(this, this::handleEvent);
     }
 
     private void handleEvent(WelcomeViewModel.WelcomeEvent event) {

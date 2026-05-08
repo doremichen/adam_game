@@ -25,6 +25,8 @@ package com.adam.app.whack_a_molejava.model;
 
 import android.graphics.PointF;
 
+import java.util.Objects;
+
 /**
  * This class is the mole model
  *
@@ -46,10 +48,10 @@ public class Mole {
 
     /**
      * construct
-     * @param position
+     * @param position the initial position of the mole
      */
     public Mole(PointF position) {
-        mPosition = (position != null) ? position : new PointF(0f, 0f);
+        mPosition = Objects.requireNonNullElseGet(position, () -> new PointF(0f, 0f));
         mIsVisible = false;
         mVisibleFrom = 0L;
         mVisibleUntil = 0L;

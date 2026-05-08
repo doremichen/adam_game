@@ -32,7 +32,6 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -84,9 +83,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     private float mCellW, mCellH;
     private boolean mCentersComputed = false;
 
-    // touch radius in px (converted from dp)
-    private float mTouchRadiusPx;
-
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         getHolder().addCallback(this);
@@ -101,9 +97,6 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             GameUtils.log(TAG, "mole bitmap load failed: " + e.getMessage());
             mMoleBitmap = null;
         }
-        // default touch radius 48dp
-        mTouchRadiusPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48f, getResources().getDisplayMetrics());
-
     }
 
     // Ensure centers recalculated when view size changes (more reliable than lazily at draw time)
@@ -115,7 +108,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     }
 
     @Override
-    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int format, int width, int height) {
         GameUtils.log(TAG, "surfaceChanged");
         // do nothing
     }
@@ -133,8 +126,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
         GameUtils.log(TAG, "surfaceDestroyed");
-
-            release();
+        release();
     }
 
 
@@ -144,6 +136,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             return true;
         }
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            performClick();
             // if not RUN, ignore touches (prevent hitting while paused)
             if (isGameRunning()) {
                 // forward touch to view model (or to engine via viewmodel)
@@ -152,6 +145,11 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     private boolean isGameRunning() {
@@ -164,8 +162,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         logState();
         // check game status
         // We always draw the static UI. If game is running we update+animate moles.
-        boolean running = isGameRunning();
-        if (!running) {
+        if (!isGameRunning()) {
             GameUtils.log(TAG, "game not running");
             return;
         }
@@ -267,28 +264,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         for (Mole mole : moles) {
             if (!mole.isVisible()) continue;
             PointF pos = mole.getPosition();
-            long visibleFrom = mole.getVisibleFrom();
-            long visibleUntil = mole.getVisibleUntil();
-            long duration = Math.max(1, visibleUntil - visibleFrom);
-            long elapsed = now - visibleFrom;
-            if (elapsed < 0) elapsed = 0;
-            float t = Math.min(1f, (float) elapsed / (float) duration);
-            // scale: ease-in-out using sin
-            float scale = 0.6f + 0.4f * (float)Math.sin(t * Math.PI);
+            float scale = calculateMoleScale(mole, now);
 
             if (mMoleBitmap != null && !mMoleBitmap.isRecycled()) {
-                // compute target size proportional to cell
-                float targetW = mCellW * 0.6f;
-                float targetH = mCellH * 0.7f;
-                float bmpW = mMoleBitmap.getWidth();
-                float bmpH = mMoleBitmap.getHeight();
-                float sx = (targetW / bmpW) * scale;
-                float sy = (targetH / bmpH) * scale;
-
-                Matrix matrix = new Matrix();
-                matrix.postTranslate(-bmpW / 2f, -bmpH / 2f);
-                matrix.postScale(sx, sy);
-                matrix.postTranslate(pos.x, pos.y - mCellH * 0.08f); // slightly raised visually
+                Matrix matrix = calculateMoleMatrix(pos, scale);
                 canvas.drawBitmap(mMoleBitmap, matrix, mPaint);
             } else {
                 // fallback: circle
@@ -297,6 +276,32 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 canvas.drawCircle(pos.x, pos.y - mCellH * 0.08f, radius, mPaint);
             }
         }
+    }
+
+    private float calculateMoleScale(Mole mole, long now) {
+        long visibleFrom = mole.getVisibleFrom();
+        long visibleUntil = mole.getVisibleUntil();
+        long duration = Math.max(1, visibleUntil - visibleFrom);
+        long elapsed = now - visibleFrom;
+        if (elapsed < 0) elapsed = 0;
+        float t = Math.min(1f, (float) elapsed / (float) duration);
+        // scale: ease-in-out using sin
+        return 0.6f + 0.4f * (float) Math.sin(t * Math.PI);
+    }
+
+    private Matrix calculateMoleMatrix(PointF pos, float scale) {
+        float targetW = mCellW * 0.6f;
+        float targetH = mCellH * 0.7f;
+        float bmpW = mMoleBitmap.getWidth();
+        float bmpH = mMoleBitmap.getHeight();
+        float sx = (targetW / bmpW) * scale;
+        float sy = (targetH / bmpH) * scale;
+
+        Matrix matrix = new Matrix();
+        matrix.postTranslate(-bmpW / 2f, -bmpH / 2f);
+        matrix.postScale(sx, sy);
+        matrix.postTranslate(pos.x, pos.y - mCellH * 0.08f); // slightly raised visually
+        return matrix;
     }
 
     private void computeCellCenters(float gridTop) {

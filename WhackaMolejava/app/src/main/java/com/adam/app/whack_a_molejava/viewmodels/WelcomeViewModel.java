@@ -27,6 +27,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 
 import com.adam.app.whack_a_molejava.util.SingleLiveEvent;
 
@@ -39,14 +40,14 @@ import com.adam.app.whack_a_molejava.util.SingleLiveEvent;
  */
 public class WelcomeViewModel extends AndroidViewModel {
 
-    private SingleLiveEvent<WelcomeEvent> mEvent = new SingleLiveEvent<WelcomeEvent>();
+    private final SingleLiveEvent<WelcomeEvent> mEvent = new SingleLiveEvent<>();
 
     public WelcomeViewModel(@NonNull Application application) {
         super(application);
     }
 
     // --- getter ---
-    public SingleLiveEvent<WelcomeEvent> getEvent() {
+    public LiveData<WelcomeEvent> getEvent() {
         return mEvent;
     }
 

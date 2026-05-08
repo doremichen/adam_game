@@ -51,12 +51,15 @@ import java.util.List;
 public class GameViewModel extends AndroidViewModel {
 
     // Live data
-    private MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
-    private MutableLiveData<Integer> mRemainingTime = new MutableLiveData<>(0);
-    private MutableLiveData<Boolean> mGameOver = new MutableLiveData<>(false);
+    private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> mRemainingTime = new MutableLiveData<>(0);
+    private final MutableLiveData<Boolean> mGameOver = new MutableLiveData<>(false);
 
     // Game engine
-    private GameEngine mGameEngine;
+    private final GameEngine mGameEngine;
+
+    // Sound manager
+    private final GameSoundManager mSoundManager;
 
     public GameViewModel(@NonNull Application application) {
         super(application);
@@ -67,7 +70,7 @@ public class GameViewModel extends AndroidViewModel {
         final SettingsManager settingsManager = SettingsManager.getInstance(context);
 
         // init sound manager
-        final GameSoundManager soundManager = new GameSoundManager(context);
+        mSoundManager = new GameSoundManager(context);
 
         int duration = settingsManager.getDurationTime() + 1;  // one is for countdown
 
@@ -77,7 +80,7 @@ public class GameViewModel extends AndroidViewModel {
             @Override
             public void onScoreChanged(int score) {
                 // play sound effect
-                soundManager.playShortSound(context, R.raw.hit_mole);
+                mSoundManager.playShortSound(context, R.raw.hit_mole);
                 // vibrator short
                 vibrator.vibrateShort();
                 // update score
@@ -153,10 +156,6 @@ public class GameViewModel extends AndroidViewModel {
         mGameEngine.setMolePositions(centers);
     }
 
-    public void changeState(GameEngine.WAMGameState state) {
-        mGameEngine.changeState(state);
-    }
-
     public GameEngine.WAMGameState getState() {
         return mGameEngine.getState();
     }
@@ -175,5 +174,11 @@ public class GameViewModel extends AndroidViewModel {
 
     public void update() {
         mGameEngine.update();
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        mSoundManager.release();
     }
 }

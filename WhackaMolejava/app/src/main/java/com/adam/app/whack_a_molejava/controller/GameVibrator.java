@@ -24,7 +24,6 @@
 package com.adam.app.whack_a_molejava.controller;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
@@ -32,7 +31,7 @@ import android.os.VibratorManager;
 /**
  * This class is the Game vibrator that handle the vibration of the game.
  *
- * GameVibrator vibrator = new GameVibrator(this);
+ * GameVibrator vibrator = GameVibrator.getInstance(this);
  *
  * // Short vibration
  * vibrator.vibrateShort();
@@ -40,32 +39,20 @@ import android.os.VibratorManager;
  * // Long vibration
  * vibrator.vibrateLong();
  *
- * // Custom vibration pattern
- * vibrator.startVibration(new long[]{0, 150, 80, 200});
- *
- * // Stop vibration
- * vibrator.stopVibration();
- *
  * @author Adam Chen
  * @version 1.0
  * @since 2025-12-04
  */
 public class GameVibrator {
 
-    private Vibrator mVibrator;
-    private VibratorManager mVibratorMgr;
+    private final Vibrator mVibrator;
     private final SettingsManager mSettingManager;
-
 
     private static volatile GameVibrator sInstance;
 
     private GameVibrator(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            mVibratorMgr = (VibratorManager) context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-        } else {
-            mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        }
-
+        VibratorManager vibratorManager = (VibratorManager) context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+        mVibrator = vibratorManager.getDefaultVibrator();
         mSettingManager = SettingsManager.getInstance(context);
     }
 
@@ -73,20 +60,12 @@ public class GameVibrator {
         if (sInstance == null) {
             synchronized (GameVibrator.class) {
                 if (sInstance == null) {
-                    sInstance = new GameVibrator(context);
+                    sInstance = new GameVibrator(context.getApplicationContext());
                 }
             }
         }
         return sInstance;
     }
-
-    private Vibrator getVibrator() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            return mVibratorMgr.getDefaultVibrator();
-        }
-        return mVibrator;
-    }
-
 
     /**
      * Vibrate short (100ms)
@@ -103,44 +82,9 @@ public class GameVibrator {
     }
 
     private void vibrate(long duration) {
-        boolean isVibOn = mSettingManager.isVibrationOn();
-        if (!isVibOn) return;
+        if (!mSettingManager.isVibrationOn()) return;
+        if (mVibrator == null) return;
 
-        Vibrator vibrator = getVibrator();
-        if (vibrator == null) return;
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
-        } else {
-            vibrator.vibrate(duration);
-        }
+        mVibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
     }
-
-    /**
-     * Vibrate with pattern
-     * @param pattern
-     */
-    public void startVibration(long[] pattern) {
-        boolean isVibOn = mSettingManager.isVibrationOn();
-        if (!isVibOn) return;
-
-        Vibrator vibrator = getVibrator();
-        if (vibrator == null) return;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            vibrator.vibrate(VibrationEffect.createWaveform(pattern, 0));
-        } else {
-            vibrator.vibrate(pattern, 0);
-        }
-    }
-
-    /**
-     * Stop vibration
-     */
-    public void stopVibration() {
-        Vibrator vibrator = getVibrator();
-        if (vibrator == null) return;
-        vibrator.cancel();
-    }
-
-
 }
