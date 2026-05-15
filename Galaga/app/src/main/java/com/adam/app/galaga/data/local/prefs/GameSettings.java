@@ -73,6 +73,16 @@ public class GameSettings {
                 bullets.add(new Bullet(x, y, 0, -speed)); // forward
                 bullets.add(new Bullet(x, y, 0, speed));  // back
             }
+        },
+        LASER {
+            @Override
+            void handle(List<Bullet> bullets, float x, float y, float speed) {
+                // Laser is longer, thinner and faster
+                Bullet laser = new Bullet(x, y, 0, -speed * 2.5f, 
+                        GameConstants.LASER_WIDTH, GameConstants.LASER_HEIGHT);
+                laser.setLaser(true);
+                bullets.add(laser);
+            }
         };
 
         public void  spawn(List<Bullet> bullets, Plane plane) {

@@ -4,6 +4,7 @@
         <item>三向散射 (Spread)</item>
         <item>全方位圓形 (Circular)</item>
         <item>前後併射 (Backward)</item>
+        <item>強力雷射 (Laser)</item>
     </string-array>
 
     <string-array name="shot_style_values">
@@ -11,5 +12,6 @@
         <item>SPREAD</item>
         <item>CIRCULAR</item>
         <item>BACKWARD</item>
+        <item>LASER</item>
     </string-array>
 </resources>

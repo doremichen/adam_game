@@ -71,11 +71,14 @@ public class CollisionManager {
 
                 // collision
                 if (RectF.intersects(mRectBufferA, mRectBufferB)) {
-                    // set dead
-                    bullet.setDead(true);
                     bee.setDead(true);
                     hitCount++;
-                    break;
+
+                    // If not piercing (like normal bullets), mark as dead and stop checking other bees
+                    if (!bullet.isPiercing()) {
+                        bullet.setDead(true);
+                        break;
+                    }
                 }
             }
         }

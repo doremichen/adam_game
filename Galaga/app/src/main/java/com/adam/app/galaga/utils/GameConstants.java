@@ -47,6 +47,8 @@ public final class GameConstants {
     public static final float BULLET_SPEED = 20.0f;
     public static final int BULLET_WIDTH = 10;
     public static final int BULLET_HEIGHT = 20;
+    public static final int LASER_WIDTH = 8;
+    public static final int LASER_HEIGHT = 250;
     public static final long AUTO_FIRE_INTERVAL = 500;
 
     // --- Enemy (General) ---
