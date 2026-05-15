@@ -23,6 +23,8 @@
     <string name="galaga_settings_category_title">戰鬥與控制</string>
     <string name="galaga_settings_auto_fire_summary">以固定間隔自動發射子彈</string>
     <string name="galaga_settings_auto_fire_title">自動開火</string>
+    <string name="galaga_settings_sound_effects_title">遊戲音效 (SFX)</string>
+    <string name="galaga_settings_bgm_title">背景音樂 (BGM)</string>
     <string name="galaga_settings_shot_style_title">發射格式</string>
     <string name="galaga_show_not_support_toast">抱歉，目前暫不支援此射擊模式！</string>
     <!-- title -->

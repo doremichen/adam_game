@@ -134,6 +134,20 @@ public class SettingsActivity extends AppCompatActivity {
                     String style = sPf.getString(GameSettings.KEY_SHOT_TYPE, GameSettings.ShotStyle.STRAIGHT.name());
                     viewModel.updateShotStyle(style);
                 }
+            },
+            SoundEffects(GameSettings.KEY_SOUND_EFFECTS) {
+                @Override
+                protected void handle(SettingsViewModel viewModel, SharedPreferences sPf) {
+                    boolean enabled = sPf.getBoolean(GameSettings.KEY_SOUND_EFFECTS, true);
+                    viewModel.updateSoundEffects(enabled);
+                }
+            },
+            Bgm(GameSettings.KEY_BGM) {
+                @Override
+                protected void handle(SettingsViewModel viewModel, SharedPreferences sPf) {
+                    boolean enabled = sPf.getBoolean(GameSettings.KEY_BGM, true);
+                    viewModel.updateBgm(enabled);
+                }
             };
 
             private final String mKey;

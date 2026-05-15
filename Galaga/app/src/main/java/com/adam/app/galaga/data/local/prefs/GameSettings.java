@@ -28,6 +28,7 @@ import android.content.SharedPreferences;
 import com.adam.app.galaga.GalagaApplication;
 import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.Plane;
+import com.adam.app.galaga.engine.SoundManager;
 import com.adam.app.galaga.utils.GameConstants;
 
 import java.util.List;
@@ -36,15 +37,17 @@ public class GameSettings {
     // TAG
     private static final String TAG = GameSettings.class.getSimpleName();
 
-    //--- Keys ---
     public static final String KEY_AUTO_FIRE = "key.auto.fire";
     public static final String KEY_SHOT_TYPE = "key.shot.type";
+    public static final String KEY_SOUND_EFFECTS = "key.sound.effects";
+    public static final String KEY_BGM = "key.bgm";
 
     public enum ShotStyle {
         STRAIGHT {
             @Override
             void handle(List<Bullet> bullets, float x, float y, float speed) {
                 bullets.add(new Bullet(x, y, 0, -speed));
+                SoundManager.getInstance().playSfx(GameConstants.SFX_FIRE);
             }
         },
         SPREAD {
@@ -82,6 +85,7 @@ public class GameSettings {
                         GameConstants.LASER_WIDTH, GameConstants.LASER_HEIGHT);
                 laser.setLaser(true);
                 bullets.add(laser);
+                SoundManager.getInstance().playSfx(GameConstants.SFX_LASER);
             }
         };
 
@@ -101,7 +105,7 @@ public class GameSettings {
     }
 
 
-    // shared preference
+    // prefes mgr
     private final SharedPreferences mPrefesMgr;
 
     private static class Helper {
@@ -109,8 +113,10 @@ public class GameSettings {
     }
 
     private GameSettings() {
-        Context context = GalagaApplication.getAppContext();
-        mPrefesMgr = context.getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        mPrefesMgr = GalagaApplication.getAppContext().getSharedPreferences(
+                GalagaApplication.getAppContext().getPackageName() + "_preferences",
+                Context.MODE_PRIVATE
+        );
     }
 
     public static GameSettings getInstance() {
@@ -118,16 +124,33 @@ public class GameSettings {
     }
 
 
-    //--- setter/getter ---
-    public void setAutoFire(boolean autoFire) {
-        mPrefesMgr.edit().putBoolean(KEY_AUTO_FIRE, autoFire).apply();
+    public void setAutoFire(boolean enable) {
+        mPrefesMgr.edit().putBoolean(KEY_AUTO_FIRE, enable).apply();
     }
+
     public boolean isAutoFire() {
         return mPrefesMgr.getBoolean(KEY_AUTO_FIRE, false);
     }
+
     public void setShotStyle(ShotStyle style) {
         if (style == null) return;
         mPrefesMgr.edit().putString(KEY_SHOT_TYPE, style.name()).apply();
+    }
+
+    public void setSoundEffects(boolean enable) {
+        mPrefesMgr.edit().putBoolean(KEY_SOUND_EFFECTS, enable).apply();
+    }
+
+    public boolean isSoundEffectsEnabled() {
+        return mPrefesMgr.getBoolean(KEY_SOUND_EFFECTS, true);
+    }
+
+    public void setBgm(boolean enable) {
+        mPrefesMgr.edit().putBoolean(KEY_BGM, enable).apply();
+    }
+
+    public boolean isBgmEnabled() {
+        return mPrefesMgr.getBoolean(KEY_BGM, true);
     }
     public ShotStyle getShotStyle() {
         String styleStr = mPrefesMgr.getString(KEY_SHOT_TYPE, ShotStyle.STRAIGHT.name());

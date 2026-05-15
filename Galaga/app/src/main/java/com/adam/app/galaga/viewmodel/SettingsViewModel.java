@@ -56,6 +56,14 @@ public class SettingsViewModel extends ViewModel {
         }
     }
 
+    public void updateSoundEffects(boolean enable) {
+        mSettings.setSoundEffects(enable);
+    }
+
+    public void updateBgm(boolean enable) {
+        mSettings.setBgm(enable);
+    }
+
     public void clearExceptionInfo() {
         mExeceptionStr.setValue(null);
     }

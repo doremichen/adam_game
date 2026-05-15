@@ -18,6 +18,18 @@
             app:icon="@drawable/ic_shot_style"
             app:useSimpleSummaryProvider="true" />
 
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="key.sound.effects"
+            app:title="@string/galaga_settings_sound_effects_title"
+            app:icon="@drawable/ic_sound_on" />
+
+        <SwitchPreferenceCompat
+            app:defaultValue="true"
+            app:key="key.bgm"
+            app:title="@string/galaga_settings_bgm_title"
+            app:icon="@drawable/ic_music_on" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

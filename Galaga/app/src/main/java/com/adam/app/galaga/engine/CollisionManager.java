@@ -29,6 +29,7 @@ import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.data.model.Plane;
+import com.adam.app.galaga.utils.GameConstants;
 
 import java.util.Iterator;
 import java.util.List;
@@ -73,6 +74,7 @@ public class CollisionManager {
                 if (RectF.intersects(mRectBufferA, mRectBufferB)) {
                     bee.setDead(true);
                     hitCount++;
+                    SoundManager.getInstance().playSfx(GameConstants.SFX_EXPLOSION);
 
                     // If not piercing (like normal bullets), mark as dead and stop checking other bees
                     if (!bullet.isPiercing()) {

@@ -25,6 +25,8 @@ package com.adam.app.galaga;
 import android.app.Application;
 import android.content.Context;
 
+import com.adam.app.galaga.engine.SoundManager;
+
 public class GalagaApplication extends Application {
 
     private static GalagaApplication sAppContext;
@@ -34,6 +36,7 @@ public class GalagaApplication extends Application {
         super.onCreate();
 
         sAppContext = this;
+        SoundManager.getInstance().init(this);
     }
 
     public static Context getAppContext() {

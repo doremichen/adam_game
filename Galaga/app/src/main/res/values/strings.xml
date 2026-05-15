@@ -23,6 +23,8 @@
     <string name="galaga_settings_category_title"><![CDATA[Combat & Control]]></string>
     <string name="galaga_settings_auto_fire_summary">Automatically fire bullets at fixed intervals</string>
     <string name="galaga_settings_auto_fire_title">Auto Fire</string>
+    <string name="galaga_settings_sound_effects_title">Sound Effects</string>
+    <string name="galaga_settings_bgm_title">Background Music</string>
     <string name="galaga_settings_shot_style_title">Shot Style</string>
     <string name="galaga_show_not_support_toast">Not support!!!</string>
     <string name="galaga_about_title">About Galaga</string>

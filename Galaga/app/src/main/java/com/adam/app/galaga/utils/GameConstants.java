@@ -85,6 +85,12 @@ public final class GameConstants {
     // --- Scoring ---
     public static final int SCORE_PER_BEE = 5;
 
+    // --- Sound Effects Keys ---
+    public static final String SFX_FIRE = "fire";
+    public static final String SFX_LASER = "laser";
+    public static final String SFX_EXPLOSION = "explosion";
+    public static final String SFX_LEVEL_START = "level_start";
+
     // --- Misc ---
     public static final String NOT_SUPPORT_INFO = "Not support!!!";
 }

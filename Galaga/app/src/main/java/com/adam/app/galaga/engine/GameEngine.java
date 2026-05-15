@@ -28,9 +28,11 @@ import android.os.Looper;
 
 import androidx.annotation.NonNull;
 
+import com.adam.app.galaga.GalagaApplication;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
+import com.adam.app.galaga.engine.SoundManager;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -121,6 +123,7 @@ public class GameEngine {
         );
 
         updateState(State.RUNNING);
+        SoundManager.getInstance().playBgm(GalagaApplication.getAppContext());
         GameUtils.info(TAG, "Game started");
     }
 
@@ -165,6 +168,7 @@ public class GameEngine {
         // cancel task
         mCurrentTask.cancel(true);
         mCurrentTask = null;
+        SoundManager.getInstance().stopBgm();
         GameUtils.info(TAG, "Game stopped");
     }
 
