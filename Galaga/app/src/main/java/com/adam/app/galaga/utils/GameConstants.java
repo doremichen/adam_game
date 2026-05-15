@@ -24,51 +24,65 @@ package com.adam.app.galaga.utils;
 
 public final class GameConstants {
 
-    public static final float BULLET_SPEED = 20.0f;
-    public static final int BULLET_WIDTH = 10;
-    public static final int BULLET_HEIGHT = 20;
-    public static final int DEFAULT_BEES_COLS = 5;
-    public static final long LEVEL_DURATION_MS = 30000L;
-    public static final String NOT_SUPPORT_INFO = "Not support!!!";
-
     private GameConstants() {
         throw new UnsupportedOperationException("This is Constants!!!");
     }
 
-    // screen size
+    // --- System & Screen ---
     public static final int GAME_WIDTH = 1080;
     public static final int GAME_HEIGHT = 1920;
-    public static final float REFERENCE_SCREEN_WIDTH = 1080f;
-    public static final float REFERENCE_SCREEN_HEIGHT = 1920f;
-
     public static final int FPS = 60;
     public static final long FRAME_PERIOD_MS = 1000 / FPS;
 
-    // Game rule
-    public static final int SCORE_PER_BEE = 5;
-
-    // player
+    // --- Player Settings ---
     public static final float PLAYER_START_X = 500f;
     public static final float PLAYER_START_Y = 1500f;
     public static final float PLAYER_SPEED = 15.0f;
     public static final int PLAYER_WIDTH = 100;
     public static final int PLAYER_HEIGHT = 100;
-    public static final int MAX_ANIM_FRAMES = 4; // assume fire animation has 4 frames
-    public static final int ANIM_FRAME_DELAY = 5;// assume fire animation has 5 frames per second
+    public static final int MAX_ANIM_FRAMES = 4;
+    public static final int ANIM_FRAME_DELAY = 5;
 
-    // bee
-    public static final int BEE_ROWS = 3;
-    public static final int BEE_COLS = 6;
+    // --- Weapon & Bullet ---
+    public static final float BULLET_SPEED = 20.0f;
+    public static final int BULLET_WIDTH = 10;
+    public static final int BULLET_HEIGHT = 20;
+    public static final long AUTO_FIRE_INTERVAL = 500;
+
+    // --- Enemy (General) ---
     public static final int BEE_WIDTH = 80;
     public static final int BEE_HEIGHT = 80;
-    public static final float BEE_SPEED_BASE = 5.0f;
     public static final int BEE_SPACING = 120;
+    public static final int DEFAULT_BEES_COLS = 5;
     public static final int BEE_INITIAL_OFFSET_X = 150;
     public static final int BEE_INITIAL_OFFSET_Y = 200;
     public static final float BEE_DIVE_PROBABILITY = 0.005f;
     public static final int BEE_TURN_INTERVAL_MS = 1000;
 
-    // setting
-    public static final long AUTO_FIRE_INTERVAL = 500;
+    // --- Enemy Spawning (Waves) ---
+    public static final int WAVE_SIZE = 5;
+    public static final long WAVE_DELAY_MS = 3000;
+    public static final long INTER_ENEMY_DELAY_MS = 200;
+    public static final long LEVEL_DURATION_MS = 30000L;
 
+    // --- Entry Strategies ---
+    // Arc
+    public static final long ARC_DURATION = 2000;
+    public static final float ARC_SCREEN_OFFSET = 100f;
+    public static final float ARC_CONTROL_POINT_Y_RATIO = 0.25f;
+    
+    // Circle
+    public static final long CIRCLE_DURATION = 3000;
+    public static final float CIRCLE_PHASE_THRESHOLD = 0.7f;
+    public static final float CIRCLE_RADIUS_START = 200f;
+    public static final float CIRCLE_RADIUS_END = 50f;
+    public static final float CIRCLE_TOTAL_ANGLES = (float) (Math.PI * 4);
+    public static final float CIRCLE_Y_OFFSET_START = 300f;
+    public static final float CIRCLE_CENTER_Y_RATIO = 0.33f;
+
+    // --- Scoring ---
+    public static final int SCORE_PER_BEE = 5;
+
+    // --- Misc ---
+    public static final String NOT_SUPPORT_INFO = "Not support!!!";
 }

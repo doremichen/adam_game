@@ -93,14 +93,7 @@ public class Plane extends GameObject{
     }
 
     private void clampPosition() {
-        if (mPosition.x < 0) mPosition.x = 0;
-        if (mPosition.x > GameConstants.GAME_WIDTH - mWidth) {
-            mPosition.x = GameConstants.GAME_WIDTH - mWidth;
-        }
-        if (mPosition.y < 0) mPosition.y = 0;
-        if (mPosition.y > GameConstants.GAME_HEIGHT - mHeight) {
-            mPosition.y = GameConstants.GAME_HEIGHT - mHeight;
-        }
+        clampToWorld();
     }
 
     /**

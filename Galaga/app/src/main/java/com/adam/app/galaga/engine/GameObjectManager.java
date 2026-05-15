@@ -29,6 +29,7 @@ import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.data.model.LevelConfig;
 import com.adam.app.galaga.data.model.Plane;
+import com.adam.app.galaga.engine.strategy.EnemyEntryStrategy;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 
@@ -67,6 +68,9 @@ public class GameObjectManager {
     private long mLevelStartTime;
     // last auto fire time
     private long mLastAutoFireTime;
+
+    // Enemy Spawning
+    private final EnemySpawner mEnemySpawner = new EnemySpawner();
 
     private GameObjectManager() {
     }
@@ -362,7 +366,8 @@ public class GameObjectManager {
         mBullets.clear();
         // reset spawn state
         mSpawnedCount = 0;
-        mLastSpawnTime = 0;
+        mEnemySpawner.reset();
+        mLevelStartTime = System.currentTimeMillis();
     }
 
 
@@ -392,35 +397,19 @@ public class GameObjectManager {
 
     private void updateSpawning() {
         if (mLevelConfig == null) return;
-        // Surving strategy
+        
+        // Survival strategy check
         if (mWinningStrategy == WinningStrategy.SURVIVAL) {
             if (System.currentTimeMillis() - mLevelStartTime >= GameConstants.LEVEL_DURATION_MS) {
                 return;
             }
         }
-        LevelConfig.EnemySettings settings = mLevelConfig.getEnemySettings();
-        if (mSpawnedCount < settings.getTotalCount()) {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - mLastSpawnTime >= settings.getSpawnIntervalMs()) {
-                // spawn single bee
-                spawnSingleBee(mSpawnedCount, settings.getBaseSpeed());
-                mSpawnedCount++;
-                mLastSpawnTime = currentTime;
-            }
+        
+        Bee bee = mEnemySpawner.spawnNextEnemy(mLevelConfig, mSpawnedCount);
+        if (bee != null) {
+            mBees.add(bee);
+            mSpawnedCount++;
         }
-    }
-
-    private void spawnSingleBee(int index, float speed) {
-        if (mLevelConfig == null) return;
-        int cols = GameConstants.DEFAULT_BEES_COLS;
-        int row = index / cols;
-        int col = index % cols;
-
-        float x = GameConstants.BEE_INITIAL_OFFSET_X + col * (GameConstants.BEE_WIDTH + GameConstants.BEE_SPACING);
-        float y = GameConstants.BEE_INITIAL_OFFSET_Y + row * (GameConstants.BEE_HEIGHT + GameConstants.BEE_SPACING);
-
-        float difficulty = mLevelConfig.getMetadata().getDifficultyMultiplier();
-        mBees.add(new Bee(x, y, speed * difficulty, GameConstants.BEE_WIDTH, GameConstants.BEE_HEIGHT));
     }
 
 

@@ -26,110 +26,55 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
+import com.adam.app.galaga.utils.GameConstants;
 
 /**
  * Base class for all game objects.
  */
 public abstract class GameObject {
-    // TAG
-    private static final String TAG = GameObject.class.getSimpleName();
-
     protected final PointF mPosition;
-    // width
+    protected final PointF mTargetPosition;
     protected final int mWidth;
-    // height
     protected final int mHeight;
     protected float mSpeed;
-    // mark delete flag
     protected volatile boolean mIsDead = false;
 
     public GameObject(float x, float y, float speed, int width, int height) {
         mPosition = new PointF(x, y);
+        mTargetPosition = new PointF(x, y);
         mSpeed = speed;
         mWidth = width;
         mHeight = height;
     }
 
+    public PointF getPosition() { return mPosition; }
+    public PointF getTargetPosition() { return mTargetPosition; }
+    public int getWidth() { return mWidth; }
+    public int getHeight() { return mHeight; }
+    public float getSpeed() { return mSpeed; }
+    public void setSpeed(float speed) { mSpeed = speed; }
+    public void setDead(boolean dead) { mIsDead = dead; }
+    public boolean isDead() { return mIsDead; }
+
     /**
-     * set speed
-     *
-     * @param speed speed
+     * Abstracted boundary clamping algorithm.
+     * @return True if the object hit or exceeded the bottom boundary.
      */
-    public void setSpeed(float speed) {
-        mSpeed = speed;
+    public boolean clampToWorld() {
+        mPosition.x = Math.max(0, Math.min(GameConstants.GAME_WIDTH - mWidth, mPosition.x));
+        float oldY = mPosition.y;
+        mPosition.y = Math.max(0, Math.min(GameConstants.GAME_HEIGHT - mHeight, mPosition.y));
+        return oldY >= (GameConstants.GAME_HEIGHT - mHeight);
     }
 
-    /**
-     * set dead
-     * @param dead boolean
-     */
-    public void setDead(boolean dead) {
-        mIsDead = dead;
+    protected float clamp(float val, float min, float max) {
+        return Math.max(min, Math.min(max, val));
     }
 
-
-    /**
-     * is dead
-     * @return boolean
-     */
-    public boolean isDead() {
-        return mIsDead;
-    }
-
-
-    /**
-     * Gets the position of the object.
-     *
-     * @return The position of the object.
-     */
-    public PointF getPosition() {
-        return mPosition;
-    }
-
-
-    /**
-     * get width
-     *
-     * @return width
-     */
-    public int getWidth() {
-        return mWidth;
-    }
-
-    /**
-     * get height
-     *
-     * @return height
-     */
-    public int getHeight() {
-        return mHeight;
-    }
-
-    /**
-     * Gets the rect of collision.
-     *
-     * @return The rect of collision.
-     */
     public RectF getRectOfCollision() {
-        return new RectF(
-                mPosition.x,
-                mPosition.y,
-                mPosition.x + mWidth,
-                mPosition.y + mHeight
-        );
+        return new RectF(mPosition.x, mPosition.y, mPosition.x + mWidth, mPosition.y + mHeight);
     }
 
-    /**
-     * update the object.
-     */
     public abstract void update();
-
-    /**
-     * draw the object.
-     *
-     * @param canvas canvas
-     * @param paint  paint
-     */
     public abstract void draw(Canvas canvas, Paint paint);
-
 }
