@@ -140,17 +140,4 @@ public class SoundManager {
         }
     }
 
-    /**
-     * Releases resources when game is closed.
-     */
-    public void release() {
-        if (mSoundPool != null) {
-            mSoundPool.release();
-            mSoundPool = null;
-        }
-        stopBgm();
-        mIsInitialized = false;
-        mSoundMap.clear();
-        GameUtils.info(TAG, "SoundManager released");
-    }
 }

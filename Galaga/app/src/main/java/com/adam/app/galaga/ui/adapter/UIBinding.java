@@ -31,7 +31,7 @@ import android.widget.TextView;
 import androidx.databinding.BindingAdapter;
 
 import com.adam.app.galaga.engine.GameEngine;
-import com.adam.app.galaga.engine.GameObjectManager;
+import com.adam.app.galaga.engine.Direction;
 import com.adam.app.galaga.viewmodel.GameViewModel;
 
 import java.text.SimpleDateFormat;
@@ -45,7 +45,7 @@ public class UIBinding {
     public static void setOnTouchDirection(View view, GameViewModel viewModel) {
         // resource id
         int id = view.getId();
-        GameObjectManager.Direction direction = GameObjectManager.Direction.fromResId(id);
+        Direction direction = Direction.fromResId(id);
         // set on touch listener
         final GameViewModel vm = viewModel;
         view.setOnTouchListener(new View.OnTouchListener() {

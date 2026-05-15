@@ -33,6 +33,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.data.repository.GameRepository;
+import com.adam.app.galaga.engine.Direction;
 import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.engine.GameObjectManager;
 import com.adam.app.galaga.utils.GameConstants;
@@ -138,7 +139,7 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
      *
      * @param direction Direction direction
      */
-    public void setMoveDirection(GameObjectManager.Direction direction) {
+    public void setMoveDirection(Direction direction) {
         GameUtils.info(TAG, "setMoveDirection");
         mGameEngine.setMoveDirection(direction);
     }

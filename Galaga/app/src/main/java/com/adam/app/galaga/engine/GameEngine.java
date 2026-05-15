@@ -32,7 +32,6 @@ import com.adam.app.galaga.GalagaApplication;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
-import com.adam.app.galaga.engine.SoundManager;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -62,7 +61,7 @@ public class GameEngine {
     private int mTotalScore;
     private volatile State mCurrentState = State.READY;
     // direction
-    private GameObjectManager.Direction mCurrentMovingDirection;
+    private Direction mCurrentMovingDirection;
     // check if shooting
     private boolean mIsShooting = false;
     private long mLastShootTime = 0L;
@@ -215,7 +214,7 @@ public class GameEngine {
      *
      * @param direction Direction direction
      */
-    public void setMoveDirection(GameObjectManager.Direction direction) {
+    public void setMoveDirection(Direction direction) {
         GameUtils.info(TAG, "setMoveDirection");
         mCurrentMovingDirection = direction;
     }
@@ -264,66 +263,53 @@ public class GameEngine {
         return mGameObjectManager.getMetadataTitle();
     }
 
-    /**
-     * game loop
-     */
     private void gameLoop() {
-        GameUtils.info(TAG, "gameLoop");
+        if (shouldSkipLoop()) return;
+
         try {
-
-            // check if game is paused
-            if (Thread.currentThread().isInterrupted()) {
-                GameUtils.info(TAG, "Game is paused");
-                return;
-            }
-
-            //early return
-            if (mCurrentState == State.GAME_OVER || mCurrentState == State.PAUSED) {
-                GameUtils.info(TAG, "Game is over or paused");
-                return;
-            }
-
-            // update player direction
-            if (mCurrentMovingDirection != null && mCurrentState == State.RUNNING) {
-                mGameObjectManager.movePlayer(mCurrentMovingDirection);
-            }
-
-            // update shooting
-            if (mIsShooting && mCurrentState == State.RUNNING) {
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - mLastShootTime >= SHOOT_INTERVAL_MS) {
-                    mGameObjectManager.spawnBullet();
-                    mLastShootTime = currentTime;
-                }
-
-            }
-
+            handleInput();
             updateLogic();
             processCollisions();
+            checkLevelState();
             sendFrameToView();
-
-            // check level cleared
-            if (mGameObjectManager.isLevelCleared()) {
-                // stop game
-                stopGameTask();
-                updateState(State.CLEARED);
-                return;
-            }
-
-
-            // check if player is dead
-            if (mGameObjectManager.isPlayerDead()) {
-                // stop game
-                stopGameTask();
-                updateState(State.GAME_OVER);
-                return;
-            }
-
-
-
         } catch (Exception e) {
-            GameUtils.error(TAG, "gameLoop error");
-            e.printStackTrace();
+            GameUtils.error(TAG, "gameLoop error: " + e.getMessage());
+        }
+    }
+
+    private boolean shouldSkipLoop() {
+        if (Thread.currentThread().isInterrupted()) return true;
+        return mCurrentState == State.GAME_OVER || mCurrentState == State.PAUSED;
+    }
+
+    private void handleInput() {
+        if (mCurrentState != State.RUNNING) return;
+
+        // Move player
+        if (mCurrentMovingDirection != null) {
+            mGameObjectManager.movePlayer(mCurrentMovingDirection);
+        }
+
+        // Fire bullets
+        if (mIsShooting) {
+            long currentTime = System.currentTimeMillis();
+            if (currentTime - mLastShootTime >= SHOOT_INTERVAL_MS) {
+                mGameObjectManager.spawnBullet();
+                mLastShootTime = currentTime;
+            }
+        }
+    }
+
+    private void checkLevelState() {
+        if (mGameObjectManager.isLevelCleared()) {
+            stopGameTask();
+            updateState(State.CLEARED);
+            return;
+        }
+
+        if (mGameObjectManager.isPlayerDead()) {
+            stopGameTask();
+            updateState(State.GAME_OVER);
         }
     }
 

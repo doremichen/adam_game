@@ -22,7 +22,6 @@
 
 package com.adam.app.galaga.engine;
 
-import com.adam.app.galaga.R;
 import com.adam.app.galaga.data.local.prefs.GameSettings;
 import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
@@ -32,11 +31,15 @@ import com.adam.app.galaga.data.model.Plane;
 import com.adam.app.galaga.engine.strategy.EnemyEntryStrategy;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
+import com.adam.app.galaga.data.local.prefs.GameSettings;
+import com.adam.app.galaga.data.model.Bee;
+import com.adam.app.galaga.data.model.Bullet;
+import com.adam.app.galaga.data.model.GameObject;
+import com.adam.app.galaga.data.model.LevelConfig;
+import com.adam.app.galaga.data.model.Plane;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class GameObjectManager {
@@ -54,14 +57,10 @@ public class GameObjectManager {
     private final LevelManager mLevelManager = new LevelManager();
     // Winnings strategy
     private WinningStrategy mWinningStrategy;
-    // Pre-allocated list for all entities to reduce GC pressure
-    private final List<GameObject> mAllEntities = new java.util.ArrayList<>();
     // level config
     private LevelConfig mLevelConfig;
     // player
     private Plane mPlayerPlane;
-    // last spawn time
-    private long mLastSpawnTime = 0;
     // spawned count
     private int mSpawnedCount = 0;
     // level start time
@@ -211,16 +210,11 @@ public class GameObjectManager {
 
     private void updateBullets() {
         mBullets.removeIf(Bullet::isOutOfBound);
-        // update bullets
-        for (Bullet bullet : mBullets) {
-            bullet.update();
-        }
+        mBullets.forEach(Bullet::update);
     }
 
     private void updateBees() {
-        for (Bee bee : mBees) {
-            bee.update();
-        }
+        mBees.forEach(Bee::update);
     }
 
     private void updatePlayer() {
@@ -302,11 +296,11 @@ public class GameObjectManager {
      * @return List<GameObject>
      */
     public List<GameObject> getAllEntities() {
-        mAllEntities.clear();
-        if (mPlayerPlane != null) mAllEntities.add(mPlayerPlane);
-        mAllEntities.addAll(mBees);
-        mAllEntities.addAll(mBullets);
-        return new ArrayList<>(mAllEntities);
+        List<GameObject> entities = new ArrayList<>();
+        if (mPlayerPlane != null) entities.add(mPlayerPlane);
+        entities.addAll(mBees);
+        entities.addAll(mBullets);
+        return entities;
     }
 
     /**
@@ -326,36 +320,6 @@ public class GameObjectManager {
         if (currentTime - mLastAutoFireTime >= GameConstants.AUTO_FIRE_INTERVAL) {
             spawnBullet();
             mLastAutoFireTime = currentTime;
-        }
-
-    }
-
-    /**
-     * direction
-     */
-    public enum Direction {
-        UP(R.id.btnUp),
-        DOWN(R.id.btnDown),
-        LEFT(R.id.btnLeft),
-        RIGHT(R.id.btnRight);
-
-        // Map: id -> Direction
-        private static Map<Integer, Direction> sResIdToDirection = new HashMap<>();
-
-        static {
-            for (Direction direction : Direction.values()) {
-                sResIdToDirection.put(direction.mResId, direction);
-            }
-        }
-
-        private final int mResId;
-
-        private Direction(int resId) {
-            mResId = resId;
-        }
-
-        public static Direction fromResId(int resId) {
-            return sResIdToDirection.get(resId);
         }
 
     }

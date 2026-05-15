@@ -52,7 +52,6 @@ public abstract class GameObject {
     public int getWidth() { return mWidth; }
     public int getHeight() { return mHeight; }
     public float getSpeed() { return mSpeed; }
-    public void setSpeed(float speed) { mSpeed = speed; }
     public void setDead(boolean dead) { mIsDead = dead; }
     public boolean isDead() { return mIsDead; }
 
@@ -67,8 +66,12 @@ public abstract class GameObject {
         return oldY >= (GameConstants.GAME_HEIGHT - mHeight);
     }
 
-    protected float clamp(float val, float min, float max) {
-        return Math.max(min, Math.min(max, val));
+    /**
+     * Updates the provided buffer with the object's collision bounds.
+     * Prevents allocation in the game loop.
+     */
+    public void updateCollisionRect(RectF buffer) {
+        buffer.set(mPosition.x, mPosition.y, mPosition.x + mWidth, mPosition.y + mHeight);
     }
 
     public RectF getRectOfCollision() {

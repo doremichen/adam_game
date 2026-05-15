@@ -59,7 +59,7 @@ public class CollisionManager {
             }
 
             // update buffer
-            updateBuffer(mRectBufferA, bullet);
+            bullet.updateCollisionRect(mRectBufferA);
 
             for (Bee bee : bees) {
                 // is dead continue
@@ -68,7 +68,7 @@ public class CollisionManager {
                 }
 
                 // update buffer
-                updateBuffer(mRectBufferB, bee);
+                bee.updateCollisionRect(mRectBufferB);
 
                 // collision
                 if (RectF.intersects(mRectBufferA, mRectBufferB)) {
@@ -101,11 +101,11 @@ public class CollisionManager {
         }
 
         // update buffer
-        updateBuffer(mRectBufferA, plane);
+        plane.updateCollisionRect(mRectBufferA);
 
         for (Bee bee : bees) {
             // update buffer
-            updateBuffer(mRectBufferB, bee);
+            bee.updateCollisionRect(mRectBufferB);
 
             // collision
             if (RectF.intersects(mRectBufferA, mRectBufferB)) {
@@ -116,20 +116,6 @@ public class CollisionManager {
     }
 
 
-    /**
-     * updateBuffer
-     * @param buffer RectF
-     * @param object GameObject
-     */
-    private void updateBuffer(RectF buffer, GameObject object) {
-        PointF position = object.getPosition();
-        buffer.set(
-                position.x,
-                position.y,
-                position.x + object.getWidth(),
-                position.y + object.getHeight()
-        );
-    }
 
 
 }

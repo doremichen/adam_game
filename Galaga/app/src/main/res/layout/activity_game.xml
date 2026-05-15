@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-        <import type="com.adam.app.galaga.engine.GameObjectManager.Direction" />
+        <import type="com.adam.app.galaga.engine.Direction" />
         <variable
             name="viewModel"
             type="com.adam.app.galaga.viewmodel.GameViewModel" />
