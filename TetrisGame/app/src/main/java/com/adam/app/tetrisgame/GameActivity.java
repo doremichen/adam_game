@@ -1,8 +1,23 @@
-/**
- * Copyright 2025 Adam
- * Description: GameActivity is the activity of the game.
- * Author: Adam
- * Date: 2025/06/23
+/*
+ * Copyright (c) 2025 Adam
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package com.adam.app.tetrisgame;
 
@@ -25,18 +40,15 @@ import com.adam.app.tetrisgame.viewmodel.GameViewModel;
 public class GameActivity extends AppCompatActivity {
 
     // Game View model
-    GameViewModel mViewModel;
+    private GameViewModel mViewModel;
     // view binding
     private ActivityGameBinding mBinding;
     // Tetris view
     private TetrisView mTetrisView;
-    // Hanlder
-    private Handler mHandler = new Handler(Looper.getMainLooper());
-    ;
-    // Runnable
+    // Handler
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    // Runnable for game loop
     private Runnable mUpdateRunnable;
-    // Runnig flag
-    private boolean mRunning = true;
 
     // sound manager
     private GameSoundManager mSoundManager;
@@ -87,13 +99,11 @@ public class GameActivity extends AppCompatActivity {
         });
 
         // observe and update score UI
-        mViewModel.getCurrentScore().observe(this, score -> {
-            mBinding.tvScoreValue.setText(String.valueOf(score));
-        });
+        mViewModel.getCurrentScore().observe(this, score -> 
+                mBinding.tvScoreValue.setText(String.valueOf(score)));
         // observe and update high score UI
-        mViewModel.getHighScore().observe(this, score -> {
-            mBinding.tvHighScoreValue.setText(String.valueOf(score));
-        });
+        mViewModel.getHighScore().observe(this, score -> 
+                mBinding.tvHighScoreValue.setText(String.valueOf(score)));
 
 
         this.mUpdateRunnable = new Runnable() {
@@ -150,18 +160,16 @@ public class GameActivity extends AppCompatActivity {
      * show game exit dialog
      */
     private void showGameExitDlg() {
-
         // Ok Button
-        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok),
+        Utils.DialogButton okButton = new Utils.DialogButton(getString(R.string.dialog_button_ok),
                 this::confirmExit);
         // Cancel Button
-        Utils.DialogButton cancelButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_cancel),
+        Utils.DialogButton cancelButton = new Utils.DialogButton(getString(R.string.dialog_button_cancel),
                 this::cancelExit);
         // show exit dialog
-        String title = getResources().getString(R.string.dialog_title_exit);
-        String message = getResources().getString(R.string.dialog_message_exit);
+        String title = getString(R.string.dialog_title_exit);
+        String message = getString(R.string.dialog_message_exit);
         Utils.showAlertDialog(this, title, message, okButton, cancelButton);
-
     }
 
     private void cancelExit(AlertDialog alertDialog) {
@@ -183,17 +191,16 @@ public class GameActivity extends AppCompatActivity {
     private void showGameOverDlg() {
         Utils.log("showGameOverDlg");
         // Ok button
-        Utils.DialogButton okButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_ok),
+        Utils.DialogButton okButton = new Utils.DialogButton(getString(R.string.dialog_button_ok),
                 this::playAgain);
         // Exit button
-        Utils.DialogButton exitButton = new Utils.DialogButton(getResources().getString(R.string.dialog_button_exit),
+        Utils.DialogButton exitButton = new Utils.DialogButton(getString(R.string.dialog_button_exit),
                 this::exitGame);
 
         // show game over dialog
-        String title = getResources().getString(R.string.dialog_title_gameover);
-        String message = getResources().getString(R.string.dialog_message_gameover);
+        String title = getString(R.string.dialog_title_gameover);
+        String message = getString(R.string.dialog_message_gameover);
         Utils.showAlertDialog(this, title, message, okButton, exitButton);
-
     }
 
     private void exitGame(AlertDialog alertDialog) {
@@ -268,25 +275,21 @@ public class GameActivity extends AppCompatActivity {
      * @param rawId raw id
      */
     public void playSound(int rawId) {
-        Utils.log("playSound");
-        // check sound setting is enable?
-        boolean sound = mViewModel.isSoundEffectEnabled(this);
-        if (!sound) {
-            Utils.log("sound is disabled");
+        if (mSoundManager == null) {
+            Utils.log("playSound: mSoundManager is null");
             return;
         }
 
-        // check sound manager has sound
-        if (mSoundManager == null) {
-            throw new ExceptionInInitializerError("mSoundManager is null");
+        // check sound setting is enabled
+        if (!mViewModel.isSoundEffectEnabled()) {
+            return;
         }
 
         if (!mSoundManager.hasRawResource(this, rawId)) {
-            Utils.log("mSoundManager has no sound");
+            Utils.log("playSound: raw resource not found: " + rawId);
             return;
         }
 
-        Utils.log("play sound");
         mSoundManager.playShortSound(this, rawId);
     }
 }

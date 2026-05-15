@@ -1,10 +1,23 @@
-/**
- * Copyright 2025 Adam
+/*
+ * Copyright (c) 2025 Adam
  *
- * Description: TetrisView is the view of the game.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * Author: Adam Chen
- * Date: 2025/08/15
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package com.adam.app.tetrisgame.view;
 
@@ -24,6 +37,8 @@ public class TetrisView extends View {
     // Paint and Grid
         private Paint mPaint;
         private int[][] mGrid;
+        private float mCellWidth;
+        private float mCellHeight;
 
         public TetrisView(Context context, @Nullable AttributeSet attrs) {
             super(context, attrs);
@@ -33,12 +48,20 @@ public class TetrisView extends View {
 
         private void init() {
             // initial paint and grid
-            mPaint = new Paint();
+            mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
             mGrid = new int[Utils.NUM.ROWS][Utils.NUM.COLUMNS];
+        }
+
+        @Override
+        protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+            super.onSizeChanged(w, h, oldw, oldh);
+            mCellWidth = (float) w / Utils.NUM.COLUMNS;
+            mCellHeight = (float) h / Utils.NUM.ROWS;
         }
 
         // set content of grid
         public void setGrid(int[][] grid) {
+            if (grid == null) return;
             mGrid = grid;
             invalidate();
         }
@@ -52,46 +75,32 @@ public class TetrisView extends View {
         }
 
         private void drawGrid(Canvas canvas) {
-            //Utils.log("drawGrid");
-            // set width and height
-            int width = getWidth();
-            int height = getHeight();
-
-            // set cell width and height
-            float cellWidth = (float)width / Utils.NUM.COLUMNS;
-            float cellHeight = (float)height / Utils.NUM.ROWS;
-
-            // draw
+            // Draw filled cells
+            mPaint.setStyle(Paint.Style.FILL);
             for (int i = 0; i < Utils.NUM.ROWS; i++) {
                 for (int j = 0; j < Utils.NUM.COLUMNS; j++) {
-//                    Utils.log("i: " +i + " "+ "j: " + j);
-                    // get color of cell
                     int color = mGrid[i][j];
                     if (color != 0) {
-                        // set paint color
                         mPaint.setColor(color);
-                        // set paint style
-                        mPaint.setStyle(Paint.Style.FILL);
-                        // draw
                         canvas.drawRect(
-                                j * cellWidth,
-                                i * cellHeight,
-                                (j + 1) * cellWidth,
-                                (i + 1) * cellHeight,
+                                j * mCellWidth,
+                                i * mCellHeight,
+                                (j + 1) * mCellWidth,
+                                (i + 1) * mCellHeight,
                                 mPaint);
                     }
-
-                    // draw border
-                    mPaint.setColor(Color.GRAY);
-                    mPaint.setStyle(Paint.Style.STROKE);
-                    mPaint.setStrokeWidth(1);
-                    canvas.drawRect(
-                            j * cellWidth,
-                            i * cellHeight,
-                            (j + 1) * cellWidth,
-                            (i + 1) * cellHeight,
-                            mPaint);
                 }
+            }
+
+            // Draw grid borders
+            mPaint.setColor(Color.GRAY);
+            mPaint.setStyle(Paint.Style.STROKE);
+            mPaint.setStrokeWidth(1);
+            for (int i = 0; i <= Utils.NUM.ROWS; i++) {
+                canvas.drawLine(0, i * mCellHeight, getWidth(), i * mCellHeight, mPaint);
+            }
+            for (int j = 0; j <= Utils.NUM.COLUMNS; j++) {
+                canvas.drawLine(j * mCellWidth, 0, j * mCellWidth, getHeight(), mPaint);
             }
         }
     }

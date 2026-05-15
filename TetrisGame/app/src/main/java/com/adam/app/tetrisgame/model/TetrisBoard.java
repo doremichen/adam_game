@@ -1,8 +1,23 @@
-/**
- * Copyright 2025 Adam
- * Description: TetrisBoard is the board of the game.
- * Author: Adam
- * Date: 2025/06/23
+/*
+ * Copyright (c) 2025 Adam
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package com.adam.app.tetrisgame.model;
 
@@ -15,7 +30,7 @@ import java.util.Random;
 public class TetrisBoard {
 
     // new two dimensional grid array of integers
-    private int[][] mGrid;
+    private final int[][] mGrid;
 
     // tetromino
     private Tetromino mCurrentBlock;
@@ -24,12 +39,7 @@ public class TetrisBoard {
     private int mCurrentCol;
 
     // Random
-    private Random mRandom = new Random();
-
-    // get grid
-    public int[][] getGrid() {
-        return mGrid;
-    }
+    private final Random mRandom = new Random();
 
     /**
      * GameListener
@@ -40,11 +50,13 @@ public class TetrisBoard {
         void onGameOver();
     }
 
-    private GameListener mGameListener;
+    private final GameListener mGameListener;
+    private final int[][] mBufferGrid;
 
     // construct
     public TetrisBoard(GameListener listener) {
         mGrid = new int[Utils.NUM.ROWS][Utils.NUM.COLUMNS];
+        mBufferGrid = new int[Utils.NUM.ROWS][Utils.NUM.COLUMNS];
         this.mGameListener = listener;
         // spawn block
         spawnBlock();
@@ -74,6 +86,8 @@ public class TetrisBoard {
 
     // update
     public void update() {
+        if (mCurrentBlock == null) return;
+
         // check if current block can move down
         if (!moveDown()) {
             mergeBlockToGrid();
@@ -83,11 +97,9 @@ public class TetrisBoard {
             // check if game over
             if (isGameOver()) {
                 // tell activity by listener
-                if (mGameListener == null) {
-                    throw new NullPointerException("mGameOverListener is null");
+                if (mGameListener != null) {
+                    mGameListener.onGameOver();
                 }
-
-                mGameListener.onGameOver();
             }
         }
     }
@@ -123,9 +135,8 @@ public class TetrisBoard {
     }
 
     public void rotate() {
-        // check mCurrentBlock null
         if (mCurrentBlock == null) {
-            throw new NullPointerException("mCurrentBlock is null");
+            return;
         }
         // get shape of current block
         int[][] oldShape  = mCurrentBlock.getShape();
@@ -140,9 +151,8 @@ public class TetrisBoard {
 
     // isGameOver
     public boolean isGameOver() {
-        // check mCurrentBlock null
         if (mCurrentBlock == null) {
-            throw new NullPointerException("mCurrentBlock is null");
+            return false;
         }
 
         return !canMove(mCurrentRow, mCurrentCol);
@@ -150,9 +160,8 @@ public class TetrisBoard {
 
 
     private boolean canMove(int row, int col) {
-        // check mCurrentBlock null
         if (mCurrentBlock == null) {
-            throw new NullPointerException("mCurrentBlock is null");
+            return false;
         }
         // get shape of current block
         int[][] shape = mCurrentBlock.getShape();
@@ -191,10 +200,9 @@ public class TetrisBoard {
                 }
                 mGrid[0] = new int[Utils.NUM.COLUMNS];
                 // tell activity by listener
-                if (mGameListener == null) {
-                    throw new NullPointerException("mGameListener is null");
+                if (mGameListener != null) {
+                    mGameListener.onClearLines();
                 }
-                mGameListener.onClearLines();
             }
         }
     }
@@ -221,18 +229,16 @@ public class TetrisBoard {
 
     // applyToView
     public void applyToView(TetrisView view) {
-        // check view null
-        if (view == null) {
-            throw new NullPointerException("view is null");
+        if (view == null || mCurrentBlock == null) {
+            return;
         }
 
-        // copy first
-        int[][] copy = new int[Utils.NUM.ROWS][Utils.NUM.COLUMNS];
+        // Use buffer to avoid frequent allocations
         for (int i = 0; i < Utils.NUM.ROWS; i++) {
-            System.arraycopy(mGrid[i], 0, copy[i], 0, Utils.NUM.COLUMNS);
+            System.arraycopy(mGrid[i], 0, mBufferGrid[i], 0, Utils.NUM.COLUMNS);
         }
 
-        // Overrlay current block
+        // Overlay current block
         int[][] shape = mCurrentBlock.getShape();
         for (int i = 0; i < shape.length; i++) {
             for (int j = 0; j < shape[i].length; j++) {
@@ -240,12 +246,12 @@ public class TetrisBoard {
                     int r = mCurrentRow + i;
                     int c = mCurrentCol + j;
                     if (r >= 0 && r < Utils.NUM.ROWS && c >= 0 && c < Utils.NUM.COLUMNS) {
-                        copy[r][c] = mCurrentBlock.getColor();
+                        mBufferGrid[r][c] = mCurrentBlock.getColor();
                     }
                 }
             }
         }
         // set grid
-        view.setGrid(copy);
+        view.setGrid(mBufferGrid);
     }
 }
