@@ -46,16 +46,16 @@ public class GameSettings {
         STRAIGHT {
             @Override
             void handle(List<Bullet> bullets, float x, float y, float speed) {
-                bullets.add(new Bullet(x, y, 0, -speed));
+                bullets.add(new Bullet(x, y - GameConstants.BULLET_HEIGHT, 0, -speed));
                 SoundManager.getInstance().playSfx(GameConstants.SFX_FIRE);
             }
         },
         SPREAD {
             @Override
             void handle(List<Bullet> bullets, float x, float y, float speed) {
-                bullets.add(new Bullet(x, y, -2.0f, -speed));
-                bullets.add(new Bullet(x, y, 0, -speed));
-                bullets.add(new Bullet(x, y, 2.0f, -speed));
+                bullets.add(new Bullet(x, y - GameConstants.BULLET_HEIGHT, -2.0f, -speed));
+                bullets.add(new Bullet(x, y - GameConstants.BULLET_HEIGHT, 0, -speed));
+                bullets.add(new Bullet(x, y - GameConstants.BULLET_HEIGHT, 2.0f, -speed));
             }
         },
         CIRCULAR {
@@ -73,15 +73,16 @@ public class GameSettings {
         BACKWARD {
             @Override
             void handle(List<Bullet> bullets, float x, float y, float speed) {
-                bullets.add(new Bullet(x, y, 0, -speed)); // forward
-                bullets.add(new Bullet(x, y, 0, speed));  // back
+                bullets.add(new Bullet(x, y - GameConstants.BULLET_HEIGHT, 0, -speed)); // forward
+                bullets.add(new Bullet(x, y + GameConstants.PLAYER_HEIGHT, 0, speed));  // back
             }
         },
         LASER {
             @Override
             void handle(List<Bullet> bullets, float x, float y, float speed) {
                 // Laser is longer, thinner and faster
-                Bullet laser = new Bullet(x, y, 0, -speed * 2.5f, 
+                // Position offset so it starts from the nose
+                Bullet laser = new Bullet(x, y - GameConstants.LASER_HEIGHT, 0, -speed * 2.5f,
                         GameConstants.LASER_WIDTH, GameConstants.LASER_HEIGHT);
                 laser.setLaser(true);
                 bullets.add(laser);
