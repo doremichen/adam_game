@@ -1,0 +1,5 @@
+# 忽略任何目錄下的 .artifacts 資料夾及其所有內容
+.artifacts/
+
+# 忽略任何目錄下的 .idea 資料夾及其所有內容
+.idea/

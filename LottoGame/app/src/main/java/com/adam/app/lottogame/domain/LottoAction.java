@@ -19,26 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.adam.app.lottogame.data;
+package com.adam.app.lottogame.domain;
 
-import com.adam.app.lottogame.data.entity.LottoHistoryEntity;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-public final class LottoHistoryFactory {
-
-    private LottoHistoryFactory() {
-        // avoid to instantiate
-    }
-
-    public static LottoHistoryEntity create(int drawnId, List<Integer> numbers) {
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = dateFormat.format(date);
-        return new LottoHistoryEntity(drawnId, dateString, numbers);
-    }
-
-
+/**
+ * Enum for Lotto actions.
+ */
+public enum LottoAction {
+    GENERATE_NUMBERS,
+    DRAW,
+    VS_AI
 }

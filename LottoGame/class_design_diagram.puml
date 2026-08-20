@@ -1,0 +1,108 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+
+package "Presentation Layer" {
+    class MainActivity << (A,#FF7700) Activity >> {
+        - mBinding: ActivityMainBinding
+        - mViewModel: LotteryViewModel
+        # onCreate(savedInstanceState: Bundle)
+        # onDestroy()
+    }
+
+    class LotteryViewModel << (V,#3399FF) ViewModel >> {
+        - mLottoUseCase: LottoUseCase
+        - mSelectedNumbers: MutableLiveData<List<Integer>>
+        - mDrawnNumbers: MutableLiveData<List<Integer>>
+        - mResult: MutableLiveData<String>
+        + generateNumber()
+        + draw()
+        + playVsAI()
+    }
+}
+
+package "Domain Layer" {
+    enum LottoAction {
+        GENERATE_NUMBERS
+        DRAW
+        VS_AI
+    }
+
+    class LottoUseCase << (S,#99CC00) Singleton >> {
+        - mRepository: LottoHistoryRepository
+        - mEngine: LottoAIEngine
+        + execute(action: LottoAction, params: Object[]): Object
+        - performDraw(): List<Integer>
+        - performVsAi(playerNumbers: List<Integer>): VsAiResult
+    }
+}
+
+package "Data Layer" {
+    class LottoHistoryRepository << (S,#99CC00) Singleton >> {
+        - mDao: ILottoHistoryDao
+        - mExecutor: ExecutorService
+        + add(entity: LottoHistoryEntity)
+        + getAll(): Future<List<LottoHistoryEntity>>
+        + getAllNumbers(): Future<List<Integer>>
+    }
+
+    abstract class LottoDatabase << RoomDatabase >> {
+        + {abstract} lottoHistoryDao(): ILottoHistoryDao
+    }
+
+    interface ILottoHistoryDao << interface >> {
+        + upsert(entity: LottoHistoryEntity)
+        + getAll(): List<LottoHistoryEntity>
+        + getLatest(): LottoHistoryEntity
+    }
+}
+
+package "AI Core & Strategy" {
+    class LottoAIEngine << (S,#99CC00) Singleton >> {
+        - mTrainer: StrategyTrainer
+        - mCurrentStrategy: LottoAIStrategy
+        + trainBestStrategy(pickCount: int, trials: int)
+        + selectNumbers(pickCount: int): List<Integer>
+    }
+
+    enum LottoAIStrategy {
+        RANDOM_PICK
+        HOT_PICK
+        COLD_PICK
+        TREND_PICK
+        + {static} pick(type, history, count, max): List<Integer>
+    }
+
+    class StrategyTrainer {
+        - mRepository: LottoHistoryRepository
+        + evaluateAllStrategiesIncremental()
+    }
+
+    interface IResultStrategy << interface >> {
+        + getResultText(context: Context): String
+    }
+}
+
+package "Dependency Injection (Hilt)" {
+    class DatabaseModule << (M,#FFCC00) Module >> {
+        + provideLottoDatabase(context: Context): LottoDatabase
+        + provideLottoHistoryDao(db: LottoDatabase): ILottoHistoryDao
+    }
+}
+
+' Relationships
+MainActivity o-- LotteryViewModel : observes
+LotteryViewModel --> LottoUseCase : commands
+LottoUseCase ..> LottoAction : uses
+LottoUseCase --> LottoHistoryRepository : persists
+LottoUseCase --> LottoAIEngine : calculates
+
+LottoHistoryRepository --> ILottoHistoryDao : delegates
+LottoDatabase ..> ILottoHistoryDao : provides (Room)
+DatabaseModule ..> LottoDatabase : configures
+
+LottoAIEngine --> StrategyTrainer : evaluates
+LottoAIEngine --> LottoAIStrategy : strategies
+StrategyTrainer --> LottoHistoryRepository : reads
+
+@enduml

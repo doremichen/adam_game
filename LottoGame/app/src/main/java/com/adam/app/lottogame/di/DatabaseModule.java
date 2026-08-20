@@ -19,26 +19,34 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.adam.app.lottogame.data;
+package com.adam.app.lottogame.di;
 
-import com.adam.app.lottogame.data.entity.LottoHistoryEntity;
+import android.content.Context;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import com.adam.app.lottogame.data.dao.ILottoHistoryDao;
+import com.adam.app.lottogame.data.database.LottoDatabase;
 
-public final class LottoHistoryFactory {
+import javax.inject.Singleton;
 
-    private LottoHistoryFactory() {
-        // avoid to instantiate
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+
+@Module
+@InstallIn(SingletonComponent.class)
+public final class DatabaseModule {
+
+    @Provides
+    @Singleton
+    public LottoDatabase provideLottoDatabase(@ApplicationContext Context context) {
+        return LottoDatabase.getInstance(context);
     }
 
-    public static LottoHistoryEntity create(int drawnId, List<Integer> numbers) {
-        Date date = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String dateString = dateFormat.format(date);
-        return new LottoHistoryEntity(drawnId, dateString, numbers);
+    @Provides
+    @Singleton
+    public ILottoHistoryDao provideLottoHistoryDao(LottoDatabase database) {
+        return database.lottoHistoryDao();
     }
-
-
 }

@@ -1,17 +1,28 @@
 /**
- * Copyright (C) 2025 Adam. All rights reserved.
- * <p>
- * This class is the view model of loto game.
+ * Copyright (c) 2026 LottoGame
  *
- * @Author: Adam Chen
- * @Date: 2025-11-24
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package com.adam.app.lottogame.viewmodel;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.widget.TextView;
 
@@ -20,20 +31,23 @@ import androidx.databinding.BindingAdapter;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.adam.app.lottogame.R;
-import com.adam.app.lottogame.core.LottoAIEngine;
-import com.adam.app.lottogame.data.LottoHistoryFactory;
-import com.adam.app.lottogame.repository.LottoHistoryRepository;
+import com.adam.app.lottogame.domain.LottoAction;
+import com.adam.app.lottogame.domain.LottoUseCase;
 import com.adam.app.lottogame.strategy.IResultStrategy;
 import com.adam.app.lottogame.strategy.ResultStrategyFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
-public class LotteryViewModel extends AndroidViewModel {
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+@HiltViewModel
+public class LotteryViewModel extends ViewModel {
 
     // TAG
     private static final String TAG = "LotteryViewModel";
@@ -45,24 +59,13 @@ public class LotteryViewModel extends AndroidViewModel {
     private final MutableLiveData<List<Integer>> mAINumbers = new MutableLiveData<>(null);
     private final MutableLiveData<String> mVsResult = new MutableLiveData<>("");
 
-    // loto repository
-    private final LottoHistoryRepository mRepository;
-
-    // lotto ai engine
-    private final LottoAIEngine mEngine;
-
-
+    private final LottoUseCase mLottoUseCase;
     private final Context mContext;
 
-    // draw id
-    private int mDrawId = 0;
-
-
-    public LotteryViewModel(@NonNull Application application) {
-        super(application);
-        mContext = application.getApplicationContext();
-        mRepository = new LottoHistoryRepository(mContext);
-        mEngine = new LottoAIEngine(mRepository, 49);
+    @Inject
+    public LotteryViewModel(@ApplicationContext Context context, LottoUseCase lottoUseCase) {
+        mContext = context;
+        mLottoUseCase = lottoUseCase;
     }
 
     // --- get live data ---
@@ -92,7 +95,7 @@ public class LotteryViewModel extends AndroidViewModel {
      * select number
      */
     public void generateNumber() {
-        List<Integer> numbers = generateRandomNumbers();
+        List<Integer> numbers = (List<Integer>) mLottoUseCase.execute(LottoAction.GENERATE_NUMBERS);
         mSelectedNumbers.setValue(numbers);
     }
 
@@ -107,30 +110,20 @@ public class LotteryViewModel extends AndroidViewModel {
         // clear result
         mResult.setValue("");
 
-
         List<Integer> selectedNumbers = mSelectedNumbers.getValue();
         if (selectedNumbers == null || selectedNumbers.isEmpty()) {
-            mResult.setValue("Please select numbers first");
+            mResult.setValue(mContext.getString(R.string.info_please_select_number_first));
             return;
         }
 
-        drawnNumbers();
+        List<Integer> drawnNumbers = (List<Integer>) mLottoUseCase.execute(LottoAction.DRAW);
+        mDrawnNumbers.setValue(drawnNumbers);
 
-        int matchCount = countMatch(selectedNumbers, mDrawnNumbers.getValue());
+        int matchCount = mLottoUseCase.countMatch(selectedNumbers, drawnNumbers);
         IResultStrategy strategy = ResultStrategyFactory.getStrategy(matchCount);
         String result = strategy.getResultText(mContext);
 
         mResult.setValue(result);
-    }
-
-    @NonNull
-    private void drawnNumbers() {
-        List<Integer> drawnNumbers = generateRandomNumbers();
-        mDrawnNumbers.setValue(drawnNumbers);
-        // update id
-        mDrawId++;
-        // save to database
-        mRepository.add(LottoHistoryFactory.create(mDrawId, drawnNumbers));
     }
 
     /**
@@ -146,27 +139,18 @@ public class LotteryViewModel extends AndroidViewModel {
         // step 1：玩家若未選號 → 自動選
         List<Integer> selectedNumbers = mSelectedNumbers.getValue();
         if (selectedNumbers == null || selectedNumbers.isEmpty()) {
-            selectedNumbers = generateRandomNumbers();
+            selectedNumbers = (List<Integer>) mLottoUseCase.execute(LottoAction.GENERATE_NUMBERS);
             mSelectedNumbers.setValue(selectedNumbers);
         }
 
-        // step 2：AI 選號
-        // training
-        mEngine.trainBestStrategy(6, 3);
-        aiPick();
-    }
+        // step 2 & 3：AI 選號 & 開獎 (via UseCase)
+        LottoUseCase.VsAiResult vsAiResult = (LottoUseCase.VsAiResult) mLottoUseCase.execute(LottoAction.VS_AI, selectedNumbers);
+        
+        mAINumbers.setValue(vsAiResult.aiNumbers);
+        mDrawnNumbers.setValue(vsAiResult.drawnNumbers);
 
-    private void aiPick() {
-        // select numbers
-        List<Integer> aiNumbers = this.mEngine.selectNumbers(6);
-        //List<Integer> aiNumbers = generateRandomNumbers();
-        mAINumbers.setValue(aiNumbers);
-
-        // step 3：開獎
-        drawnNumbers();
-
-        int playerMatchCount = countMatch(mSelectedNumbers.getValue(), mDrawnNumbers.getValue());
-        int aiMatchCount = countMatch(aiNumbers, mDrawnNumbers.getValue());
+        int playerMatchCount = mLottoUseCase.countMatch(selectedNumbers, vsAiResult.drawnNumbers);
+        int aiMatchCount = mLottoUseCase.countMatch(vsAiResult.aiNumbers, vsAiResult.drawnNumbers);
 
         // step 4：產生結果文字
         String result;
@@ -180,29 +164,14 @@ public class LotteryViewModel extends AndroidViewModel {
         mVsResult.setValue(result);
     }
 
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        mLottoUseCase.shutdown();
+    }
+
     public void onClear() {
-        mRepository.shutdown();
-    }
-
-    // --- private method ---
-    private List<Integer> generateRandomNumbers() {
-        List<Integer> numbers = new ArrayList<>();
-        Random random = new Random();
-
-        while (numbers.size() < 6) {
-            int num = random.nextInt(49) + 1;
-            if (!numbers.contains(num)) numbers.add(num);
-        }
-        Collections.sort(numbers);
-        return numbers;
-    }
-
-    private int countMatch(List<Integer> selectedNumbers, List<Integer> drawnNumbers) {
-        int count = 0;
-        for (int n : selectedNumbers) {
-            if (drawnNumbers.contains(n)) count++;
-        }
-        return count;
+        // Keep for backward compatibility if needed, but onCleared is preferred
     }
 
     public static String formatNumbers(List<Integer> numbers) {
