@@ -13,7 +13,7 @@ package "Engine Layer" as EL #LightCoral
 PL ..> DL : depends on
 DL ..> DT : interface impl
 PL ..> EL : control/observe
-EL ..> DT : load config
+EL ..> DT : load config / prefs
 @enduml
 
 @startuml "App Architecture (Clean + MVVM)"
@@ -43,7 +43,9 @@ package "Domain Layer" {
 
     class GameUseCase
     class SettingsUseCase
-    class UseCaseBridge <<Bridge>>
+
+    class GameUCBridge <<Bridge>>
+    class SettingsUCBridge <<Bridge>>
 
     interface IGameRepository <<Boundary>>
     interface ILevelRepository <<Boundary>>
@@ -76,15 +78,15 @@ SettingsViewModel -down-> SettingsUseCase : execute(Request)
 
 ' UseCase Implementation
 GameUseCase ..|> IUseCase
-SettingsUseCase .up.|> IUseCase
+SettingsUseCase ..|> IUseCase
 
-GameUseCase -down-> UseCaseBridge
-SettingsUseCase -down-> UseCaseBridge
+GameUseCase -down-> GameUCBridge
+SettingsUseCase -down-> SettingsUCBridge
 
 ' Bridge to Repository Interfaces
-UseCaseBridge -down-> IGameRepository
-UseCaseBridge -down-> ILevelRepository
-UseCaseBridge -down-> ISettingsRepository
+GameUCBridge -down-> IGameRepository
+GameUCBridge -down-> ILevelRepository
+SettingsUCBridge -down-> ISettingsRepository
 
 ' Repository Interface Implementations
 GameRepository .up.|> IGameRepository
@@ -133,10 +135,15 @@ package "Engine Layer" {
     }
 }
 
+package "Data Layer" {
+    class GameSettings <<Prefs>>
+}
+
 ' Connections
 GameEngine -down-> GameObjectManager : control
 GameObjectManager -down-> EnemySpawner : spawn request
 GameObjectManager -right-> GameObject : update/draw
+GameObjectManager -down-> GameSettings : constructor injection
 
 EnemySpawner -down-> SpawnHandler
 SpawnHandler <|-- NewWaveHandler
