@@ -37,35 +37,21 @@ import javax.inject.Singleton;
 
 @Singleton
 public class GameRepository implements IGameRepository {
-    // TAG
-    private static final String TAG = GameRepository.class.getSimpleName();
-    // Executor service
     private final ExecutorService mExecutorService = Executors.newFixedThreadPool(2);
-    // Dao
     private final ScoreDao mScoreDao;
 
     @Inject
     public GameRepository(ScoreDao scoreDao) {
-        mScoreDao = scoreDao;
+        this.mScoreDao = scoreDao;
     }
 
-    /**
-     * insertScore
-     * @param record record
-     */
     @Override
     public void insertScore(ScoreRecord record) {
         mExecutorService.execute(() -> mScoreDao.insertScore(record));
     }
 
-
-    /**
-     * getTop10Scores
-     * @return top 10 scores
-     */
     @Override
     public LiveData<List<ScoreRecord>> getTop10Scores() {
         return mScoreDao.getTop10Scores();
     }
-
 }

@@ -22,39 +22,58 @@
 
 package com.adam.app.galaga.data.repository;
 
-import com.adam.app.galaga.data.local.assets.AssetProvider;
-import com.adam.app.galaga.data.model.LevelConfig;
-import com.adam.app.galaga.domain.repository.ILevelRepository;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.adam.app.galaga.data.local.prefs.GameSettings;
+import com.adam.app.galaga.domain.repository.ISettingsRepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class LevelRepository implements ILevelRepository {
-    private final AssetProvider mAssetProvider;
-    private final Map<Integer, LevelConfig> mLevelCache = new HashMap<>();
+public class SettingsRepository implements ISettingsRepository {
+    private final GameSettings mGameSettings;
 
     @Inject
-    public LevelRepository(AssetProvider assetProvider) {
-        this.mAssetProvider = assetProvider;
+    public SettingsRepository(GameSettings gameSettings) {
+        this.mGameSettings = gameSettings;
     }
 
     @Override
-    public LevelConfig getLevelConfig(int levelId) {
-        if (mLevelCache.containsKey(levelId)) {
-            return mLevelCache.get(levelId);
-        }
+    public void setAutoFire(boolean enable) {
+        mGameSettings.setAutoFire(enable);
+    }
 
-        String fileName = String.format("levels/level_%d.json", levelId);
-        LevelConfig levelConfig = mAssetProvider.loadJsonFromAssets(fileName, LevelConfig.class);
+    @Override
+    public boolean isAutoFire() {
+        return mGameSettings.isAutoFire();
+    }
 
-        if (levelConfig != null) {
-            mLevelCache.put(levelId, levelConfig);
-        }
+    @Override
+    public void setShotStyle(GameSettings.ShotStyle style) {
+        mGameSettings.setShotStyle(style);
+    }
 
-        return levelConfig;
+    @Override
+    public GameSettings.ShotStyle getShotStyle() {
+        return mGameSettings.getShotStyle();
+    }
+
+    @Override
+    public void setSoundEffects(boolean enable) {
+        mGameSettings.setSoundEffects(enable);
+    }
+
+    @Override
+    public boolean isSoundEffectsEnabled() {
+        return mGameSettings.isSoundEffectsEnabled();
+    }
+
+    @Override
+    public void setBgm(boolean enable) {
+        mGameSettings.setBgm(enable);
+    }
+
+    @Override
+    public boolean isBgmEnabled() {
+        return mGameSettings.isBgmEnabled();
     }
 }

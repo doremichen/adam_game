@@ -27,6 +27,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.galaga.data.local.prefs.GameSettings;
+import com.adam.app.galaga.domain.usecase.SettingsUseCase;
 import com.adam.app.galaga.utils.GameConstants;
 
 import javax.inject.Inject;
@@ -35,47 +36,41 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
 
 @HiltViewModel
 public class SettingsViewModel extends ViewModel {
-    // TAG
-    private static final String TAG = SettingsViewModel.class.getSimpleName();
 
-    // live data
-    private final MutableLiveData<String> mExeceptionStr = new MutableLiveData<>(null);
-    public LiveData<String> getExceptionInfo() {
-        return mExeceptionStr;
-    }
-
-
-    // game setting
-    private final GameSettings mSettings;
+    private final MutableLiveData<String> mExceptionStr = new MutableLiveData<>(null);
+    private final SettingsUseCase mSettingsUseCase;
 
     @Inject
-    public SettingsViewModel(GameSettings settings) {
-        this.mSettings = settings;
+    public SettingsViewModel(SettingsUseCase settingsUseCase) {
+        this.mSettingsUseCase = settingsUseCase;
+    }
+
+    public LiveData<String> getExceptionInfo() {
+        return mExceptionStr;
     }
 
     public void updateAutoFire(boolean enable) {
-        mSettings.setAutoFire(enable);
+        mSettingsUseCase.execute(new SettingsUseCase.Request(SettingsUseCase.ActionType.UPDATE_AUTO_FIRE, enable));
     }
 
     public void updateShotStyle(String styleStr) {
         try {
             GameSettings.ShotStyle style = GameSettings.ShotStyle.valueOf(styleStr);
-            mSettings.setShotStyle(style);
+            mSettingsUseCase.execute(new SettingsUseCase.Request(SettingsUseCase.ActionType.UPDATE_SHOT_STYLE, style));
         } catch (IllegalArgumentException | NullPointerException e) {
-            mExeceptionStr.setValue(GameConstants.NOT_SUPPORT_INFO);
+            mExceptionStr.setValue(GameConstants.NOT_SUPPORT_INFO);
         }
     }
 
     public void updateSoundEffects(boolean enable) {
-        mSettings.setSoundEffects(enable);
+        mSettingsUseCase.execute(new SettingsUseCase.Request(SettingsUseCase.ActionType.UPDATE_SOUND_EFFECTS, enable));
     }
 
     public void updateBgm(boolean enable) {
-        mSettings.setBgm(enable);
+        mSettingsUseCase.execute(new SettingsUseCase.Request(SettingsUseCase.ActionType.UPDATE_BGM, enable));
     }
 
     public void clearExceptionInfo() {
-        mExeceptionStr.setValue(null);
+        mExceptionStr.setValue(null);
     }
-
 }

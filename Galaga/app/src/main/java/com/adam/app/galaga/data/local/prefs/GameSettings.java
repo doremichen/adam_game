@@ -121,55 +121,55 @@ public class GameSettings {
          * BulletContext for Builder pattern
          */
         public static class BulletContext {
-            private final List<Bullet> bullets;
-            private final float x;
-            private final float y;
-            private final float speed;
-            private final SoundManager soundManager;
+            private final List<Bullet> mBullets;
+            private final float mX;
+            private final float mY;
+            private final float mSpeed;
+            private final SoundManager mSoundManager;
 
             private BulletContext(Builder builder) {
-                this.bullets = builder.bullets;
-                this.x = builder.x;
-                this.y = builder.y;
-                this.speed = builder.speed;
-                this.soundManager = builder.soundManager;
+                this.mBullets = builder.mBullets;
+                this.mX = builder.mX;
+                this.mY = builder.mY;
+                this.mSpeed = builder.mSpeed;
+                this.mSoundManager = builder.mSoundManager;
             }
 
-            public List<Bullet> getBullets() { return bullets; }
-            public float getX() { return x; }
-            public float getY() { return y; }
-            public float getSpeed() { return speed; }
-            public SoundManager getSoundManager() { return soundManager; }
+            public List<Bullet> getBullets() { return mBullets; }
+            public float getX() { return mX; }
+            public float getY() { return mY; }
+            public float getSpeed() { return mSpeed; }
+            public SoundManager getSoundManager() { return mSoundManager; }
 
             public static class Builder {
-                private List<Bullet> bullets;
-                private float x;
-                private float y;
-                private float speed;
-                private SoundManager soundManager;
+                private List<Bullet> mBullets;
+                private float mX;
+                private float mY;
+                private float mSpeed;
+                private SoundManager mSoundManager;
 
                 public Builder setBullets(List<Bullet> bullets) {
-                    this.bullets = bullets;
+                    this.mBullets = bullets;
                     return this;
                 }
 
                 public Builder setX(float x) {
-                    this.x = x;
+                    this.mX = x;
                     return this;
                 }
 
                 public Builder setY(float y) {
-                    this.y = y;
+                    this.mY = y;
                     return this;
                 }
 
                 public Builder setSpeed(float speed) {
-                    this.speed = speed;
+                    this.mSpeed = speed;
                     return this;
                 }
 
                 public Builder setSoundManager(SoundManager soundManager) {
-                    this.soundManager = soundManager;
+                    this.mSoundManager = soundManager;
                     return this;
                 }
 

@@ -22,9 +22,14 @@
 
 package com.adam.app.galaga.domain.usecase;
 
+import androidx.lifecycle.LiveData;
+
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
+import com.adam.app.galaga.data.model.LevelConfig;
 import com.adam.app.galaga.domain.repository.IGameRepository;
 import com.adam.app.galaga.domain.repository.ILevelRepository;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -33,10 +38,10 @@ import javax.inject.Inject;
  */
 public class GameUseCase implements IUseCase<GameUseCase.Request, Object> {
 
-    private final UseCaseBridge mBridge;
+    private final GameUCBridge mBridge;
 
     @Inject
-    public GameUseCase(UseCaseBridge bridge) {
+    public GameUseCase(GameUCBridge bridge) {
         this.mBridge = bridge;
     }
 
@@ -77,20 +82,20 @@ public class GameUseCase implements IUseCase<GameUseCase.Request, Object> {
         INSERT_SCORE {
             @Override
             public Object execute(ExecutionContext context) {
-                context.getBridge().getGameRepository().insertScore((ScoreRecord) getData());
+                context.getBridge().insertScore((ScoreRecord) getData());
                 return null;
             }
         },
         GET_TOP_SCORES {
             @Override
             public Object execute(ExecutionContext context) {
-                return context.getBridge().getGameRepository().getTop10Scores();
+                return context.getBridge().getTop10Scores();
             }
         },
         GET_LEVEL_CONFIG {
             @Override
             public Object execute(ExecutionContext context) {
-                return context.getBridge().getLevelRepository().getLevelConfig((Integer) getData());
+                return context.getBridge().getLevelConfig((Integer) getData());
             }
         };
 
@@ -116,36 +121,40 @@ public class GameUseCase implements IUseCase<GameUseCase.Request, Object> {
      * ExecutionContext - Wrapper for bridge
      */
     public static class ExecutionContext {
-        private final UseCaseBridge mBridge;
+        private final GameUCBridge mBridge;
 
-        public ExecutionContext(UseCaseBridge bridge) {
+        public ExecutionContext(GameUCBridge bridge) {
             this.mBridge = bridge;
         }
 
-        public UseCaseBridge getBridge() {
+        public GameUCBridge getBridge() {
             return mBridge;
         }
     }
 
     /**
-     * UseCaseBridge - Holds Hilt injected dependencies
+     * GameUCBridge - Holds Hilt injected dependencies and provides services
      */
-    public static class UseCaseBridge {
+    public static class GameUCBridge {
         private final IGameRepository mGameRepository;
         private final ILevelRepository mLevelRepository;
 
         @Inject
-        public UseCaseBridge(IGameRepository gameRepository, ILevelRepository levelRepository) {
+        public GameUCBridge(IGameRepository gameRepository, ILevelRepository levelRepository) {
             this.mGameRepository = gameRepository;
             this.mLevelRepository = levelRepository;
         }
 
-        public IGameRepository getGameRepository() {
-            return mGameRepository;
+        public void insertScore(ScoreRecord record) {
+            mGameRepository.insertScore(record);
         }
 
-        public ILevelRepository getLevelRepository() {
-            return mLevelRepository;
+        public LiveData<List<ScoreRecord>> getTop10Scores() {
+            return mGameRepository.getTop10Scores();
+        }
+
+        public LevelConfig getLevelConfig(int levelId) {
+            return mLevelRepository.getLevelConfig(levelId);
         }
     }
 }

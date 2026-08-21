@@ -30,44 +30,23 @@ import javax.inject.Singleton;
 
 @Singleton
 public class LevelManager {
-    // TAG
-    private static final String TAG = LevelManager.class.getSimpleName();
-
-    // level repository
     private final ILevelRepository mLevelRepository;
-
-    // current level id
     private int mCurrentLevelId = 1;
-
 
     @Inject
     public LevelManager(ILevelRepository levelRepository) {
         this.mLevelRepository = levelRepository;
     }
 
-    /**
-     * enterLevel
-     * @param levelId int
-     * @return LevelConfig
-     */
     public LevelConfig enterLevel(int levelId) {
-        // update level id
         mCurrentLevelId = levelId;
         return mLevelRepository.getLevelConfig(levelId);
     }
 
-    /**
-     * nextLevel
-     * @return LevelConfig
-     */
     public LevelConfig nextLevel() {
         return enterLevel(mCurrentLevelId + 1);
     }
 
-    /**
-     * get level id
-     * @return int
-     */
     public int getCurrentLevelId() {
         return mCurrentLevelId;
     }

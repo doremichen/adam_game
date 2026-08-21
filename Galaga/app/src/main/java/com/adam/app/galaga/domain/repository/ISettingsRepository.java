@@ -20,16 +20,17 @@
  * SOFTWARE.
  */
 
-package com.adam.app.galaga.di;
+package com.adam.app.galaga.domain.repository;
 
 import com.adam.app.galaga.data.local.prefs.GameSettings;
 
-import dagger.hilt.EntryPoint;
-import dagger.hilt.InstallIn;
-import dagger.hilt.components.SingletonComponent;
-
-@EntryPoint
-@InstallIn(SingletonComponent.class)
-public interface SettingsEntryPoint {
-    GameSettings getGameSettings();
+public interface ISettingsRepository {
+    void setAutoFire(boolean enable);
+    boolean isAutoFire();
+    void setShotStyle(GameSettings.ShotStyle style);
+    GameSettings.ShotStyle getShotStyle();
+    void setSoundEffects(boolean enable);
+    boolean isSoundEffectsEnabled();
+    void setBgm(boolean enable);
+    boolean isBgmEnabled();
 }

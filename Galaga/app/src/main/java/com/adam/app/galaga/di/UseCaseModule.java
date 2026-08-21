@@ -23,6 +23,7 @@
 package com.adam.app.galaga.di;
 
 import com.adam.app.galaga.domain.usecase.GameUseCase;
+import com.adam.app.galaga.domain.usecase.SettingsUseCase;
 
 import dagger.Module;
 import dagger.Provides;
@@ -34,7 +35,12 @@ import dagger.hilt.components.SingletonComponent;
 public final class UseCaseModule {
 
     @Provides
-    public GameUseCase provideGameUseCase(GameUseCase.UseCaseBridge bridge) {
+    public GameUseCase provideGameUseCase(GameUseCase.GameUCBridge bridge) {
         return new GameUseCase(bridge);
+    }
+
+    @Provides
+    public SettingsUseCase provideSettingsUseCase(SettingsUseCase.SettingsUCBridge bridge) {
+        return new SettingsUseCase(bridge);
     }
 }

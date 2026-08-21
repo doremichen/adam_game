@@ -1,6 +1,26 @@
-@startuml
-skinparam backgroundColor white
-skinparam handwritten false
+@startuml "System Overview"
+header Galaga Project Architecture
+footer Page 1 of 3
+top to bottom direction
+
+skinparam packageStyle rectangle
+
+package "Presentation Layer" as PL #LightBlue
+package "Domain Layer" as DL #LightGreen
+package "Data Layer" as DT #LightYellow
+package "Engine Layer" as EL #LightCoral
+
+PL ..> DL : depends on
+DL ..> DT : interface impl
+PL ..> EL : control/observe
+EL ..> DT : load config
+@enduml
+
+@startuml "App Architecture (Clean + MVVM)"
+header Presentation, Domain & Data Layers
+footer Page 2 of 3
+top to bottom direction
+
 skinparam class {
     BackgroundColor white
     ArrowColor Black
@@ -19,31 +39,79 @@ package "Presentation Layer" {
 }
 
 package "Domain Layer" {
-    interface IUseCase<T, R>
-    class GameUseCase
-    enum ActionType
-    class UseCaseBridge
+    interface IUseCase <<Interface>>
 
-    interface IGameRepository
-    interface ILevelRepository
+    class GameUseCase
+    class SettingsUseCase
+    class UseCaseBridge <<Bridge>>
+
+    interface IGameRepository <<Boundary>>
+    interface ILevelRepository <<Boundary>>
+    interface ISettingsRepository <<Boundary>>
+
+    class "UseCase.Request" as UCR <<DTO>>
 }
 
 package "Data Layer" {
     class GameRepository
     class LevelRepository
-    class AppDatabase <<RoomDatabase>>
-    interface ScoreDao
-    class ScoreRecord <<Entity>>
-    class AssetProvider
-    class GameSettings <<SharedPreferences>>
+    class SettingsRepository
+
+    class AppDatabase <<Room>>
+    class GameSettings <<Prefs>>
+    class AssetProvider <<assets>>
+}
+
+' Positioning (UI to VM)
+MainActivity .down.> MainViewModel : Data Binding
+GameActivity .down.> GameViewModel : Data Binding
+LeaderboardActivity .down.> LeaderboardViewModel : Observe State
+SettingsActivity .down.> SettingsViewModel : Observe State
+
+' VM to UseCase Interaction
+MainViewModel -down-> GameUseCase : execute(Request)
+GameViewModel -down-> GameUseCase : execute(Request)
+LeaderboardViewModel -down-> GameUseCase : execute(Request)
+SettingsViewModel -down-> SettingsUseCase : execute(Request)
+
+' UseCase Implementation
+GameUseCase ..|> IUseCase
+SettingsUseCase .up.|> IUseCase
+
+GameUseCase -down-> UseCaseBridge
+SettingsUseCase -down-> UseCaseBridge
+
+' Bridge to Repository Interfaces
+UseCaseBridge -down-> IGameRepository
+UseCaseBridge -down-> ILevelRepository
+UseCaseBridge -down-> ISettingsRepository
+
+' Repository Interface Implementations
+GameRepository .up.|> IGameRepository
+LevelRepository .up.|> ILevelRepository
+SettingsRepository .up.|> ISettingsRepository
+
+' Data Layer Logic
+GameRepository -down-> AppDatabase
+LevelRepository -down-> AssetProvider
+SettingsRepository -down-> GameSettings
+
+@enduml
+
+@startuml "Game Engine Architecture"
+header Engine, Patterns & Game Objects
+footer Page 3 of 3
+top to bottom direction
+
+skinparam class {
+    BackgroundColor white
+    ArrowColor Black
+    BorderColor DarkBlue
 }
 
 package "Engine Layer" {
-    class GameEngine
-    class GameObjectManager
-    class LevelManager
-    class CollisionManager
-    class SoundManager
+    class GameEngine <<Core>>
+    class GameObjectManager <<Facade>>
     class EnemySpawner
 
     package "Spawning (CoR)" {
@@ -52,53 +120,25 @@ package "Engine Layer" {
         class WaveInProgressHandler
     }
 
-    package "Entry Strategy" {
-        interface EnemyEntryStrategy
-        class ArcEntryStrategy
-        class CircleEntryStrategy
+    package "Behavior Patterns" {
+        interface EnemyEntryStrategy <<Strategy>>
+        interface BeeState <<State>>
     }
 
-    package "States (State Pattern)" {
-        interface BeeState
-        class FormationState
-        class DivingState
-        class EnteringState
+    package "Models" {
+        abstract class GameObject
+        class Bee
+        class Plane
+        class Bullet
     }
-
-    abstract class GameObject
-    class Bee
-    class Plane
-    class Bullet
 }
 
-' Relationships
-MainViewModel --> GameUseCase
-GameViewModel --> GameUseCase
-LeaderboardViewModel --> GameUseCase
-SettingsViewModel --> GameSettings
+' Connections
+GameEngine -down-> GameObjectManager : control
+GameObjectManager -down-> EnemySpawner : spawn request
+GameObjectManager -right-> GameObject : update/draw
 
-GameUseCase ..|> IUseCase
-GameUseCase +-- ActionType
-GameUseCase +-- UseCaseBridge
-UseCaseBridge --> IGameRepository
-UseCaseBridge --> ILevelRepository
-
-GameRepository ..|> IGameRepository
-LevelRepository ..|> ILevelRepository
-
-GameRepository --> ScoreDao
-ScoreDao --> ScoreRecord
-LevelRepository --> AssetProvider
-AppDatabase --> ScoreDao
-
-GameViewModel --> GameEngine
-GameEngine --> GameObjectManager
-GameObjectManager --> CollisionManager
-GameObjectManager --> LevelManager
-GameObjectManager --> SoundManager
-GameObjectManager --> EnemySpawner
-
-EnemySpawner --> SpawnHandler
+EnemySpawner -down-> SpawnHandler
 SpawnHandler <|-- NewWaveHandler
 SpawnHandler <|-- WaveInProgressHandler
 
@@ -106,13 +146,6 @@ GameObject <|-- Bee
 GameObject <|-- Plane
 GameObject <|-- Bullet
 
-Bee --> BeeState
-BeeState <|.. FormationState
-BeeState <|.. DivingState
-BeeState <|.. EnteringState
-
-Bee --> EnemyEntryStrategy
-EnemyEntryStrategy <|.. ArcEntryStrategy
-EnemyEntryStrategy <|.. CircleEntryStrategy
-
+Bee -down-> BeeState
+Bee -down-> EnemyEntryStrategy
 @enduml

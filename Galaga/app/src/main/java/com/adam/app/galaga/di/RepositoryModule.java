@@ -24,8 +24,10 @@ package com.adam.app.galaga.di;
 
 import com.adam.app.galaga.data.repository.GameRepository;
 import com.adam.app.galaga.data.repository.LevelRepository;
+import com.adam.app.galaga.data.repository.SettingsRepository;
 import com.adam.app.galaga.domain.repository.IGameRepository;
 import com.adam.app.galaga.domain.repository.ILevelRepository;
+import com.adam.app.galaga.domain.repository.ISettingsRepository;
 
 import dagger.Binds;
 import dagger.Module;
@@ -41,4 +43,7 @@ public abstract class RepositoryModule {
 
     @Binds
     public abstract ILevelRepository bindLevelRepository(LevelRepository implementation);
+
+    @Binds
+    public abstract ISettingsRepository bindSettingsRepository(SettingsRepository implementation);
 }

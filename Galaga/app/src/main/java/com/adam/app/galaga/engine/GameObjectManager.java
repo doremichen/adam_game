@@ -38,89 +38,59 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import dagger.hilt.android.EntryPointAccessors;
-
 @Singleton
 public class GameObjectManager {
-    // TAG
     private static final String TAG = GameObjectManager.class.getSimpleName();
 
-    // use CopyOnWriteArrayList to avoid concurrent modification exception
-    // list of bees
     private final List<Bee> mBees = new CopyOnWriteArrayList<>();
-    // list of bullets
     private final List<Bullet> mBullets = new CopyOnWriteArrayList<>();
-    // collision manager
     private final CollisionManager mCollisionManager;
-    // level manager
     private final LevelManager mLevelManager;
-    // sound manager
     private final SoundManager mSoundManager;
+    private final GameSettings mGameSettings;
     
-    // Winnings strategy
     private WinningStrategy mWinningStrategy;
-    // level config
     private LevelConfig mLevelConfig;
-    // player
     private Plane mPlayerPlane;
-    // spawned count
     private int mSpawnedCount = 0;
-    // level start time
     private long mLevelStartTime;
-    // last auto fire time
     private long mLastAutoFireTime;
 
-    // Enemy Spawning
     private final EnemySpawner mEnemySpawner = new EnemySpawner();
 
     @Inject
-    public GameObjectManager(LevelManager levelManager, CollisionManager collisionManager, SoundManager soundManager) {
+    public GameObjectManager(LevelManager levelManager, 
+                             CollisionManager collisionManager, 
+                             SoundManager soundManager,
+                             GameSettings gameSettings) {
         this.mLevelManager = levelManager;
         this.mCollisionManager = collisionManager;
         this.mSoundManager = soundManager;
+        this.mGameSettings = gameSettings;
     }
 
-    /**
-     * init
-     */
     public void init() {
         mBees.clear();
         mBullets.clear();
-
         initPlayer();
-
         if (!loadLevel(1)) {
             GameUtils.error(TAG, "no config file!!!");
         }
     }
 
-    /**
-     * loadLevel
-     *
-     * @param levelId int
-     */
     public boolean loadLevel(int levelId) {
-        // level config
         mLevelConfig = mLevelManager.enterLevel(levelId);
         if (mLevelConfig == null) {
             return false;
         }
 
         mLevelStartTime = System.currentTimeMillis();
-
-        // winning strategy
         buildWinningStrategy();
-
-        // clear bee/bullet
         resetLevelState();
         GameUtils.info(TAG, "Level " + levelId + " loaded: " + mLevelConfig.getMetadata().getTitle());
         return true;
     }
 
-    /**
-     * isLevelCleared
-     * @return boolean true if level is cleared
-     */
     public boolean isLevelCleared() {
         if (mLevelConfig == null) {
             GameUtils.error(TAG, "Level config is null");
@@ -129,18 +99,10 @@ public class GameObjectManager {
         return mWinningStrategy.validate(this);
     }
 
-    /**
-     * get level id
-     *
-     * @return int
-     */
     public int getCurrentLevelId() {
         return mLevelManager.getCurrentLevelId();
     }
 
-    /**
-     * next level
-     */
     public void nextLevel() {
         mLevelConfig = mLevelManager.nextLevel();
         if (mLevelConfig == null) {
@@ -148,56 +110,28 @@ public class GameObjectManager {
         }
 
         mLevelStartTime = System.currentTimeMillis();
-
         buildWinningStrategy();
-
         resetLevelState();
         GameUtils.info(TAG, "Level " + mLevelManager.getCurrentLevelId() + " loaded: " + mLevelConfig.getMetadata().getTitle());
-
     }
 
-
-    /**
-     * get level start time
-     * @return long the time when level start
-     */
     public long getLevelStartTime() {
         return mLevelStartTime;
     }
 
-    /**
-     * check if bees are live?
-     *
-     * @return boolean true if all bees are dead
-     */
     public boolean areAllBeesDead() {
         return mSpawnedCount >= mLevelConfig.getEnemySettings().getTotalCount() && mBees.isEmpty();
     }
 
-
-    /**
-     * get metadata title
-     *
-     * @return String
-     */
     public String getMetadataTitle() {
         if (mLevelConfig == null) return "";
         return mLevelConfig.getMetadata().getTitle();
     }
 
-
-    /**
-     * get strategy
-     *
-     * @return WinningStrategy
-     */
     public WinningStrategy getStrategy() {
         return (mWinningStrategy == null)? WinningStrategy.ELIMINATE_ALL : mWinningStrategy;
     }
 
-    /**
-     * updateAll
-     */
     public void updateAll() {
         updatePlayer();
         updateSpawning();
@@ -220,39 +154,20 @@ public class GameObjectManager {
         }
     }
 
-    /**
-     * cleanupEntities
-     */
     public void cleanupEntities() {
         mBees.removeIf(Bee::isDead);
         mBullets.removeIf(bullet -> bullet.isDead() || bullet.isOutOfBound());
     }
 
-    /**
-     * handleCollisions
-     *
-     * @return int
-     */
     public int handleCollisions() {
         return mCollisionManager.handleCollisions(mBullets, mBees);
     }
 
-    /**
-     * isPlayerDead
-     *
-     * @return boolean
-     */
     public boolean isPlayerDead() {
         return mCollisionManager.isPlaneHit(mPlayerPlane, mBees);
     }
 
-    /**
-     * movePlayer
-     *
-     * @param direction Direction
-     */
     public void movePlayer(Direction direction) {
-        GameUtils.info(TAG, "movePlayer");
         switch (direction) {
             case UP:
                 mPlayerPlane.moveUp();
@@ -266,35 +181,18 @@ public class GameObjectManager {
             case RIGHT:
                 mPlayerPlane.moveRight();
                 break;
-            default:
-                break;
         }
     }
 
-    /**
-     * spawnBullet
-     */
     public void spawnBullet() {
-        GameUtils.info(TAG, "spawnBullet");
-        // early return
         if (mPlayerPlane == null) {
             return;
         }
 
-        // shot type
-        GameSettings.ShotStyle shotStyle = EntryPointAccessors.fromApplication(
-                com.adam.app.galaga.GalagaApplication.getAppContext(), 
-                com.adam.app.galaga.di.SettingsEntryPoint.class
-        ).getGameSettings().getShotStyle();
-        // spawn bullets
+        GameSettings.ShotStyle shotStyle = mGameSettings.getShotStyle();
         shotStyle.spawn(mBullets, mPlayerPlane, mSoundManager);
     }
 
-    /**
-     * getAllEntities
-     *
-     * @return List<GameObject>
-     */
     public List<GameObject> getAllEntities() {
         List<GameObject> entities = new ArrayList<>();
         if (mPlayerPlane != null) entities.add(mPlayerPlane);
@@ -303,40 +201,28 @@ public class GameObjectManager {
         return entities;
     }
 
-    /**
-     * clear
-     */
     public void clear() {
         resetLevelState();
         mPlayerPlane = null;
     }
 
     public void handleAutoFiring() {
-        boolean isAutoFire = EntryPointAccessors.fromApplication(
-                com.adam.app.galaga.GalagaApplication.getAppContext(), 
-                com.adam.app.galaga.di.SettingsEntryPoint.class
-        ).getGameSettings().isAutoFire();
-        if (!isAutoFire) return;
+        if (!mGameSettings.isAutoFire()) return;
 
-        // handle auto fire logic
         long currentTime = System.currentTimeMillis();
         if (currentTime - mLastAutoFireTime >= GameConstants.AUTO_FIRE_INTERVAL) {
             spawnBullet();
             mLastAutoFireTime = currentTime;
         }
-
     }
 
     private void resetLevelState() {
-        // clear bee/bullet
         mBees.clear();
         mBullets.clear();
-        // reset spawn state
         mSpawnedCount = 0;
         mEnemySpawner.reset();
         mLevelStartTime = System.currentTimeMillis();
     }
-
 
     private void initPlayer() {
         mPlayerPlane = new Plane(
@@ -348,11 +234,6 @@ public class GameObjectManager {
         );
     }
 
-
-
-    /**
-     * build winnings strategy
-     */
     private void buildWinningStrategy() {
         String type = mLevelConfig.getWinningCondition().getType();
         try {
@@ -365,7 +246,6 @@ public class GameObjectManager {
     private void updateSpawning() {
         if (mLevelConfig == null) return;
         
-        // Survival strategy check
         if (mWinningStrategy == WinningStrategy.SURVIVAL) {
             if (System.currentTimeMillis() - mLevelStartTime >= GameConstants.LEVEL_DURATION_MS) {
                 return;
