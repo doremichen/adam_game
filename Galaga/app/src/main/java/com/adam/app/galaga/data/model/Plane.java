@@ -27,39 +27,32 @@ import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.adam.app.galaga.utils.GameConstants;
-import com.adam.app.galaga.utils.GameUtils;
 
 /**
  * Plane class
  */
-public class Plane extends GameObject{
-
-    // TAG
-    private static final String TAG = Plane.class.getSimpleName();
+public class Plane extends GameObject {
 
     private int mAnimationFrame;
     private int mFrameCounter;
 
-
     public Plane(float x, float y, float speed, int width, int height) {
         super(x, y, speed, width, height);
-
         mAnimationFrame = 0;
         mFrameCounter = 0;
     }
 
     @Override
     public void update() {
-        //GameUtils.info(TAG, "update");
         updateAnimation();
         clampPosition();
     }
 
     @Override
     public void draw(Canvas canvas, Paint paint) {
-        // config paint
         paint.setColor(Color.BLUE);
         paint.setStyle(Paint.Style.FILL);
+        
         // plane body
         canvas.drawRect(
                 mPosition.x,
@@ -78,54 +71,33 @@ public class Plane extends GameObject{
                 mPosition.y,
                 paint
         );
-
     }
 
     private void updateAnimation() {
-        //GameUtils.info(TAG, "updateAnimation");
-        // update animation
         mFrameCounter++;
         if (mFrameCounter >= GameConstants.ANIM_FRAME_DELAY) {
             mAnimationFrame = (mAnimationFrame + 1) % GameConstants.MAX_ANIM_FRAMES;
             mFrameCounter = 0;
         }
-
     }
 
     private void clampPosition() {
         clampToWorld();
     }
 
-    /**
-     * move left
-     */
     public void moveLeft() {
-        //GameUtils.info(TAG, "moveLeft");
         this.mPosition.x -= this.mSpeed;
     }
 
-    /**
-     * move right
-     */
     public void moveRight() {
-        //GameUtils.info(TAG, "moveRight");
         this.mPosition.x += this.mSpeed;
     }
 
-    /**
-     * move up
-     */
     public void moveUp() {
-        //GameUtils.info(TAG, "moveUp");
         this.mPosition.y -= this.mSpeed;
     }
 
-    /**
-     * move down
-     */
     public void moveDown() {
-        //GameUtils.info(TAG, "moveDown");
         this.mPosition.y += this.mSpeed;
     }
-
 }

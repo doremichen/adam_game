@@ -33,52 +33,43 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
 import com.adam.app.galaga.databinding.ItemLeaderboardBinding;
 
+import java.util.Objects;
+
 public class LeaderboardAdapter extends ListAdapter<ScoreRecord, LeaderboardAdapter.ViewHolder> {
 
-    private static final DiffUtil.ItemCallback<ScoreRecord> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
-
-        @Override
-        public boolean areItemsTheSame(@NonNull ScoreRecord oldItem, @NonNull ScoreRecord newItem) {
-            return oldItem.getId() == newItem.getId();
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull ScoreRecord oldItem, @NonNull ScoreRecord newItem) {
-            return oldItem.equals(newItem);
-        }
-    };
-
     public LeaderboardAdapter() {
-        super(DIFF_CALLBACK);
+        super(new DiffUtil.ItemCallback<ScoreRecord>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull ScoreRecord oldItem, @NonNull ScoreRecord newItem) {
+                return oldItem.getId() == newItem.getId();
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull ScoreRecord oldItem, @NonNull ScoreRecord newItem) {
+                return Objects.equals(oldItem, newItem);
+            }
+        });
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // view binding
         ItemLeaderboardBinding binding = ItemLeaderboardBinding.inflate(
-                LayoutInflater.from(parent.getContext()),
-                parent,
-                false
-        );
+                LayoutInflater.from(parent.getContext()), parent, false);
         return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        ScoreRecord record = getItem(position);
-        holder.bind(record);
+        holder.bind(getItem(position));
     }
 
-    // view holder
-    protected static class ViewHolder extends RecyclerView.ViewHolder {
-
-        // view binding
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         private final ItemLeaderboardBinding mBinding;
 
-        public ViewHolder(@NonNull ItemLeaderboardBinding binding) {
+        public ViewHolder(ItemLeaderboardBinding binding) {
             super(binding.getRoot());
-            mBinding = binding;
+            this.mBinding = binding;
         }
 
         public void bind(ScoreRecord record) {
@@ -86,6 +77,4 @@ public class LeaderboardAdapter extends ListAdapter<ScoreRecord, LeaderboardAdap
             mBinding.executePendingBindings();
         }
     }
-
-
 }

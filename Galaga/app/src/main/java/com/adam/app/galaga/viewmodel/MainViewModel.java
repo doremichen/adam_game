@@ -23,21 +23,28 @@
 package com.adam.app.galaga.viewmodel;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.galaga.utils.GameUtils;
+import com.adam.app.galaga.utils.SingleLiveEvent;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
 public class MainViewModel extends ViewModel {
-    // TAG
     private static final String TAG = MainViewModel.class.getSimpleName();
 
-    // event live data
-    private final MutableLiveData<ActionType> mAction = new MutableLiveData<>(ActionType.DO_NOTHING);
+    private final SingleLiveEvent<ActionType> mAction = new SingleLiveEvent<>();
+
+    @Inject
+    public MainViewModel() {
+    }
+
     public LiveData<ActionType> getAction() {
         return mAction;
     }
-
 
     public void onStartGame() {
         GameUtils.info(TAG, "onStartGame");
@@ -64,20 +71,11 @@ public class MainViewModel extends ViewModel {
         mAction.setValue(ActionType.EXIT);
     }
 
-    public void onDoNothing() {
-        GameUtils.info(TAG, "onDoNothing");
-        mAction.setValue(ActionType.DO_NOTHING);
-    }
-
-
     public enum ActionType {
         START_GAME,
         OPEN_SETTINGS,
         OPEN_LEADER_BOARD,
         OPEN_ABOUT,
-        EXIT,
-        DO_NOTHING
+        EXIT
     }
-
-
 }

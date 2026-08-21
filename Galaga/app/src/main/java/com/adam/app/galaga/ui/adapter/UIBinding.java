@@ -30,8 +30,8 @@ import android.widget.TextView;
 
 import androidx.databinding.BindingAdapter;
 
-import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.engine.Direction;
+import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.viewmodel.GameViewModel;
 
 import java.text.SimpleDateFormat;
@@ -39,93 +39,72 @@ import java.util.Locale;
 
 public class UIBinding {
 
-    private static int mActiveDirectionId = View.NO_ID;
+    private static int sActiveDirectionId = View.NO_ID;
 
     @BindingAdapter("onTouchDirection")
     public static void setOnTouchDirection(View view, GameViewModel viewModel) {
-        // resource id
         int id = view.getId();
         Direction direction = Direction.fromResId(id);
-        // set on touch listener
-        final GameViewModel vm = viewModel;
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        mActiveDirectionId = id;
-                        vm.setMoveDirection(direction);
-                        v.setPressed(true);
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        Rect rect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
-                        // point position
-                        int x = v.getLeft() + (int) event.getX();
-                        int y = v.getTop() + (int) event.getY();
-                        // boundary check
-                        if (!rect.contains(x, y)) {
-                            handleRelease();
-                        }
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        handleRelease();
-                        break;
-                    default:
-                        break;
-                }
-                return true;
+        
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    sActiveDirectionId = id;
+                    viewModel.setMoveDirection(direction);
+                    v.setPressed(true);
+                    v.performClick();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Rect rect = new Rect(v.getLeft(), v.getTop(), v.getRight(), v.getBottom());
+                    int x = v.getLeft() + (int) event.getX();
+                    int y = v.getTop() + (int) event.getY();
+                    if (!rect.contains(x, y)) {
+                        handleRelease(view, id, viewModel);
+                    }
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    handleRelease(view, id, viewModel);
+                    break;
             }
-
-
-            private void handleRelease() {
-                // view
-                view.setPressed(false);
-
-                if (mActiveDirectionId == id) {
-                    viewModel.setMoveDirection(null);
-                    mActiveDirectionId = View.NO_ID;
-                }
-            }
-
-
+            return true;
         });
+    }
+
+    private static void handleRelease(View view, int id, GameViewModel viewModel) {
+        view.setPressed(false);
+        if (sActiveDirectionId == id) {
+            viewModel.setMoveDirection(null);
+            sActiveDirectionId = View.NO_ID;
+        }
     }
 
     @BindingAdapter("onTouchFire")
     public static void setOnTouchFire(View view, GameViewModel viewModel) {
-        view.setOnTouchListener(new View.OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        viewModel.setShooting(true);
-                        v.setPressed(true);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                    case MotionEvent.ACTION_CANCEL:
-                        viewModel.setShooting(false);
-                        v.setPressed(false);
-                        break;
-                    default:
-                        break;
-                }
-                return true;
+        view.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    viewModel.setShooting(true);
+                    v.setPressed(true);
+                    v.performClick();
+                    break;
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    viewModel.setShooting(false);
+                    v.setPressed(false);
+                    break;
             }
+            return true;
         });
-
     }
 
     @BindingAdapter("formattedDate")
     public static void setFormattedDate(TextView view, long timestamp) {
-        if (timestamp < 0) {
+        if (timestamp <= 0) {
             return;
         }
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
-        String formattedDate = sdf.format(timestamp);
-        view.setText(formattedDate);
+        view.setText(sdf.format(timestamp));
     }
 
     @BindingAdapter("gameState")
@@ -136,7 +115,6 @@ public class UIBinding {
             view.setScaleX(0.8f);
             view.setScaleY(0.8f);
 
-            // 播放簡單的縮放與淡入動畫
             view.animate()
                     .alpha(1f)
                     .scaleX(1f)
@@ -145,14 +123,9 @@ public class UIBinding {
                     .setInterpolator(new OvershootInterpolator())
                     .start();
 
-            // 1.5 秒後淡出，配合你的 2 秒延遲
-            view.postDelayed(() -> {
-                view.animate().alpha(0f).setDuration(400).start();
-            }, 1500);
-
+            view.postDelayed(() -> view.animate().alpha(0f).setDuration(400).start(), 1500);
         } else {
             view.setVisibility(View.GONE);
         }
     }
-
 }

@@ -22,23 +22,27 @@
 
 package com.adam.app.galaga.engine;
 
-import com.adam.app.galaga.GalagaApplication;
 import com.adam.app.galaga.data.model.LevelConfig;
-import com.adam.app.galaga.data.repository.LevelRepository;
+import com.adam.app.galaga.domain.repository.ILevelRepository;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class LevelManager {
     // TAG
     private static final String TAG = LevelManager.class.getSimpleName();
 
     // level repository
-    private final LevelRepository mLevelRepository;
+    private final ILevelRepository mLevelRepository;
 
     // current level id
     private int mCurrentLevelId = 1;
 
 
-    public LevelManager() {
-        mLevelRepository = LevelRepository.getInstance(GalagaApplication.getAppContext());
+    @Inject
+    public LevelManager(ILevelRepository levelRepository) {
+        this.mLevelRepository = levelRepository;
     }
 
     /**

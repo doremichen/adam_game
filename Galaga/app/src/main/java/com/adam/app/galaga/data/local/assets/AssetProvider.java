@@ -30,46 +30,24 @@ import com.google.gson.Gson;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+@Singleton
 public class AssetProvider {
-    // TAG
     private static final String TAG = AssetProvider.class.getSimpleName();
-    // Context
     private final Context mContext;
-    // Gson
     private final Gson mGson;
 
-
-    private static volatile AssetProvider sInstance;
-
-    private AssetProvider(Context context) {
-        mContext = context.getApplicationContext();
+    @Inject
+    public AssetProvider(@ApplicationContext Context context) {
+        mContext = context;
         mGson = new Gson();
     }
 
-    /**
-     * DCLP
-     * @param context Context
-     * @return AssetProvider
-     */
-    public static AssetProvider getInstance(Context context) {
-        if (sInstance == null) {
-            synchronized (AssetProvider.class) {
-                if (sInstance == null) {
-                    sInstance = new AssetProvider(context);
-                }
-            }
-        }
-        return sInstance;
-    }
-
-    /**
-     * loadJsonFromAssets
-     * @param fileName String, e.g. levels/level_1.json
-     * @param clazz Class<T>
-     * @return T
-     */
     public <T> T loadJsonFromAssets(String fileName, Class<T> clazz) {
-        GameUtils.info(TAG, "loadJsonFromAssets");
         String jsonString = loadStringFromAssets(fileName);
         if (jsonString == null) {
             return null;
@@ -77,21 +55,16 @@ public class AssetProvider {
         return mGson.fromJson(jsonString, clazz);
     }
 
-    /**
-     * loadStringFromAssets
-     * @param fileName String
-     * @return String
-     */
     private String loadStringFromAssets(String fileName) {
-        GameUtils.info(TAG, "loadStringFromAssets");
         try (InputStream inputStream = mContext.getAssets().open(fileName)) {
             int size = inputStream.available();
             byte[] buffer = new byte[size];
-            inputStream.read(buffer);
-            return new String(buffer, StandardCharsets.UTF_8);
+            int read = inputStream.read(buffer);
+            if (read != -1) {
+                return new String(buffer, StandardCharsets.UTF_8);
+            }
         } catch (Exception e) {
-            GameUtils.error(TAG, "loadStringFromAssets error");
-            e.printStackTrace();
+            GameUtils.error(TAG, "loadStringFromAssets error: " + e.getMessage());
         }
         return null;
     }

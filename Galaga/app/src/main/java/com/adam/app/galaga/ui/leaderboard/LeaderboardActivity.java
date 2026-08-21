@@ -36,41 +36,30 @@ import com.adam.app.galaga.viewmodel.LeaderboardViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class LeaderboardActivity extends AppCompatActivity {
-    //TAG
-    private static final String TAG = LeaderboardActivity.class.getSimpleName();
 
-    // view binding
-    private ActivityLeaderboardBinding mBinding;
-
-    // adapter
     private LeaderboardAdapter mAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // view binding
-        mBinding = ActivityLeaderboardBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
-        // adapter
-        mAdapter = new LeaderboardAdapter();
-        // linear manager
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        //linearLayoutManager.setStackFromEnd(true);
-
-        mBinding.rvLeaderboard.setLayoutManager(linearLayoutManager);
-        mBinding.rvLeaderboard.setAdapter(mAdapter);
-
-        // exit button click listener
-        mBinding.btnExit.setOnClickListener(v -> finish());
-
-        // init view model
+        ActivityLeaderboardBinding binding = ActivityLeaderboardBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
         LeaderboardViewModel viewModel = new ViewModelProvider(this).get(LeaderboardViewModel.class);
-        // observer scores
+        binding.setViewModel(viewModel);
+        binding.setLifecycleOwner(this);
+        
+        mAdapter = new LeaderboardAdapter();
+        binding.rvLeaderboard.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvLeaderboard.setAdapter(mAdapter);
+
+        binding.btnExit.setOnClickListener(v -> finish());
+
         viewModel.getTopScores().observe(this, this::updateList);
-
-
     }
 
     private void updateList(List<ScoreRecord> scoreRecords) {

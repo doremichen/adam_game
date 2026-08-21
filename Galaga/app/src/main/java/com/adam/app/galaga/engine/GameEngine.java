@@ -22,13 +22,8 @@
 
 package com.adam.app.galaga.engine;
 
-
-import android.os.Handler;
-import android.os.Looper;
-
 import androidx.annotation.NonNull;
 
-import com.adam.app.galaga.GalagaApplication;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
@@ -39,43 +34,33 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-
 /**
  * This is the main class of the game engine.
  */
 public class GameEngine {
-    // TAG
     private static final String TAG = GameEngine.class.getSimpleName();
     private static final long SHOOT_INTERVAL_MS = 50L;
-    // GameObjectManager
-    private final GameObjectManager mGameObjectManager = GameObjectManager.getInstance();
-    // scheduled executor service
+    
+    private final GameObjectManager mGameObjectManager;
     private ScheduledExecutorService mScheduledExecutorService;
-    // Future Task
     private volatile ScheduledFuture<?> mCurrentTask;
-    // Handler
-    private Handler mMainHandler;
-    // Engine callback
     private EngineCallback mEngineCallback;
-    // total score
+    
     private int mTotalScore;
     private volatile State mCurrentState = State.READY;
-    // direction
     private Direction mCurrentMovingDirection;
-    // check if shooting
     private boolean mIsShooting = false;
     private long mLastShootTime = 0L;
-
 
     /**
      * Construct
      *
      * @param engineCallback EngineCallback
      */
-    public GameEngine(@NonNull EngineCallback engineCallback) {
+    public GameEngine(@NonNull EngineCallback engineCallback, GameObjectManager gameObjectManager) {
         GameUtils.info(TAG, "Construct");
         mEngineCallback = engineCallback;
-        this.mMainHandler = new Handler(Looper.getMainLooper());
+        mGameObjectManager = gameObjectManager;
         initGame();
     }
 
@@ -105,7 +90,6 @@ public class GameEngine {
      */
     public synchronized void start() {
         GameUtils.info(TAG, "start");
-        // early return
         if (mCurrentTask != null && !mCurrentTask.isCancelled()) {
             GameUtils.info(TAG, "Game is already running");
             return;
@@ -113,19 +97,17 @@ public class GameEngine {
 
         ensureExecutorAvailable();
 
-        //Start Game
+        // Start Game Task
         mCurrentTask = mScheduledExecutorService.scheduleWithFixedDelay(
                 this::gameLoop,
-                1000L,  // delay 1 sec to start for view is ready
+                GameConstants.GAME_START_DELAY_MS,
                 GameConstants.FRAME_PERIOD_MS,
                 TimeUnit.MILLISECONDS
         );
 
         updateState(State.RUNNING);
-        SoundManager.getInstance().playBgm(GalagaApplication.getAppContext());
         GameUtils.info(TAG, "Game started");
     }
-
 
     /**
      * pause
@@ -153,7 +135,6 @@ public class GameEngine {
      */
     public synchronized void stopGameTask() {
         GameUtils.info(TAG, "stop");
-        // early return
         if (mCurrentTask == null) {
             GameUtils.info(TAG, "Game is not running");
             return;
@@ -164,10 +145,8 @@ public class GameEngine {
             return;
         }
 
-        // cancel task
         mCurrentTask.cancel(true);
         mCurrentTask = null;
-        SoundManager.getInstance().stopBgm();
         GameUtils.info(TAG, "Game stopped");
     }
 
@@ -176,7 +155,6 @@ public class GameEngine {
      */
     public void clear() {
         GameUtils.info(TAG, "clear");
-        // check if game is running
         if (mCurrentTask != null && !mCurrentTask.isCancelled()) {
             stopGameTask();
             updateState(State.PAUSED);
@@ -184,21 +162,17 @@ public class GameEngine {
 
         mGameObjectManager.clear();
 
-        // shutdown executor service
         if (mScheduledExecutorService != null) {
             mScheduledExecutorService.shutdown();
-
             try {
-                if (!mScheduledExecutorService.awaitTermination(1000, java.util.concurrent.TimeUnit.MILLISECONDS)) {
-                    // shutdown now
+                if (!mScheduledExecutorService.awaitTermination(GameConstants.EXECUTOR_SHUTDOWN_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
                     mScheduledExecutorService.shutdownNow();
-                    GameUtils.info(TAG, "Game cleared");
-
+                    GameUtils.info(TAG, "Game cleared (forced)");
                 }
             } catch (InterruptedException ie) {
                 mScheduledExecutorService.shutdownNow();
                 Thread.currentThread().interrupt();
-                GameUtils.info(TAG, "Game cleared");
+                GameUtils.info(TAG, "Game cleared (interrupted)");
             }
             mScheduledExecutorService = null;
         }
@@ -215,7 +189,6 @@ public class GameEngine {
      * @param direction Direction direction
      */
     public void setMoveDirection(Direction direction) {
-        GameUtils.info(TAG, "setMoveDirection");
         mCurrentMovingDirection = direction;
     }
 
@@ -225,24 +198,20 @@ public class GameEngine {
      * @param shooting boolean
      */
     public void setShooting(boolean shooting) {
-        GameUtils.info(TAG, "setShooting");
         mIsShooting = shooting;
     }
-
 
     /**
      * startNextLevel
      */
     public void startNextLevel() {
         GameUtils.info(TAG, "startNextLevel");
-        // early return
         if (mCurrentState == State.RUNNING) {
             GameUtils.info(TAG, "Game is running");
             return;
         }
 
         mGameObjectManager.nextLevel();
-        //mGameObjectManager.loadLevel(nextLevelId);
         start();
     }
 
@@ -253,7 +222,6 @@ public class GameEngine {
     public int getCurrentLevelId() {
         return mGameObjectManager.getCurrentLevelId();
     }
-
 
     /**
      * get metadata title
@@ -314,7 +282,6 @@ public class GameEngine {
     }
 
     private void updateLogic() {
-        //GameUtils.info(TAG, "updateLogic");
         mGameObjectManager.handleAutoFiring();
         mGameObjectManager.updateAll();
         WinningStrategy strategy = mGameObjectManager.getStrategy();
@@ -325,50 +292,44 @@ public class GameEngine {
     }
 
     private void processCollisions() {
-        //GameUtils.info(TAG, "checkCollisions");
-        //(Mark Dead)
         int hitCount = mGameObjectManager.handleCollisions();
         if (hitCount > 0) {
             mTotalScore += hitCount * GameConstants.SCORE_PER_BEE;
             notifyScoreChanged(mTotalScore);
         }
 
-        // Sweep bees
         mGameObjectManager.cleanupEntities();
-
     }
 
     private void sendFrameToView() {
-        //GameUtils.info(TAG, "sendFrameToView");
         List<GameObject> entities = mGameObjectManager.getAllEntities();
         notifyFrameUpdate(entities);
     }
 
     private void notifyRemainingTime(long elapsed) {
         final EngineCallback callback = mEngineCallback;
-        if (callback != null) mMainHandler.post(() -> callback.onRemainingTime(elapsed));
+        if (callback != null) GameUtils.runOnMainThread(() -> callback.onRemainingTime(elapsed));
     }
 
 
     private void notifyScoreChanged(int score) {
         final EngineCallback callback = mEngineCallback;
-        if (callback != null) mMainHandler.post(() -> callback.onScoreChanged(score));
+        if (callback != null) GameUtils.runOnMainThread(() -> callback.onScoreChanged(score));
     }
 
     private void notifyFrameUpdate(List<GameObject> entities) {
         final EngineCallback callback = mEngineCallback;
-        if (callback != null) mMainHandler.post(() -> callback.onFrameUpdate(entities));
+        if (callback != null) GameUtils.runOnMainThread(() -> callback.onFrameUpdate(entities));
     }
 
     private void updateState(State newState) {
-        // early return
         if (mCurrentState == newState) {
             return;
         }
 
         mCurrentState = newState;
         final EngineCallback callback = mEngineCallback;
-        if (callback != null) mMainHandler.post(() -> callback.onGameStateChanged(newState));
+        if (callback != null) GameUtils.runOnMainThread(() -> callback.onGameStateChanged(newState));
     }
 
     public enum State {
@@ -383,15 +344,9 @@ public class GameEngine {
      * EngineCallback interface
      */
     public interface EngineCallback {
-        // Trigger score changed when hit bee
         void onScoreChanged(int currentScore);
-
-        // refresh game frame when came object state is changed
         void onFrameUpdate(List<GameObject> entities);
-
-        // Trigger when game state is changed
         void onGameStateChanged(State state);
-
         void onRemainingTime(long elapsed);
     }
 

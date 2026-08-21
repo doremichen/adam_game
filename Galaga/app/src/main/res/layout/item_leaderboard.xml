@@ -23,17 +23,17 @@
             android:padding="16dp">
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvPlayerName"
+                android:id="@+id/tv_player_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@{record.name}"
                 android:textAppearance="?attr/textAppearanceTitleMedium"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tvScore" />
+                app:layout_constraintEnd_toStartOf="@+id/tv_score" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvScore"
+                android:id="@+id/tv_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{String.valueOf(record.score)}"
@@ -43,14 +43,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvDate"
+                android:id="@+id/tv_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:formattedDate="@{record.date}"
+                app:formattedDate="@{record.timestamp}"
                 android:textAppearance="?attr/textAppearanceLabelSmall"
                 android:alpha="0.6"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvPlayerName" />
+                app:layout_constraintTop_toBottomOf="@id/tv_player_name" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>

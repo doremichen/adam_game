@@ -22,19 +22,21 @@
 
 package com.adam.app.galaga.data.repository;
 
-import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 
-import com.adam.app.galaga.data.local.AppDatabase;
 import com.adam.app.galaga.data.local.dao.ScoreDao;
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
+import com.adam.app.galaga.domain.repository.IGameRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GameRepository {
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
+public class GameRepository implements IGameRepository {
     // TAG
     private static final String TAG = GameRepository.class.getSimpleName();
     // Executor service
@@ -42,35 +44,16 @@ public class GameRepository {
     // Dao
     private final ScoreDao mScoreDao;
 
-    private static volatile GameRepository sInstance;
-
-    private GameRepository(Application app) {
-        AppDatabase database = AppDatabase.getInstance(app);
-        mScoreDao = database.scoreDao();
+    @Inject
+    public GameRepository(ScoreDao scoreDao) {
+        mScoreDao = scoreDao;
     }
-
-    /**
-     * Singleton
-     */
-    public static GameRepository getInstance(Application app) {
-        if (sInstance == null) {
-            synchronized (GameRepository.class) {
-                if (sInstance == null) {
-                    sInstance = new GameRepository(app);
-                }
-            }
-        }
-
-        return sInstance;
-    }
-
-
-
 
     /**
      * insertScore
      * @param record record
      */
+    @Override
     public void insertScore(ScoreRecord record) {
         mExecutorService.execute(() -> mScoreDao.insertScore(record));
     }
@@ -80,6 +63,7 @@ public class GameRepository {
      * getTop10Scores
      * @return top 10 scores
      */
+    @Override
     public LiveData<List<ScoreRecord>> getTop10Scores() {
         return mScoreDao.getTop10Scores();
     }

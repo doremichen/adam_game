@@ -38,161 +38,96 @@ import com.adam.app.galaga.utils.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
-    // TAG
     private static final String TAG = GameSurfaceView.class.getSimpleName();
 
-    // Render Executor service
-    private ScheduledExecutorService mRenderExecutorService;
-    private Future<?> mRenderFuture;
-
-    private final Paint mCommonPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private volatile List<GameObject> mEntities = new ArrayList<>();
-
-    // Scale x, y
+    private ExecutorService mRenderExecutorService;
+    private final SurfaceHolder mHolder;
+    private final Paint mPaint = new Paint();
+    private List<GameObject> mEntities = new ArrayList<>();
     private float mScaleX = 1.0f;
     private float mScaleY = 1.0f;
-
 
     public GameSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         GameUtils.info(TAG, "Construct");
-        getHolder().addCallback(this);
+        mHolder = getHolder();
+        mHolder.addCallback(this);
         initExecutor();
     }
 
-
-    /**
-     * update Entities
-     */
-    public void updateEntities(List<GameObject> entities) {
-        GameUtils.info(TAG, "updateEntities");
-        mEntities = entities;
-    }
-
-
     private void initExecutor() {
         if (mRenderExecutorService == null || mRenderExecutorService.isShutdown()) {
-            mRenderExecutorService = Executors.newSingleThreadScheduledExecutor();
+            mRenderExecutorService = Executors.newSingleThreadExecutor();
         }
     }
 
-
-    private void startRender() {
-        GameUtils.info(TAG, "startRender");
-        initExecutor(); // assure executor service is live
-        if (mRenderFuture != null && !mRenderFuture.isCancelled()) {
-            GameUtils.info(TAG, "Render is already running");
-            return;
-        }
-
-        mRenderFuture = mRenderExecutorService.scheduleWithFixedDelay(
-                this::renderLoop,
-                0,
-                GameConstants.FRAME_PERIOD_MS,
-                TimeUnit.MILLISECONDS
-        );
+    public void updateEntities(List<GameObject> entities) {
+        if (entities == null) return;
+        this.mEntities = new ArrayList<>(entities);
+        initExecutor();
+        mRenderExecutorService.execute(this::drawFrame);
     }
 
-    private void renderLoop() {
-        // draw
-        SurfaceHolder holder = getHolder();
-        if (!holder.getSurface().isValid()) {
-            GameUtils.info(TAG, "Surface is not valid");
-            return;
-        }
+    private void drawFrame() {
         Canvas canvas = null;
         try {
-            canvas = holder.lockCanvas();
-            if (canvas == null) {
-                GameUtils.info(TAG, "Canvas is null");
-                return;
-            }
-            // save canvas
-            canvas.save();
-
-            // clear canvas
-            canvas.drawColor(Color.BLACK);
-
-            // scale canvas
-            canvas.scale(mScaleX, mScaleY);
-
-            // draw object
-            List<GameObject> snapshot = mEntities;
-            for (GameObject obj : snapshot) {
-                obj.draw(canvas, mCommonPaint);
+            canvas = mHolder.lockCanvas();
+            if (canvas != null) {
+                canvas.drawColor(Color.BLACK);
+                canvas.save();
+                canvas.scale(mScaleX, mScaleY);
+                
+                for (GameObject entity : mEntities) {
+                    entity.draw(canvas, mPaint);
+                }
+                
+                canvas.restore();
             }
         } catch (Exception e) {
-            GameUtils.error(TAG, "renderLoop error");
-            e.printStackTrace();
+            GameUtils.error(TAG, "drawFrame error: " + e.getMessage());
         } finally {
             if (canvas != null) {
-                holder.unlockCanvasAndPost(canvas);
+                mHolder.unlockCanvasAndPost(canvas);
             }
         }
-    }
-
-    private void stopRender() {
-        GameUtils.info(TAG, "stopRender");
-        if (mRenderFuture == null) {
-            GameUtils.info(TAG, "Render is not running");
-            return;
-        }
-
-        if (mRenderFuture.isCancelled()) {
-            GameUtils.info(TAG, "Render is already stopped");
-            return;
-        }
-
-        mRenderFuture.cancel(true);
-        mRenderFuture = null;
     }
 
     public void release() {
-        GameUtils.info(TAG, "release");
-        stopRender();
-        mRenderExecutorService.shutdownNow();
-
-        try {
-            if (!mRenderExecutorService.awaitTermination(1000, java.util.concurrent.TimeUnit.MILLISECONDS)) {
-                // shutdown now
+        if (mRenderExecutorService != null) {
+            mRenderExecutorService.shutdown();
+            try {
+                if (!mRenderExecutorService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+                    mRenderExecutorService.shutdownNow();
+                }
+            } catch (InterruptedException ie) {
                 mRenderExecutorService.shutdownNow();
-                GameUtils.info(TAG, "render service is  shutdown!!");
+                Thread.currentThread().interrupt();
             }
-        } catch (InterruptedException ie) {
-            mRenderExecutorService.shutdownNow();
-            Thread.currentThread().interrupt();
+            mRenderExecutorService = null;
         }
-
-    }
-
-
-    @Override
-    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int format, int width, int height) {
-        GameUtils.info(TAG, "surfaceChanged: ");
-        GameUtils.info(TAG, "width=" + width + ", height=" + height);
-        GameUtils.setScreenSize(width, height);
-        mScaleX = (float) width / GameConstants.GAME_WIDTH;
-        mScaleY = (float) height / GameConstants.GAME_HEIGHT;
-
-        GameUtils.info(TAG, "Scale factors: X=" + mScaleX + ", Y=" + mScaleY);
     }
 
     @Override
     public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
         GameUtils.info(TAG, "surfaceCreated");
-        // start render
-        startRender();
+    }
+
+    @Override
+    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int format, int width, int height) {
+        GameUtils.info(TAG, "surfaceChanged: width=" + width + ", height=" + height);
+        mScaleX = (float) width / GameConstants.GAME_WIDTH;
+        mScaleY = (float) height / GameConstants.GAME_HEIGHT;
+        GameUtils.info(TAG, "Scale factors: X=" + mScaleX + ", Y=" + mScaleY);
     }
 
     @Override
     public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
         GameUtils.info(TAG, "surfaceDestroyed");
-        stopRender();
+        release();
     }
 }

@@ -35,27 +35,26 @@ import com.adam.app.galaga.utils.GameUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 /**
  * SoundManager - Manages SoundPool for SFX and MediaPlayer for BGM.
  * Integrated with res/raw resources.
  */
+@Singleton
 public class SoundManager {
     private static final String TAG = SoundManager.class.getSimpleName();
 
     private SoundPool mSoundPool;
     private MediaPlayer mMediaPlayer;
     private final Map<String, Integer> mSoundMap = new HashMap<>();
-    private final GameSettings mSettings = GameSettings.getInstance();
+    private final GameSettings mSettings;
     private boolean mIsInitialized = false;
 
-    private SoundManager() {}
-
-    private static class Helper {
-        private static final SoundManager INSTANCE = new SoundManager();
-    }
-
-    public static SoundManager getInstance() {
-        return Helper.INSTANCE;
+    @Inject
+    public SoundManager(GameSettings settings) {
+        this.mSettings = settings;
     }
 
     /**

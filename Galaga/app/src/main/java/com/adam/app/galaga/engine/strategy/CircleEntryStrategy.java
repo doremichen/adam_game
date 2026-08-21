@@ -36,7 +36,7 @@ public class CircleEntryStrategy extends BaseEntryStrategy {
 
     @Override
     public PointF getPosition(long elapsedMillis, PointF targetPos) {
-        float t = Math.min(1.0f, (float) elapsedMillis / mDuration);
+        float t = Math.min(1.0f, (float) elapsedMillis / getDuration());
         
         if (t < GameConstants.CIRCLE_PHASE_THRESHOLD) {
             float spinT = t / GameConstants.CIRCLE_PHASE_THRESHOLD;

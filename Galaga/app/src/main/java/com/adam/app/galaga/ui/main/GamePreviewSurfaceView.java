@@ -32,7 +32,6 @@ import android.view.SurfaceView;
 
 import androidx.annotation.NonNull;
 
-import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.utils.GameConstants;
 
 import java.util.ArrayList;
@@ -44,246 +43,172 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GamePreviewSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
-    // TAG
-    private static final String TAG = "GamePreviewSurfaceView";
-    // Random
-    private final Random mRandom = new Random();
-    // --- Game Entities ---
-    private Fighter mFighter;
-    private final List<Bee> mEnemies = new ArrayList<>();
-    private final List<Bullet> mBullets = new ArrayList<>();
-    // ScheduledExecutorService
-    private volatile ScheduledExecutorService mExecutor;
-    // Paint
-    private final Paint mPaint = new Paint();
 
+    private static final int ENEMY_COUNT = 15;
+    private static final long FRAME_DELAY = 16L;
+
+    private ScheduledExecutorService mExecutor;
+    private final Paint mPaint = new Paint();
+    private final List<Enemy> mEnemies = new ArrayList<>();
+    private final List<Bullet> mBullets = new ArrayList<>();
+    private final Random mRandom = new Random();
+    private Player mPlayer;
 
     public GamePreviewSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // add Callback
-        this.getHolder().addCallback(this);
+        getHolder().addCallback(this);
     }
 
-    @Override
-    public void surfaceChanged(@NonNull SurfaceHolder surfaceHolder, int format, int width, int height) {
+    private void startAnimation() {
+        if (mExecutor != null && !mExecutor.isShutdown()) {
+            return;
+        }
 
+        mExecutor = Executors.newSingleThreadScheduledExecutor();
+        initObjects();
+
+        mExecutor.scheduleWithFixedDelay(this::updateAndDraw, 0, FRAME_DELAY, TimeUnit.MILLISECONDS);
     }
 
-    @Override
-    public void surfaceCreated(@NonNull SurfaceHolder surfaceHolder) {
-        // init game
-        initGame();
-        // init executor service
-        this.mExecutor = Executors.newSingleThreadScheduledExecutor();
-        // start schedule
-        this.mExecutor.scheduleWithFixedDelay(this::updateAndRender, 0, 16L, TimeUnit.MILLISECONDS);
-
-    }
-
-    @Override
-    public void surfaceDestroyed(@NonNull SurfaceHolder surfaceHolder) {
-        // shutdown executor
-        if (this.mExecutor == null) return;
-
-        try {
+    private void stopAnimation() {
+        if (mExecutor != null) {
             mExecutor.shutdown();
-            if (mExecutor.awaitTermination(3L, TimeUnit.SECONDS)) {
+            try {
+                mExecutor.awaitTermination(1L, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
                 mExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
             }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            mExecutor = null;
         }
     }
 
-    private void initGame() {
-        // init plan
-        this.mFighter = new Fighter(this.getWidth() / 2f, this.getHeight() - 150f, getWidth(), getHeight());
-        spawnEnemies();
-    }
-
-    private void spawnEnemies() {
-        // clear
-        this.mEnemies.clear();
-        // build list of enemy
-        final int ENEMY_COUNT = 5;
+    private void initObjects() {
+        mEnemies.clear();
+        mBullets.clear();
         for (int i = 0; i < ENEMY_COUNT; i++) {
-            this.mEnemies.add(new Bee(
-                    mRandom.nextInt(this.getWidth()),
-                    mRandom.nextInt(getHeight() / 2),
-                    getWidth(),
-                    getHeight()));
+            mEnemies.add(new Enemy());
+        }
+        mPlayer = new Player();
+    }
+
+    private void updateAndDraw() {
+        update();
+        Canvas canvas = getHolder().lockCanvas();
+        if (canvas != null) {
+            try {
+                drawFrame(canvas);
+            } finally {
+                getHolder().unlockCanvasAndPost(canvas);
+            }
         }
     }
 
-    private void updateAndRender() {
-        SurfaceHolder holder = getHolder();
-        Canvas canvas = holder.lockCanvas();
-        if (canvas == null) return;
-        try {
-            // update background
-            canvas.drawColor(Color.BLACK);
-            // plan
-            this.mFighter.update();
-            this.mFighter.draw(canvas, this.mPaint);
-            // fire
-            if (this.mFighter.shouldFire()) { // 每 500ms 左右發射
-                mBullets.add(new Bullet(mFighter.getPosition().x, mFighter.getPosition().y));
+    private void update() {
+        for (Enemy enemy : mEnemies) {
+            enemy.update();
+        }
+
+        mPlayer.update();
+
+        if (mRandom.nextInt(100) < 5) {
+            mBullets.add(new Bullet(mPlayer.x + 40, mPlayer.y));
+        }
+
+        Iterator<Bullet> bIter = mBullets.iterator();
+        while (bIter.hasNext()) {
+            Bullet bullet = bIter.next();
+            bullet.update();
+            if (bullet.y < 0) {
+                bIter.remove();
             }
-
-            Iterator<Bullet> bIter = mBullets.iterator();
-            while (bIter.hasNext()) {
-                Bullet b = bIter.next();
-                b.update();
-                b.draw(canvas, mPaint);
-                if (b.getPosition().y < 0) bIter.remove(); // when out of y bound the bullet is removed
-            }
-
-            // update bee
-            Iterator<Bee> eIter = mEnemies.iterator();
-            while (eIter.hasNext()) {
-                Bee bee = eIter.next();
-                bee.update();
-                bee.draw(canvas, mPaint);
-
-                // detect collision
-                for (Bullet b: mBullets) {
-                    if (Math.abs(b.getPosition().x - bee.getPosition().x) < 40 && Math.abs(b.getPosition().y - bee.getPosition().y) < 40) {
-                        bee.setDead(true);
-                        break;
-                    }
-                }
-                // when bee is dead that would be removed
-                if (bee.isDead()) {
-                    eIter.remove();
-                }
-            }
-
-            // reset when the enemies is empty
-            if (mEnemies.isEmpty()) {
-                spawnEnemies();
-            }
-
-        } finally {
-            holder.unlockCanvasAndPost(canvas);
         }
     }
 
-    // Game entity
-    private static class Fighter extends GameObject {
+    private void drawFrame(Canvas canvas) {
+        canvas.drawColor(Color.TRANSPARENT, android.graphics.PorterDuff.Mode.CLEAR);
 
-        private long mLastFireTime;
-
-        public Fighter(float x, float y, int width, int height) {
-            super(x, y, 5f, width, height);
-            this.mLastFireTime = System.currentTimeMillis();
+        mPaint.setColor(Color.RED);
+        for (Enemy enemy : mEnemies) {
+            canvas.drawRect(enemy.x, enemy.y, enemy.x + 40, enemy.y + 40, mPaint);
         }
 
+        mPaint.setColor(Color.BLUE);
+        canvas.drawRect(mPlayer.x, mPlayer.y, mPlayer.x + 80, mPlayer.y + 80, mPaint);
 
-        public boolean shouldFire() {
-            long currentTime = System.currentTimeMillis();
-            if (currentTime - mLastFireTime >= GameConstants.AUTO_FIRE_INTERVAL) {
-                mLastFireTime = currentTime;
-                return  true;
-            }
-            return  false;
-        }
-
-
-
-        @Override
-        public void update() {
-            this.mPosition.x += this.mSpeed;
-            if (this.mPosition.x < 50 ||
-                    this.mPosition.x > this.mWidth - 50) {
-                // change speed direction
-                this.mSpeed *= -1;
-            }
-        }
-
-        @Override
-        public void draw(Canvas canvas, Paint paint) {
-            paint.setColor(Color.WHITE);
-            // body
-            canvas.drawRect(
-                    this.mPosition.x - 30,
-                    this.mPosition.y,
-                    this.mPosition.x + 30,
-                    this.mPosition.y + 40,
-                    paint
-            );
-            // head
-            paint.setColor(Color.RED);
-            canvas.drawRect(
-                    this.mPosition.x - 5,
-                    this.mPosition.y - 10,
-                    this.mPosition.x + 5,
-                    this.mPosition.y,
-                    paint
-            );
-
+        mPaint.setColor(Color.YELLOW);
+        for (Bullet bullet : mEnemies.isEmpty() ? new ArrayList<Bullet>() : mBullets) {
+            canvas.drawRect(bullet.x, bullet.y, bullet.x + 10, bullet.y + 20, mPaint);
         }
     }
 
-    private static class Bullet extends GameObject {
+    @Override
+    public void surfaceCreated(@NonNull SurfaceHolder holder) {
+        startAnimation();
+    }
 
-        public Bullet(float x, float y) {
-            super(x, y, 15f, 0, 0);
+    @Override
+    public void surfaceChanged(@NonNull SurfaceHolder holder, int format, int width, int height) {
+    }
+
+    @Override
+    public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
+        stopAnimation();
+    }
+
+    private class Enemy {
+        float x, y, speed;
+
+        Enemy() {
+            reset();
         }
 
-        @Override
-        public void update() {
-            // update position
-            this.mPosition.y -= this.mSpeed;
+        void reset() {
+            x = mRandom.nextInt(Math.max(1, getWidth() - 40));
+            y = -mRandom.nextInt(500);
+            speed = 2 + mRandom.nextFloat() * 3;
         }
 
-        @Override
-        public void draw(Canvas canvas, Paint paint) {
-            paint.setColor(Color.YELLOW);
-            canvas.drawCircle(this.mPosition.x, this.mPosition.y, 8f, paint);
+        void update() {
+            y += speed;
+            if (y > getHeight()) {
+                reset();
+            }
         }
     }
 
-    private static class Bee extends GameObject {
-        private boolean mIsDead = false;
-        private float mVx;
-        private float mVy;
+    private class Player {
+        float x, y, targetX;
 
-        public Bee(float x, float y, int width, int height) {
-            super(x, y, 0f, width, height);
-            this.mVx = (new Random().nextFloat() - 0.5f) * 10;
-            this.mVy = (new Random().nextFloat() - 0.5f) * 10;
+        Player() {
+            y = GameConstants.GAME_HEIGHT - 200f; // Simplified
+            x = 500;
+            targetX = x;
         }
 
-        @Override
-        public void update() {
-            // update position
-            this.mPosition.x += this.mVx;
-            this.mPosition.y += this.mVy;
-            // boundary check
-            if (this.mPosition.x < 0 || this.mPosition.x > this.mWidth) {
-                this.mVx *= -1f;
+        void update() {
+            if (Math.abs(x - targetX) < 5) {
+                targetX = mRandom.nextInt(Math.max(1, getWidth() - 80));
             }
-            if (this.mPosition.y < 0 || this.mPosition.y > this.mHeight / 2f) {
-                this.mVy *= -1f;
+            x += (targetX - x) * 0.1f;
+            
+            // Adjust Y based on actual height
+            if (getHeight() > 0) {
+                y = getHeight() - 100;
             }
-        }
-
-        @Override
-        public void draw(Canvas canvas, Paint paint) {
-            paint.setColor(Color.MAGENTA);
-            canvas.drawCircle(this.mPosition.x, this.mPosition.y, 25f, paint);
-        }
-
-        @Override
-        public boolean isDead() {
-            return mIsDead;
-        }
-
-        @Override
-        public void setDead(boolean dead) {
-            mIsDead = dead;
         }
     }
 
+    private static class Bullet {
+        float x, y;
 
+        Bullet(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        void update() {
+            y -= 15;
+        }
+    }
 }

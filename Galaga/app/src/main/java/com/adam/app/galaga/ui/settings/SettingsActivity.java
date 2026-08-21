@@ -39,98 +39,88 @@ import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.SettingsViewModel;
 
-public class SettingsActivity extends AppCompatActivity {
-    // TAG
-    private static final String TAG = SettingsActivity.class.getSimpleName();
+import java.util.Objects;
 
-    // view binding
-    private ActivitySettingsBinding mBinding;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class SettingsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // view binding
-        mBinding = ActivitySettingsBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
+        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(mBinding.settings.getId(), new SettingsFragment())
+                    .replace(binding.flSettings.getId(), new SettingsFragment())
                     .commit();
         }
-
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat
-            implements SharedPreferences.OnSharedPreferenceChangeListener{
+            implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-        // view model
-        private SettingsViewModel mViewMode;
+        private SettingsViewModel mViewModel;
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            // init view model
-            mViewMode = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
-        
-            // observer exception info
-            mViewMode.getExceptionInfo().observe(this.requireActivity(), this::onException);
-        
+            mViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
+            mViewModel.getExceptionInfo().observe(this.requireActivity(), this::onException);
         }
 
         private void onException(String info) {
-            if (info == null) return;
-
-            if (info.equals(GameConstants.NOT_SUPPORT_INFO)) {
-                // show toast
+            if (Objects.equals(info, GameConstants.NOT_SUPPORT_INFO)) {
                 GameUtils.showToast(this.getActivity(), this.getString(R.string.galaga_show_not_support_toast));
-                // clear event
-                mViewMode.clearExceptionInfo();
+                mViewModel.clearExceptionInfo();
             }
         }
 
         @Override
         public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            // set transparent
-            getListView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            if (getListView() != null) {
+                getListView().setBackgroundColor(android.graphics.Color.TRANSPARENT);
+            }
         }
 
         @Override
         public void onResume() {
             super.onResume();
-            getPreferenceManager().getSharedPreferences()
-                    .registerOnSharedPreferenceChangeListener(this);
+            if (getPreferenceManager().getSharedPreferences() != null) {
+                getPreferenceManager().getSharedPreferences()
+                        .registerOnSharedPreferenceChangeListener(this);
+            }
         }
 
         @Override
         public void onPause() {
             super.onPause();
-            getPreferenceManager().getSharedPreferences()
-                    .unregisterOnSharedPreferenceChangeListener(this);
+            if (getPreferenceManager().getSharedPreferences() != null) {
+                getPreferenceManager().getSharedPreferences()
+                        .unregisterOnSharedPreferenceChangeListener(this);
+            }
         }
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sPf, @Nullable String key) {
-            // change item setting
-            SettingsItem.changeSharedPreference(mViewMode, sPf, key);
+            SettingsItem.changeSharedPreference(mViewModel, sPf, key);
         }
 
         private enum SettingsItem {
-
             AutoFire(GameSettings.KEY_AUTO_FIRE) {
                 @Override
                 protected void handle(SettingsViewModel viewModel, SharedPreferences sPf) {
-                    // get setting
                     boolean isAutoFire = sPf.getBoolean(GameSettings.KEY_AUTO_FIRE, false);
                     viewModel.updateAutoFire(isAutoFire);
-
                 }
             },
             ShotType(GameSettings.KEY_SHOT_TYPE) {
                 @Override
                 protected void handle(SettingsViewModel viewModel, SharedPreferences sPf) {
-                    // get setting
                     String style = sPf.getString(GameSettings.KEY_SHOT_TYPE, GameSettings.ShotStyle.STRAIGHT.name());
                     viewModel.updateShotStyle(style);
                 }
@@ -152,21 +142,20 @@ public class SettingsActivity extends AppCompatActivity {
 
             private final String mKey;
 
-            private SettingsItem(String key) {
+            SettingsItem(String key) {
                 this.mKey = key;
             }
 
             static void changeSharedPreference(SettingsViewModel viewModel, SharedPreferences sPf, String key) {
-                for (SettingsItem item: SettingsItem.values()) {
-                    if (item.mKey.equals(key)) {
+                for (SettingsItem item : SettingsItem.values()) {
+                    if (Objects.equals(item.mKey, key)) {
                         item.handle(viewModel, sPf);
                         break;
                     }
                 }
             }
+
             protected abstract void handle(SettingsViewModel viewModel, SharedPreferences sPf);
         }
-
-
     }
 }

@@ -1,0 +1,118 @@
+@startuml
+skinparam backgroundColor white
+skinparam handwritten false
+skinparam class {
+    BackgroundColor white
+    ArrowColor Black
+    BorderColor DarkBlue
+}
+
+package "Presentation Layer" {
+    class MainActivity
+    class MainViewModel
+    class GameActivity
+    class GameViewModel
+    class LeaderboardActivity
+    class LeaderboardViewModel
+    class SettingsActivity
+    class SettingsViewModel
+}
+
+package "Domain Layer" {
+    interface IUseCase<T, R>
+    class GameUseCase
+    enum ActionType
+    class UseCaseBridge
+
+    interface IGameRepository
+    interface ILevelRepository
+}
+
+package "Data Layer" {
+    class GameRepository
+    class LevelRepository
+    class AppDatabase <<RoomDatabase>>
+    interface ScoreDao
+    class ScoreRecord <<Entity>>
+    class AssetProvider
+    class GameSettings <<SharedPreferences>>
+}
+
+package "Engine Layer" {
+    class GameEngine
+    class GameObjectManager
+    class LevelManager
+    class CollisionManager
+    class SoundManager
+    class EnemySpawner
+
+    package "Spawning (CoR)" {
+        abstract class SpawnHandler
+        class NewWaveHandler
+        class WaveInProgressHandler
+    }
+
+    package "Entry Strategy" {
+        interface EnemyEntryStrategy
+        class ArcEntryStrategy
+        class CircleEntryStrategy
+    }
+
+    package "States (State Pattern)" {
+        interface BeeState
+        class FormationState
+        class DivingState
+        class EnteringState
+    }
+
+    abstract class GameObject
+    class Bee
+    class Plane
+    class Bullet
+}
+
+' Relationships
+MainViewModel --> GameUseCase
+GameViewModel --> GameUseCase
+LeaderboardViewModel --> GameUseCase
+SettingsViewModel --> GameSettings
+
+GameUseCase ..|> IUseCase
+GameUseCase +-- ActionType
+GameUseCase +-- UseCaseBridge
+UseCaseBridge --> IGameRepository
+UseCaseBridge --> ILevelRepository
+
+GameRepository ..|> IGameRepository
+LevelRepository ..|> ILevelRepository
+
+GameRepository --> ScoreDao
+ScoreDao --> ScoreRecord
+LevelRepository --> AssetProvider
+AppDatabase --> ScoreDao
+
+GameViewModel --> GameEngine
+GameEngine --> GameObjectManager
+GameObjectManager --> CollisionManager
+GameObjectManager --> LevelManager
+GameObjectManager --> SoundManager
+GameObjectManager --> EnemySpawner
+
+EnemySpawner --> SpawnHandler
+SpawnHandler <|-- NewWaveHandler
+SpawnHandler <|-- WaveInProgressHandler
+
+GameObject <|-- Bee
+GameObject <|-- Plane
+GameObject <|-- Bullet
+
+Bee --> BeeState
+BeeState <|.. FormationState
+BeeState <|.. DivingState
+BeeState <|.. EnteringState
+
+Bee --> EnemyEntryStrategy
+EnemyEntryStrategy <|.. ArcEntryStrategy
+EnemyEntryStrategy <|.. CircleEntryStrategy
+
+@enduml

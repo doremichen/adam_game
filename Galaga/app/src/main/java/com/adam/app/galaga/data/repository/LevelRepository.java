@@ -22,38 +22,29 @@
 
 package com.adam.app.galaga.data.repository;
 
-import android.content.Context;
-
 import com.adam.app.galaga.data.local.assets.AssetProvider;
 import com.adam.app.galaga.data.model.LevelConfig;
+import com.adam.app.galaga.domain.repository.ILevelRepository;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class LevelRepository {
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
+public class LevelRepository implements ILevelRepository {
     // TAG
     private static final String TAG = LevelRepository.class.getSimpleName();
-    private static volatile LevelRepository sInstance;
     // AssetProvider
     private final AssetProvider mAssetProvider;
     // mLevelCache
     private final Map<Integer, LevelConfig> mLevelCache = new HashMap<>();
 
-    private LevelRepository(Context context) {
-        mAssetProvider = AssetProvider.getInstance(context);
+    @Inject
+    public LevelRepository(AssetProvider assetProvider) {
+        mAssetProvider = assetProvider;
     }
-
-    public static LevelRepository getInstance(Context context) {
-        if (sInstance == null) {
-            synchronized (LevelRepository.class) {
-                if (sInstance == null) {
-                    sInstance = new LevelRepository(context);
-                }
-            }
-        }
-        return sInstance;
-    }
-
 
     /**
      * getLevelConfig
@@ -61,6 +52,7 @@ public class LevelRepository {
      * @param levelId int
      * @return LevelConfig
      */
+    @Override
     public LevelConfig getLevelConfig(int levelId) {
         // early return
         if (mLevelCache.containsKey(levelId)) {

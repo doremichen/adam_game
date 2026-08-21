@@ -24,26 +24,25 @@ package com.adam.app.galaga.ui.about;
 
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-import com.adam.app.galaga.R;
 import com.adam.app.galaga.databinding.ActivityAboutBinding;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class AboutActivity extends AppCompatActivity {
-
-    // view binding
-    private ActivityAboutBinding mBinding;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // view binding
-        mBinding = ActivityAboutBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
+        ActivityAboutBinding binding = ActivityAboutBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
+        setSupportActionBar(binding.aboutToolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        binding.aboutToolbar.setNavigationOnClickListener(v -> finish());
     }
 }

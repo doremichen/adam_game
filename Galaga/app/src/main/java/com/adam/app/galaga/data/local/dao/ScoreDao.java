@@ -25,6 +25,7 @@ package com.adam.app.galaga.data.local.dao;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
@@ -33,9 +34,10 @@ import java.util.List;
 
 @Dao
 public interface ScoreDao {
-    @Insert
-    public void insertScore(ScoreRecord record);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertScore(ScoreRecord record);
 
     @Query("SELECT * FROM leaderboard ORDER BY score DESC LIMIT 10")
-    public LiveData<List<ScoreRecord>> getTop10Scores();
+    LiveData<List<ScoreRecord>> getTop10Scores();
 }

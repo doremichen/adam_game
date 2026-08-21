@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">大黃蜂戰機</string>
     <string name="galaga_leaderboard_title">排行榜</string>
+    <string name="galaga_leaderboard_empty">目前尚無排行資料。開始遊戲來挑戰上榜吧！</string>
     <string name="galaga_exit_btn">離開</string>
     <string name="galaga_main_start_game_btn">開始</string>
     <string name="galaga_main_settings_btn">設定</string>
@@ -11,15 +12,15 @@
     <string name="galaga_dlg_confirm_and_exit_btn"><![CDATA[確認 & 離開]]></string>
     <string name="galaga_dlg_paused_title">停止</string>
     <string name="galaga_dlg_continue_btn">繼續</string>
-    <string name="game_score">分數：%1$d</string>
-    <string name="game_next_level">下一關：第 %1$d 關</string>
-    <string name="game_level_cleared">成功過關</string>
+    <string name="galaga_game_score">分數：%1$d</string>
+    <string name="galaga_game_next_level">下一關：第 %1$d 關</string>
+    <string name="galaga_game_level_cleared">成功過關</string>
 
-    <string name="dir_up">↑</string>
-    <string name="dir_down">↓</string>
-    <string name="dir_left">←</string>
-    <string name="dir_right">→</string>
-    <string name="title_activity_settings">設定</string>
+    <string name="galaga_dir_up">↑</string>
+    <string name="galaga_dir_down">↓</string>
+    <string name="galaga_dir_left">←</string>
+    <string name="galaga_dir_right">→</string>
+    <string name="galaga_settings_activity_title">設定</string>
     <string name="galaga_settings_category_title">戰鬥與控制</string>
     <string name="galaga_settings_auto_fire_summary">以固定間隔自動發射子彈</string>
     <string name="galaga_settings_auto_fire_title">自動開火</string>

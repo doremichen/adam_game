@@ -15,7 +15,7 @@
         android:background="?attr/colorSurface">
 
         <com.adam.app.galaga.ui.main.GamePreviewSurfaceView
-            android:id="@+id/gamePreview"
+            android:id="@+id/game_preview"
             android:layout_width="0dp"
             android:layout_height="240dp"
             android:layout_marginTop="40dp"
@@ -24,14 +24,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tvMainTitle"
+            android:id="@+id/tv_main_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/galaga_game_name"
             android:textColor="#00E5FF"
             android:textSize="28sp"
             android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/gamePreview"
+            app:layout_constraintTop_toBottomOf="@id/game_preview"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="-20dp"/>
@@ -48,60 +48,60 @@
 <!--            app:layout_constraintTop_toTopOf="parent" />-->
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnStart"
+            android:id="@+id/btn_start"
             style="@style/Widget.Material3.Button.ElevatedButton"
             android:layout_width="240dp"
             android:layout_height="64dp"
             android:text="@string/galaga_main_start_game_btn"
             android:onClick="@{() -> viewModel.onStartGame()}"
             android:textAppearance="?attr/textAppearanceTitleLarge"
-            app:layout_constraintBottom_toTopOf="@+id/btnSettings"
+            app:layout_constraintBottom_toTopOf="@+id/btn_settings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvMainTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tv_main_title"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSettings"
+            android:id="@+id/btn_settings"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/galaga_main_settings_btn"
             android:onClick="@{() -> viewModel.onOpenSettings()}"
-            app:layout_constraintBottom_toTopOf="@+id/btnLeaderboard"
+            app:layout_constraintBottom_toTopOf="@+id/btn_leaderboard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnStart" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_start" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLeaderboard"
+            android:id="@+id/btn_leaderboard"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/galaga_main_leaderboard_btn"
             android:onClick="@{() -> viewModel.onOpenLeaderBoard()}"
-            app:layout_constraintBottom_toTopOf="@+id/btnAbout"
+            app:layout_constraintBottom_toTopOf="@+id/btn_about"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnSettings" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_settings" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAbout"
+            android:id="@+id/btn_about"
             style="@style/Widget.Material3.Button.TonalButton"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:text="@string/galaga_main_about_btn"
             android:onClick="@{() -> viewModel.onOpenAbout()}"
-            app:layout_constraintBottom_toTopOf="@+id/btnExit"
+            app:layout_constraintBottom_toTopOf="@+id/btn_exit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnLeaderboard" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_leaderboard" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExit"
+            android:id="@+id/btn_exit"
             style="@style/Widget.Material3.Button.TextButton"
             android:layout_width="240dp"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnAbout" />
+            app:layout_constraintTop_toBottomOf="@+id/btn_about" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

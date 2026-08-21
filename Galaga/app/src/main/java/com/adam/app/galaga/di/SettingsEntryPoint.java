@@ -20,28 +20,16 @@
  * SOFTWARE.
  */
 
-package com.adam.app.galaga.engine.handler;
+package com.adam.app.galaga.di;
 
-import com.adam.app.galaga.utils.GameConstants;
+import com.adam.app.galaga.data.local.prefs.GameSettings;
 
-/**
- * Handles spawning when a wave is already in progress.
- */
-public class WaveInProgressHandler extends SpawnHandler {
-    @Override
-    public boolean handle(SpawnContext context) {
-        if (context.getRemainingInWave() > 0) {
-            if (context.getCurrentTime() - context.getLastEnemySpawnTime() >= GameConstants.INTER_ENEMY_DELAY_MS) {
-                context.setRemainingInWave(context.getRemainingInWave() - 1);
-                context.setLastEnemySpawnTime(context.getCurrentTime());
-                return true;
-            }
-            return false;
-        }
-        
-        if (getNext() != null) {
-            return getNext().handle(context);
-        }
-        return false;
-    }
+import dagger.hilt.EntryPoint;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
+
+@EntryPoint
+@InstallIn(SingletonComponent.class)
+public interface SettingsEntryPoint {
+    GameSettings getGameSettings();
 }

@@ -33,7 +33,7 @@
         <activity
             android:name=".ui.settings.SettingsActivity"
             android:exported="false"
-            android:label="@string/title_activity_settings"
+            android:label="@string/galaga_settings_activity_title"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Galaga.Settings" />
         <activity

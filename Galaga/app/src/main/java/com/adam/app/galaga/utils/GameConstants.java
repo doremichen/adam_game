@@ -32,7 +32,9 @@ public final class GameConstants {
     public static final int GAME_WIDTH = 1080;
     public static final int GAME_HEIGHT = 1920;
     public static final int FPS = 60;
-    public static final long FRAME_PERIOD_MS = 1000 / FPS;
+    public static final long FRAME_PERIOD_MS = 1000L / FPS;
+    public static final long GAME_START_DELAY_MS = 1000L;
+    public static final long EXECUTOR_SHUTDOWN_TIMEOUT_MS = 1000L;
 
     // --- Player Settings ---
     public static final float PLAYER_START_X = 500f;
@@ -49,7 +51,7 @@ public final class GameConstants {
     public static final int BULLET_HEIGHT = 20;
     public static final int LASER_WIDTH = 8;
     public static final int LASER_HEIGHT = 250;
-    public static final long AUTO_FIRE_INTERVAL = 500;
+    public static final long AUTO_FIRE_INTERVAL = 500L;
 
     // --- Enemy (General) ---
     public static final int BEE_WIDTH = 80;
@@ -61,20 +63,21 @@ public final class GameConstants {
     public static final float BEE_DIVE_PROBABILITY = 0.005f;
     public static final int BEE_TURN_INTERVAL_MS = 1000;
 
-    // --- Enemy Spawning (Waves) ---
+    // --- Waves & Levels ---
     public static final int WAVE_SIZE = 5;
-    public static final long WAVE_DELAY_MS = 3000;
-    public static final long INTER_ENEMY_DELAY_MS = 200;
+    public static final long WAVE_DELAY_MS = 3000L;
+    public static final long INTER_ENEMY_DELAY_MS = 200L;
     public static final long LEVEL_DURATION_MS = 30000L;
+    public static final long LEVEL_TRANSITION_DELAY_MS = 2000L;
 
     // --- Entry Strategies ---
     // Arc
-    public static final long ARC_DURATION = 2000;
+    public static final long ARC_DURATION = 2000L;
     public static final float ARC_SCREEN_OFFSET = 100f;
     public static final float ARC_CONTROL_POINT_Y_RATIO = 0.25f;
     
     // Circle
-    public static final long CIRCLE_DURATION = 3000;
+    public static final long CIRCLE_DURATION = 3000L;
     public static final float CIRCLE_PHASE_THRESHOLD = 0.7f;
     public static final float CIRCLE_RADIUS_START = 200f;
     public static final float CIRCLE_RADIUS_END = 50f;

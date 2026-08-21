@@ -33,9 +33,6 @@ public final class GameUtils {
 
     // Game Tag
     private static final String TAG = "Galaga";
-    // screen size:
-    private static int sScreenWidth = 0;
-    private static int sScreenHeight = 0;
 
 
     private GameUtils() {
@@ -45,39 +42,57 @@ public final class GameUtils {
     /**
      * info log
      *
-     * @param tag
-     * @param msg
+     * @param featureTag tag for the feature
+     * @param msg        message
      */
-    public static void info(String tag, String msg) {
-        Log.i(TAG, tag + ": " + msg);
+    public static void info(String featureTag, String msg) {
+        Log.i(TAG, featureTag + ": " + msg);
     }
 
     /**
-     * erro log
+     * error log
      *
-     * @param tag
-     * @param msg
+     * @param featureTag tag for the feature
+     * @param msg        message
      */
-    public static void error(String tag, String msg) {
-        Log.e(TAG, tag + ": " + msg);
+    public static void error(String featureTag, String msg) {
+        Log.e(TAG, featureTag + ": " + msg);
     }
 
     /**
-     *
      * Show toast message.
      *
      * @param context Context
      * @param msg     String
      */
-    public static void showToast(Context context, String msg) {
-        // check if main thread
-        if (Looper.myLooper() != Looper.getMainLooper()) {
-            // run in main thread
-            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
-            return;
-        }
+    public static void showToast(final Context context, final String msg) {
+        runOnMainThread(() -> Toast.makeText(context, msg, Toast.LENGTH_SHORT).show());
+    }
 
-        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+    /**
+     * Run a task on the main thread.
+     *
+     * @param task Runnable
+     */
+    public static void runOnMainThread(Runnable task) {
+        runOnMainThread(task, 0);
+    }
+
+    /**
+     * Run a task on the main thread with a delay.
+     *
+     * @param task    Runnable
+     * @param delayMs Delay in milliseconds
+     */
+    public static void runOnMainThread(Runnable task, long delayMs) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        if (delayMs > 0) {
+            handler.postDelayed(task, delayMs);
+        } else if (Looper.myLooper() == Looper.getMainLooper()) {
+            task.run();
+        } else {
+            handler.post(task);
+        }
     }
 
     /**
@@ -90,39 +105,5 @@ public final class GameUtils {
         Intent intent = new Intent(context, cls);
         context.startActivity(intent);
     }
-
-    public static void showUnImplementedToast(Context context) {
-        showToast(context, "Not implemented yet");
-    }
-
-    /**
-     * set screen size
-     *
-     * @param width  int
-     * @param height int
-     */
-    public static void setScreenSize(int width, int height) {
-        sScreenWidth = width;
-        sScreenHeight = height;
-    }
-
-    /**
-     * get screen width
-     *
-     * @return int
-     */
-    public static int getScreenWidth() {
-        return (sScreenWidth == 0) ? GameConstants.GAME_WIDTH : sScreenWidth;
-    }
-
-    /**
-     * get screen height
-     *
-     * @return int
-     */
-    public static int getScreenHeight() {
-        return (sScreenHeight == 0) ? GameConstants.GAME_HEIGHT : sScreenHeight;
-    }
-
 
 }

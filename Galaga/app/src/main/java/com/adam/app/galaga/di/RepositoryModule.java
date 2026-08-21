@@ -20,28 +20,25 @@
  * SOFTWARE.
  */
 
-package com.adam.app.galaga.engine.handler;
+package com.adam.app.galaga.di;
 
-import com.adam.app.galaga.utils.GameConstants;
+import com.adam.app.galaga.data.repository.GameRepository;
+import com.adam.app.galaga.data.repository.LevelRepository;
+import com.adam.app.galaga.domain.repository.IGameRepository;
+import com.adam.app.galaga.domain.repository.ILevelRepository;
 
-/**
- * Handles spawning when a wave is already in progress.
- */
-public class WaveInProgressHandler extends SpawnHandler {
-    @Override
-    public boolean handle(SpawnContext context) {
-        if (context.getRemainingInWave() > 0) {
-            if (context.getCurrentTime() - context.getLastEnemySpawnTime() >= GameConstants.INTER_ENEMY_DELAY_MS) {
-                context.setRemainingInWave(context.getRemainingInWave() - 1);
-                context.setLastEnemySpawnTime(context.getCurrentTime());
-                return true;
-            }
-            return false;
-        }
-        
-        if (getNext() != null) {
-            return getNext().handle(context);
-        }
-        return false;
-    }
+import dagger.Binds;
+import dagger.Module;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
+
+@Module
+@InstallIn(SingletonComponent.class)
+public abstract class RepositoryModule {
+
+    @Binds
+    public abstract IGameRepository bindGameRepository(GameRepository implementation);
+
+    @Binds
+    public abstract ILevelRepository bindLevelRepository(LevelRepository implementation);
 }

@@ -36,45 +36,35 @@ import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.GameViewModel;
 
-public class GameActivity extends AppCompatActivity {
+import dagger.hilt.android.AndroidEntryPoint;
 
-    // TAG
+@AndroidEntryPoint
+public class GameActivity extends AppCompatActivity {
     private static final String TAG = GameActivity.class.getSimpleName();
 
-    // view binding
     private ActivityGameBinding mBinding;
-    // view model
     private GameViewModel mViewModel;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GameUtils.info(TAG, "onCreate");
-        // view binding
+        
         mBinding = ActivityGameBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
-        // view model
+        
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
-        // data binding
         mBinding.setViewModel(mViewModel);
         mBinding.setLifecycleOwner(this);
 
-        // observer live data
-        mViewModel.getEntities().observe(this, entities -> {
-            mBinding.gameSurfaceView.updateEntities(entities);
-        });
+        mViewModel.getEntities().observe(this, mBinding.gameSurfaceView::updateEntities);
         mViewModel.getCurrentState().observe(this, this::onState);
 
-        // add back press dispatcher
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                // check running state
                 if (mViewModel.getCurrentState().getValue() == GameEngine.State.RUNNING) {
-                    // pause game
                     mViewModel.pauseGame();
-                    // show pause dialog
                     showPauseDialog();
                 } else {
                     setEnabled(false);
@@ -82,7 +72,6 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @Override
@@ -97,9 +86,7 @@ public class GameActivity extends AppCompatActivity {
         super.onPause();
         GameUtils.info(TAG, "onPause");
         mViewModel.pauseGame();
-
     }
-
 
     @Override
     protected void onDestroy() {
@@ -109,79 +96,52 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void onState(GameEngine.State state) {
-        // Game over state
         if (state == GameEngine.State.GAME_OVER) {
             showGameOverDialog();
         }
     }
 
-    /**
-     * show game over dialog
-     */
     private void showGameOverDialog() {
         GameUtils.info(TAG, "showGameOverDialog");
-        // view binding
         DialogGameOverBinding dialogBinding = DialogGameOverBinding.inflate(getLayoutInflater());
 
-        // alert dialog builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(dialogBinding.getRoot());
-        builder.setCancelable(false);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogBinding.getRoot())
+                .setCancelable(false)
+                .create();
 
-        AlertDialog dialog = builder.create();
-        // set score
-        int finalScore = mViewModel.getFinalScore();
-        dialogBinding.tvFinalScore.setText(String.valueOf(finalScore));
+        dialogBinding.tvFinalScore.setText(String.valueOf(mViewModel.getFinalScore()));
 
-        // set confirm button click listener
-        dialogBinding.btnConfirm.setOnClickListener(
-                v -> {
-                    // player name
-                    String name = dialogBinding.etPlayerName.getText().toString();
-                    // save score
-                    mViewModel.saveScore(name);
-                    // dismiss dialog
-                    dialog.dismiss();
-                    // return to main activity
-                    finish();
-                }
-        );
+        dialogBinding.btnConfirm.setOnClickListener(v -> {
+            String name = (dialogBinding.etPlayerName.getText() != null) 
+                    ? dialogBinding.etPlayerName.getText().toString() : "";
+            mViewModel.saveScore(name);
+            dialog.dismiss();
+            finish();
+        });
 
-        // show
         dialog.show();
     }
 
-
-    /**
-     * showPauseDialog
-     */
     private void showPauseDialog() {
         GameUtils.info(TAG, "showPauseDialog");
-        // view binding
         DialogPauseBinding binding = DialogPauseBinding.inflate(getLayoutInflater());
 
-        // alert dialog builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setView(binding.getRoot());
-        builder.setCancelable(false);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(binding.getRoot())
+                .setCancelable(false)
+                .create();
 
-        AlertDialog dialog = builder.create();
-        // continue
-        binding.btnContinue.setOnClickListener(
-                v -> {
-                    mViewModel.resumeGame();
-                    dialog.dismiss();
-                }
-        );
-        // quit
-        binding.btnQuit.setOnClickListener(
-                v -> {
-                    dialog.dismiss();
-                    finish();
-                }
-        );
+        binding.btnContinue.setOnClickListener(v -> {
+            mViewModel.resumeGame();
+            dialog.dismiss();
+        });
+        
+        binding.btnQuit.setOnClickListener(v -> {
+            dialog.dismiss();
+            finish();
+        });
 
-        // show
         dialog.show();
     }
 }

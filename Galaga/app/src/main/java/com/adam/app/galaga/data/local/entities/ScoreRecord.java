@@ -22,16 +22,12 @@
 
 package com.adam.app.galaga.data.local.entities;
 
-import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
-/**
- * This class is used to represent a rank record.
- */
 @Entity(tableName = "leaderboard")
 public class ScoreRecord {
 
@@ -44,66 +40,60 @@ public class ScoreRecord {
     @ColumnInfo(name = "score")
     private int mScore;
 
-    @ColumnInfo(name = "date")
-    private long mDate;
+    @ColumnInfo(name = "timestamp")
+    private long mTimestamp;
 
-    public ScoreRecord(String name, int score, long date) {
-        mName = name;
-        mScore = score;
-        mDate = date;
+    public ScoreRecord(String name, int score, long timestamp) {
+        this.mName = name;
+        this.mScore = score;
+        this.mTimestamp = timestamp;
     }
 
-    // --- setter ---
-    public void setId(int id) {
-        mId = id;
-    }
-
-    public void setName(String name) {
-        mName = name;
-    }
-
-    public void setScore(int score) {
-        mScore = score;
-    }
-
-    public void setDate(long date) {
-        mDate = date;
-    }
-
-
-    // --- getter ---
     public int getId() {
         return mId;
+    }
+
+    public void setId(int id) {
+        this.mId = id;
     }
 
     public String getName() {
         return mName;
     }
 
+    public void setName(String name) {
+        this.mName = name;
+    }
+
     public int getScore() {
         return mScore;
     }
 
-    public long getDate() {
-        return mDate;
+    public void setScore(int score) {
+        this.mScore = score;
+    }
+
+    public long getTimestamp() {
+        return mTimestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.mTimestamp = timestamp;
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        // check instance
-        if (this == obj) return true;
-        // check null or class info
-        if (obj == null || getClass() != obj.getClass()) return false;
-
-        ScoreRecord that = (ScoreRecord) obj;
-        if (mId != that.mId) return false;
-        if (mScore != that.mScore) return false;
-        if (mDate != that.mDate) return false;
-        return mName.equals(that.mName);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScoreRecord that = (ScoreRecord) o;
+        return mId == that.mId &&
+                mScore == that.mScore &&
+                mTimestamp == that.mTimestamp &&
+                Objects.equals(mName, that.mName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mId, mName, mScore, mDate);
+        return Objects.hash(mId, mName, mScore, mTimestamp);
     }
 }

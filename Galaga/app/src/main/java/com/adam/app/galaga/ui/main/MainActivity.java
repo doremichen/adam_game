@@ -35,61 +35,46 @@ import com.adam.app.galaga.ui.settings.SettingsActivity;
 import com.adam.app.galaga.utils.GameUtils;
 import com.adam.app.galaga.viewmodel.MainViewModel;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MainActivity extends AppCompatActivity {
-    //TAG
     private static final String TAG = MainActivity.class.getSimpleName();
-
-    // view binding
-    private ActivityMainBinding mBinding;
-
-    // view model
-    private MainViewModel mViewModel;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // view binding
-        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(mBinding.getRoot());
-        // init view model
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-        mBinding.setViewModel(mViewModel);
-        mBinding.setLifecycleOwner(this);
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
+        MainViewModel viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        binding.setViewModel(viewModel);
+        binding.setLifecycleOwner(this);
 
-        // observe event
-        mViewModel.getAction().observe(this, this::handleAction);
+        viewModel.getAction().observe(this, this::handleAction);
     }
 
     private void handleAction(MainViewModel.ActionType action) {
+        if (action == null) return;
+        
         GameUtils.info(TAG, "handleAction: " + action.name());
-        if (action == MainViewModel.ActionType.DO_NOTHING) {
-            return;
-        }
-
+        
         switch (action) {
             case START_GAME:
-                // start game
                 GameUtils.startActivity(this, GameActivity.class);
                 break;
             case OPEN_SETTINGS:
-                // open settings
                 GameUtils.startActivity(this, SettingsActivity.class);
                 break;
             case OPEN_LEADER_BOARD:
-                // open leader board
                 GameUtils.startActivity(this, LeaderboardActivity.class);
                 break;
             case OPEN_ABOUT:
-                // open about
                 GameUtils.startActivity(this, AboutActivity.class);
                 break;
             case EXIT:
-                // exit
-                this.finish();
+                finish();
                 break;
         }
-        //
-        mViewModel.onDoNothing();
     }
 }

@@ -17,10 +17,10 @@
         android:background="?attr/colorSurface">
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvScore"
+            android:id="@+id/tv_score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text='@{@string/game_score(viewModel.score)}'
+            android:text='@{@string/galaga_game_score(viewModel.score)}'
             android:textColor="?attr/colorOnSurface"
             android:textAppearance="?attr/textAppearanceDisplayLarge"
             android:layout_marginTop="16dp"
@@ -29,7 +29,7 @@
             tools:text="Score"/>
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvTimer"
+            android:id="@+id/tv_timer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text='@{viewModel.remainingTime}'
@@ -43,27 +43,27 @@
             tools:text="Time: 60s" />
 
         <com.adam.app.galaga.ui.game.GameSurfaceView
-            android:id="@+id/gameSurfaceView"
+            android:id="@+id/game_surface_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintTop_toBottomOf="@id/tvScore"
+            app:layout_constraintTop_toBottomOf="@id/tv_score"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/control_guideline"
             app:layout_constrainedHeight="true"/>
 
         <LinearLayout
-            android:id="@+id/llLevelTransition"
+            android:id="@+id/ll_level_transition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
             android:visibility="gone"
             app:gameState="@{viewModel.currentState}"
-            app:layout_constraintTop_toTopOf="@id/gameSurfaceView"
-            app:layout_constraintBottom_toBottomOf="@id/gameSurfaceView"
-            app:layout_constraintStart_toStartOf="@id/gameSurfaceView"
-            app:layout_constraintEnd_toEndOf="@id/gameSurfaceView">
+            app:layout_constraintTop_toTopOf="@id/game_surface_view"
+            app:layout_constraintBottom_toBottomOf="@id/game_surface_view"
+            app:layout_constraintStart_toStartOf="@id/game_surface_view"
+            app:layout_constraintEnd_toEndOf="@id/game_surface_view">
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
@@ -78,17 +78,17 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/game_level_cleared"
+                android:text="@string/galaga_game_level_cleared"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:letterSpacing="0.2" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/tvNextLevel"
+                android:id="@+id/tv_next_level"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text='@{@string/game_next_level(viewModel.currentLevelData + 1)}'
+                android:text='@{@string/galaga_game_next_level(viewModel.currentLevelData + 1)}'
                 android:textColor="?attr/colorSecondary"
                 android:textAppearance="?attr/textAppearanceBodyLarge"
                 tools:text="Next"/>
@@ -111,7 +111,7 @@
             app:layout_constraintEnd_toEndOf="parent">
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btnFire"
+                android:id="@+id/btn_fire"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 app:onTouchFire="@{viewModel}"
@@ -127,70 +127,70 @@
                 app:shapeAppearanceOverlay="@style/shape_circle"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnUp"
+                android:id="@+id/btn_up"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="80dp"
                 android:layout_height="0dp"
-                android:text="@string/dir_up"
+                android:text="@string/galaga_dir_up"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:layout_marginBottom="0dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/btnFire"
-                app:layout_constraintEnd_toEndOf="@+id/btnFire"
-                app:layout_constraintStart_toStartOf="@+id/btnFire"
+                app:layout_constraintBottom_toTopOf="@+id/btn_fire"
+                app:layout_constraintEnd_toEndOf="@+id/btn_fire"
+                app:layout_constraintStart_toStartOf="@+id/btn_fire"
                 app:shapeAppearanceOverlay="@null"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDown"
+                android:id="@+id/btn_down"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="80dp"
                 android:layout_height="0dp"
-                android:text="@string/dir_down"
+                android:text="@string/galaga_dir_down"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:layout_marginTop="0dp"
-                app:layout_constraintTop_toBottomOf="@+id/btnFire"
+                app:layout_constraintTop_toBottomOf="@+id/btn_fire"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/btnFire"
-                app:layout_constraintStart_toStartOf="@+id/btnFire"/>
+                app:layout_constraintEnd_toEndOf="@+id/btn_fire"
+                app:layout_constraintStart_toStartOf="@+id/btn_fire"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLeft"
+                android:id="@+id/btn_left"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:text="@string/dir_left"
+                android:text="@string/galaga_dir_left"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetLeft="0dp"
                 android:insetRight="0dp"
                 android:layout_marginEnd="0dp"
-                app:layout_constraintBottom_toBottomOf="@+id/btnFire"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_fire"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/btnFire"
-                app:layout_constraintTop_toTopOf="@+id/btnFire"
+                app:layout_constraintEnd_toStartOf="@+id/btn_fire"
+                app:layout_constraintTop_toTopOf="@+id/btn_fire"
                 app:shapeAppearanceOverlay="@null"/>
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnRight"
+                android:id="@+id/btn_right"
                 style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="0dp"
                 android:layout_height="80dp"
-                android:text="@string/dir_right"
+                android:text="@string/galaga_dir_right"
                 android:textSize="28sp"
                 app:onTouchDirection="@{viewModel}"
                 android:insetLeft="0dp"
                 android:insetRight="0dp"
                 android:layout_marginStart="0dp"
-                app:layout_constraintBottom_toBottomOf="@+id/btnFire"
-                app:layout_constraintStart_toEndOf="@+id/btnFire"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_fire"
+                app:layout_constraintStart_toEndOf="@+id/btn_fire"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/btnFire"
+                app:layout_constraintTop_toTopOf="@+id/btn_fire"
                 app:shapeAppearanceOverlay="@null" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

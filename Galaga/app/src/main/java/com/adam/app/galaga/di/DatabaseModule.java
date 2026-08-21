@@ -20,28 +20,33 @@
  * SOFTWARE.
  */
 
-package com.adam.app.galaga.engine.handler;
+package com.adam.app.galaga.di;
 
-import com.adam.app.galaga.utils.GameConstants;
+import android.content.Context;
 
-/**
- * Handles spawning when a wave is already in progress.
- */
-public class WaveInProgressHandler extends SpawnHandler {
-    @Override
-    public boolean handle(SpawnContext context) {
-        if (context.getRemainingInWave() > 0) {
-            if (context.getCurrentTime() - context.getLastEnemySpawnTime() >= GameConstants.INTER_ENEMY_DELAY_MS) {
-                context.setRemainingInWave(context.getRemainingInWave() - 1);
-                context.setLastEnemySpawnTime(context.getCurrentTime());
-                return true;
-            }
-            return false;
-        }
-        
-        if (getNext() != null) {
-            return getNext().handle(context);
-        }
-        return false;
+import com.adam.app.galaga.data.local.AppDatabase;
+import com.adam.app.galaga.data.local.dao.ScoreDao;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+import dagger.hilt.InstallIn;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+import dagger.hilt.components.SingletonComponent;
+
+@Module
+@InstallIn(SingletonComponent.class)
+public final class DatabaseModule {
+
+    @Provides
+    @Singleton
+    public AppDatabase provideAppDatabase(@ApplicationContext Context context) {
+        return AppDatabase.getInstance(context);
+    }
+
+    @Provides
+    public ScoreDao provideScoreDao(AppDatabase database) {
+        return database.scoreDao();
     }
 }

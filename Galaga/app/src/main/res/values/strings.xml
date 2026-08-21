@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Galaga</string>
     <string name="galaga_leaderboard_title">Leader Board</string>
+    <string name="galaga_leaderboard_empty">No rankings yet. Start playing to get on the board!</string>
     <string name="galaga_exit_btn">EXIT</string>
     <string name="galaga_main_start_game_btn">START GAME</string>
     <string name="galaga_main_settings_btn">SETTINGS</string>
@@ -11,15 +12,15 @@
     <string name="galaga_dlg_confirm_and_exit_btn"><![CDATA[CONFIRM & EXIT]]></string>
     <string name="galaga_dlg_paused_title">PAUSED</string>
     <string name="galaga_dlg_continue_btn">CONTINUE</string>
-    <string name="game_score">Score: %1$d</string>
-    <string name="game_next_level">Next: Level %1$d</string>
-    <string name="game_level_cleared">LEVEL CLEARED</string>
+    <string name="galaga_game_score">Score: %1$d</string>
+    <string name="galaga_game_next_level">Next: Level %1$d</string>
+    <string name="galaga_game_level_cleared">LEVEL CLEARED</string>
 
-    <string name="dir_up">↑</string>
-    <string name="dir_down">↓</string>
-    <string name="dir_left">←</string>
-    <string name="dir_right">→</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="galaga_dir_up">↑</string>
+    <string name="galaga_dir_down">↓</string>
+    <string name="galaga_dir_left">←</string>
+    <string name="galaga_dir_right">→</string>
+    <string name="galaga_settings_activity_title">SettingsActivity</string>
     <string name="galaga_settings_category_title"><![CDATA[Combat & Control]]></string>
     <string name="galaga_settings_auto_fire_summary">Automatically fire bullets at fixed intervals</string>
     <string name="galaga_settings_auto_fire_title">Auto Fire</string>

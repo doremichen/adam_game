@@ -24,24 +24,19 @@ package com.adam.app.galaga.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * LevelConfig
- */
 public class LevelConfig {
 
     @SerializedName("level_id")
     private int mLevelId;
+
     @SerializedName("metadata")
     private Metadata mMetadata;
+
     @SerializedName("enemy_settings")
     private EnemySettings mEnemySettings;
+
     @SerializedName("winning_condition")
     private WinningCondition mWinningCondition;
-
-    // --- getter ---
-    public int getLevelId() {
-        return mLevelId;
-    }
 
     public Metadata getMetadata() {
         return mMetadata;
@@ -55,14 +50,13 @@ public class LevelConfig {
         return mWinningCondition;
     }
 
-
     public static class Metadata {
         @SerializedName("title")
         private String mTitle;
+
         @SerializedName("difficulty_multiplier")
         private float mDifficultyMultiplier;
 
-        // --- getter ---
         public String getTitle() {
             return mTitle;
         }
@@ -75,12 +69,13 @@ public class LevelConfig {
     public static class EnemySettings {
         @SerializedName("total_count")
         private int mTotalCount;
+
         @SerializedName("base_speed")
         private float mBaseSpeed;
+
         @SerializedName("spawn_interval_ms")
         private long mSpawnIntervalMs;
 
-        // --- getter ---
         public int getTotalCount() {
             return mTotalCount;
         }
@@ -88,20 +83,14 @@ public class LevelConfig {
         public float getBaseSpeed() {
             return mBaseSpeed;
         }
-
-        public long getSpawnIntervalMs() {
-            return mSpawnIntervalMs;
-        }
     }
 
     public static class WinningCondition {
         @SerializedName("type")
         private String mType;
 
-        // --- getter ---
         public String getType() {
             return mType;
         }
-
     }
 }

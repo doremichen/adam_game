@@ -27,16 +27,24 @@ import android.content.Context;
 
 import com.adam.app.galaga.engine.SoundManager;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.HiltAndroidApp;
+
+@HiltAndroidApp
 public class GalagaApplication extends Application {
 
     private static GalagaApplication sAppContext;
+
+    @Inject
+    SoundManager mSoundManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         sAppContext = this;
-        SoundManager.getInstance().init(this);
+        mSoundManager.init(this);
     }
 
     public static Context getAppContext() {

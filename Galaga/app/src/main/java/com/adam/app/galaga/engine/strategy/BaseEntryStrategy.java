@@ -26,10 +26,14 @@ package com.adam.app.galaga.engine.strategy;
  * Abstract base class for entry strategies to share common logic.
  */
 public abstract class BaseEntryStrategy implements EnemyEntryStrategy {
-    protected final long mDuration;
+    private final long mDuration;
 
     protected BaseEntryStrategy(long duration) {
         this.mDuration = duration;
+    }
+
+    public long getDuration() {
+        return mDuration;
     }
 
     @Override

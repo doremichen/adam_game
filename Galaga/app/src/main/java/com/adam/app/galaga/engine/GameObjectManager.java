@@ -28,20 +28,19 @@ import com.adam.app.galaga.data.model.Bullet;
 import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.data.model.LevelConfig;
 import com.adam.app.galaga.data.model.Plane;
-import com.adam.app.galaga.engine.strategy.EnemyEntryStrategy;
 import com.adam.app.galaga.utils.GameConstants;
 import com.adam.app.galaga.utils.GameUtils;
-import com.adam.app.galaga.data.local.prefs.GameSettings;
-import com.adam.app.galaga.data.model.Bee;
-import com.adam.app.galaga.data.model.Bullet;
-import com.adam.app.galaga.data.model.GameObject;
-import com.adam.app.galaga.data.model.LevelConfig;
-import com.adam.app.galaga.data.model.Plane;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import dagger.hilt.android.EntryPointAccessors;
+
+@Singleton
 public class GameObjectManager {
     // TAG
     private static final String TAG = GameObjectManager.class.getSimpleName();
@@ -52,9 +51,12 @@ public class GameObjectManager {
     // list of bullets
     private final List<Bullet> mBullets = new CopyOnWriteArrayList<>();
     // collision manager
-    private final CollisionManager mCollisionManager = new CollisionManager();
+    private final CollisionManager mCollisionManager;
     // level manager
-    private final LevelManager mLevelManager = new LevelManager();
+    private final LevelManager mLevelManager;
+    // sound manager
+    private final SoundManager mSoundManager;
+    
     // Winnings strategy
     private WinningStrategy mWinningStrategy;
     // level config
@@ -71,16 +73,11 @@ public class GameObjectManager {
     // Enemy Spawning
     private final EnemySpawner mEnemySpawner = new EnemySpawner();
 
-    private GameObjectManager() {
-    }
-
-    /**
-     * singleton
-     *
-     * @return GameObjectManager
-     */
-    public static GameObjectManager getInstance() {
-        return Helper.INSTANCE;
+    @Inject
+    public GameObjectManager(LevelManager levelManager, CollisionManager collisionManager, SoundManager soundManager) {
+        this.mLevelManager = levelManager;
+        this.mCollisionManager = collisionManager;
+        this.mSoundManager = soundManager;
     }
 
     /**
@@ -285,9 +282,12 @@ public class GameObjectManager {
         }
 
         // shot type
-        GameSettings.ShotStyle shotStyle = GameSettings.getInstance().getShotStyle();
+        GameSettings.ShotStyle shotStyle = EntryPointAccessors.fromApplication(
+                com.adam.app.galaga.GalagaApplication.getAppContext(), 
+                com.adam.app.galaga.di.SettingsEntryPoint.class
+        ).getGameSettings().getShotStyle();
         // spawn bullets
-        shotStyle.spawn(mBullets, mPlayerPlane);
+        shotStyle.spawn(mBullets, mPlayerPlane, mSoundManager);
     }
 
     /**
@@ -312,7 +312,10 @@ public class GameObjectManager {
     }
 
     public void handleAutoFiring() {
-        boolean isAutoFire = GameSettings.getInstance().isAutoFire();
+        boolean isAutoFire = EntryPointAccessors.fromApplication(
+                com.adam.app.galaga.GalagaApplication.getAppContext(), 
+                com.adam.app.galaga.di.SettingsEntryPoint.class
+        ).getGameSettings().isAutoFire();
         if (!isAutoFire) return;
 
         // handle auto fire logic
@@ -374,12 +377,5 @@ public class GameObjectManager {
             mBees.add(bee);
             mSpawnedCount++;
         }
-    }
-
-
-
-
-    private static class Helper {
-        private static final GameObjectManager INSTANCE = new GameObjectManager();
     }
 }

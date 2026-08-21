@@ -22,26 +22,33 @@
 
 package com.adam.app.galaga.engine;
 
-import android.graphics.PointF;
 import android.graphics.RectF;
 
 import com.adam.app.galaga.data.model.Bee;
 import com.adam.app.galaga.data.model.Bullet;
-import com.adam.app.galaga.data.model.GameObject;
 import com.adam.app.galaga.data.model.Plane;
 import com.adam.app.galaga.utils.GameConstants;
 
-import java.util.Iterator;
 import java.util.List;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * This is used to manage collisions between game objects.
  */
+@Singleton
 public class CollisionManager {
 
     // define rect buffer
     private final RectF mRectBufferA = new RectF();
     private final RectF mRectBufferB = new RectF();
+    private final SoundManager mSoundManager;
+
+    @Inject
+    public CollisionManager(SoundManager soundManager) {
+        this.mSoundManager = soundManager;
+    }
 
     /**
      * Handle collisions bullets with bees.
@@ -74,7 +81,7 @@ public class CollisionManager {
                 if (RectF.intersects(mRectBufferA, mRectBufferB)) {
                     bee.setDead(true);
                     hitCount++;
-                    SoundManager.getInstance().playSfx(GameConstants.SFX_EXPLOSION);
+                    mSoundManager.playSfx(GameConstants.SFX_EXPLOSION);
 
                     // If not piercing (like normal bullets), mark as dead and stop checking other bees
                     if (!bullet.isPiercing()) {
@@ -114,8 +121,5 @@ public class CollisionManager {
         }
         return false;
     }
-
-
-
 
 }

@@ -22,31 +22,29 @@
 
 package com.adam.app.galaga.viewmodel;
 
-import android.app.Application;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
 
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
-import com.adam.app.galaga.data.repository.GameRepository;
+import com.adam.app.galaga.domain.usecase.GameUseCase;
 
 import java.util.List;
 
-public class LeaderboardViewModel extends AndroidViewModel {
-    //TAG
-    private static final String TAG = LeaderboardViewModel.class.getSimpleName();
+import javax.inject.Inject;
 
-    // repository
-    private final GameRepository mGameRepository;
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
+@HiltViewModel
+public class LeaderboardViewModel extends ViewModel {
 
-    // live data: topScores
+    private final GameUseCase mGameUseCase;
     private LiveData<List<ScoreRecord>> mTopScores;
+    private LiveData<Boolean> mIsEmpty;
 
-    public LeaderboardViewModel(Application application) {
-        super(application);
-        mGameRepository = GameRepository.getInstance(application);
-        // load top scores
+    @Inject
+    public LeaderboardViewModel(GameUseCase gameUseCase) {
+        this.mGameUseCase = gameUseCase;
         loadTopScores();
     }
 
@@ -54,10 +52,16 @@ public class LeaderboardViewModel extends AndroidViewModel {
         return mTopScores;
     }
 
-    private void loadTopScores() {
-        // live data
-        mTopScores = mGameRepository.getTop10Scores();
+    public LiveData<Boolean> getIsEmpty() {
+        return mIsEmpty;
     }
 
-
+    @SuppressWarnings("unchecked")
+    private void loadTopScores() {
+        mTopScores = (LiveData<List<ScoreRecord>>) mGameUseCase.execute(
+                new GameUseCase.Request(GameUseCase.ActionType.GET_TOP_SCORES, null)
+        );
+        
+        mIsEmpty = Transformations.map(mTopScores, list -> list == null || list.isEmpty());
+    }
 }

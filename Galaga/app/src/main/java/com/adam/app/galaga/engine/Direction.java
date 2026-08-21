@@ -30,10 +30,10 @@ import java.util.Map;
  * Enum representing movement direction.
  */
 public enum Direction {
-    UP(R.id.btnUp),
-    DOWN(R.id.btnDown),
-    LEFT(R.id.btnLeft),
-    RIGHT(R.id.btnRight);
+    UP(R.id.btn_up),
+    DOWN(R.id.btn_down),
+    LEFT(R.id.btn_left),
+    RIGHT(R.id.btn_right);
 
     private static final Map<Integer, Direction> sResIdToDirection = new HashMap<>();
 

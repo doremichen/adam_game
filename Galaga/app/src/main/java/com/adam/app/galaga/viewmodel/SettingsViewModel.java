@@ -29,6 +29,11 @@ import androidx.lifecycle.ViewModel;
 import com.adam.app.galaga.data.local.prefs.GameSettings;
 import com.adam.app.galaga.utils.GameConstants;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+@HiltViewModel
 public class SettingsViewModel extends ViewModel {
     // TAG
     private static final String TAG = SettingsViewModel.class.getSimpleName();
@@ -41,7 +46,12 @@ public class SettingsViewModel extends ViewModel {
 
 
     // game setting
-    private GameSettings mSettings = GameSettings.getInstance();
+    private final GameSettings mSettings;
+
+    @Inject
+    public SettingsViewModel(GameSettings settings) {
+        this.mSettings = settings;
+    }
 
     public void updateAutoFire(boolean enable) {
         mSettings.setAutoFire(enable);

@@ -31,7 +31,7 @@ import androidx.room.RoomDatabase;
 import com.adam.app.galaga.data.local.dao.ScoreDao;
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
 
-@Database(entities = {ScoreRecord.class}, version = 1, exportSchema = false)
+@Database(entities = {ScoreRecord.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
     // Dao
     public abstract ScoreDao scoreDao();
@@ -46,7 +46,9 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (sInstance == null) {
                     sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "galaga_db").build();
+                                    AppDatabase.class, "galaga_db")
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }

@@ -22,17 +22,13 @@
 
 package com.adam.app.galaga.viewmodel;
 
-import android.app.Application;
-import android.os.Handler;
-import android.os.Looper;
-
-import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.adam.app.galaga.data.local.entities.ScoreRecord;
 import com.adam.app.galaga.data.model.GameObject;
-import com.adam.app.galaga.data.repository.GameRepository;
+import com.adam.app.galaga.domain.usecase.GameUseCase;
 import com.adam.app.galaga.engine.Direction;
 import com.adam.app.galaga.engine.GameEngine;
 import com.adam.app.galaga.engine.GameObjectManager;
@@ -41,22 +37,22 @@ import com.adam.app.galaga.utils.GameUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
 
 /**
  * This is the view model for the game.
  */
-public class GameViewModel extends AndroidViewModel implements GameEngine.EngineCallback {
-    // TAG
+@HiltViewModel
+public class GameViewModel extends ViewModel implements GameEngine.EngineCallback {
     private static final String TAG = GameViewModel.class.getSimpleName();
 
-    // game engine
     private final GameEngine mGameEngine;
+    private final GameUseCase mGameUseCase;
 
-    // game repository
-    private final GameRepository mGameRepository;
-
-
-    // --- Live data ---
     private final MutableLiveData<List<GameObject>> mEntities = new MutableLiveData<>(new ArrayList<>());
     private final MutableLiveData<Integer> mScore = new MutableLiveData<>(0);
     private final MutableLiveData<GameEngine.State> mCurrentState = new MutableLiveData<>(GameEngine.State.READY);
@@ -66,27 +62,18 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
 
     private int mFinalScore;
 
-    /**
-     * Constructor
-     */
-    public GameViewModel(Application application) {
-        super(application);
-        // init
-        mGameRepository = GameRepository.getInstance(application);
-        mGameEngine = new GameEngine(this);
-        // start game
+    @Inject
+    public GameViewModel(GameUseCase gameUseCase, GameObjectManager gameObjectManager) {
+        this.mGameUseCase = gameUseCase;
+        mGameEngine = new GameEngine(this, gameObjectManager);
         startGame();
     }
 
-
     @Override
     protected void onCleared() {
-        super.onCleared();
-        // clear
         mGameEngine.clear();
     }
 
-    // --- getter  live data ---
     public LiveData<List<GameObject>> getEntities() {
         return mEntities;
     }
@@ -115,15 +102,13 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         return mRemainingTime;
     }
 
-
-    // --- public method ---
     public void startGame() {
         GameUtils.info(TAG, "startGame");
         mGameEngine.start();
     }
 
     public void pauseGame() {
-        GameUtils.info(TAG, "stopGame");
+        GameUtils.info(TAG, "pauseGame");
         mGameEngine.pause();
     }
 
@@ -134,40 +119,19 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         }
     }
 
-    /**
-     * set direction
-     *
-     * @param direction Direction direction
-     */
     public void setMoveDirection(Direction direction) {
-        GameUtils.info(TAG, "setMoveDirection");
         mGameEngine.setMoveDirection(direction);
     }
 
-    /**
-     * set shooting
-     *
-     * @param shooting boolean
-     */
     public void setShooting(boolean shooting) {
-        GameUtils.info(TAG, "setShooting");
         mGameEngine.setShooting(shooting);
     }
 
-    /**
-     * Save score
-     *
-     * @param name Player name
-     */
     public void saveScore(String name) {
         GameUtils.info(TAG, "saveScore");
         String finalName = (name == null || name.isEmpty()) ? "Guest" : name;
-        // new record
         ScoreRecord record = new ScoreRecord(finalName, mFinalScore, System.currentTimeMillis());
-
-        // save record
-        mGameRepository.insertScore(record);
-
+        mGameUseCase.execute(new GameUseCase.Request(GameUseCase.ActionType.INSERT_SCORE, record));
     }
 
     private void handleLevelTransition() {
@@ -175,23 +139,18 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         mCurrentLevelTitle.setValue(title);
         mCurrentLevelData.setValue(mGameEngine.getCurrentLevelId());
 
-        // delay 2 sec before start next level
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        GameUtils.runOnMainThread(() -> {
             try {
-                // NEXT LEVEL
                 mGameEngine.startNextLevel();
             } catch (RuntimeException e) {
-                GameUtils.error(TAG, "handleLevelTransition error");
-                GameUtils.error(TAG, e.getMessage());
-                // Show game over screen
+                GameUtils.error(TAG, "handleLevelTransition error: " + e.getMessage());
                 mCurrentState.setValue(GameEngine.State.GAME_OVER);
             }
-        }, 2000L);
+        }, GameConstants.LEVEL_TRANSITION_DELAY_MS);
     }
 
     @Override
     public void onScoreChanged(int currentScore) {
-        GameUtils.info(TAG, "onScoreChanged");
         mScore.setValue(currentScore);
         mFinalScore = currentScore;
     }
@@ -201,25 +160,18 @@ public class GameViewModel extends AndroidViewModel implements GameEngine.Engine
         mEntities.setValue(entities);
     }
 
-
     @Override
     public void onGameStateChanged(GameEngine.State state) {
-        // update state
         mCurrentState.setValue(state);
-
-        // handle level
         if (state == GameEngine.State.CLEARED) {
             handleLevelTransition();
         }
-
     }
 
     @Override
     public void onRemainingTime(long elapsed) {
         long totalDuration = GameConstants.LEVEL_DURATION_MS;
         long remaining = Math.max(0, totalDuration - elapsed);
-        mRemainingTime.postValue(String.format("Time: %ds", remaining / 1000));
+        mRemainingTime.postValue(String.format(Locale.getDefault(), "Time: %ds", remaining / 1000));
     }
-
-
 }

@@ -36,7 +36,7 @@ public class ArcEntryStrategy extends BaseEntryStrategy {
 
     @Override
     public PointF getPosition(long elapsedMillis, PointF targetPos) {
-        float t = Math.min(1.0f, (float) elapsedMillis / mDuration);
+        float t = Math.min(1.0f, (float) elapsedMillis / getDuration());
         
         float startX = targetPos.x < GameConstants.GAME_WIDTH / 2f ? -GameConstants.ARC_SCREEN_OFFSET : GameConstants.GAME_WIDTH + GameConstants.ARC_SCREEN_OFFSET;
         float startY = -GameConstants.ARC_SCREEN_OFFSET;
