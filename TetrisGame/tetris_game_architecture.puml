@@ -1,0 +1,135 @@
+@startuml
+' --- Global Configuration ---
+skinparam ClassAttributeIconSize 0
+skinparam componentStyle uml2
+skinparam shadowing false
+hide empty members
+
+' ======================================================
+' Page 1: Architecture Overview
+' ======================================================
+title TetrisGame - Page 1: Architecture Overview
+
+package "presentation" #E1F5FE {
+    class "Activities/Fragments" as UI
+    class "ViewModels" as VM
+}
+
+package "domain" #F1F8E9 {
+    class "UseCases" as UC
+    class "Bridges" as BR
+    class "Repository Interfaces" as REPO_INF
+    class "Entities" as MODEL
+}
+
+package "data" #FFFDE7 {
+    class "Repository Implementations" as REPO_IMPL
+    class "Local DB / SharedPreferences" as DB
+}
+
+' High-level flow
+UI --> VM : uses
+VM --> UC : commands
+UC --> BR : delegates
+BR --> REPO_INF : uses
+REPO_IMPL ..|> REPO_INF : implements
+REPO_IMPL --> DB : accesses
+UC ..> MODEL : logic on
+
+newpage
+' ======================================================
+' Page 2: Domain Model (Game Logic)
+' ======================================================
+title TetrisGame - Page 2: Domain Model
+
+package "domain.model" {
+    enum TetrominoType {
+        I, O, T, S, Z, J, L
+        + getShape(): int[][]
+        + getColor(): int
+    }
+
+    class Tetromino {
+        - mShape: int[][]
+        - mColor: int
+        + rotate()
+        + getShape(): int[][]
+    }
+
+    class TetrisBoard {
+        - mGrid: int[][]
+        - mCurrentRow: int
+        - mCurrentCol: int
+        + update()
+        + moveLeft()
+        + moveRight()
+        + rotate()
+        + getDisplayGrid(): int[][]
+    }
+
+    class ScoreRecord {
+        - mId: int
+        - mTimestamp: long
+        - mScore: int
+        + getDate(): String
+    }
+}
+
+TetrisBoard "1" *-- "1" Tetromino : owns
+Tetromino ..> TetrominoType : derived from
+
+newpage
+' ======================================================
+' Page 3: MVVM & Data Binding
+' ======================================================
+title TetrisGame - Page 3: MVVM Pattern
+
+package "presentation" {
+    package "ui" {
+        class MainActivity {
+            + observeViewModel()
+        }
+        class GameActivity {
+            + playSound()
+        }
+        class SettingsActivity
+
+        note right of MainActivity: Uses Data Binding\nwith MainViewModel
+    }
+
+    package "viewmodel" {
+        class MainViewModel {
+            + mNavigationEvent: SingleLiveEvent
+            + onStartClick()
+        }
+        class GameViewModel {
+            + mCurrentScore: LiveData
+            + mHighScore: LiveData
+            + saveScore()
+        }
+        class SettingsViewModel {
+            + setSpeed(String)
+        }
+    }
+}
+
+package "domain.usecase" {
+    class ScoreUseCase {
+        + execute(Action, param, Callback)
+    }
+    class SettingsUseCase {
+        + execute(Action, param): Object
+    }
+}
+
+' Connections
+MainActivity ..> MainViewModel : binding
+GameActivity ..> GameViewModel : binding
+SettingsActivity ..> SettingsViewModel : binding
+
+MainViewModel ..> "SingleLiveEvent" : notifies UI
+GameViewModel --> ScoreUseCase : uses
+GameViewModel --> SettingsUseCase : uses
+SettingsViewModel --> SettingsUseCase : uses
+
+@enduml

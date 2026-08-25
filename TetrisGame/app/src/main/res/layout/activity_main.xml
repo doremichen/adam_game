@@ -1,127 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?android:attr/windowBackground"
-    android:fitsSystemWindows="true"
-    android:padding="24dp"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Tetris Logo -->
-    <ImageView
-        android:id="@+id/image_tetris_logo"
-        android:layout_width="0dp"
-        android:layout_height="120dp"
-        android:layout_marginTop="24dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/tetris_logo_desc"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_tetris_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.adam.app.tetrisgame.presentation.viewmodel.MainViewModel" />
+    </data>
 
-    <!-- CardView menu -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_menu"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:cardCornerRadius="24dp"
-        app:cardElevation="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_tetris_logo">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/windowBackground"
+        android:fitsSystemWindows="true"
+        android:padding="24dp"
+        tools:context=".presentation.ui.MainActivity">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- Tetris Logo -->
+        <ImageView
+            android:id="@+id/image_tetris_logo"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="24dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/tetris_logo_desc"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_tetris_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- CardView menu -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_menu"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/card_inner_gradient"
-            android:orientation="vertical"
-            android:padding="24dp">
+            android:layout_marginTop="32dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image_tetris_logo">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_start"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/button_gradient_selector"
-                android:fontFamily="sans-serif-black"
-                android:text="@string/btn_start"
-                android:textAllCaps="true"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="20sp"
-                android:letterSpacing="0.05" />
+                android:layout_height="wrap_content"
+                android:background="@drawable/card_inner_gradient"
+                android:orientation="vertical"
+                android:padding="24dp">
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_leaderboard"
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_start"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/button_gradient_selector"
+                    android:fontFamily="sans-serif-black"
+                    android:onClick="@{() -> viewModel.onStartClick()}"
+                    android:text="@string/btn_start"
+                    android:textAllCaps="true"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="20sp"
+                    android:letterSpacing="0.05" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_leaderboard"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginBottom="16dp"
+                    android:background="@drawable/button_gradient_selector"
+                    android:fontFamily="sans-serif-black"
+                    android:onClick="@{() -> viewModel.onLeaderboardClick()}"
+                    android:text="@string/ranking_list"
+                    android:textAllCaps="true"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="20sp"
+                    android:letterSpacing="0.05" />
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/button_about"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:background="@drawable/button_gradient_selector"
+                    android:fontFamily="sans-serif-black"
+                    android:onClick="@{() -> viewModel.onAboutClick()}"
+                    android:text="@string/btn_instruction"
+                    android:textAllCaps="true"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:textSize="20sp"
+                    android:letterSpacing="0.05" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Demo region -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_demo"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:cardBackgroundColor="@android:color/black"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="12dp"
+            app:layout_constraintBottom_toTopOf="@id/button_exit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_menu">
+
+            <com.adam.app.tetrisgame.presentation.ui.DemoTetrisView
+                android:id="@+id/demo_tetris"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginBottom="16dp"
-                android:background="@drawable/button_gradient_selector"
-                android:fontFamily="sans-serif-black"
-                android:text="@string/ranking_list"
-                android:textAllCaps="true"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="20sp"
-                android:letterSpacing="0.05" />
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/button_about"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/button_gradient_selector"
-                android:fontFamily="sans-serif-black"
-                android:text="@string/btn_instruction"
-                android:textAllCaps="true"
-                android:textColor="?attr/colorOnPrimary"
-                android:textSize="20sp"
-                android:letterSpacing="0.05" />
+        <!-- Exit button -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/button_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:background="?attr/selectableItemBackground"
+            android:fontFamily="sans-serif-medium"
+            android:minHeight="0dp"
+            android:onClick="@{() -> viewModel.onExitClick()}"
+            android:padding="12dp"
+            android:text="@string/btn_exit"
+            android:textAllCaps="false"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <!-- Demo region -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card_demo"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        app:cardBackgroundColor="@android:color/black"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="12dp"
-        app:layout_constraintBottom_toTopOf="@id/button_exit"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_menu">
-
-        <com.adam.app.tetrisgame.view.DemoTetrisView
-            android:id="@+id/demo_tetris"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.cardview.widget.CardView>
-
-    <!-- Exit button -->
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/button_exit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:background="?attr/selectableItemBackground"
-        android:fontFamily="sans-serif-medium"
-        android:minHeight="0dp"
-        android:padding="12dp"
-        android:text="@string/btn_exit"
-        android:textAllCaps="false"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

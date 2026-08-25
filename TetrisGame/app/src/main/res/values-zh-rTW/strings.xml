@@ -4,8 +4,8 @@
     <string name="btn_start">開始遊戲</string>
     <string name="btn_instruction">遊戲說明</string>
     <string name="btn_exit">離開遊戲</string>
-    <string name="dialog_message_instruction">這是一款使用 Java 和 Android Studio 開發的簡單俄羅斯方塊遊戲。</string>
-    <string name="dialog_title_instruction">關於本遊戲</string>
+    <string name="dialog_message_instruction">遊戲玩法：\n\n1. 使用左、右、下按鈕移動方塊。\n2. 點擊「旋轉」按鈕來改變方塊方向。\n3. 填滿完整的一橫列即可消除並獲得 100 分。\n4. 當方塊堆疊到頂部時，遊戲結束。</string>
+    <string name="dialog_title_instruction">遊戲說明</string>
     <string name="dialog_button_restart">重新開始</string>
     <string name="btn_control_left">左</string>
     <string name="btn_control_right">右</string>

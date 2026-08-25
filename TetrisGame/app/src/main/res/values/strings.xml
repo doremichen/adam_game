@@ -4,8 +4,8 @@
     <string name="btn_start">Start</string>
     <string name="btn_instruction">Instruction</string>
     <string name="btn_exit">Exit</string>
-    <string name="dialog_message_instruction">This is a simple Tetris game developed in Java with Android Studio.</string>
-    <string name="dialog_title_instruction">About</string>
+    <string name="dialog_message_instruction">How to play:\n\n1. Move blocks using Left, Right, and Down buttons.\n2. Tap Rotate to change block orientation.\n3. Fill a complete horizontal line to clear it and score 100 points.\n4. Game ends when blocks reach the top.</string>
+    <string name="dialog_title_instruction">Game Instructions</string>
     <string name="dialog_button_restart">Restart</string>
     <string name="btn_control_left">Left</string>
     <string name="btn_control_right">right</string>

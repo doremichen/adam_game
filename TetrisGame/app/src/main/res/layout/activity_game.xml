@@ -1,154 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/game_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context=".GameActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Score view and setting button (Top panel) -->
-    <LinearLayout
-        android:id="@+id/info_panel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="12dp"
-        android:background="@drawable/panel_bg"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+    <data>
+    </data>
 
-        <!-- Score -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/game_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context=".presentation.ui.GameActivity">
+
+        <!-- Score view and setting button (Top panel) -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/info_panel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginEnd="16dp"
-            android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/tv_score_label"
+            android:padding="12dp"
+            android:background="@drawable/panel_bg"
+            android:gravity="center_vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Score -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/tv_score"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-            <TextView
-                android:id="@+id/tv_score_value"
+                android:orientation="horizontal"
+                android:layout_marginEnd="16dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tv_score_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_score"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/tv_score_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:layout_marginStart="4dp" />
+            </LinearLayout>
+
+            <!-- High Score -->
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:layout_marginStart="4dp" />
+                android:orientation="horizontal"
+                android:layout_marginEnd="16dp"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tv_high_score_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tv_high"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+                <TextView
+                    android:id="@+id/tv_high_score_value"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:layout_marginStart="4dp" />
+            </LinearLayout>
+
+            <!-- Settings -->
+            <ImageButton
+                android:id="@+id/btn_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_preferences"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/btn_settings"
+                app:tint="@android:color/white" />
         </LinearLayout>
 
-        <!-- High Score -->
+        <!-- Game area (middle section) -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:id="@+id/game_area"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#AA000000"
+            app:layout_constraintTop_toBottomOf="@id/info_panel"
+            app:layout_constraintBottom_toTopOf="@id/control_panel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.adam.app.tetrisgame.presentation.ui.TetrisView
+                android:id="@+id/tetris_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black" />
+        </LinearLayout>
+
+        <!-- Control panel (bottom section) -->
+        <LinearLayout
+            android:id="@+id/control_panel"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginEnd="16dp"
-            android:gravity="center_vertical">
-            <TextView
-                android:id="@+id/tv_high_score_label"
-                android:layout_width="wrap_content"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#AA000000"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/btn_left"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/tv_high"
-                android:textColor="@android:color/white"
-                android:textSize="16sp" />
-            <TextView
-                android:id="@+id/tv_high_score_value"
-                android:layout_width="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_control_left"
+                android:textColor="@color/android:white"
+                android:background="@drawable/button_bg" />
+
+            <Button
+                android:id="@+id/btn_right"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="0"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:layout_marginStart="4dp" />
+                android:layout_weight="1"
+                android:text="@string/btn_control_right"
+                android:textColor="@color/android:white"
+                android:background="@drawable/button_bg" />
+
+            <Button
+                android:id="@+id/btn_down"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_control_down"
+                android:textColor="@color/android:white"
+                android:background="@drawable/button_bg" />
+
+            <Button
+                android:id="@+id/btn_rotate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_control_rotate"
+                android:textColor="@color/android:white"
+                android:background="@drawable/button_bg" />
         </LinearLayout>
 
-        <!-- Settings -->
-        <ImageButton
-            android:id="@+id/btn_settings"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_preferences"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/btn_settings"
-            app:tint="@android:color/white" />
-    </LinearLayout>
-
-    <!-- Game area (middle section) -->
-    <LinearLayout
-        android:id="@+id/game_area"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="12dp"
-        android:background="#AA000000"
-        app:layout_constraintTop_toBottomOf="@id/info_panel"
-        app:layout_constraintBottom_toTopOf="@id/control_panel"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.adam.app.tetrisgame.view.TetrisView
-            android:id="@+id/tetris_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/black" />
-    </LinearLayout>
-
-    <!-- Control panel (bottom section) -->
-    <LinearLayout
-        android:id="@+id/control_panel"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="12dp"
-        android:background="#AA000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <Button
-            android:id="@+id/btn_left"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/btn_control_left"
-            android:textColor="@color/android:white"
-            android:background="@drawable/button_bg" />
-
-        <Button
-            android:id="@+id/btn_right"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/btn_control_right"
-            android:textColor="@color/android:white"
-            android:background="@drawable/button_bg" />
-
-        <Button
-            android:id="@+id/btn_down"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/btn_control_down"
-            android:textColor="@color/android:white"
-            android:background="@drawable/button_bg" />
-
-        <Button
-            android:id="@+id/btn_rotate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/btn_control_rotate"
-            android:textColor="@color/android:white"
-            android:background="@drawable/button_bg" />
-    </LinearLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
