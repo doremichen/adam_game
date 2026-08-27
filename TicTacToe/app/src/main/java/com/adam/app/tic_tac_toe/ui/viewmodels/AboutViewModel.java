@@ -20,20 +20,37 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
+package com.adam.app.tic_tac_toe.ui.viewmodels;
 
-import org.junit.Test;
+import android.content.Context;
 
-import static org.junit.Assert.*;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
+
+import com.adam.app.tic_tac_toe.R;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * View model for the About screen.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+@HiltViewModel
+public class AboutViewModel extends ViewModel {
+
+    private final MutableLiveData<String> mAboutText = new MutableLiveData<>("");
+
+    @Inject
+    public AboutViewModel(@NonNull @ApplicationContext Context context) {
+        mAboutText.setValue(context.getString(R.string.tic_tac_toe_about_instruction));
+    }
+
+    @NonNull
+    public LiveData<String> getAboutText() {
+        return mAboutText;
     }
 }

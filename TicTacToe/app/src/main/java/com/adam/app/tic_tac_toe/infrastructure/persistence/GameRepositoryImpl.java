@@ -20,20 +20,45 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
+package com.adam.app.tic_tac_toe.infrastructure.persistence;
 
-import org.junit.Test;
+import com.adam.app.tic_tac_toe.application.interfaces.GameRepository;
 
-import static org.junit.Assert.*;
+import androidx.annotation.NonNull;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Implementation of GameRepository using SettingsManager.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+@Singleton
+public class GameRepositoryImpl implements GameRepository {
+
+    private final SettingsManager mSettingsManager;
+
+    @Inject
+    public GameRepositoryImpl(@NonNull SettingsManager settingsManager) {
+        mSettingsManager = settingsManager;
+    }
+
+    @Override
+    public boolean isGameModePve() {
+        return mSettingsManager.isGameModePve();
+    }
+
+    @Override
+    public void setGameModePve(boolean value) {
+        mSettingsManager.setGameModePve(value);
+    }
+
+    @Override
+    public boolean isAiStrategyHard() {
+        return mSettingsManager.isAiStrategyHard();
+    }
+
+    @Override
+    public void setAiStrategyHard(boolean value) {
+        mSettingsManager.setAiStrategyHard(value);
     }
 }

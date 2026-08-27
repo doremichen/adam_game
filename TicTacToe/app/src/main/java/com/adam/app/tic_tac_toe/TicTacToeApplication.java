@@ -22,18 +22,13 @@
 
 package com.adam.app.tic_tac_toe;
 
-import org.junit.Test;
+import android.app.Application;
 
-import static org.junit.Assert.*;
+import dagger.hilt.android.HiltAndroidApp;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * TicTacToe Application class.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
-    }
+@HiltAndroidApp
+public class TicTacToeApplication extends Application {
 }

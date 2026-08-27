@@ -37,9 +37,10 @@ This document defines the coding standards and architectural guidelines for Andr
 ## 4. Architectural Standards
 - **AS-01**: Follow **Clean Architecture + MVVM**.
 - **AS-02**: **Layers**:
-    - **Domain**: Pure logic and Use Cases. Encapsulate related actions in **Enum-based UseCases**.
-    - **Data**: Repository implementations and DB access. Repositories only respond to UseCases.
-    - **Presentation**: UI, Adapters, and ViewModels. ViewModels only interact with UseCases.
+    - **Domain**: Core entities and pure logic. Absolutely independent.
+    - **Application**: Business processes and Use Cases. Encapsulate related actions in **Enum-based UseCases**.
+    - **Infrastructure**: Technical implementations (Repositories, DB, SharedPreferences). Repositories only respond to UseCases.
+    - **UI / Presentation**: UI, Adapters, and ViewModels. ViewModels only interact with UseCases.
 - **AS-03**: Use **Google Hilt** for all dependency management.
 
 ## 5. Design Patterns & Testing

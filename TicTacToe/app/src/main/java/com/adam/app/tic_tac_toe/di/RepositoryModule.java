@@ -20,20 +20,26 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
+package com.adam.app.tic_tac_toe.di;
 
-import org.junit.Test;
+import com.adam.app.tic_tac_toe.application.interfaces.GameRepository;
+import com.adam.app.tic_tac_toe.infrastructure.persistence.GameRepositoryImpl;
 
-import static org.junit.Assert.*;
+import dagger.Binds;
+import dagger.Module;
+import dagger.hilt.InstallIn;
+import dagger.hilt.components.SingletonComponent;
+
+import javax.inject.Singleton;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Hilt module for providing repository bindings.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
-    }
+@Module
+@InstallIn(SingletonComponent.class)
+public abstract class RepositoryModule {
+
+    @Binds
+    @Singleton
+    public abstract GameRepository bindGameRepository(GameRepositoryImpl impl);
 }

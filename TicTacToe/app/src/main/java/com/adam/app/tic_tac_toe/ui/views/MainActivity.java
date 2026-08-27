@@ -20,20 +20,34 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
+package com.adam.app.tic_tac_toe.ui.views;
 
-import org.junit.Test;
+import android.os.Bundle;
 
-import static org.junit.Assert.*;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.fragment.NavHostFragment;
+
+import com.adam.app.tic_tac_toe.R;
+import com.adam.app.tic_tac_toe.databinding.ActivityMainBinding;
+
+import dagger.hilt.android.AndroidEntryPoint;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Main activity for the Tic Tac Toe game.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+@AndroidEntryPoint
+public class MainActivity extends AppCompatActivity {
+
+    private ActivityMainBinding mBinding;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(mBinding.getRoot());
+
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host_fragment);
     }
 }

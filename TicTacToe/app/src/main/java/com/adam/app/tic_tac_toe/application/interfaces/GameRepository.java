@@ -20,20 +20,14 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
-
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+package com.adam.app.tic_tac_toe.application.interfaces;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Repository interface for game-related data and settings.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
-    }
+public interface GameRepository {
+    boolean isGameModePve();
+    void setGameModePve(boolean value);
+    boolean isAiStrategyHard();
+    void setAiStrategyHard(boolean value);
 }

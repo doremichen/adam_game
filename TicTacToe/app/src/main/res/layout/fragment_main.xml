@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2026 Adam Chen
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
@@ -6,76 +27,76 @@
     <data>
         <variable
             name="viewModel"
-            type="com.adam.app.tic_tac_toe.viewmodels.MainViewModel" />
+            type="com.adam.app.tic_tac_toe.ui.viewmodels.MainViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="16dp"
-        tools:context=".views.fragments.MenuFragment">
+        tools:context=".ui.views.fragments.MainFragment">
 
         <TextView
-            android:id="@+id/text_view_title"
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/app_name"
             android:textSize="34sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/button_start_game"
+            app:layout_constraintBottom_toTopOf="@+id/btn_start_game"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <Button
-            android:id="@+id/button_start_game"
+            android:id="@+id/btn_start_game"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:text="@string/tic_tac_toe_start_game_btn"
             android:onClick="@{() -> viewModel.onStartGameClicked()}"
-            app:layout_constraintBottom_toTopOf="@+id/button_settings"
+            app:layout_constraintBottom_toTopOf="@+id/btn_settings"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/text_view_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
             app:layout_constraintWidth_percent="0.6" />
 
         <Button
-            android:id="@+id/button_settings"
+            android:id="@+id/btn_settings"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/tic_tac_toe_settings_btn"
             android:onClick="@{() -> viewModel.onSettingsClicked()}"
-            app:layout_constraintBottom_toTopOf="@+id/button_about"
-            app:layout_constraintEnd_toEndOf="@+id/button_start_game"
-            app:layout_constraintStart_toStartOf="@+id/button_start_game"
-            app:layout_constraintTop_toBottomOf="@+id/button_start_game" />
+            app:layout_constraintBottom_toTopOf="@+id/btn_about"
+            app:layout_constraintEnd_toEndOf="@+id/btn_start_game"
+            app:layout_constraintStart_toStartOf="@+id/btn_start_game"
+            app:layout_constraintTop_toBottomOf="@+id/btn_start_game" />
 
         <Button
-            android:id="@+id/button_about"
+            android:id="@+id/btn_about"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/tic_tac_toe_about_btn"
             android:onClick="@{() -> viewModel.onAboutClicked()}"
-            app:layout_constraintBottom_toTopOf="@+id/button_exit"
-            app:layout_constraintEnd_toEndOf="@+id/button_settings"
-            app:layout_constraintStart_toStartOf="@+id/button_settings"
-            app:layout_constraintTop_toBottomOf="@+id/button_settings" />
+            app:layout_constraintBottom_toTopOf="@+id/btn_exit"
+            app:layout_constraintEnd_toEndOf="@+id/btn_settings"
+            app:layout_constraintStart_toStartOf="@+id/btn_settings"
+            app:layout_constraintTop_toBottomOf="@+id/btn_settings" />
 
         <Button
-            android:id="@+id/button_exit"
+            android:id="@+id/btn_exit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:text="@string/tic_tac_toe_exit_btn"
             android:onClick="@{() -> viewModel.onExitClicked()}"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/button_about"
-            app:layout_constraintStart_toStartOf="@+id/button_about"
-            app:layout_constraintTop_toBottomOf="@+id/button_about" />
+            app:layout_constraintEnd_toEndOf="@+id/btn_about"
+            app:layout_constraintStart_toStartOf="@+id/btn_about"
+            app:layout_constraintTop_toBottomOf="@+id/btn_about" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

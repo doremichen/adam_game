@@ -23,4 +23,5 @@
     <string name="tic_tac_toe_game_over_title">遊戲結束</string>
     <string name="tic_tac_toe_game_over_message">獲勝者是 %1$S</string>
     <string name="tic_tac_toe_draw_game_over_message">平手!</string>
+    <string name="tic_tac_toe_player_turn">輪到玩家 %1$s</string>
 </resources>

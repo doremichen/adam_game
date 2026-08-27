@@ -1,0 +1,143 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+package "UI / Presentation Layer" {
+    class MainActivity <<Activity>>
+
+    package "Fragments" {
+        class MainFragment <<Fragment>>
+        class GameFragment <<Fragment>>
+        class AboutFragment <<Fragment>>
+        class SettingsFragment <<Fragment>>
+    }
+
+    package "ViewModels" {
+        class MainViewModel <<ViewModel>> {
+            + mNavigateTo: LiveData<Destination>
+        }
+        class GameViewModel <<ViewModel>> {
+            + mBoardState: LiveData<Player[][]>
+            + mStatusText: LiveData<String>
+            + mIsGameOver: LiveData<Boolean>
+            + mWinningCells: LiveData<List<Point>>
+        }
+        class AboutViewModel <<ViewModel>> {
+            + mAboutText: LiveData<String>
+        }
+        class SettingsViewModel <<ViewModel>>
+    }
+
+    package "UI Utils" {
+        class Utils <<Final>> {
+            + {static} showAlertDialog()
+        }
+        interface OnPressListener <<Callback>> {
+            + onPress()
+        }
+        class GameBindingAdapters <<BindingAdapter>>
+    }
+}
+
+package "Application Layer" {
+    package "UseCases" {
+        class GameUseCase {
+            + execute(Action, Params)
+        }
+        enum Action {
+            GET_SETTINGS
+            SET_GAME_MODE
+            SET_AI_DIFFICULTY
+            RESET_BOARD
+            CHECK_GAME_OVER
+        }
+    }
+
+    package "Interfaces" {
+        interface GameRepository {
+            + isGameModePve()
+            + setGameModePve()
+            + isAiStrategyHard()
+            + setAiStrategyHard()
+        }
+    }
+}
+
+package "Infrastructure Layer" {
+    package "Persistence" {
+        class GameRepositoryImpl {
+            - mSettingsManager: SettingsManager
+        }
+        class SettingsManager <<Singleton>> {
+            - mSharedPreferences: SharedPreferences
+        }
+    }
+}
+
+package "Domain Layer" {
+    package "Entities" {
+        class Board {
+            - mCells: Cell[][]
+            - mWinner: Player
+            + placeMove()
+            + reset()
+        }
+        class Cell {
+            - mPlayer: Player
+            - mPosition: Point
+        }
+        enum Player {
+            X
+            O
+        }
+    }
+
+    package "Logic" {
+        enum AIStrategy <<Strategy>> {
+            EasyAIStrategy
+            HardAIStrategy
+            + findBestMove()
+        }
+        class WinnerPattern <<Final>> {
+            - {static} sWinPatterns
+            + {static} getWinPatterns()
+        }
+    }
+}
+
+' Relationships & Patterns
+
+' Observation Pattern
+MainFragment ..> MainViewModel : observers mNavigateTo
+GameFragment ..> GameViewModel : observers LiveData state
+AboutFragment ..> AboutViewModel : observers mAboutText
+
+' Callback Pattern
+GameFragment ..> OnPressListener : implements for dialogs
+SettingsFragment ..> SettingsViewModel : calls methods on change
+Utils +-- OnPressListener
+
+' Dependency Flow
+MainFragment --> MainViewModel
+GameFragment --> GameViewModel
+AboutFragment --> AboutViewModel
+SettingsFragment --> SettingsViewModel
+
+SettingsViewModel --> GameUseCase : requests actions
+GameViewModel --> GameUseCase : requests actions
+GameViewModel --> Board : state management
+GameViewModel --> AIStrategy : uses for AI move
+GameViewModel --> Player
+
+GameUseCase --> GameRepository : data access
+GameUseCase --> Board : logic validation
+
+GameRepositoryImpl ..|> GameRepository : implements
+GameRepositoryImpl --> SettingsManager
+
+Board *-- Cell
+Cell o-- Player
+AIStrategy --> Board
+AIStrategy --> WinnerPattern
+
+@enduml

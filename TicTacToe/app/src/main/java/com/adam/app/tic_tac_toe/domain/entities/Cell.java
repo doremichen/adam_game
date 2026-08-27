@@ -20,20 +20,38 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
+package com.adam.app.tic_tac_toe.domain.entities;
 
-import org.junit.Test;
+import android.graphics.Point;
 
-import static org.junit.Assert.*;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Represents a single cell on the game board.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+public class Cell {
+
+    private Player mPlayer;
+    private final Point mPosition;
+
+    public Cell(@Nullable Player player, @NonNull Point position) {
+        this.mPlayer = player;
+        this.mPosition = position;
+    }
+
+    @Nullable
+    public Player getPlayer() {
+        return mPlayer;
+    }
+
+    public Cell setPlayer(@Nullable Player player) {
+        this.mPlayer = player;
+        return this;
+    }
+
+    @NonNull
+    public Point getPosition() {
+        return mPosition;
     }
 }

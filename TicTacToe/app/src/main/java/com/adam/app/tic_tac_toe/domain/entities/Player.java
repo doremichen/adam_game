@@ -20,20 +20,11 @@
  * SOFTWARE.
  */
 
-package com.adam.app.tic_tac_toe;
-
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+package com.adam.app.tic_tac_toe.domain.entities;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Players in the Tic Tac Toe game.
  */
-public class ExampleUnitTest {
-    @Test
-    public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
-    }
+public enum Player {
+    X, O
 }
