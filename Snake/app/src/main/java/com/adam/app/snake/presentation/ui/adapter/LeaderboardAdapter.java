@@ -95,6 +95,7 @@ public class LeaderboardAdapter extends ListAdapter<LeaderboardEntry, Leaderboar
             Utils.logDebug(TAG, "bind: position = " + position);
             mBinding.textRank.setText(String.valueOf(position));
             mBinding.textName.setText(entry.getName());
+            mBinding.textDate.setText(Utils.formatDate(entry.getTimeStamp()));
             mBinding.textScore.setText(String.valueOf(entry.getScore()));
         }
     }

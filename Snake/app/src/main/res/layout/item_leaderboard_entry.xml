@@ -55,6 +55,15 @@
         android:maxLines="1" />
 
     <TextView
+        android:id="@+id/text_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="2026/08/27"
+        android:textSize="12sp"
+        android:textColor="?android:attr/textColorSecondary" />
+
+    <TextView
         android:id="@+id/text_score"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

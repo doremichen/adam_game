@@ -32,12 +32,28 @@ import android.widget.Toast;
 
 import com.adam.app.snake.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public final class Utils {
     // DEBUG_TAG: SnakeGame
     public static final String DEBUG_TAG = "SnakeGame";
 
+    private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
+
     private Utils() {
         throw new AssertionError();
+    }
+
+    /**
+     * format timestamp to readable date string
+     *
+     * @param timestamp long
+     * @return String
+     */
+    public static String formatDate(long timestamp) {
+        return sDateFormat.format(new Date(timestamp));
     }
 
     /**

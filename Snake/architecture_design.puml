@@ -113,6 +113,8 @@ package Presentation {
     class SettingActivity
     class SnakeViewModel
     class SettingViewModel
+    class LeaderboardFragment
+    class LeaderboardAdapter
 }
 
 package Domain {
@@ -127,6 +129,11 @@ package Data {
     class SettingRepositoryImpl
     class RoomDatabase
     class SharedPreferencesManager
+    class LeaderboardEntry {
+        - mName: String
+        - mScore: int
+        - mTimeStamp: long
+    }
 }
 
 ' Interaction Flow
@@ -144,6 +151,12 @@ SettingRepositoryImpl .up.|> ISettingRepository : implements
 
 LeaderboardRepositoryImpl -right-> RoomDatabase : CRUD
 SettingRepositoryImpl -right-> SharedPreferencesManager : CRUD
+
+note bottom of LeaderboardAdapter
+  **UI Enhancement**
+  Formats *mTimeStamp* to
+  "yyyy/MM/dd HH:mm" for display.
+end note
 
 note top of LeaderboardUseCase
   **Enum-based UseCase Pattern**
