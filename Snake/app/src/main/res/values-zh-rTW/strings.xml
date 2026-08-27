@@ -1,3 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2026 Adam Game
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
 <resources>
     <string name="app_name">貪食蛇</string>
     <string name="snake_game_core">分數：%1$d</string>
@@ -8,6 +30,20 @@
     <string name="snake_game_ok">確定</string>
     <string name="snake_game_over_title">遊戲結束</string>
     <string name="snake_game_dialog_message">你想再玩一次還是離開遊戲？</string>
+    <string name="snake_game_btn_about">關於遊戲</string>
+    <string name="snake_game_about_title">遊戲玩法說明</string>
+    <string name="snake_game_instructions">
+        玩法介紹：\n\n
+        1. 使用方向鍵控制蛇的移動方向。\n
+        2. 吃掉紅色普通食物可增加長度並獲得分數。\n
+        3. 特殊食物具有多種效果：\n
+           - 加速 / 減速\n
+           - 隱身 (蛇身消失 3 秒)\n
+           - 無敵 (8 秒內撞牆不會死亡)\n
+        4. 避免撞到牆壁（除非處於無敵狀態）或蛇的身軀。\n
+        5. 在設定中，您可以開啟「穿牆模式」來自由穿梭牆壁。
+    </string>
+    <string name="snake_game_exit_btn">退出</string>
     <string name="snake_game_restart">再玩一次</string>
     <string name="snake_game_exit">離開</string>
     <string name="snake_game_exit_title">離開</string>

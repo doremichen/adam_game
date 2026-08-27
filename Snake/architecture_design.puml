@@ -1,0 +1,167 @@
+@startuml
+' 強制允許混合語法以避免圖表類型誤判
+allow_mixing
+
+' 全域樣式設定，讓類別看起來像矩形
+hide circle
+hide empty members
+skinparam shadowing false
+skinparam class {
+    BackgroundColor White
+    ArrowColor Black
+    BorderColor Black
+}
+
+header Snake Game Architecture Design
+footer Page 1 of 3
+
+' --- Page 1: Overview ---
+title Snake Game Architecture - Overview
+
+package PresentationLayer #lightBlue {
+    class UI << (V,orchid) >>
+    class ViewModels << (V,orchid) >>
+    class CustomViews << (V,orchid) >>
+}
+
+package DomainLayer #lightGreen {
+    class Entities
+    class UseCases
+    class RepoInterfaces
+}
+
+package DataLayer #lightYellow {
+    class Repositories
+    class Database
+    class SharedPreferences
+}
+
+PresentationLayer -down-> DomainLayer : depends on
+DataLayer .up.|> DomainLayer : implements
+DataLayer -right-> DomainLayer : uses models
+
+note bottom of DomainLayer
+  Pure logic, no Android dependencies.
+  Contains business rules and entities.
+end note
+
+newpage
+header Snake Game Architecture Design
+footer Page 2 of 3
+
+' --- Page 2: Domain Model ---
+title Snake Game Architecture - Domain Model
+
+package model {
+    class SnakeGame {
+        - mSnake: Snake
+        - mSpecialFoods: List<SpecialFood>
+        - mGameState: GameState
+        - mScore: int
+        + update()
+        + start()
+        + stop()
+        + reset()
+        + setDirection(Direction)
+    }
+
+    class Snake {
+        - mBody: List<Point>
+        - mDirection: Direction
+        - mIsInvisible: boolean
+        - mIsInvincible: boolean
+        + move()
+        + grow()
+        + checkCollision()
+    }
+
+    class SpecialFood {
+        - mPosition: Point
+        - mType: FoodType
+        - mResId: int
+    }
+
+    enum Direction {
+        UP
+        DOWN
+        LEFT
+        RIGHT
+    }
+
+    enum GameState {
+        IDLE
+        RUNNING
+        PAUSED
+        GAME_OVER
+    }
+
+    SnakeGame "1" *-- "1" Snake : contains
+    SnakeGame "1" *-- "*" SpecialFood : manages
+    Snake "1" --> "1" Direction : oriented
+    SnakeGame ..> GameState : state
+}
+
+newpage
+header Snake Game Architecture Design
+footer Page 3 of 3
+
+' --- Page 3: MVVM Interaction ---
+title Snake Game Architecture - MVVM Interaction Flow
+
+package Presentation {
+    class ViewComponent
+    class SettingActivity
+    class SnakeViewModel
+    class SettingViewModel
+}
+
+package Domain {
+    class LeaderboardUseCase
+    class SettingUseCase
+    interface ILeaderboardRepository
+    interface ISettingRepository
+}
+
+package Data {
+    class LeaderboardRepositoryImpl
+    class SettingRepositoryImpl
+    class RoomDatabase
+    class SharedPreferencesManager
+}
+
+' Interaction Flow
+ViewComponent -right-> SnakeViewModel : observes LiveData
+SnakeViewModel -right-> LeaderboardUseCase : executes
+SnakeViewModel -down-> SettingUseCase : executes
+SettingActivity -right-> SettingViewModel : uses Data Binding
+SettingViewModel -right-> SettingUseCase : executes
+
+LeaderboardUseCase -right-> ILeaderboardRepository : calls
+SettingUseCase -right-> ISettingRepository : calls
+
+LeaderboardRepositoryImpl .up.|> ILeaderboardRepository : implements
+SettingRepositoryImpl .up.|> ISettingRepository : implements
+
+LeaderboardRepositoryImpl -right-> RoomDatabase : CRUD
+SettingRepositoryImpl -right-> SharedPreferencesManager : CRUD
+
+note top of LeaderboardUseCase
+  **Enum-based UseCase Pattern**
+  - GET_TOP_SCORES
+  - SAVE_SCORE
+  - CLEAR_ALL
+end note
+
+note top of SettingUseCase
+  **Enum-based UseCase Pattern**
+  - GET_SETTING
+  - SAVE_SETTING
+end note
+
+note bottom of SnakeViewModel
+  **Hilt Injected**
+  ViewModels no longer access
+  Repositories directly.
+end note
+
+@enduml

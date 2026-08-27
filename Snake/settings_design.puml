@@ -1,0 +1,63 @@
+@startuml
+title Game Setting Item Refactoring Design
+
+hide circle
+hide empty members
+
+class GameSettingItem {
+    - mType: SettingType
+    - mValue: Object
+    - mSpinnerItems: List<String>
+    - mInfo: String
+    + getSettingType(): SettingType
+    + getValue(): Object
+    + getSpinnerItems(): List<String>
+    + getInfo(): String
+}
+
+enum SettingType {
+    WRAP_MODE
+    SPECIAL_FOOD
+    MULTI_FOODS_SHOW
+    SPECIAL_FREQ
+    VERSION
+    .. Fields ..
+    - mKey: String
+    - mTitleResId: int
+    - mUiType: UiType
+    .. Methods ..
+    + getKey(): String
+    + getTitleResId(): int
+    + getUiType(): UiType
+}
+
+enum UiType {
+    SWITCH
+    SPINNER
+    TEXT
+}
+
+class SettingViewModel {
+    + buildSettingItems(Context): List<GameSettingItem>
+}
+
+' Relationships
+GameSettingItem "*" o-- "1" SettingType : categorized by
+SettingType "1" --> "1" UiType : defines UI
+SettingViewModel ..> GameSettingItem : creates
+SettingViewModel ..> SettingType : iterates
+
+note right of SettingType
+  **Metadata Definition**
+  Encapsulates key string,
+  string resource ID, and
+  expected UI representation.
+end note
+
+note right of GameSettingItem
+  **Runtime Data Container**
+  Holds the current value
+  and dynamic list for Spinner.
+end note
+
+@enduml

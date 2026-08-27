@@ -1,100 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+  ~ Copyright (C) 2026 Adam Game
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining a copy
+  ~ of this software and associated documentation files (the "Software"), to deal
+  ~ in the Software without restriction, including without limitation the rights
+  ~ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  ~ copies of the Software, and to permit persons to whom the Software is
+  ~ furnished to do so, subject to the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be included in all
+  ~ copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  ~ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  ~ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  ~ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  ~ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+  ~ SOFTWARE.
+  -->
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@drawable/bg_welcome_gradient"
-    tools:context=".WelcomeActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Title -->
-    <TextView
-        android:id="@+id/tvGameTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/snake_game_title"
-        android:textSize="36sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:letterSpacing="0.1"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.1" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.adam.app.snake.presentation.viewmodel.WelcomeViewModel" />
+    </data>
 
-    <!-- Game Icon -->
-    <ImageView
-        android:id="@+id/imgSnakeLogo"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:src="@drawable/ic_snake_logo"
-        android:contentDescription="@string/snake_game_icon_description"
-        app:layout_constraintTop_toBottomOf="@id/tvGameTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="24dp"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="#0F0F1E"
+        tools:context=".presentation.ui.WelcomeActivity">
 
-    <!-- Start -->
-    <Button
-        android:id="@+id/btnStart"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/snake_game_start"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:backgroundTint="@color/teal_700"
-        android:textColor="@android:color/white"
-        android:layout_marginHorizontal="48dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@id/imgSnakeLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Retro Grid Background Overlay -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_welcome_gradient"
+            android:alpha="0.8"/>
 
-    <!-- Leaderboard -->
-    <Button
-        android:id="@+id/btnLeaderboard"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="@string/snake_game_leader_board"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:backgroundTint="@color/purple_500"
-        android:textColor="@android:color/white"
-        android:layout_marginHorizontal="48dp"
-        android:layout_marginTop="12dp"
-        app:layout_constraintTop_toBottomOf="@id/btnStart"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <!-- Header: Snake Animation within a Frame -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardAnimation"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="32dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="#000000"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Snake Demo Animation -->
-    <com.adam.app.snake.view.DemoSnakeSurfaceView
-        android:id="@+id/demoSnakeView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="48dp"
-        android:layout_marginVertical="12dp"
-        app:layout_constraintTop_toBottomOf="@id/btnLeaderboard"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnExit"/>
+            <com.adam.app.snake.presentation.view.DemoSnakeSurfaceView
+                android:id="@+id/demoSnakeView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.cardview.widget.CardView>
 
-    <!-- Exit -->
-    <Button
-        android:id="@+id/btnExit"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="@string/snake_game_exit"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:backgroundTint="@color/red_700"
-        android:textColor="@android:color/white"
-        android:layout_marginHorizontal="48dp"
-        android:layout_marginVertical="12dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <!-- Title Section -->
+        <TextView
+            android:id="@+id/tvGameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/snake_game_title"
+            android:textSize="42sp"
+            android:textStyle="bold"
+            android:textColor="#00FF41"
+            android:letterSpacing="0.15"
+            android:shadowColor="#000000"
+            android:shadowDx="4"
+            android:shadowDy="4"
+            android:shadowRadius="2"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/cardAnimation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Floating Logo Icon -->
+        <ImageView
+            android:id="@+id/imgSnakeLogo"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:src="@drawable/ic_snake_logo"
+            android:contentDescription="@string/snake_game_icon_description"
+            android:elevation="10dp"
+            app:layout_constraintTop_toBottomOf="@id/tvGameTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="-10dp"/>
+
+        <!-- Action Buttons: Arcade Style -->
+        <LinearLayout
+            android:id="@+id/buttonContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="56dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintTop_toBottomOf="@id/imgSnakeLogo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Start Game Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStart"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:text="@string/snake_game_start"
+                android:onClick="@{() -> viewModel.onStartClick()}"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#2ECC71"
+                app:cornerRadius="32dp"
+                app:icon="@android:drawable/ic_media_play"
+                app:iconGravity="textStart"
+                app:iconSize="24dp"
+                android:elevation="6dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Leaderboard Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLeaderboard"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/snake_game_leader_board"
+                android:onClick="@{() -> viewModel.onLeaderboardClick()}"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#9B59B6"
+                app:cornerRadius="28dp"
+                app:icon="@android:drawable/btn_star_big_on"
+                app:iconGravity="textStart"
+                app:iconSize="20dp"
+                android:elevation="4dp"
+                android:layout_marginBottom="12dp"/>
+
+            <!-- About Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAbout"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="@string/snake_game_btn_about"
+                android:onClick="@{() -> viewModel.onAboutClick()}"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#34495E"
+                app:cornerRadius="28dp"
+                app:icon="@android:drawable/ic_dialog_info"
+                app:iconGravity="textStart"
+                app:iconSize="20dp"
+                android:elevation="4dp"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

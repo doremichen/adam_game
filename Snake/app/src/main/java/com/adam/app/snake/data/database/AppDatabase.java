@@ -1,10 +1,23 @@
-/**
- * Copyright 2015 the Adam Game
+/*
+ * Copyright (C) 2026 Adam Game
  *
- * Description: this class is the database class that is used to store the leaderboard data
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * Author: Adam Chen
- * Date: 2025/10/08
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 package com.adam.app.snake.data.database;
 
@@ -17,23 +30,33 @@ import androidx.room.RoomDatabase;
 import com.adam.app.snake.data.dao.LeaderboardDao;
 import com.adam.app.snake.data.entity.LeaderboardEntry;
 
-@Database(entities = {LeaderboardEntry.class}, version = 1, exportSchema = false)
+/**
+ * Database class for storing leaderboard data.
+ * Updated to Room 2.7.0+ API to avoid deprecated methods.
+ */
+@Database(entities = {LeaderboardEntry.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
-    private volatile static AppDatabase INSTANCE;
+    private volatile static AppDatabase sInstance;
 
     public abstract LeaderboardDao leaderboardDao();
 
+    /**
+     * Get the singleton instance of AppDatabase.
+     * @param context Application context
+     * @return AppDatabase instance
+     */
     public static AppDatabase getInstance(Context context) {
-        if (INSTANCE == null) {
+        if (sInstance == null) {
             synchronized (AppDatabase.class) {
-                if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "snake_game_db")
-                            .fallbackToDestructiveMigration()
+                if (sInstance == null) {
+                    sInstance = Room.databaseBuilder(context.getApplicationContext(),
+                                    AppDatabase.class, "snake_game_db")
+                            // Replacing deprecated fallbackToDestructiveMigration()
+                            .fallbackToDestructiveMigration(true)
                             .build();
                 }
             }
         }
-        return INSTANCE;
+        return sInstance;
     }
 }
