@@ -39,7 +39,7 @@
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="?attr/colorOnSurface"
-        android:text="1" />
+        android:text="@string/leaderboard_rank_placeholder" />
 
     <TextView
         android:id="@+id/text_name"
@@ -47,7 +47,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:layout_marginStart="12dp"
-        android:text="Player"
+        android:text="@string/leaderboard_name_placeholder"
         android:textStyle="bold"
         android:textSize="16sp"
         android:textColor="?attr/colorOnSurface"
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:text="2026/08/27"
+        android:text="@string/leaderboard_date_placeholder"
         android:textSize="12sp"
         android:textColor="?android:attr/textColorSecondary" />
 
@@ -68,7 +68,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
-        android:text="999"
+        android:text="@string/leaderboard_score_placeholder"
         android:textSize="16sp"
         android:textStyle="bold"
         android:textColor="?attr/colorPrimary" />

@@ -71,15 +71,13 @@ public class SettingUseCase {
             return null;
         }
 
-        switch (operation) {
-            case GET_SETTING:
-                return (T) mRepository.getSetting(key);
-            case SAVE_SETTING:
+        return switch (operation) {
+            case GET_SETTING -> (T) mRepository.getSetting(key);
+            case SAVE_SETTING -> {
                 mRepository.saveSetting(key, value);
-                return null;
-            default:
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 
     /**

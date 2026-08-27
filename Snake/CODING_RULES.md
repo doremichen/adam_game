@@ -1,75 +1,56 @@
-# DemoSet Project Coding Rules
+# Android Project Coding Rules
 
-This document defines the coding standards and architectural guidelines for the **DemoSet** project to ensure consistency, maintainability, and high quality across all modules.
+This document defines the coding standards and architectural guidelines for Android projects to ensure consistency, maintainability, and quality.
 
 ---
 
 ## 1. General Principles
-- **Language**: Core logic and system demos should prioritize **Java (JDK 17)** or **Kotlin** as per the specific module's architecture.
-- **Documentation**: All comments, Javadocs, and technical notes must be in **English**.
-- **Licensing**: Every source file (`.java`, `.kt`, `.xml`) must include the **MIT License header**.
+- **GP-01**: Core logic should prioritize **Java (JDK 17)** or **Kotlin**.
+- **GP-02**: All comments, Javadocs, and notes must be in **English**.
+- **GP-03**: Every source file must include the **MIT License header**.
+- **GP-04**: **Indentation**: Use 4 spaces for indentation (no tabs).
+- **GP-05**: **Line Length**: Limit lines to 120 characters where possible.
 
 ## 2. Naming Conventions
-### Java/Kotlin Code
-- **Member Variables**: Use the `m` prefix (e.g., `mUserRepository`, `mBinding`).
-- **Static/Class Variables**: Use the `s` prefix (e.g., `sInstance`).
-- **Constants**: Use `UPPER_SNAKE_CASE` (e.g., `DEFAULT_TIMEOUT`, `ACTION_PROFILE_UNAVAILABLE`).
-- **Method/Variable Names**: Use `camelCase`.
-- **Class Names**: Use `PascalCase`.
-
+### Java/Kotlin
+- **NC-01**: Member variables must use the `m` prefix (e.g., `mBinding`).
+- **NC-02**: Static variables must use the `s` prefix (e.g., `sInstance`).
+- **NC-03**: Constants must be `UPPER_SNAKE_CASE`.
+- **NC-04**: Classes use `PascalCase`, methods and variables use `camelCase`.
 ### Resources
-- **Layout IDs**: Use `snake_case` with type prefix (e.g., `tv_title`, `btn_submit`).
-- **String Keys**: Use descriptive prefixes (e.g., `ps_` for Private Space module).
+- **NC-05**: Layout IDs use `snake_case` with type prefix (e.g., `tv_title`).
+- **NC-06**: Resource files (drawables, layouts) use `snake_case`. Prefixes are encouraged (e.g., `bg_`, `ic_`, `item_`).
 
-## 3. Code Cleanliness & Best Practices
-- **No Magic Values**: Avoid "magic numbers" or "magic strings". Define them as named constants in a `Constants` class or move them to `strings.xml`.
-- **Full Qualified Names (FQN)**: Avoid using full paths in code (e.g., `android.view.View`). Use proper `import` statements instead.
-- **View Access**: **Strictly prohibit** the use of `findViewById`. Use **View Binding** or **Data Binding**.
-- **Memory Safety**: 
-    - Always unregister BroadcastReceivers and Listeners in `onDestroy()` or `onCleared()`.
-    - Use `ApplicationContext` for long-lived components.
-- **Thread Safety**: 
-    - Use `synchronized` blocks, atomic variables, or thread-safe collections (`ConcurrentHashMap`, etc.) where needed.
-    - Ensure UI updates always happen on the **Main Thread**.
+## 3. Code Quality & Clean Code
+- **CQ-01**: **No Magic Values**: Define "magic numbers" or strings as named constants or move to `strings.xml`.
+- **CQ-02**: **View Access**: Strictly prohibit `findViewById`. Use **View/Data Binding**.
+- **CQ-03**: **Unified Logging**: Prohibit direct use of `Log.d`. Use `Utils.logDebug(label, message)`.
+- **CQ-04**: **SOLID & DRY**: Adhere to SOLID principles and avoid code duplication.
+- **CQ-05**: **Method Focus**: Keep methods short and focused on a single responsibility.
+- **CQ-06**: **Dead Code**: Strictly prohibit unused imports, variables, or methods. No commented-out code.
+- **CQ-07**: **Encapsulation**: All class members must be `private`. Public getters/setters must not include `m` in their names.
+- **CQ-08**: **Dependency Injection**: Prefer constructor injection. Fields holding dependencies should be `final`.
+- **CQ-09**: **Thread Safety**: Ensure UI updates happen on the Main Thread. Use background threads for I/O.
+- **CQ-10**: **Imports**: Strictly prohibit wildcard imports (e.g., `import java.util.*`).
+- **CQ-11**: **Null Safety**: Use `@Nullable` and `@NonNull` annotations to define nullability contracts.
 
-## 4. Clean Code Principles
-- **SOLID Principles**: Adhere to SOLID principles. Every class and method should have a **Single Responsibility (SRP)**.
-- **DRY (Don't Repeat Yourself)**: Avoid code duplication. Extract common logic into reusable components or utility methods.
-- **Method Length**: Keep methods short and focused. A method should ideally do one thing and do it well.
-- **Parameter Count**: Avoid long parameter lists (ideally <= 3). Use **Builder Pattern** or **Data Classes/Parameter Objects** for complex inputs.
-- **Meaningful Names**: Variable and method names must be descriptive and reveal intent. Avoid abbreviations that obscure meaning.
-- **Error Handling**: Use exceptions for exceptional conditions, not for control flow. Provide meaningful error messages.
-- **Dead Code & Unused Members**: **Strictly prohibit** keeping dead code (commented-out blocks that are no longer needed) and unused methods, variables, or imports. Regularly perform cleanup to keep the codebase lean and maintainable.
-- **Field Encapsulation & Dependency Injection**:
-    - **General Attributes**: All class members must be **private** and follow the `m` prefix convention. Provide public **getter** and **setter** methods as needed (e.g., `getBinding()`, `setBinding()`). Method names **must not** include the `m` prefix.
-    - **Dependencies**: Prefer **Constructor Injection** for managing dependencies. Fields holding injected dependencies must be marked as **final** to ensure immutability and **must not** provide setter methods.
+## 4. Architectural Standards
+- **AS-01**: Follow **Clean Architecture + MVVM**.
+- **AS-02**: **Layers**:
+    - **Domain**: Pure logic and Use Cases. Encapsulate related actions in **Enum-based UseCases**.
+    - **Data**: Repository implementations and DB access. Repositories only respond to UseCases.
+    - **Presentation**: UI, Adapters, and ViewModels. ViewModels only interact with UseCases.
+- **AS-03**: Use **Google Hilt** for all dependency management.
 
-## 5. Architectural Standards
-- **Pattern**: Follow **Clean Architecture + MVVM (Model-View-ViewModel)**.
-- **Layers**:
-    - **Domain**: Pure logic, Use Cases, and Repository Interfaces.
-        - **UseCase Consolidation**: Avoid creating excessive UseCase classes for related features. Encapsulate related actions into an **Enum-based UseCase** pattern and use a **Bridge** module to provide Hilt-injected dependencies.
-    - **Data**: Implementation of repositories, API clients, and DB access.
-        - **Repository Responsibility**: Repositories must only be responsible to UseCases. They should not be directly accessed by ViewModels or other layers.
-    - **Presentation**: UI, Adapters, and ViewModels.
-        - **ViewModel Interaction**: ViewModels should only issue commands to UseCases and observe results via LiveData/Flow.
-- **Dependency Injection**: 
-    - Use **Google Hilt** for all dependency management.
-    - Prefer `@Binds` over `@Provides` when mapping implementation to interface to reduce generated code size and improve build performance.
-- **Modularization**: Support **Static Modularization** (independent feature libraries) to ensure decoupling.
-
-## 5. Design Patterns
-Leverage established patterns to solve common problems:
-- **Repository Pattern**: Abstract data sources.
-- **Strategy Pattern**: Version-aware logic (e.g., handling different Android APIs).
-- **Observer Pattern**: Reactive UI using LiveData or Flow.
-- **Builder Pattern**: For complex object construction with many parameters.
-- **Singleton Pattern**: Managed via Hilt.
+## 5. Design Patterns & Testing
+- **DP-01**: Leverage **Repository**, **Strategy**, **Observer**, **Builder**, and **Singleton** patterns.
+- **TS-01**: **Unit Testing**: Business logic in UseCases and ViewModels must have corresponding unit tests.
+- **TS-02**: **Immutability**: Favor immutable data structures (e.g., `final` fields, `List` instead of `ArrayList` in APIs).
 
 ## 6. Internationalization (i18n)
-- All user-facing strings must be defined in `res/values/strings.xml`.
-- Support for **English** (default) and **Traditional Chinese** (`values-zh-rTW`) is mandatory for all new features.
+- **IN-01**: All user-facing strings must be defined in `strings.xml`.
+- **IN-02**: Support for **English** (default) and **Traditional Chinese** (`values-zh-rTW`) is mandatory.
 
 ---
 
-*Last Updated: 2026-07-30*
+*Last Updated: 2026-08-27*

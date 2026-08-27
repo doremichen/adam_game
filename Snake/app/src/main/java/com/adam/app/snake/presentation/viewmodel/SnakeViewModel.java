@@ -272,7 +272,7 @@ public class SnakeViewModel extends ViewModel {
     public LiveData<Integer> getSpecialFoodToastLiveData() { return mSpecialFoodToastLiveData; }
 
     private enum SpeedLevel {
-        Low(0, 300L), Middle(1, 150L), High(2, 100L);
+        LOW(0, 300L), MIDDLE(1, 150L), HIGH(2, 100L);
         private final int mId;
         private final long mValue;
         SpeedLevel(int id, long value) { mId = id; mValue = value; }

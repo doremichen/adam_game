@@ -65,12 +65,8 @@ public class AppExecutors {
      */
     public void execute(Type type, Runnable runnable) {
         switch (type) {
-            case DiskIO:
-                mDiskIO.execute(runnable);
-                break;
-            case MainThread:
-                mMainThread.execute(runnable);
-                break;
+            case DiskIO -> mDiskIO.execute(runnable);
+            case MainThread -> mMainThread.execute(runnable);
         }
     }
 

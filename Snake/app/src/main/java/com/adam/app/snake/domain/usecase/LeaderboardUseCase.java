@@ -83,10 +83,9 @@ public class LeaderboardUseCase {
     public <T> T execute(Operation operation, Args args) {
         if (operation == null) return null;
 
-        switch (operation) {
-            case GET_TOP_SCORES:
-                return (T) mRepository.getTopScores();
-            case SAVE_SCORE:
+        return switch (operation) {
+            case GET_TOP_SCORES -> (T) mRepository.getTopScores();
+            case SAVE_SCORE -> {
                 if (args != null) {
                     mRepository.insert(new LeaderboardEntry(
                             args.getPlayerName(),
@@ -94,13 +93,13 @@ public class LeaderboardUseCase {
                             System.currentTimeMillis()
                     ));
                 }
-                return null;
-            case CLEAR_ALL:
+                yield null;
+            }
+            case CLEAR_ALL -> {
                 mRepository.clearAll();
-                return null;
-            default:
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 
     /**

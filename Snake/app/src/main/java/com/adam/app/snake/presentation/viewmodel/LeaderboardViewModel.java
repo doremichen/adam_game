@@ -38,15 +38,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel;
  */
 @HiltViewModel
 public class LeaderboardViewModel extends ViewModel {
-    // use case
-    private final LeaderboardUseCase mUseCase;
     // list of top leaderboard entries live data
     private final LiveData<List<LeaderboardEntry>> mTopScores;
 
     @Inject
     public LeaderboardViewModel(LeaderboardUseCase useCase) {
-        mUseCase = useCase;
-        mTopScores = mUseCase.getTopScores();
+        mTopScores = useCase.getTopScores();
     }
 
     /**
@@ -55,23 +52,5 @@ public class LeaderboardViewModel extends ViewModel {
      */
     public LiveData<List<LeaderboardEntry>> getTopScores() {
         return mTopScores;
-    }
-
-    /**
-     * addScore
-     *     add score to database
-     * @param name String
-     * @param score int
-     */
-    public void addScore(String name, int score) {
-        mUseCase.saveScore(name, score);
-    }
-
-    /**
-     * clearAll
-     *     clear all scores from database
-     */
-    public void clearAll() {
-        mUseCase.clearAll();
     }
 }

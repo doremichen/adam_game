@@ -39,18 +39,15 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class AboutActivity extends AppCompatActivity {
 
-    private ActivityAboutBinding mBinding;
-    private AboutViewModel mViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(AboutViewModel.class);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_about);
-        mBinding.setViewModel(mViewModel);
-        mBinding.setLifecycleOwner(this);
+        AboutViewModel viewModel = new ViewModelProvider(this).get(AboutViewModel.class);
+        ActivityAboutBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_about);
+        binding.setViewModel(viewModel);
+        binding.setLifecycleOwner(this);
 
         // Observe back event from ViewModel
-        mViewModel.getBackEvent().observe(this, unused -> finish());
+        viewModel.getBackEvent().observe(this, unused -> finish());
     }
 }

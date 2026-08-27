@@ -22,7 +22,6 @@
 package com.adam.app.snake.presentation.ui.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -44,7 +43,7 @@ public class LeaderboardAdapter extends ListAdapter<LeaderboardEntry, Leaderboar
     private static final String TAG = "LeaderboardAdapter";
 
     private static final DiffUtil.ItemCallback<LeaderboardEntry> DIFF_CALLBACK =
-            new DiffUtil.ItemCallback<LeaderboardEntry>() {
+            new DiffUtil.ItemCallback<>() {
                 @Override
                 public boolean areItemsTheSame(@NonNull LeaderboardEntry oldItem, @NonNull LeaderboardEntry newItem) {
                     return oldItem.getId() == newItem.getId();
@@ -53,6 +52,7 @@ public class LeaderboardAdapter extends ListAdapter<LeaderboardEntry, Leaderboar
                 @Override
                 public boolean areContentsTheSame(@NonNull LeaderboardEntry oldItem, @NonNull LeaderboardEntry newItem) {
                     return oldItem.getScore() == newItem.getScore() &&
+                            oldItem.getTimeStamp() == newItem.getTimeStamp() &&
                             oldItem.getName().equals(newItem.getName());
                 }
             };

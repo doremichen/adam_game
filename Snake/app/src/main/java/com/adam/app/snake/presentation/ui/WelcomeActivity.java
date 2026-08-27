@@ -44,16 +44,15 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private static final String TAG = "WelcomeActivity";
 
-    private ActivityWelcomeBinding mBinding;
     private WelcomeViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(WelcomeViewModel.class);
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_welcome);
-        mBinding.setViewModel(mViewModel);
-        mBinding.setLifecycleOwner(this);
+        ActivityWelcomeBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_welcome);
+        binding.setViewModel(mViewModel);
+        binding.setLifecycleOwner(this);
 
         // Observe navigation events from ViewModel
         mViewModel.getNavigationEvent().observe(this, this::handleNavigation);
@@ -67,17 +66,15 @@ public class WelcomeActivity extends AppCompatActivity {
         if (event == null) return;
 
         switch (event) {
-            case START_GAME:
-                showInputUserNameDialog();
-                break;
-            case SHOW_LEADERBOARD:
+            case START_GAME -> showInputUserNameDialog();
+            case SHOW_LEADERBOARD -> {
                 Utils.logDebug(TAG, "start leader board");
                 startActivity(LeaderBoardActivity.class);
-                break;
-            case SHOW_ABOUT:
+            }
+            case SHOW_ABOUT -> {
                 Utils.logDebug(TAG, "start about");
                 startActivity(AboutActivity.class);
-                break;
+            }
         }
     }
 

@@ -95,7 +95,7 @@ public class GameActivity extends AppCompatActivity {
                 // stop game
                 mSnakeViewModel.stopGame();
                 // show game exit dialog
-                showGameExitDialog(ExitType.Normal);
+                showGameExitDialog(ExitType.NORMAL);
 
             }
         });
@@ -189,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
             vibrateOnGameOver();
 
             // show game exit dialog
-            showGameExitDialog(ExitType.GameOver);
+            showGameExitDialog(ExitType.GAME_OVER);
 
         }
     }
@@ -243,20 +243,17 @@ public class GameActivity extends AppCompatActivity {
      */
     private void showGameExitDialog(ExitType type) {
         Utils.logDebug(TAG, "showExitDialog");
-        String title = "";
-        if (type == ExitType.Normal) {
-            title = getString(R.string.snake_game_exit_title);
-
-        } else if (type == ExitType.GameOver) {
-            title = getString(R.string.snake_game_over_title);
-        }
+        String title = switch (type) {
+            case NORMAL -> getString(R.string.snake_game_exit_title);
+            case GAME_OVER -> getString(R.string.snake_game_over_title);
+        };
 
         String message = getString(R.string.snake_game_dialog_message);
         showGameDialog(title, message);
     }
 
     private enum ExitType {
-        Normal, GameOver
+        NORMAL, GAME_OVER
     }
 
 

@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -174,6 +175,8 @@ public final class SnakeGame {
      * remove expired special foods
      */
     public void removeExpiredSpecialFoods() {
+        if (mSpecialFoods.isEmpty()) return;
+        
         Iterator<SpecialFood> iterator = mSpecialFoods.iterator();
         while (iterator.hasNext()) {
             SpecialFood food = iterator.next();
@@ -191,18 +194,10 @@ public final class SnakeGame {
         int newY = head.y;
 
         switch (mDirection) {
-            case UP:
-                newY--;
-                break;
-            case DOWN:
-                newY++;
-                break;
-            case LEFT:
-                newX--;
-                break;
-            case RIGHT:
-                newX++;
-                break;
+            case UP -> newY--;
+            case DOWN -> newY++;
+            case LEFT -> newX--;
+            case RIGHT -> newX++;
         }
 
         if (mWrapEnabled || mIsInvincible) {
@@ -237,7 +232,7 @@ public final class SnakeGame {
     }
 
     private void handleFoodCollision(Point newHead) {
-        if (newHead.equals(mFood)) {
+        if (Objects.equals(newHead, mFood)) {
             mScore++;
             mNormalFoodEaten++;
             generateFood();
@@ -245,9 +240,7 @@ public final class SnakeGame {
             if (mSpecialFoodEnabled && mNormalFoodEaten % 3 == 0) {
                 generateSpecialFoods();
             }
-        } else if (isSpecialFood()) {
-            // do nothing
-        } else {
+        } else if (!isSpecialFood()) {
             mSnake.remove(mSnake.size() - 1);
         }
     }
