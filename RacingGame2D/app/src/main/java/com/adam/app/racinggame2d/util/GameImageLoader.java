@@ -1,11 +1,25 @@
-/**
- * Copyright 2025 - Adam Game. All rights reserved.
- * <p>
- * Description: This class is the image loader for the game.
- * <p>
- * Author: Adam Game
- * Created Date: 2025/10/30
+/*
+ * Copyright (c) 2026 Adam Game
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.racinggame2d.util;
 
 import android.content.Context;
@@ -24,105 +38,71 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * General image loader that automatically loads PNG / SVG, and supports caching and scaling.
+ * Image loader for loading PNG and SVG assets with caching.
  */
-public class GameImageLoader {
-    // TAG
-    private static final String TAG = "GameImageLoader";
-    // Map: String -> Bitmap
-    private static final Map<String, Bitmap> CACHE = new HashMap<>();
+public final class GameImageLoader {
+    private static final String sTAG = "GameImageLoader";
+    private static final Map<String, Bitmap> sCACHE = new HashMap<>();
 
-    /**
-     * load
-     * load picture from assets (support PNG/SVG)
-     * @param context Context
-     * @param assetPath asset path
-     * @param targetWidth target width
-     * @param targetHeight target height
-     * @return Bitmap
-     */
+    private GameImageLoader() {
+        // Prevent instantiation
+    }
+
     public static Bitmap load(Context context, String assetPath, int targetWidth, int targetHeight) {
         try {
-            // get bitmap from cache
-            if (CACHE.containsKey(assetPath)) {
-                return CACHE.get(assetPath);
+            if (sCACHE.containsKey(assetPath)) {
+                return sCACHE.get(assetPath);
             }
 
             Bitmap bitmap;
-            // check if svg file in assets
             if (assetPath.toLowerCase().endsWith(".svg")) {
                 bitmap = loadSvg(context, assetPath, targetWidth, targetHeight);
             } else {
                 bitmap = loadPng(context, assetPath, targetWidth, targetHeight);
-            } 
+            }
 
-            // put in CACHE
             if (bitmap != null) {
-                CACHE.put(assetPath, bitmap);
+                sCACHE.put(assetPath, bitmap);
             }
             return bitmap;
         } catch (Exception e) {
-            GameUtil.error(TAG, e.getMessage());
+            Utils.logError(sTAG, e.getMessage());
         }
         return null;
     }
 
-    /**
-     * loadPng
-     * load png from assets
-     * @param context Context
-     * @param assetPath asset path
-     * @param targetWidth target width
-     * @param targetHeight target height
-     * @return Bitmap
-     * @throws IOException IOException
-     */
     private static Bitmap loadPng(Context context, String assetPath, int targetWidth, int targetHeight) throws IOException {
-        InputStream is = context.getAssets().open(assetPath);
-        Bitmap bitmap = BitmapFactory.decodeStream(is);
-        is.close();
-        if (bitmap == null) {
-            return null;
+        try (InputStream is = context.getAssets().open(assetPath)) {
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            if (bitmap == null) return null;
+            if (targetWidth > 0 && targetHeight > 0) {
+                return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
+            }
+            return bitmap;
         }
-        if (targetWidth > 0 && targetHeight > 0) {
-            // auto scale bitmap
-            return Bitmap.createScaledBitmap(bitmap, targetWidth, targetHeight, true);
-        }
-
-        return bitmap;
     }
 
     private static Bitmap loadSvg(Context context, String assetPath, int targetWidth, int targetHeight) throws IOException, SVGParseException {
-        InputStream is = context.getAssets().open(assetPath);
-        SVG svg = SVG.getFromInputStream(is);
-        is.close();
-        if (svg == null) {
-            return null;
+        try (InputStream is = context.getAssets().open(assetPath)) {
+            SVG svg = SVG.getFromInputStream(is);
+            if (svg == null) return null;
+
+            Picture picture = svg.renderToPicture();
+            PictureDrawable drawable = new PictureDrawable(picture);
+            Bitmap bitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.scale(targetWidth / (float) drawable.getIntrinsicWidth(), targetHeight / (float) drawable.getIntrinsicHeight());
+            drawable.draw(canvas);
+            return bitmap;
         }
-
-        Picture picture = svg.renderToPicture();
-        PictureDrawable drawable = new PictureDrawable(picture);
-
-        // create bitmap from drawable
-        Bitmap bitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-        canvas.scale(targetWidth / (float) drawable.getIntrinsicWidth(), targetHeight / (float) drawable.getIntrinsicHeight());
-
-        drawable.draw(canvas);
-        return bitmap;
     }
 
-    /**
-     * clearCache
-     * clear cache
-     */
     public static void clearCache() {
-        for (Bitmap b : CACHE.values()) {
+        for (Bitmap b : sCACHE.values()) {
             if (b != null && !b.isRecycled()) {
                 b.recycle();
             }
         }
-        CACHE.clear();
+        sCACHE.clear();
     }
-
 }

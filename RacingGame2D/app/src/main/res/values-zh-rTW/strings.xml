@@ -8,6 +8,8 @@
     <string name="racinggame2d_car_racing_game_tv">小汽車大冒險</string>
     <string name="racinggame2d_dlg_ok_btn_label">確認</string>
     <string name="racinggame2d_dlg_edit_player_name_hint">輸入玩家姓名</string>
+    <string name="racinggame2d_dlg_edit_car_id_hint">輸入車號</string>
+    <string name="racinggame2d_dlg_edit_car_name_hint">輸入車名</string>
     <string name="racinggame2d_dlg_cancel_btn_label">取消</string>
     <string name="racinggame2d_left_btn">左</string>
     <string name="racinggame2d_right_btn">右</string>
@@ -31,7 +33,7 @@
     <string name="racinggame2d_game_over_dlog_title">Game Over</string>
     <string name="racinggame2d_game_over_dlg_content">你想要再玩一次嗎？</string>
     <string name="racinggame2d_about_racing_game_title">關於賽車大冒險</string>
-    <string name="racinggame2d_about_instruction">Racing Game 2D 是一款充滿速度與挑戰的賽車遊戲。玩家可以透過簡單的操作體驗逼真的駕駛感受，閃避障礙、收集道具、挑戰極限分數。快來展現你的反應力與技巧，征服賽道吧！</string>
+    <string name="racinggame2d_about_instruction">Racing Game 2D 是一款極速街機賽車遊戲。\n\n[詳細玩法說明]\n1. 轉向控制：點擊「左」、「右」按鈕來操控賽車左右移動，閃避障礙物。\n2. 速度控制：按下「加速」可提升車速並獲得更高積分，按下「減速」可幫助您更安全地通過複雜路段。\n3. 生存規則：每次碰撞都會扣除血量 (HP)，當血量歸零時遊戲結束。\n4. 積分系統：車速越快、存活時間越長，獲得的分數就越高！\n\n展現您的操控技巧，挑戰排行榜最高紀錄！</string>
     <string name="racinggame2d_about_exit_btn">離開</string>
     <string name="racinggame2d_leaderboard_title">排行榜</string>
     <string name="racinggame2d_leaderboard_close_btn">關閉</string>
@@ -44,10 +46,10 @@
     <string name="racinggame2d_no_data_tv">沒資料</string>
     <string name="racinggame2d_score_tv">分數: %1$s</string>
     <string name="racinggame2d_hp_tv">血量:</string>
-    <string name="racinggame2d_game_difficuty_setting_tv">遊戲難度</string>
-    <string name="racinggame2d_difficuty_item_easy">容易</string>
-    <string name="racinggame2d_difficuty_item_medium">中等</string>
-    <string name="racinggame2d_difficuty_item_hard">艱難</string>
+    <string name="racinggame2d_game_difficulty_setting_tv">遊戲難度</string>
+    <string name="racinggame2d_difficulty_item_easy">容易</string>
+    <string name="racinggame2d_difficulty_item_medium">中等</string>
+    <string name="racinggame2d_difficulty_item_hard">艱難</string>
 
 
     <string-array name="difficulty_levels">

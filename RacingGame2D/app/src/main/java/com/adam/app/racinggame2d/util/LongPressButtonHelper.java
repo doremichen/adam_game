@@ -1,74 +1,64 @@
-/**
- * Copyright 2025 - Adam Game. All rights reserved.
- * <p>
- * Description: This class is used to help with long press buttons.
- * <p>
- * Author: Adam Game
- * Created Date: 2025/11/07
+/*
+ * Copyright (c) 2026 Adam Game
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.racinggame2d.util;
 
+import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 
-/**
- * LongPressButtonHelper
- * ---------------------
- * Used to help with long press buttons.
- * At the same time, the button's ripple animation and click event are preserved.
- *
- * Usage：
- * LongPressButtonHelper.attach(button, 100l, () -> {
- *     // repeat action
- *     viewModel.moveCarLeft();
- * });
- */
-public class LongPressButtonHelper {
-    // default interval
-    private static final long DEFAULT_INTERVAL = 100L;
-    // used to do long press action
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
-    // interval time of loong press button
-    private final long mIntervalMillis;
-    // long press action
-    private final Runnable mRepeatTask;
+import androidx.annotation.NonNull;
 
+/**
+ * Helper class for handling long press events on Buttons.
+ */
+public final class LongPressButtonHelper {
+    private static final long sDEFAULT_INTERVAL = 100L;
+    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final long mIntervalMillis;
+    private final Runnable mRepeatTask;
     private boolean mIsPressed = false;
 
-
-    // repeatTask runnable
     private final Runnable mRepeatTaskRunnable = new Runnable() {
         @Override
         public void run() {
-            if (!mIsPressed) {
-                return;
-            }
+            if (!mIsPressed) return;
             if (mRepeatTask != null) mRepeatTask.run();
             mHandler.postDelayed(this, mIntervalMillis);
         }
     };
 
-
-    /**
-     * Constructor
-     *
-     * @param button button
-     * @param intervalMillis interval
-     * @param repeatTask repeat task
-     */
-    private LongPressButtonHelper(View button, long intervalMillis, Runnable repeatTask) {
-        this.mIntervalMillis = intervalMillis > 0L ? intervalMillis : DEFAULT_INTERVAL;;
+    @SuppressLint("ClickableViewAccessibility")
+    private LongPressButtonHelper(@NonNull View button, long intervalMillis, Runnable repeatTask) {
+        this.mIntervalMillis = intervalMillis > 0L ? intervalMillis : sDEFAULT_INTERVAL;
         this.mRepeatTask = repeatTask;
 
-        // set touch listener
         button.setOnTouchListener((view, motionEvent) -> {
             switch (motionEvent.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mIsPressed = true;
                     mHandler.post(mRepeatTaskRunnable);
-                    // perform click event
                     view.performClick();
                     break;
                 case MotionEvent.ACTION_UP:
@@ -76,31 +66,16 @@ public class LongPressButtonHelper {
                     stop();
                     break;
             }
-            return false;  // Retain the original click effect
+            return false;
         });
     }
 
-    /**
-     * attach
-     * attach to button
-     *
-     * @param button button
-     * @param intervalMillis interval
-     * @param repeatTask repeat task
-     * @return LongPressButtonHelper
-     */
-    public static LongPressButtonHelper attach(View button, long intervalMillis, Runnable repeatTask) {
-        return new LongPressButtonHelper(button, intervalMillis, repeatTask);
+    public static void attach(@NonNull View button, long intervalMillis, Runnable repeatTask) {
+        new LongPressButtonHelper(button, intervalMillis, repeatTask);
     }
 
-    /**
-     * stop
-     * unset isPressed and remove repeat task
-     */
     private void stop() {
         mIsPressed = false;
         mHandler.removeCallbacks(mRepeatTaskRunnable);
     }
-
-
 }

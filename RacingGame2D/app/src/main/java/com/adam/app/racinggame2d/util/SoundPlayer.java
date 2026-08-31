@@ -1,12 +1,25 @@
-/**
- * Copyright 2025 - Adam Game. All rights reserved.
- * <p>
- * Description: This class is used to Tool categories for
- * unifying sound effects and background music playback
- * <p>
- * Author: Adam Game
- * Created Date: 2025/10/30
+/*
+ * Copyright (c) 2026 Adam Game
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.racinggame2d.util;
 
 import android.content.Context;
@@ -21,22 +34,19 @@ import com.adam.app.racinggame2d.R;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SoundPlayer {
-
+/**
+ * Utility class for sound effects and background music.
+ */
+public final class SoundPlayer {
     private final SoundPool mSoundPool;
     private final Map<Integer, Integer> mSoundMap = new HashMap<>();
-    private MediaPlayer mBgmPlayer;
-    private boolean mEnabled = true;
     private final Context mContext;
+    private MediaPlayer mBgmPlayer;
+    private boolean mEnabled;
 
-    /**
-     * Constructor
-     * @param context the Context
-     * @param soundEnable enable sound effect
-     */
     public SoundPlayer(Context context, boolean soundEnable) {
-        mContext = context;
-        mEnabled = soundEnable;
+        this.mContext = context;
+        this.mEnabled = soundEnable;
         AudioAttributes attrs = new AudioAttributes.Builder()
                 .setUsage(AudioAttributes.USAGE_GAME)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
@@ -50,28 +60,14 @@ public class SoundPlayer {
         preloadShortSounds();
     }
 
-    /**
-     * preloadShortSounds
-     *  preload the short sounds
-     */
     private void preloadShortSounds() {
         mSoundMap.put(Constants.SOUND_COLLISION, mSoundPool.load(mContext, R.raw.collision, 1));
         mSoundMap.put(Constants.SOUND_ENGINE, mSoundPool.load(mContext, R.raw.engine, 1));
         mSoundMap.put(Constants.SOUND_BUTTON, mSoundPool.load(mContext, R.raw.button, 1));
     }
 
-    // === short sound ===
-    /**
-     * playShortSound
-     * @param soundId the short sound
-     * @param isLooping is looping
-     */
     public void playShortSound(int soundId, boolean isLooping) {
-        if (!mEnabled) {
-            GameUtil.showToast(mContext, "Sound is disabled");
-            return;
-        }
-        // sound id
+        if (!mEnabled) return;
         Integer id = mSoundMap.get(soundId);
         int loop = isLooping ? -1 : 0;
         if (id != null) {
@@ -79,18 +75,8 @@ public class SoundPlayer {
         }
     }
 
-    // === background music ===
-    /**
-     * playBgm
-     * @param resId the resource id
-     * @param isLooping is looping
-     */
     public void playBgm(@RawRes int resId, boolean isLooping) {
-        if (!mEnabled) {
-            GameUtil.showToast(mContext, "Sound is disabled");
-            return;
-        }
-        // stop bgm
+        if (!mEnabled) return;
         stopBgm();
         mBgmPlayer = MediaPlayer.create(mContext, resId);
         if (mBgmPlayer != null) {
@@ -100,29 +86,18 @@ public class SoundPlayer {
         }
     }
 
-    /**
-     * pauseBgm
-     */
     public void pauseBgm() {
         if (mBgmPlayer != null && mBgmPlayer.isPlaying()) {
             mBgmPlayer.pause();
         }
     }
 
-    /**
-     * resumeBgm
-     */
     public void resumeBgm() {
-        if (!mEnabled) {
-            GameUtil.showToast(mContext, "Sound is disabled");
-            return;
-        }
-
+        if (!mEnabled) return;
         if (mBgmPlayer != null && !mBgmPlayer.isPlaying()) {
             mBgmPlayer.start();
         }
     }
-
 
     public void stopBgm() {
         if (mBgmPlayer != null) {
@@ -134,25 +109,19 @@ public class SoundPlayer {
         }
     }
 
-    // == state control ===
-    public void setEnabled(boolean enabled) {
-        if (!enabled) {
-            stopBgm();
-        }
-        mEnabled = enabled;
-    }
-
     public boolean isEnabled() {
         return mEnabled;
     }
 
-    /**
-     * release
-     * release the resources
-     */
+    public void setEnabled(boolean enabled) {
+        if (!enabled) {
+            stopBgm();
+        }
+        this.mEnabled = enabled;
+    }
+
     public void release() {
         stopBgm();
         mSoundPool.release();
     }
-
 }

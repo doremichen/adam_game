@@ -1,0 +1,207 @@
+@startuml
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+package "UI Layer" {
+    class MainActivity {
+        +onCreate()
+        -initObservers()
+        -showPlayerNameDialog()
+    }
+    class MainViewModel {
+        +getNavigateEvent(): LiveData
+        +setPlayerName(String)
+        +navigateToStartGame()
+        +navigateToSetting()
+    }
+    class GameActivity {
+        +onCreate()
+        -initObservers()
+        -setupControls()
+    }
+    class GameViewModel {
+        +getScore(): LiveData
+        +getHp(): LiveData
+        +prepareGameEngine(int, int, String, String)
+        +startGame()
+        +moveHorizontally(boolean)
+        +saveGameResult()
+    }
+    class SettingsActivity {
+        +onCreate()
+        -initUI()
+    }
+    class SettingsViewModel {
+        +getSettingsLiveData(): LiveData
+        +saveSettings()
+        +setSoundEnable(boolean)
+        +setDifficulty(Difficulty)
+    }
+    class LeaderBoardActivity {
+        +onCreate()
+        -initObservers()
+    }
+    class LeaderBoardViewModel {
+        +getScoresLiveData(): LiveData
+        +getIsLoading(): LiveData
+        +getIsEmpty(): LiveData
+        +loadScores()
+        +addScore(String, int)
+    }
+    class GameSurfaceView {
+        +setViewModel(GameViewModel)
+        +onUpdate()
+        -drawGame(Canvas)
+        -drawCar(Canvas)
+    }
+}
+
+package "Application Layer" {
+    class GameEngine {
+        +start()
+        +stop()
+        +update(deltaTime)
+        +getCarPosition(): PointF
+    }
+    class SettingsUseCase <<Enum-based>> {
+        +execute(Action, Object): T
+    }
+    enum SettingsAction <<Action>> {
+        +LOAD_SETTINGS
+        +SAVE_SETTINGS
+        +SET_PLAYER_NAME
+        +GET_PLAYER_NAME
+        +SET_HIGH_SCORE
+        +GET_HIGH_SCORE
+        +handle(ISettingsRepository, Object): T
+    }
+    class LeaderboardUseCase <<Enum-based>> {
+        +execute(Action, Object): T
+    }
+    enum LeaderboardAction <<Action>> {
+        +ADD_SCORE
+        +GET_ALL_SCORES
+        +handle(ILeaderboardRepository, Object): T
+    }
+    interface LeaderboardCallback <<Callback>> {
+        +onResult(List<LeaderboardRecord>)
+    }
+}
+
+package "Domain Layer" {
+    package "Entities" {
+        class Car {
+            +updateSpeed()
+            +moveHorizontally()
+            +getCarHP(): int
+        }
+        class Player {
+            +addScore()
+            +reset()
+            +getScore(): int
+        }
+        class Track {
+            +generateRandomObstacles()
+            +checkCollisions(): boolean
+            +scroll(float)
+        }
+        class Obstacle {
+            +getPosition(): PointF
+            +getType(): Type
+        }
+        class Settings {
+            +isSoundEnable(): boolean
+            +getDifficulty(): Difficulty
+        }
+        class LeaderboardRecord {
+            +getPlayerName(): String
+            +getScore(): int
+        }
+    }
+
+    package "Repositories (Interfaces)" {
+        interface ILeaderboardRepository {
+            +addScore(LeaderboardRecord)
+            +getAllScores(Callback)
+        }
+        interface ISettingsRepository {
+            +saveSettings(Settings)
+            +loadSettings(): Settings
+            +setPlayerName(String)
+            +getPlayerName(): String
+        }
+    }
+}
+
+package "Infrastructure Layer" {
+    class LeaderboardRepositoryImpl {
+        +addScore()
+        +getAllScores()
+    }
+    class SettingsRepositoryImpl {
+        +saveSettings()
+        +loadSettings()
+    }
+    class LeaderboardDatabase {
+        {static} +getDatabase(): Database
+        +leaderboardDao(): Dao
+    }
+    interface LeaderboardDao {
+        +insert(LeaderboardEntity)
+        +getAllScores(): List
+    }
+    class SharedPrefHelper {
+        +saveSettings()
+        +loadSettings()
+    }
+}
+
+' Relationships with Descriptions
+MainActivity --> MainViewModel : "Observes events"
+MainViewModel --> SettingsUseCase : "Requests actions"
+
+GameActivity --> GameViewModel : "Observes state"
+GameActivity --> GameSurfaceView : "Hosts"
+GameSurfaceView --> GameViewModel : "Fetches data"
+GameViewModel --> GameEngine : "Controls logic"
+GameViewModel --> SettingsUseCase : "Fetches config"
+GameViewModel --> LeaderboardUseCase : "Saves score"
+
+SettingsActivity --> SettingsViewModel : "Binds UI"
+SettingsViewModel --> SettingsUseCase : "Manages settings"
+
+LeaderBoardActivity --> LeaderBoardViewModel : "Displays data"
+LeaderBoardViewModel --> LeaderboardUseCase : "Requests actions"
+
+GameEngine --> Player : "Updates"
+GameEngine --> Track : "Manages"
+GameEngine --> SettingsUseCase : "Applies config"
+
+SettingsUseCase --> ISettingsRepository : "Delegates"
+SettingsUseCase *-up- SettingsAction : "Contains"
+
+LeaderboardUseCase --> ILeaderboardRepository : "Delegates"
+LeaderboardUseCase *-up- LeaderboardAction : "Contains"
+LeaderboardUseCase *-up- LeaderboardCallback : "Defines"
+
+LeaderboardRepositoryImpl ..|> ILeaderboardRepository : "Implements"
+LeaderboardRepositoryImpl --> LeaderboardDao : "Uses Room"
+
+SettingsRepositoryImpl ..|> ISettingsRepository : "Implements"
+SettingsRepositoryImpl --> SharedPrefHelper : "Uses SharedPreferences"
+
+LeaderboardDatabase --> LeaderboardDao : "Provides"
+
+Player --> Car : "Owns"
+Track --> Obstacle : "Contains"
+
+' Entity Usage Notes (Cross-module connections)
+SettingsUseCase ..> Settings : "Loads/Saves"
+SettingsViewModel ..> Settings : "Observes/Updates"
+SettingsRepositoryImpl ..> Settings : "Persists"
+
+ILeaderboardRepository ..> LeaderboardRecord : "Transfers"
+LeaderboardRepositoryImpl ..> LeaderboardRecord : "Maps"
+LeaderBoardViewModel ..> LeaderboardRecord : "Exposes list"
+
+@enduml
