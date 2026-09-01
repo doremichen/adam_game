@@ -20,29 +20,41 @@
  * SOFTWARE.
  */
 
-package com.adam.app.mydeviceinfo;
+package com.adam.app.mydeviceinfo.domain.repository;
 
-import android.content.Context;
+import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import com.adam.app.mydeviceinfo.domain.model.DeviceInfo;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Interface for device information repository.
  */
-@RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.adam.app.mydeviceinfo", appContext.getPackageName());
-    }
+public interface IDeviceRepository {
+    /**
+     * Fetches current device information.
+     * @return DeviceInfo object containing comprehensive info.
+     */
+    @NonNull
+    DeviceInfo fetchDeviceInfo();
+
+    /**
+     * Gets a live stream of device information.
+     * @return LiveData containing the latest DeviceInfo.
+     */
+    @NonNull
+    LiveData<DeviceInfo> getDeviceInfoStream();
+
+    /**
+     * Exports device information to a file.
+     * @param deviceInfo The information to export.
+     * @return true if successful, false otherwise.
+     */
+    boolean exportDeviceInfo(@NonNull DeviceInfo deviceInfo);
+
+    /**
+     * Runs a hardware test (vibration, etc).
+     * @param type The test type.
+     */
+    void runHardwareTest(int type);
 }

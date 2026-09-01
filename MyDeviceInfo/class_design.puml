@@ -1,0 +1,148 @@
+@startuml
+' --- Configuration ---
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam nodesep 60
+skinparam ranksep 80
+skinparam shadowing false
+
+' --- UI Layer ---
+package "UI Layer" #E8F5E9 {
+    package "ui.main" {
+        class MainActivity {
+            # onCreate(savedInstanceState: Bundle): void
+            - setupNavigation(): void
+            - requestPermissions(): void
+        }
+        class MainViewModel
+    }
+
+    together {
+        package "ui.dashboard" {
+            class DashboardFragment <<View>>
+            class DashboardViewModel <<ViewModel>> {
+                + ramUsage: LiveData<String>
+                + storageUsage: LiveData<String>
+                + batteryState: LiveData<String>
+            }
+        }
+        package "ui.system" {
+            class SystemFragment <<View>>
+            class SystemViewModel <<ViewModel>> {
+                + deviceSpecs: LiveData<List<SpecItem>>
+                + sensorList: LiveData<List<String>>
+            }
+        }
+        package "ui.network" {
+            class NetworkFragment <<View>>
+            class NetworkViewModel <<ViewModel>> {
+                + wifiDetails: LiveData<String>
+                + cellularState: LiveData<String>
+            }
+        }
+        package "ui.tools" {
+            class ToolsFragment <<View>>
+            class ToolsViewModel <<ViewModel>> {
+                + onShareReport(): void
+                + startHardwareTest(testType: int): void
+            }
+        }
+    }
+}
+
+' --- Application Layer ---
+package "Application Layer" #E1F5FE {
+    class InfoUseCase <<UseCase>> {
+        + execute(action: Action, data: Object): T
+    }
+    enum Action {
+        FETCH_ALL_INFO
+        SUBSCRIBE_INFO
+        EXPORT_REPORT
+        EXECUTE_HW_TEST
+        + handle(repo, data)
+    }
+    InfoUseCase +-- Action
+}
+
+' --- Domain Layer ---
+package "Domain Layer" #FEFECE {
+    interface IDeviceRepository <<Interface>> {
+        + fetchDeviceInfo(): DeviceInfo
+        + getDeviceInfoStream(): LiveData<DeviceInfo>
+        + exportDeviceInfo(info: DeviceInfo): boolean
+        + runHardwareTest(type: int): void
+    }
+
+    class DeviceInfo <<Entity>> {
+        - mDashboardData: DashboardData
+        - mSystemSpecs: SystemSpecs
+        - mNetworkStatus: NetworkStatus
+    }
+
+    class DashboardData <<VO>> {
+        - mRamUsed/Total: long
+        - mStorageUsed/Total: long
+        - mBatteryPct/Temp/Status: String
+    }
+
+    class SystemSpecs <<VO>> {
+        - mManufacturer/Codename: String
+        - mDisplayMetrics: String
+        - mSensorList: List<String>
+    }
+
+    DeviceInfo *-- DashboardData
+    DeviceInfo *-- SystemSpecs
+}
+
+' --- Infrastructure Layer ---
+package "Infrastructure Layer" #FFF9C4 {
+    class InfoRepositoryImpl <<Implementation>> {
+        - mInfoLiveData: MutableLiveData<DeviceInfo>
+        - mapDtoToEntity(dto: DeviceStateDto): DeviceInfo
+    }
+
+    class InfoService <<Android Service>> {
+        - mBatteryReceiver: BroadcastReceiver
+        - mCallbacks: RemoteCallbackList<IInfoCallback>
+        --
+        - collectHardwareSpecs(): void
+        - collectConnectivityState(): void
+        - broadcastUpdate(dto: DeviceStateDto): void
+    }
+
+    package "IPC & Data Contracts" {
+        interface IInfoService <<AIDL>>
+        interface IInfoCallback <<AIDL>>
+
+        class DeviceStateDto <<Parcelable>> {
+            + ramUsed: long
+            + batteryPct: int
+            + manufacturer: String
+            + wifiIp: String
+            .. (50+ fields) ..
+            + {static} class Builder
+        }
+    }
+
+    InfoService o-- IInfoCallback : "broadcasts"
+    InfoRepositoryImpl --> IInfoService : "AIDL Proxy"
+}
+
+' --- Layout Hints ---
+"UI Layer" -[hidden]down-> "Application Layer"
+"Application Layer" -[hidden]down-> "Domain Layer"
+"Domain Layer" -[hidden]down-> "Infrastructure Layer"
+
+' --- Relationships ---
+DashboardViewModel -[#blue]down-> InfoUseCase : "triggers SUBSCRIBE_INFO"
+ToolsViewModel -[#blue]down-> InfoUseCase : "triggers HW_TEST"
+
+InfoUseCase -[#red]down-> IDeviceRepository : "uses contract"
+InfoRepositoryImpl -[#green]up..|> IDeviceRepository : "implements"
+
+InfoService -[#orange]down-> DeviceStateDto : "populates"
+InfoRepositoryImpl -[#orange]right-> DeviceStateDto : "receives"
+
+@enduml

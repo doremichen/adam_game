@@ -20,29 +20,44 @@
  * SOFTWARE.
  */
 
-package com.adam.app.mydeviceinfo;
+package com.adam.app.mydeviceinfo.common;
 
 import android.content.Context;
-
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import static org.junit.Assert.*;
+import android.util.Log;
+import android.widget.Toast;
 
 /**
- * Instrumented test, which will execute on an Android device.
- *
- * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
+ * Utility class for logging and UI notifications.
  */
-@RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
-    @Test
-    public void useAppContext() {
-        // Context of the app under test.
-        Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.adam.app.mydeviceinfo", appContext.getPackageName());
+public final class Utils {
+
+    private Utils() {
+        // Prevent instantiation
+    }
+
+    /**
+     * Logs a debug message.
+     * @param label The label for the log.
+     * @param message The message to log.
+     */
+    public static void logDebug(String label, String message) {
+        Log.d(Constants.GLOBAL_TAG, "[" + label + "] " + message);
+    }
+
+    /**
+     * Logs a message (legacy support).
+     * @param message The message to log.
+     */
+    public static void log(String message) {
+        Log.d(Constants.GLOBAL_TAG, message);
+    }
+
+    /**
+     * Shows a short toast message.
+     * @param context The context to show the toast in.
+     * @param message The message to show.
+     */
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

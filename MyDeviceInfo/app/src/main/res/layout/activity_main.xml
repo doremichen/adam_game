@@ -1,97 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:fitsSystemWindows="true"
-    tools:context=".MainActivity"
-    android:background="?android:attr/windowBackground">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Refresh Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnRefresh"
+    <data>
+        <variable
+            name="viewModel"
+            type="com.adam.app.mydeviceinfo.ui.main.MainViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_query_system_information"
-        android:icon="@drawable/ic_refresh"
-        android:iconTint="?attr/colorOnPrimary"
-        android:textAllCaps="false"
-        style="@style/Widget.MaterialComponents.Button"/>
+        android:layout_height="match_parent"
+        android:background="?android:attr/windowBackground"
+        android:fitsSystemWindows="true">
 
-    <!-- Content Scrollable Area -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="12dp"
-        android:overScrollMode="ifContentScrolls">
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <LinearLayout
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:titleCentered="true" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:defaultNavHost="true"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:navGraph="@navigation/nav_graph" />
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom_nav"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_gravity="bottom"
+            app:menu="@menu/bottom_nav_menu" />
 
-            <!-- CPU Info Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="12dp">
-
-                <TextView
-                    android:id="@+id/textCpuInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/tv_cpu_info"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorPrimary" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Memory Info Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardElevation="4dp"
-                app:cardCornerRadius="12dp">
-
-                <TextView
-                    android:id="@+id/textMemory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="16dp"
-                    android:text="@string/tv_memory_info"
-                    android:textSize="16sp"
-                    android:textColor="?android:attr/textColorPrimary" />
-            </com.google.android.material.card.MaterialCardView>
-
-        </LinearLayout>
-    </ScrollView>
-
-    <!-- Export Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnExport"
-        style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_export_to_file"
-        android:icon="@drawable/ic_save"
-        android:textAllCaps="false"
-        android:padding="10dp"
-        android:layout_marginTop="8dp"/>
-    <!-- Exit Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnExit"
-        style="@style/Widget.MaterialComponents.Button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/btn_exit"
-        android:textAllCaps="false"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

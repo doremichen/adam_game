@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">我的裝置資訊</string>
+    <string name="btn_query_system_information">查詢系統資訊</string>
+    <string name="tv_cpu_info">CPU 資訊</string>
+    <string name="tv_memory_info">記憶體資訊</string>
+    <string name="tv_network_status_label">目前網路狀態</string>
+    <string name="btn_export_to_file">匯出至檔案</string>
+    <string name="error_failed_to_fetch_cpu_info">無法取得 CPU 資訊</string>
+    <string name="error_failed_to_fetch_memory_info">無法取得記憶體資訊</string>
+    <string name="toast_can_not_create_uri">無法建立 URI</string>
+    <string name="toast_has_been_saved_to_download_folder">已儲存至下載資料夾</string>
+    <string name="toast_save_fail">儲存失敗：</string>
+    <string name="info_total_available">總量: %.2f MB\n可用: %.2f MB</string>
+    <string name="btn_exit">結束</string>
+    <string name="error_service_not_ready">服務尚未就緒</string>
+    <string name="error_fetching_cpu_info">讀取 CPU 資訊失敗</string>
+    <string name="error_fetching_memory_info">讀取記憶體資訊失敗</string>
+    <string name="toast_export_successful">匯出成功</string>
+    <string name="toast_export_failed">匯出失敗</string>
+
+    <!-- System Labels -->
+    <string name="label_brand">品牌</string>
+    <string name="label_model">型號</string>
+    <string name="label_os_version">Android 版本</string>
+    <string name="label_sdk_level">SDK 層級</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">主面板</string>
+    <string name="nav_system">系統資訊</string>
+    <string name="nav_network">網路狀態</string>
+    <string name="nav_tools">工具</string>
+
+    <string name="label_ram">記憶體 (RAM)</string>
+    <string name="label_storage">儲存空間 (Storage)</string>
+    <string name="label_battery">電池狀態</string>
+    <string name="label_uptime">系統運行時間</string>
+    <string name="label_sensors">感測器清單</string>
+    <string name="label_wifi">Wi-Fi 連線</string>
+    <string name="label_cellular">行動網路</string>
+    <string name="label_reports">報告匯出</string>
+    <string name="label_hw_tests">硬體檢測</string>
+    <string name="label_manufacturer">製造商</string>
+    <string name="label_codename">裝置代號</string>
+    <string name="label_os_api">系統版本 / API</string>
+    <string name="label_cpu">處理器 (CPU)</string>
+    <string name="btn_share_report">分享裝置報告</string>
+    <string name="btn_vibration_test">震動測試</string>
+
+    <!-- Battery Status -->
+    <string name="battery_status_unknown">未知</string>
+    <string name="battery_status_charging">充電中</string>
+    <string name="battery_status_discharging">放電中</string>
+    <string name="battery_status_not_charging">未在充電</string>
+    <string name="battery_status_full">已充滿</string>
+
+    <!-- Battery Health -->
+    <string name="battery_health_unknown">未知</string>
+    <string name="battery_health_good">良好</string>
+    <string name="battery_health_overheat">過熱</string>
+    <string name="battery_health_dead">損壞</string>
+    <string name="battery_health_over_voltage">電壓過高</string>
+    <string name="battery_health_cold">過冷</string>
+
+    <!-- Network -->
+    <string name="net_disconnected">未連線</string>
+    <string name="net_wifi">Wi-Fi</string>
+    <string name="net_cellular">行動網路</string>
+    <string name="net_other">其他</string>
+    <string name="net_bluetooth">藍牙</string>
+    <string name="net_nfc">NFC</string>
+    <string name="sim_ready">就緒</string>
+    <string name="sim_absent">無 SIM 卡</string>
+    <string name="sim_unknown">未知</string>
+
+    <!-- Detail Labels -->
+    <string name="label_health">健康度: %s</string>
+    <string name="label_temp_volt">溫度: %1$d°C | 電壓: %2$dmV</string>
+    <string name="label_rssi_speed">訊號: %1$d dBm | 速率: %2$d Mbps</string>
+    <string name="label_sim_prefix">SIM卡: %s</string>
+    <string name="label_bt_nfc">藍牙: %1$s | NFC: %2$s</string>
+    <string name="state_on">開啟</string>
+    <string name="state_off">關閉</string>
+    <string name="state_na">不支援</string>
+    <string name="state_ready">就緒</string>
+</resources>

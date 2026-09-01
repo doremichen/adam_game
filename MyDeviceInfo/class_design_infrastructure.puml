@@ -1,0 +1,59 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+package "Infrastructure Layer" {
+
+    class InfoRepositoryImpl <<Implementation>> {
+        - mContext: Context
+        - mService: IInfoService
+        - mInfoLiveData: MutableLiveData<DeviceInfo>
+        - mCallback: IInfoCallback.Stub
+        + fetchDeviceInfo(): DeviceInfo
+        + getDeviceInfoStream(): LiveData<DeviceInfo>
+        + runHardwareTest(type: int): void
+        - mapDtoToEntity(dto: DeviceStateDto): DeviceInfo
+    }
+
+    class InfoService <<Android Service>> {
+        - mScheduler: TaskScheduler
+        - mCachedState: DeviceStateDto
+        - mCallbacks: RemoteCallbackList<IInfoCallback>
+        - mBatteryReceiver: BroadcastReceiver
+        - updateDeviceInfo(): void
+        - collectHardwareSpecs(): void
+        - collectConnectivityState(): void
+        - broadcastUpdate(dto: DeviceStateDto): void
+    }
+
+    class "BnInfoService" as BnService <<Inner Class>> {
+        + getDeviceState(): DeviceStateDto
+        + registerCallback(cb: IInfoCallback): void
+    }
+
+    InfoService +-- BnService
+
+    package "IPC & Data Contracts" {
+        interface IInfoService <<AIDL>>
+        interface IInfoCallback <<AIDL>>
+
+        class DeviceStateDto <<Parcelable>> {
+            + ramUsed/Total: long
+            + storageUsed/Total: long
+            + batteryPct/Temp/Volt: int
+            + manufacturer/Model/Codename: String
+            + screenRes/Dpi/Refresh: String
+            + wifiIp/Signal/Speed: String
+            + carrier/NetType/Sim: String
+            + bluetooth/Nfc: String
+            + sensors: List<String>
+            + {static} class Builder
+        }
+    }
+
+    BnService --|> "IInfoService.Stub"
+    InfoRepositoryImpl *-- "IInfoCallback.Stub"
+    InfoRepositoryImpl --> IInfoService : "uses Proxy"
+    InfoService o-- IInfoCallback : "broadcasts"
+}
+@enduml

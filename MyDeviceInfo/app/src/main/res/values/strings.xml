@@ -3,6 +3,7 @@
     <string name="btn_query_system_information">Query system information</string>
     <string name="tv_cpu_info">CPU Info</string>
     <string name="tv_memory_info">Memory Info</string>
+    <string name="tv_network_status_label">Current Network Status</string>
     <string name="btn_export_to_file">Export to file</string>
     <string name="error_failed_to_fetch_cpu_info">Failed to fetch cpu info</string>
     <string name="error_failed_to_fetch_memory_info">Failed to fetch memory info</string>
@@ -10,5 +11,75 @@
     <string name="toast_has_been_saved_to_download_folder">Has been saved to Download folder</string>
     <string name="toast_save_fail">Save fail：</string>
     <string name="info_total_available">Total: %.2f MB\nAvailable: %.2f MB</string>
+    <string name="error_service_not_ready">Service not ready</string>
+    <string name="error_fetching_cpu_info">Error fetching CPU info</string>
+    <string name="error_fetching_memory_info">Error fetching memory info</string>
     <string name="btn_exit">Exit</string>
+    <string name="toast_export_successful">Export successful</string>
+    <string name="toast_export_failed">Export failed</string>
+
+    <!-- System Labels -->
+    <string name="label_brand">Brand</string>
+    <string name="label_model">Model</string>
+    <string name="label_os_version">Android Version</string>
+    <string name="label_sdk_level">SDK Level</string>
+
+    <!-- Navigation -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_system">System</string>
+    <string name="nav_network">Network</string>
+    <string name="nav_tools">Tools</string>
+
+    <string name="label_ram">RAM</string>
+    <string name="label_storage">Storage</string>
+    <string name="label_battery">Battery</string>
+    <string name="label_uptime">System Uptime</string>
+    <string name="label_sensors">Sensors</string>
+    <string name="label_wifi">Wi-Fi Connection</string>
+    <string name="label_cellular">Cellular Network</string>
+    <string name="label_reports">Reports</string>
+    <string name="label_hw_tests">Hardware Tests</string>
+    <string name="label_manufacturer">Manufacturer</string>
+    <string name="label_codename">Codename</string>
+    <string name="label_os_api">Android / API</string>
+    <string name="label_cpu">CPU</string>
+    <string name="btn_share_report">Share Device Report</string>
+    <string name="btn_vibration_test">Vibration Test</string>
+
+    <!-- Battery Status -->
+    <string name="battery_status_unknown">Unknown</string>
+    <string name="battery_status_charging">Charging</string>
+    <string name="battery_status_discharging">Discharging</string>
+    <string name="battery_status_not_charging">Not Charging</string>
+    <string name="battery_status_full">Full</string>
+
+    <!-- Battery Health -->
+    <string name="battery_health_unknown">Unknown</string>
+    <string name="battery_health_good">Good</string>
+    <string name="battery_health_overheat">Overheat</string>
+    <string name="battery_health_dead">Dead</string>
+    <string name="battery_health_over_voltage">Over Voltage</string>
+    <string name="battery_health_cold">Cold</string>
+
+    <!-- Network -->
+    <string name="net_disconnected">Disconnected</string>
+    <string name="net_wifi">Wi-Fi</string>
+    <string name="net_cellular">Cellular</string>
+    <string name="net_other">Other</string>
+    <string name="net_bluetooth">Bluetooth</string>
+    <string name="net_nfc">NFC</string>
+    <string name="sim_ready">Ready</string>
+    <string name="sim_absent">No SIM</string>
+    <string name="sim_unknown">Unknown</string>
+
+    <!-- Detail Labels -->
+    <string name="label_health">Health: %s</string>
+    <string name="label_temp_volt">Temp: %1$d°C | Volt: %2$dmV</string>
+    <string name="label_rssi_speed">RSSI: %1$d dBm | Speed: %2$d Mbps</string>
+    <string name="label_sim_prefix">SIM: %s</string>
+    <string name="label_bt_nfc">Bluetooth: %1$s | NFC: %2$s</string>
+    <string name="state_on">ON</string>
+    <string name="state_off">OFF</string>
+    <string name="state_na">N/A</string>
+    <string name="state_ready">Ready</string>
 </resources>

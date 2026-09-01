@@ -1,0 +1,21 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+package "Application Layer" {
+    class InfoUseCase <<UseCase>> {
+        - mRepository: IDeviceRepository
+        + execute(action: Action, data: Object): T
+    }
+
+    enum Action {
+        FETCH_ALL_INFO
+        SUBSCRIBE_INFO
+        EXPORT_REPORT
+        EXECUTE_HW_TEST
+        + handle(repo: IDeviceRepository, data: Object): T
+    }
+
+    InfoUseCase +-- Action
+}
+@enduml

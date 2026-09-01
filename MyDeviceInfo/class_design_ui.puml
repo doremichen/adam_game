@@ -1,0 +1,53 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+package "UI Layer" {
+    package "ui.main" {
+        class MainActivity {
+            - requestPermissions(): void
+        }
+    }
+
+    package "ui.dashboard" {
+        class DashboardFragment
+        class DashboardViewModel {
+            + ramUsage: LiveData<String>
+            + storageUsage: LiveData<String>
+            + batteryState: LiveData<String>
+        }
+    }
+
+    package "ui.system" {
+        class SystemFragment
+        class SystemViewModel {
+            + deviceSpecs: LiveData<List<SpecItem>>
+            + sensorList: LiveData<List<String>>
+        }
+    }
+
+    package "ui.network" {
+        class NetworkFragment
+        class NetworkViewModel {
+            + wifiDetails: LiveData<String>
+            + cellularState: LiveData<String>
+        }
+    }
+
+    package "ui.tools" {
+        class ToolsFragment
+        class ToolsViewModel {
+            + onShareReport(): void
+            + startHardwareTest(testType: int): void
+        }
+    }
+
+    ' Relationships
+    DashboardFragment --> DashboardViewModel
+    SystemFragment --> SystemViewModel
+    NetworkFragment --> NetworkViewModel
+    ToolsFragment --> ToolsViewModel
+
+    MainActivity --> DashboardFragment : "hosts"
+}
+@enduml
