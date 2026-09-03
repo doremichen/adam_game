@@ -20,27 +20,43 @@
  * SOFTWARE.
  */
 
-package com.adam.app.mydeviceinfo.di;
+package com.adam.app.mydeviceinfo.domain.model;
 
-import com.adam.app.mydeviceinfo.domain.repository.IDeviceRepository;
-import com.adam.app.mydeviceinfo.infrastructure.InfoRepositoryImpl;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
-import dagger.Binds;
-import dagger.Module;
-import dagger.hilt.InstallIn;
-import dagger.hilt.components.SingletonComponent;
+import com.adam.app.mydeviceinfo.R;
+import com.adam.app.mydeviceinfo.common.Constants;
 
 /**
- * Hilt module for repository bindings.
+ * Enum representing SIM card states.
  */
-@Module
-@InstallIn(SingletonComponent.class)
-public abstract class RepositoryModule {
+public enum SimState {
+    READY(Constants.SIM_STATUS_READY, R.string.sim_ready),
+    ABSENT(Constants.SIM_STATUS_ABSENT, R.string.sim_absent),
+    UNKNOWN(Constants.SIM_STATUS_UNKNOWN, R.string.sim_unknown);
+
+    private final String mKey;
+    private final int mResId;
+
+    SimState(String key, @StringRes int resId) {
+        this.mKey = key;
+        this.mResId = resId;
+    }
+
+    @NonNull public String getKey() { return mKey; }
+    @StringRes public int getResId() { return mResId; }
+
     /**
-     * Binds the repository implementation to its interface.
-     * @param impl The concrete implementation.
-     * @return The interface binding.
+     * Finds the enum instance associated with the given key.
+     * @param key The constant string key.
+     * @return Matching SimState or UNKNOWN if not found.
      */
-    @Binds
-    public abstract IDeviceRepository bindDeviceRepository(InfoRepositoryImpl impl);
+    @NonNull
+    public static SimState fromKey(String key) {
+        for (SimState state : values()) {
+            if (state.mKey.equals(key)) return state;
+        }
+        return UNKNOWN;
+    }
 }

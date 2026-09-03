@@ -45,27 +45,64 @@ public final class SystemSpecs {
     private final int mCpuCores;
     private final List<String> mSensorList;
 
-    public SystemSpecs(@NonNull String manufacturer, @NonNull String brand, @NonNull String model,
-                       @NonNull String codename, @NonNull String screenRes, @NonNull String screenDpi,
-                       @NonNull String refreshRate, @NonNull String osVersion, int sdkLevel,
-                       @NonNull String securityPatch, @NonNull String kernelVersion,
-                       @NonNull String fingerprint, @NonNull String cpuAbi, int cpuCores,
-                       @NonNull List<String> sensorList) {
-        this.mManufacturer = manufacturer;
-        this.mBrand = brand;
-        this.mModel = model;
-        this.mCodename = codename;
-        this.mScreenRes = screenRes;
-        this.mScreenDpi = screenDpi;
-        this.mRefreshRate = refreshRate;
-        this.mOsVersion = osVersion;
-        this.mSdkLevel = sdkLevel;
-        this.mSecurityPatch = securityPatch;
-        this.mKernelVersion = kernelVersion;
-        this.mFingerprint = fingerprint;
-        this.mCpuAbi = cpuAbi;
-        this.mCpuCores = cpuCores;
-        this.mSensorList = sensorList;
+    private SystemSpecs(Builder builder) {
+        this.mManufacturer = builder.mManufacturer;
+        this.mBrand = builder.mBrand;
+        this.mModel = builder.mModel;
+        this.mCodename = builder.mCodename;
+        this.mScreenRes = builder.mScreenRes;
+        this.mScreenDpi = builder.mScreenDpi;
+        this.mRefreshRate = builder.mRefreshRate;
+        this.mOsVersion = builder.mOsVersion;
+        this.mSdkLevel = builder.mSdkLevel;
+        this.mSecurityPatch = builder.mSecurityPatch;
+        this.mKernelVersion = builder.mKernelVersion;
+        this.mFingerprint = builder.mFingerprint;
+        this.mCpuAbi = builder.mCpuAbi;
+        this.mCpuCores = builder.mCpuCores;
+        this.mSensorList = builder.mSensorList;
+    }
+
+    public static final class Builder {
+        private String mManufacturer = "";
+        private String mBrand = "";
+        private String mModel = "";
+        private String mCodename = "";
+        private String mScreenRes = "";
+        private String mScreenDpi = "";
+        private String mRefreshRate = "";
+        private String mOsVersion = "";
+        private int mSdkLevel;
+        private String mSecurityPatch = "";
+        private String mKernelVersion = "";
+        private String mFingerprint = "";
+        private String mCpuAbi = "";
+        private int mCpuCores;
+        private List<String> mSensorList;
+
+        public Builder setManufacturer(@NonNull String manufacturer) { this.mManufacturer = manufacturer; return this; }
+        public Builder setBrand(@NonNull String brand) { this.mBrand = brand; return this; }
+        public Builder setModel(@NonNull String model) { this.mModel = model; return this; }
+        public Builder setCodename(@NonNull String codename) { this.mCodename = codename; return this; }
+        public Builder setScreenRes(@NonNull String screenRes) { this.mScreenRes = screenRes; return this; }
+        public Builder setScreenDpi(@NonNull String screenDpi) { this.mScreenDpi = screenDpi; return this; }
+        public Builder setRefreshRate(@NonNull String refreshRate) { this.mRefreshRate = refreshRate; return this; }
+        public Builder setOsVersion(@NonNull String osVersion) { this.mOsVersion = osVersion; return this; }
+        public Builder setSdkLevel(int sdkLevel) { this.mSdkLevel = sdkLevel; return this; }
+        public Builder setSecurityPatch(@NonNull String securityPatch) { this.mSecurityPatch = securityPatch; return this; }
+        public Builder setKernelVersion(@NonNull String kernelVersion) { this.mKernelVersion = kernelVersion; return this; }
+        public Builder setFingerprint(@NonNull String fingerprint) { this.mFingerprint = fingerprint; return this; }
+        public Builder setCpuAbi(@NonNull String cpuAbi) { this.mCpuAbi = cpuAbi; return this; }
+        public Builder setCpuCores(int cpuCores) { this.mCpuCores = cpuCores; return this; }
+        public Builder setSensorList(@NonNull List<String> sensorList) { this.mSensorList = sensorList; return this; }
+
+        /**
+         * Finalizes the building of SystemSpecs.
+         * @return A new SystemSpecs instance.
+         */
+        public SystemSpecs build() {
+            return new SystemSpecs(this);
+        }
     }
 
     @NonNull public String getManufacturer() { return mManufacturer; }

@@ -27,13 +27,15 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.mydeviceinfo.R;
 import com.adam.app.mydeviceinfo.application.InfoUseCase;
+import com.adam.app.mydeviceinfo.common.Constants;
+import com.adam.app.mydeviceinfo.domain.model.ConnectivityState;
 import com.adam.app.mydeviceinfo.domain.model.DeviceInfo;
 import com.adam.app.mydeviceinfo.domain.model.NetworkStatus;
+import com.adam.app.mydeviceinfo.domain.model.SimState;
 
 import javax.inject.Inject;
 
@@ -47,17 +49,80 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 public final class NetworkViewModel extends ViewModel {
     private final Context mContext;
     private final InfoUseCase mUseCase;
-    private final MediatorLiveData<DeviceInfo> mInfoSource = new MediatorLiveData<>();
-    
-    private final MutableLiveData<String> mWifiStatus = new MutableLiveData<>("");
-    private final MutableLiveData<String> mIpAddress = new MutableLiveData<>("");
-    private final MutableLiveData<String> mWifiDetails = new MutableLiveData<>("");
-    private final MutableLiveData<String> mCarrierName = new MutableLiveData<>("");
-    private final MutableLiveData<String> mNetworkType = new MutableLiveData<>("");
-    private final MutableLiveData<String> mSimStatus = new MutableLiveData<>("");
-    private final MutableLiveData<String> mBluetoothState = new MutableLiveData<>("");
-    private final MutableLiveData<String> mNfcState = new MutableLiveData<>("");
+    private final MediatorLiveData<NetworkUiState> mUiState = new MediatorLiveData<>();
 
+    /**
+     * UI State for the network screen.
+     */
+    public static final class NetworkUiState {
+        private final String mWifiStatus;
+        private final String mIpAddress;
+        private final String mWifiDetails;
+        private final String mCarrierName;
+        private final String mNetworkType;
+        private final String mSimStatus;
+        private final String mBluetoothState;
+        private final String mNfcState;
+
+        /**
+         * Private constructor using the Builder.
+         * @param builder The state builder.
+         */
+        private NetworkUiState(Builder builder) {
+            this.mWifiStatus = builder.mWifiStatus;
+            this.mIpAddress = builder.mIpAddress;
+            this.mWifiDetails = builder.mWifiDetails;
+            this.mCarrierName = builder.mCarrierName;
+            this.mNetworkType = builder.mNetworkType;
+            this.mSimStatus = builder.mSimStatus;
+            this.mBluetoothState = builder.mBluetoothState;
+            this.mNfcState = builder.mNfcState;
+        }
+
+        @NonNull public String getWifiStatus() { return mWifiStatus; }
+        @NonNull public String getIpAddress() { return mIpAddress; }
+        @NonNull public String getWifiDetails() { return mWifiDetails; }
+        @NonNull public String getCarrierName() { return mCarrierName; }
+        @NonNull public String getNetworkType() { return mNetworkType; }
+        @NonNull public String getSimStatus() { return mSimStatus; }
+        @NonNull public String getBluetoothState() { return mBluetoothState; }
+        @NonNull public String getNfcState() { return mNfcState; }
+
+        /**
+         * Builder for NetworkUiState.
+         */
+        public static final class Builder {
+            private String mWifiStatus = Constants.EMPTY_STRING;
+            private String mIpAddress = Constants.EMPTY_STRING;
+            private String mWifiDetails = Constants.EMPTY_STRING;
+            private String mCarrierName = Constants.EMPTY_STRING;
+            private String mNetworkType = Constants.EMPTY_STRING;
+            private String mSimStatus = Constants.EMPTY_STRING;
+            private String mBluetoothState = Constants.EMPTY_STRING;
+            private String mNfcState = Constants.EMPTY_STRING;
+
+            @NonNull public Builder wifiStatus(String status) { mWifiStatus = status; return this; }
+            @NonNull public Builder ipAddress(String ip) { mIpAddress = ip; return this; }
+            @NonNull public Builder wifiDetails(String details) { mWifiDetails = details; return this; }
+            @NonNull public Builder carrierName(String name) { mCarrierName = name; return this; }
+            @NonNull public Builder networkType(String type) { mNetworkType = type; return this; }
+            @NonNull public Builder simStatus(String status) { mSimStatus = status; return this; }
+            @NonNull public Builder bluetoothState(String state) { mBluetoothState = state; return this; }
+            @NonNull public Builder nfcState(String state) { mNfcState = state; return this; }
+
+            /**
+             * Finalizes the building of NetworkUiState.
+             * @return A new NetworkUiState instance.
+             */
+            @NonNull public NetworkUiState build() { return new NetworkUiState(this); }
+        }
+    }
+
+    /**
+     * Constructs the NetworkViewModel.
+     * @param context Application context.
+     * @param useCase The use case for device information.
+     */
     @Inject
     public NetworkViewModel(@ApplicationContext @NonNull Context context, @NonNull InfoUseCase useCase) {
         this.mContext = context;
@@ -65,59 +130,71 @@ public final class NetworkViewModel extends ViewModel {
         setupSource();
     }
 
+    /**
+     * Initializes the reactive source for network information.
+     */
     private void setupSource() {
         LiveData<DeviceInfo> stream = mUseCase.execute(InfoUseCase.Action.SUBSCRIBE_INFO, null);
         if (stream != null) {
-            mInfoSource.addSource(stream, info -> {
+            mUiState.addSource(stream, info -> {
                 if (info != null) {
-                    updateNetwork(info.getNetworkStatus());
+                    mUiState.setValue(mapToUiState(info.getNetworkStatus()));
                 }
             });
         }
     }
 
-    private void updateNetwork(NetworkStatus status) {
-        mWifiStatus.postValue(getLocalizedNetStatus(status.getWifiStatus()));
-        mIpAddress.postValue(status.getIpV4().isEmpty() ? status.getIpV6() : status.getIpV4());
-        mWifiDetails.postValue(mContext.getString(R.string.label_rssi_speed, 
-                status.getWifiRssi(), status.getWifiLinkSpeed()));
-        
-        mCarrierName.postValue(status.getCarrierName().isEmpty() ? mContext.getString(R.string.net_disconnected) : status.getCarrierName());
-        mNetworkType.postValue(status.getNetworkType());
-        mSimStatus.postValue(mContext.getString(R.string.label_sim_prefix, getLocalizedSimStatus(status.getSimStatus())));
-        
-        mBluetoothState.postValue(status.isBluetoothEnabled() ? mContext.getString(R.string.state_on) : mContext.getString(R.string.state_off));
-        mNfcState.postValue(status.isNfcEnabled() ? mContext.getString(R.string.state_ready) : mContext.getString(R.string.state_na));
+    /**
+     * Maps the domain NetworkStatus entity to the UI State object.
+     * @param status The network status from the domain layer.
+     * @return A new instance of NetworkUiState.
+     */
+    @NonNull
+    private NetworkUiState mapToUiState(@NonNull NetworkStatus status) {
+        String ip = status.getIpV4().isEmpty() ? status.getIpV6() : status.getIpV4();
+        String wifiDetails = mContext.getString(R.string.label_rssi_speed,
+                status.getWifiRssi(), status.getWifiLinkSpeed());
+        String carrier = status.getCarrierName().isEmpty() ?
+                mContext.getString(R.string.net_disconnected) : status.getCarrierName();
+        String sim = mContext.getString(R.string.label_sim_prefix,
+                getLocalizedSimStatus(status.getSimStatus()));
+        String bluetooth = status.isBluetoothEnabled() ?
+                mContext.getString(R.string.state_on) : mContext.getString(R.string.state_off);
+        String nfc = status.isNfcEnabled() ?
+                mContext.getString(R.string.state_ready) : mContext.getString(R.string.state_na);
+
+        return new NetworkUiState.Builder()
+                .wifiStatus(getLocalizedNetStatus(status.getWifiStatus()))
+                .ipAddress(ip)
+                .wifiDetails(wifiDetails)
+                .carrierName(carrier)
+                .networkType(status.getNetworkType())
+                .simStatus(sim)
+                .bluetoothState(bluetooth)
+                .nfcState(nfc)
+                .build();
     }
 
-    private String getLocalizedNetStatus(String status) {
-        switch (status) {
-            case "wifi": return mContext.getString(R.string.net_wifi);
-            case "cellular": return mContext.getString(R.string.net_cellular);
-            case "disconnected": return mContext.getString(R.string.net_disconnected);
-            default: return mContext.getString(R.string.net_other);
-        }
+    /**
+     * Returns the localized string for a connectivity state key.
+     * @param status The status key from Constants.
+     * @return Localized string from resources.
+     */
+    @NonNull
+    private String getLocalizedNetStatus(@NonNull String status) {
+        return mContext.getString(ConnectivityState.fromKey(status).getResId());
     }
 
-    private String getLocalizedSimStatus(String status) {
-        switch (status) {
-            case "ready": return mContext.getString(R.string.sim_ready);
-            case "absent": return mContext.getString(R.string.sim_absent);
-            default: return mContext.getString(R.string.sim_unknown);
-        }
+    /**
+     * Returns the localized string for a SIM state key.
+     * @param status The status key from Constants.
+     * @return Localized string from resources.
+     */
+    @NonNull
+    private String getLocalizedSimStatus(@NonNull String status) {
+        return mContext.getString(SimState.fromKey(status).getResId());
     }
 
-    @NonNull public LiveData<String> getWifiStatus() { return mWifiStatus; }
-    @NonNull public LiveData<String> getIpAddress() { return mIpAddress; }
-    @NonNull public LiveData<String> getWifiDetails() { return mWifiDetails; }
-    @NonNull public LiveData<String> getCarrierName() { return mCarrierName; }
-    @NonNull public LiveData<String> getNetworkType() { return mNetworkType; }
-    @NonNull public LiveData<String> getSimStatus() { return mSimStatus; }
-    @NonNull public LiveData<String> getBluetoothState() { return mBluetoothState; }
-    @NonNull public LiveData<String> getNfcState() { return mNfcState; }
-    @NonNull public LiveData<DeviceInfo> getInfoSource() { return mInfoSource; }
+    @NonNull public LiveData<NetworkUiState> getUiState() { return mUiState; }
 
-    public void refreshData() {
-        // Auto-updated
-    }
 }

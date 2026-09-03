@@ -2,40 +2,37 @@
 skinparam linetype ortho
 skinparam packageStyle rectangle
 
-package "Domain Layer" #FEFECE {
-    interface IDeviceRepository
-    class DeviceInfo
+package "Presentation Layer" #E8F5E9 {
+    class "UI Modules" as UI {
+        MainActivity
+        Dashboard
+        System
+        Network
+        Tools
+    }
 }
 
 package "Application Layer" #E1F5FE {
-    class InfoUseCase
+    class InfoUseCase <<UseCase>>
+}
+
+package "Domain Layer" #FEFECE {
+    interface IDeviceRepository <<Interface>>
+    class "Domain Models" as Models {
+        DeviceInfo
+        Enums (Status/Mapping)
+    }
 }
 
 package "Infrastructure Layer" #FFF9C4 {
-    class InfoService
     class InfoRepositoryImpl
-    package "IPC Contracts" {
-        interface IInfoService
-        interface IInfoCallback
-    }
+    class InfoService <<Android Service>>
 }
 
-package "UI / Presentation Layer" #E8F5E9 {
-    class MainActivity
-    package "Feature ViewModels" as FVM {
-        class DashboardViewModel
-        class SystemViewModel
-        class NetworkViewModel
-        class ToolsViewModel
-    }
-}
-
-' High-level data flow
-InfoUseCase --> IDeviceRepository : "uses"
-InfoRepositoryImpl ..|> IDeviceRepository : "implements"
-FVM --> InfoUseCase : "executes actions"
-InfoRepositoryImpl --> IInfoService : "AIDL Proxy"
-InfoService o-- IInfoCallback : "broadcasts"
-InfoRepositoryImpl --|> IInfoCallback : "callback receiver"
+' High-level flow
+UI --> InfoUseCase : "Requests actions"
+InfoUseCase --> IDeviceRepository : "Orchestrates"
+InfoRepositoryImpl ..|> IDeviceRepository : "Fulfills"
+InfoRepositoryImpl --> InfoService : "Queries device state"
 
 @enduml

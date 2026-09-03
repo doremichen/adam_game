@@ -23,41 +23,41 @@
 package com.adam.app.mydeviceinfo.domain.model;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+
+import com.adam.app.mydeviceinfo.R;
+import com.adam.app.mydeviceinfo.common.Constants;
 
 /**
- * Entity representing device information.
+ * Enum representing connectivity states with their associated resource IDs and keys.
  */
-public final class DeviceInfo {
-    private final DashboardData mDashboardData;
-    private final SystemSpecs mSystemSpecs;
-    private final NetworkStatus mNetworkStatus;
+public enum ConnectivityState {
+    WIFI(Constants.NET_STATUS_WIFI, R.string.net_wifi),
+    CELLULAR(Constants.NET_STATUS_CELLULAR, R.string.net_cellular),
+    DISCONNECTED(Constants.NET_STATUS_DISCONNECTED, R.string.net_disconnected),
+    OTHER(Constants.NET_STATUS_OTHER, R.string.net_other);
+
+    private final String mKey;
+    private final int mResId;
+
+    ConnectivityState(String key, @StringRes int resId) {
+        this.mKey = key;
+        this.mResId = resId;
+    }
+
+    @NonNull public String getKey() { return mKey; }
+    @StringRes public int getResId() { return mResId; }
 
     /**
-     * Constructs the DeviceInfo entity.
-     * @param dashboardData Current metrics.
-     * @param systemSpecs Static specifications.
-     * @param networkStatus Connectivity details.
+     * Finds the enum instance associated with the given key.
+     * @param key The constant string key.
+     * @return Matching ConnectivityState or OTHER if not found.
      */
-    public DeviceInfo(@NonNull DashboardData dashboardData,
-                      @NonNull SystemSpecs systemSpecs,
-                      @NonNull NetworkStatus networkStatus) {
-        this.mDashboardData = dashboardData;
-        this.mSystemSpecs = systemSpecs;
-        this.mNetworkStatus = networkStatus;
-    }
-
     @NonNull
-    public DashboardData getDashboardData() {
-        return mDashboardData;
-    }
-
-    @NonNull
-    public SystemSpecs getSystemSpecs() {
-        return mSystemSpecs;
-    }
-
-    @NonNull
-    public NetworkStatus getNetworkStatus() {
-        return mNetworkStatus;
+    public static ConnectivityState fromKey(String key) {
+        for (ConnectivityState state : values()) {
+            if (state.mKey.equals(key)) return state;
+        }
+        return OTHER;
     }
 }

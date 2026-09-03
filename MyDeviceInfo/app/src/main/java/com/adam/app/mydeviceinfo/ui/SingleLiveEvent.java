@@ -46,6 +46,11 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
 
     private final AtomicBoolean mPending = new AtomicBoolean(false);
 
+    /**
+     * Observes the LiveData within the lifecycle of the owner.
+     * @param owner The lifecycle owner.
+     * @param observer The observer that will receive events.
+     */
     @MainThread
     @Override
     public void observe(@NonNull LifecycleOwner owner, @NonNull final Observer<? super T> observer) {
@@ -61,6 +66,10 @@ public class SingleLiveEvent<T> extends MutableLiveData<T> {
         });
     }
 
+    /**
+     * Sets the value and triggers the pending state for observers.
+     * @param t The new value.
+     */
     @MainThread
     @Override
     public void setValue(T t) {

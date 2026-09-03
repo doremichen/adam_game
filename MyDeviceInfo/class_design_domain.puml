@@ -12,20 +12,9 @@ package "Domain Layer" {
     class DashboardData <<Value Object>> {
         - mRamUsed/Total: long
         - mStorageUsed/Total: long
-        - mBatteryPct/Temp/Volt: String
+        - mBatteryPct/Temp/Volt: int
         - mBatteryStatus/Health: String
         - mUptime: long
-    }
-
-    class SystemSpecs <<Value Object>> {
-        - mManufacturer: String
-        - mModel/Codename: String
-        - mDisplayMetrics: String
-        - mOsVersion/Api: String
-        - mSecurityPatch: String
-        - mKernel/Fingerprint: String
-        - mCpuAbi/Cores: String
-        - mSensorList: List<String>
     }
 
     class NetworkStatus <<Value Object>> {
@@ -35,7 +24,39 @@ package "Domain Layer" {
         - mCarrierName: String
         - mNetworkType: String
         - mSimStatus: String
-        - mBluetooth/NfcStatus: String
+        - mBluetooth/NfcEnabled: boolean
+    }
+
+    enum ConnectivityState <<Enum>> {
+        WIFI
+        CELLULAR
+        DISCONNECTED
+        OTHER
+        + fromKey(key: String): ConnectivityState
+        + getResId(): int
+    }
+
+    enum SimState <<Enum>> {
+        READY
+        ABSENT
+        UNKNOWN
+        + fromKey(key: String): SimState
+    }
+
+    enum BatteryStatus <<Enum>> {
+        CHARGING
+        DISCHARGING
+        FULL
+        ...
+        + fromCode(code: int): BatteryStatus
+    }
+
+    enum BatteryHealth <<Enum>> {
+        GOOD
+        OVERHEAT
+        DEAD
+        ...
+        + fromCode(code: int): BatteryHealth
     }
 
     interface IDeviceRepository <<Interface>> {
@@ -46,7 +67,6 @@ package "Domain Layer" {
     }
 
     DeviceInfo *-- DashboardData
-    DeviceInfo *-- SystemSpecs
     DeviceInfo *-- NetworkStatus
 }
 @enduml

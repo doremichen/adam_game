@@ -31,13 +31,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
+import android.hardware.display.DisplayManager;
 import android.net.ConnectivityManager;
+import android.net.LinkAddress;
+import android.net.LinkProperties;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.net.TransportInfo;
 import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.os.BatteryManager;
@@ -49,8 +53,11 @@ import android.os.RemoteException;
 import android.os.StatFs;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
-import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.WindowManager;
+import android.view.WindowMetrics;
+
+import androidx.annotation.NonNull;
 
 import com.adam.app.mydeviceinfo.IInfoCallback;
 import com.adam.app.mydeviceinfo.IInfoService;
@@ -65,6 +72,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -111,12 +121,16 @@ public final class InfoService extends Service {
         }
     };
 
+    /**
+     * Called when the service is first created.
+     */
     @Override
     public void onCreate() {
         super.onCreate();
         registerReceiver(mBatteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
     }
 
+    @NonNull
     @Override
     public IBinder onBind(Intent intent) {
         mActiveClients++;
@@ -127,6 +141,11 @@ public final class InfoService extends Service {
         return new BnInfoService(this);
     }
 
+    /**
+     * Called when a client unbinds from the service.
+     * @param intent The unbind intent.
+     * @return true if onRebind should be called.
+     */
     @Override
     public boolean onUnbind(Intent intent) {
         mActiveClients--;
@@ -137,6 +156,9 @@ public final class InfoService extends Service {
         return super.onUnbind(intent);
     }
 
+    /**
+     * Called when the service is being destroyed.
+     */
     @Override
     public void onDestroy() {
         mScheduler.stop();
@@ -145,6 +167,9 @@ public final class InfoService extends Service {
         super.onDestroy();
     }
 
+    /**
+     * Main task that orchestrates the collection of device information.
+     */
     private void updateDeviceInfo() {
         DeviceStateDto.Builder builder = new DeviceStateDto.Builder();
 
@@ -163,6 +188,10 @@ public final class InfoService extends Service {
         broadcastUpdate(dto);
     }
 
+    /**
+     * Collects real-time metrics for the dashboard (RAM, Storage, Battery).
+     * @param builder The DTO builder to populate.
+     */
     private void collectDashboardMetrics(DeviceStateDto.Builder builder) {
         // RAM
         ActivityManager.MemoryInfo memInfo = getMemoryInfoInternal();
@@ -193,6 +222,10 @@ public final class InfoService extends Service {
         builder.setMemoryInfo(formatMemoryInfo(memInfo));
     }
 
+    /**
+     * Collects static hardware specifications (Model, OS, CPU).
+     * @param builder The DTO builder to populate.
+     */
     private void collectHardwareSpecs(DeviceStateDto.Builder builder) {
         builder.setManufacturer(Build.MANUFACTURER)
                .setBrand(Build.BRAND)
@@ -207,13 +240,18 @@ public final class InfoService extends Service {
                .setCpuCores(Runtime.getRuntime().availableProcessors());
 
         // Screen
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        WindowManager wm = getSystemService(WindowManager.class);
         if (wm != null) {
-            DisplayMetrics metrics = new DisplayMetrics();
-            wm.getDefaultDisplay().getMetrics(metrics);
-            builder.setScreenRes(metrics.widthPixels + "x" + metrics.heightPixels)
-                   .setScreenDpi(metrics.densityDpi + " dpi")
-                   .setRefreshRate(wm.getDefaultDisplay().getRefreshRate() + " Hz");
+            WindowMetrics windowMetrics = wm.getCurrentWindowMetrics();
+            Rect bounds = windowMetrics.getBounds();
+            builder.setScreenRes(bounds.width() + "x" + bounds.height())
+                   .setScreenDpi(getResources().getConfiguration().densityDpi + " dpi");
+            // Refresh rate still needs display object
+            DisplayManager dm = getSystemService(DisplayManager.class);
+            Display display = (dm != null) ? dm.getDisplay(Display.DEFAULT_DISPLAY) : null;
+            if (display != null) {
+                builder.setRefreshRate(display.getRefreshRate() + " Hz");
+            }
         }
 
         // Sensors
@@ -226,6 +264,10 @@ public final class InfoService extends Service {
         }
     }
 
+    /**
+     * Collects connectivity state (WiFi, Cellular, BT, NFC).
+     * @param builder The DTO builder to populate.
+     */
     private void collectConnectivityState(DeviceStateDto.Builder builder) {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return;
@@ -234,15 +276,15 @@ public final class InfoService extends Service {
         NetworkCapabilities capabilities = cm.getNetworkCapabilities(activeNetwork);
 
         if (capabilities == null) {
-            builder.setWifiStatus("disconnected");
+            builder.setWifiStatus(Constants.NET_STATUS_DISCONNECTED);
         } else {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                builder.setWifiStatus("wifi");
-                collectWifiDetails(builder);
+            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) && activeNetwork != null) {
+                builder.setWifiStatus(Constants.NET_STATUS_WIFI);
+                collectWifiDetails(builder, activeNetwork, capabilities);
             } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                builder.setWifiStatus("cellular");
+                builder.setWifiStatus(Constants.NET_STATUS_CELLULAR);
             } else {
-                builder.setWifiStatus("other");
+                builder.setWifiStatus(Constants.NET_STATUS_OTHER);
             }
         }
 
@@ -252,34 +294,68 @@ public final class InfoService extends Service {
         builder.setNetworkStatus(getNetworkStatusInternal());
     }
 
-    private void collectWifiDetails(DeviceStateDto.Builder builder) {
-        WifiManager wm = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        if (wm != null) {
-            @SuppressLint("HardwareIds") WifiInfo info = wm.getConnectionInfo();
+    /**
+     * Collects detailed WiFi information and extracts IP addresses.
+     * @param builder The DTO builder to populate.
+     * @param network The active network object.
+     * @param caps The network capabilities.
+     */
+    private void collectWifiDetails(@NonNull DeviceStateDto.Builder builder, @NonNull Network network, @NonNull NetworkCapabilities caps) {
+        TransportInfo transportInfo = caps.getTransportInfo();
+        if (transportInfo instanceof WifiInfo info) {
             builder.setWifiRssi(info.getRssi())
                    .setWifiLinkSpeed(info.getLinkSpeed())
                    .setWifiFrequency(info.getFrequency());
-            // IP
-            int ip = info.getIpAddress();
-            String ipStr = String.format(Locale.getDefault(), "%d.%d.%d.%d",
-                    (ip & 0xff), (ip >> 8 & 0xff), (ip >> 16 & 0xff), (ip >> 24 & 0xff));
-            builder.setIpV4(ipStr);
+        }
+
+        ConnectivityManager cm = getSystemService(ConnectivityManager.class);
+        if (cm == null) return;
+
+        LinkProperties lp = cm.getLinkProperties(network);
+        if (lp == null) return;
+
+        extractIpAddresses(builder, lp);
+    }
+
+    /**
+     * Extracts and categorizes IPv4 and IPv6 addresses from link properties.
+     * @param builder The DTO builder to populate.
+     * @param lp The link properties containing network addresses.
+     */
+    private void extractIpAddresses(@NonNull DeviceStateDto.Builder builder, @NonNull LinkProperties lp) {
+        for (LinkAddress la : lp.getLinkAddresses()) {
+            InetAddress addr = la.getAddress();
+            if (addr instanceof Inet4Address) {
+                builder.setIpV4(addr.getHostAddress());
+            } else if (addr instanceof Inet6Address) {
+                builder.setIpV6(addr.getHostAddress());
+            }
         }
     }
 
+    /**
+     * Collects cellular network details (Carrier, SIM status).
+     * @param builder The DTO builder to populate.
+     */
     private void collectCellularDetails(DeviceStateDto.Builder builder) {
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null) {
             try {
                 builder.setCarrierName(tm.getNetworkOperatorName());
                 builder.setSimStatus(getSimStateKey(tm.getSimState()));
-                builder.setNetworkType(getNetworkTypeString(tm.getDataNetworkType()));
+                // Network type is better determined from capabilities or via TelephonyCallback for API 31+
+                // For simplicity and avoiding deprecation of tm.getDataNetworkType()
+                builder.setNetworkType(getNetworkTypeFromTelephony(tm));
             } catch (SecurityException e) {
-                builder.setCarrierName("Permission Denied");
+                builder.setCarrierName(Constants.PERMISSION_DENIED);
             }
         }
     }
 
+    /**
+     * Collects states for Bluetooth and NFC.
+     * @param builder The DTO builder to populate.
+     */
     @SuppressLint("MissingPermission")
     private void collectOtherConnections(DeviceStateDto.Builder builder) {
         BluetoothManager bm = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
@@ -299,27 +375,45 @@ public final class InfoService extends Service {
         }
     }
 
+    /**
+     * Maps SIM state code to a constant string key.
+     * @param state The SIM state from TelephonyManager.
+     * @return Domain constant for SIM status.
+     */
     private String getSimStateKey(int state) {
-        switch (state) {
-            case TelephonyManager.SIM_STATE_READY: return "ready";
-            case TelephonyManager.SIM_STATE_ABSENT: return "absent";
-            default: return "unknown";
+        return switch (state) {
+            case TelephonyManager.SIM_STATE_READY -> Constants.SIM_STATUS_READY;
+            case TelephonyManager.SIM_STATE_ABSENT -> Constants.SIM_STATUS_ABSENT;
+            default -> Constants.SIM_STATUS_UNKNOWN;
+        };
+    }
+
+    /**
+     * Maps TelephonyManager data network type to a localized constant string.
+     * @param tm TelephonyManager instance.
+     * @return Localized network type string (e.g., "5G", "4G").
+     */
+    @SuppressLint("MissingPermission")
+    private String getNetworkTypeFromTelephony(TelephonyManager tm) {
+        try {
+            return switch (tm.getDataNetworkType()) {
+                case TelephonyManager.NETWORK_TYPE_NR -> Constants.NET_TYPE_5G;
+                case TelephonyManager.NETWORK_TYPE_LTE -> Constants.NET_TYPE_4G;
+                case TelephonyManager.NETWORK_TYPE_HSPA, TelephonyManager.NETWORK_TYPE_HSPAP -> Constants.NET_TYPE_3G;
+                default -> Constants.VAL_UNKNOWN;
+            };
+        } catch (Exception e) {
+            return Constants.VAL_UNKNOWN;
         }
     }
 
-    private String getNetworkTypeString(int type) {
-        switch (type) {
-            case TelephonyManager.NETWORK_TYPE_NR: return "5G";
-            case TelephonyManager.NETWORK_TYPE_LTE: return "4G";
-            case TelephonyManager.NETWORK_TYPE_HSPA:
-            case TelephonyManager.NETWORK_TYPE_HSPAP: return "3G";
-            default: return "Unknown";
-        }
-    }
-
+    /**
+     * Broadcasts the updated device state to all registered AIDL clients.
+     * @param dto The device state data to broadcast.
+     */
     private void broadcastUpdate(DeviceStateDto dto) {
-        int n = mCallbacks.beginBroadcast();
-        for (int i = 0; i < n; i++) {
+        int count = mCallbacks.beginBroadcast();
+        for (int i = 0; i < count; i++) {
             try {
                 mCallbacks.getBroadcastItem(i).onDeviceStateChanged(dto);
             } catch (RemoteException e) {
@@ -329,21 +423,30 @@ public final class InfoService extends Service {
         mCallbacks.finishBroadcast();
     }
 
+    /**
+     * Returns the high-level connectivity status.
+     * @return Constant string representing connectivity.
+     */
     private String getNetworkStatusInternal() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (cm == null) return "disconnected";
+        if (cm == null) return Constants.NET_STATUS_DISCONNECTED;
 
         Network activeNetwork = cm.getActiveNetwork();
-        if (activeNetwork == null) return "disconnected";
+        if (activeNetwork == null) return Constants.NET_STATUS_DISCONNECTED;
 
         NetworkCapabilities capabilities = cm.getNetworkCapabilities(activeNetwork);
-        if (capabilities == null) return "disconnected";
+        if (capabilities == null) return Constants.NET_STATUS_DISCONNECTED;
 
-        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return "wifi";
-        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return "cellular";
-        return "other";
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) return Constants.NET_STATUS_WIFI;
+        if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) return Constants.NET_STATUS_CELLULAR;
+        return Constants.NET_STATUS_OTHER;
     }
 
+    /**
+     * Formats memory info into a displayable string.
+     * @param memInfo Memory information structure.
+     * @return Formatted string.
+     */
     private String formatMemoryInfo(ActivityManager.MemoryInfo memInfo) {
         return String.format(
                 Locale.getDefault(),
@@ -352,7 +455,13 @@ public final class InfoService extends Service {
                 memInfo.availMem / Constants.BYTES_IN_MB);
     }
 
-    private String readFile(String path) {
+    /**
+     * Reads a file from the system and returns its content.
+     * @param path The absolute path to the file.
+     * @return Content of the file as a string.
+     */
+    @NonNull
+    private String readFile(@NonNull String path) {
         StringBuilder sb = new StringBuilder();
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
             String line;
@@ -365,6 +474,11 @@ public final class InfoService extends Service {
         return sb.toString();
     }
 
+    /**
+     * Retrieves current memory info from ActivityManager.
+     * @return MemoryInfo structure.
+     */
+    @NonNull
     private ActivityManager.MemoryInfo getMemoryInfoInternal() {
         ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();

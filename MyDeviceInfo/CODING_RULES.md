@@ -7,9 +7,11 @@ This document defines the coding standards and architectural guidelines for Andr
 ## 1. General Principles
 - **GP-01**: Core logic should prioritize **Java (JDK 17)** or **Kotlin**.
 - **GP-02**: All comments, Javadocs, and notes must be in **English**.
-- **GP-03**: Every source file must include the **MIT License header**.
+- **GP-03**: **Mandatory Javadoc**: All methods, except for simple getters and setters, must include a Javadoc comment explaining the purpose, parameters, and return value.
+- **GP-04**: Every source file must include the **MIT License header**.
 - **GP-04**: **Indentation**: Use 4 spaces for indentation (no tabs).
 - **GP-05**: **Line Length**: Limit lines to 120 characters where possible.
+- **GP-06**: **Zero Warnings Policy**: All builds must be strictly free of both errors and warnings. Unused code, deprecated APIs (where alternatives exist), and styling issues should be resolved immediately.
 
 ## 2. Naming Conventions
 ### Java/Kotlin
@@ -48,6 +50,7 @@ This document defines the coding standards and architectural guidelines for Andr
 
 ## 5. Design Patterns & Testing
 - **DP-01**: Leverage **Repository**, **Strategy**, **Observer**, **Builder**, **Singleton**, and **State (Enum-based)** patterns.
+- **DP-02**: **Builder Pattern Requirement**: For any class with more than 4 constructor parameters, the **Builder Pattern** must be implemented and used for object creation to ensure readability and maintainability.
 - **TS-01**: **Unit Testing**: Business logic in UseCases and ViewModels must have corresponding unit tests.
 - **TS-02**: **Immutability**: Favor immutable data structures (e.g., `final` fields, `List` instead of `ArrayList` in APIs).
 

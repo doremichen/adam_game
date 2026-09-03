@@ -9,45 +9,31 @@ skinparam shadowing false
 ' --- UI Layer ---
 package "UI Layer" #E8F5E9 {
     package "ui.main" {
-        class MainActivity {
-            # onCreate(savedInstanceState: Bundle): void
-            - setupNavigation(): void
-            - requestPermissions(): void
-        }
+        class MainActivity
         class MainViewModel
     }
 
-    together {
-        package "ui.dashboard" {
-            class DashboardFragment <<View>>
-            class DashboardViewModel <<ViewModel>> {
-                + ramUsage: LiveData<String>
-                + storageUsage: LiveData<String>
-                + batteryState: LiveData<String>
-            }
-        }
-        package "ui.system" {
-            class SystemFragment <<View>>
-            class SystemViewModel <<ViewModel>> {
-                + deviceSpecs: LiveData<List<SpecItem>>
-                + sensorList: LiveData<List<String>>
-            }
-        }
-        package "ui.network" {
-            class NetworkFragment <<View>>
-            class NetworkViewModel <<ViewModel>> {
-                + wifiDetails: LiveData<String>
-                + cellularState: LiveData<String>
-            }
-        }
-        package "ui.tools" {
-            class ToolsFragment <<View>>
-            class ToolsViewModel <<ViewModel>> {
-                + onShareReport(): void
-                + startHardwareTest(testType: int): void
-            }
-        }
+    package "ui.dashboard" {
+        class DashboardFragment
+        class DashboardViewModel
     }
+
+    package "ui.system" {
+        class SystemFragment
+        class SystemViewModel
+    }
+
+    package "ui.network" {
+        class NetworkFragment
+        class NetworkViewModel
+    }
+
+    package "ui.tools" {
+        class ToolsFragment
+        class ToolsViewModel
+    }
+
+    class SingleLiveEvent <<Utility>>
 }
 
 ' --- Application Layer ---
@@ -60,7 +46,6 @@ package "Application Layer" #E1F5FE {
         SUBSCRIBE_INFO
         EXPORT_REPORT
         EXECUTE_HW_TEST
-        + handle(repo, data)
     }
     InfoUseCase +-- Action
 }
@@ -68,66 +53,39 @@ package "Application Layer" #E1F5FE {
 ' --- Domain Layer ---
 package "Domain Layer" #FEFECE {
     interface IDeviceRepository <<Interface>> {
-        + fetchDeviceInfo(): DeviceInfo
-        + getDeviceInfoStream(): LiveData<DeviceInfo>
-        + exportDeviceInfo(info: DeviceInfo): boolean
-        + runHardwareTest(type: int): void
+        + fetchDeviceInfo()
+        + getDeviceInfoStream()
+        + exportDeviceInfo()
+        + runHardwareTest()
     }
 
-    class DeviceInfo <<Entity>> {
-        - mDashboardData: DashboardData
-        - mSystemSpecs: SystemSpecs
-        - mNetworkStatus: NetworkStatus
-    }
+    class DeviceInfo <<Entity>>
+    class DashboardData <<VO>>
+    class SystemSpecs <<VO>>
+    class NetworkStatus <<VO>>
 
-    class DashboardData <<VO>> {
-        - mRamUsed/Total: long
-        - mStorageUsed/Total: long
-        - mBatteryPct/Temp/Status: String
-    }
-
-    class SystemSpecs <<VO>> {
-        - mManufacturer/Codename: String
-        - mDisplayMetrics: String
-        - mSensorList: List<String>
+    package "Enums (Mapping)" {
+        enum ConnectivityState
+        enum SimState
+        enum BatteryStatus
+        enum BatteryHealth
     }
 
     DeviceInfo *-- DashboardData
     DeviceInfo *-- SystemSpecs
+    DeviceInfo *-- NetworkStatus
 }
 
 ' --- Infrastructure Layer ---
 package "Infrastructure Layer" #FFF9C4 {
-    class InfoRepositoryImpl <<Implementation>> {
-        - mInfoLiveData: MutableLiveData<DeviceInfo>
-        - mapDtoToEntity(dto: DeviceStateDto): DeviceInfo
+    class InfoRepositoryImpl <<Implementation>>
+    class InfoService <<Android Service>>
+
+    package "IPC Contracts (AIDL)" {
+        interface IInfoService
+        interface IInfoCallback
+        class DeviceStateDto <<Parcelable>>
     }
-
-    class InfoService <<Android Service>> {
-        - mBatteryReceiver: BroadcastReceiver
-        - mCallbacks: RemoteCallbackList<IInfoCallback>
-        --
-        - collectHardwareSpecs(): void
-        - collectConnectivityState(): void
-        - broadcastUpdate(dto: DeviceStateDto): void
-    }
-
-    package "IPC & Data Contracts" {
-        interface IInfoService <<AIDL>>
-        interface IInfoCallback <<AIDL>>
-
-        class DeviceStateDto <<Parcelable>> {
-            + ramUsed: long
-            + batteryPct: int
-            + manufacturer: String
-            + wifiIp: String
-            .. (50+ fields) ..
-            + {static} class Builder
-        }
-    }
-
-    InfoService o-- IInfoCallback : "broadcasts"
-    InfoRepositoryImpl --> IInfoService : "AIDL Proxy"
 }
 
 ' --- Layout Hints ---
@@ -136,13 +94,35 @@ package "Infrastructure Layer" #FFF9C4 {
 "Domain Layer" -[hidden]down-> "Infrastructure Layer"
 
 ' --- Relationships ---
-DashboardViewModel -[#blue]down-> InfoUseCase : "triggers SUBSCRIBE_INFO"
-ToolsViewModel -[#blue]down-> InfoUseCase : "triggers HW_TEST"
 
-InfoUseCase -[#red]down-> IDeviceRepository : "uses contract"
-InfoRepositoryImpl -[#green]up..|> IDeviceRepository : "implements"
+' UI Relationships
+MainActivity --> MainViewModel
+MainActivity ..> DashboardFragment : "hosts"
+DashboardFragment --> DashboardViewModel
+SystemFragment --> SystemViewModel
+NetworkFragment --> NetworkViewModel
+ToolsFragment --> ToolsViewModel
 
-InfoService -[#orange]down-> DeviceStateDto : "populates"
-InfoRepositoryImpl -[#orange]right-> DeviceStateDto : "receives"
+' UI -> Application
+DashboardViewModel --> InfoUseCase : "SUBSCRIBE_INFO"
+SystemViewModel --> InfoUseCase : "SUBSCRIBE_INFO"
+NetworkViewModel --> InfoUseCase : "SUBSCRIBE_INFO"
+ToolsViewModel --> InfoUseCase : "EXPORT_REPORT / HW_TEST"
+
+' Application -> Domain
+InfoUseCase --> IDeviceRepository : "executes contract"
+
+' Domain -> Infrastructure
+InfoRepositoryImpl ..|> IDeviceRepository : "implements"
+
+' Infrastructure Internal
+InfoRepositoryImpl --> IInfoService : "AIDL Proxy"
+InfoService o-- IInfoCallback : "broadcasts"
+InfoService ..> DeviceStateDto : "populates"
+InfoRepositoryImpl ..> DeviceStateDto : "maps to Entity"
+
+' Cross-layer Dependency on Enums
+InfoService --> ConnectivityState : "determines status"
+NetworkViewModel --> ConnectivityState : "maps to UI string"
 
 @enduml

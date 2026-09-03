@@ -38,6 +38,10 @@ import javax.inject.Singleton;
 public final class InfoUseCase {
     private final IDeviceRepository mRepository;
 
+    /**
+     * Constructs the UseCase with a repository.
+     * @param repository The repository for device information.
+     */
     @Inject
     public InfoUseCase(@NonNull IDeviceRepository repository) {
         this.mRepository = repository;

@@ -28,6 +28,8 @@ import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.adam.app.mydeviceinfo.common.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -238,9 +240,9 @@ public final class DeviceStateDto implements Parcelable {
 
     // --- Getters ---
 
-    @NonNull public String getCpuInfo() { return mCpuInfo != null ? mCpuInfo : ""; }
-    @NonNull public String getMemoryInfo() { return mMemoryInfo != null ? mMemoryInfo : ""; }
-    @NonNull public String getNetworkStatus() { return mNetworkStatus != null ? mNetworkStatus : ""; }
+    @NonNull public String getCpuInfo() { return mCpuInfo != null ? mCpuInfo : Constants.EMPTY_STRING; }
+    @NonNull public String getMemoryInfo() { return mMemoryInfo != null ? mMemoryInfo : Constants.EMPTY_STRING; }
+    @NonNull public String getNetworkStatus() { return mNetworkStatus != null ? mNetworkStatus : Constants.EMPTY_STRING; }
 
     public long getRamUsed() { return mRamUsed; }
     public long getRamTotal() { return mRamTotal; }
@@ -249,35 +251,35 @@ public final class DeviceStateDto implements Parcelable {
     public int getBatteryPct() { return mBatteryPct; }
     public int getBatteryTemp() { return mBatteryTemp; }
     public int getBatteryVolt() { return mBatteryVolt; }
-    @NonNull public String getBatteryStatus() { return mBatteryStatus != null ? mBatteryStatus : ""; }
-    @NonNull public String getBatteryHealth() { return mBatteryHealth != null ? mBatteryHealth : ""; }
+    @NonNull public String getBatteryStatus() { return mBatteryStatus != null ? mBatteryStatus : Constants.EMPTY_STRING; }
+    @NonNull public String getBatteryHealth() { return mBatteryHealth != null ? mBatteryHealth : Constants.EMPTY_STRING; }
     public long getUptime() { return mUptime; }
 
-    @NonNull public String getManufacturer() { return mManufacturer != null ? mManufacturer : ""; }
-    @NonNull public String getBrand() { return mBrand != null ? mBrand : ""; }
-    @NonNull public String getModel() { return mModel != null ? mModel : ""; }
-    @NonNull public String getCodename() { return mCodename != null ? mCodename : ""; }
-    @NonNull public String getScreenRes() { return mScreenRes != null ? mScreenRes : ""; }
-    @NonNull public String getScreenDpi() { return mScreenDpi != null ? mScreenDpi : ""; }
-    @NonNull public String getRefreshRate() { return mRefreshRate != null ? mRefreshRate : ""; }
-    @NonNull public String getOsVersion() { return mOsVersion != null ? mOsVersion : ""; }
+    @NonNull public String getManufacturer() { return mManufacturer != null ? mManufacturer : Constants.EMPTY_STRING; }
+    @NonNull public String getBrand() { return mBrand != null ? mBrand : Constants.EMPTY_STRING; }
+    @NonNull public String getModel() { return mModel != null ? mModel : Constants.EMPTY_STRING; }
+    @NonNull public String getCodename() { return mCodename != null ? mCodename : Constants.EMPTY_STRING; }
+    @NonNull public String getScreenRes() { return mScreenRes != null ? mScreenRes : Constants.EMPTY_STRING; }
+    @NonNull public String getScreenDpi() { return mScreenDpi != null ? mScreenDpi : Constants.EMPTY_STRING; }
+    @NonNull public String getRefreshRate() { return mRefreshRate != null ? mRefreshRate : Constants.EMPTY_STRING; }
+    @NonNull public String getOsVersion() { return mOsVersion != null ? mOsVersion : Constants.EMPTY_STRING; }
     public int getSdkLevel() { return mSdkLevel; }
-    @NonNull public String getSecurityPatch() { return mSecurityPatch != null ? mSecurityPatch : ""; }
-    @NonNull public String getKernelVersion() { return mKernelVersion != null ? mKernelVersion : ""; }
-    @NonNull public String getFingerprint() { return mFingerprint != null ? mFingerprint : ""; }
-    @NonNull public String getCpuAbi() { return mCpuAbi != null ? mCpuAbi : ""; }
+    @NonNull public String getSecurityPatch() { return mSecurityPatch != null ? mSecurityPatch : Constants.EMPTY_STRING; }
+    @NonNull public String getKernelVersion() { return mKernelVersion != null ? mKernelVersion : Constants.EMPTY_STRING; }
+    @NonNull public String getFingerprint() { return mFingerprint != null ? mFingerprint : Constants.EMPTY_STRING; }
+    @NonNull public String getCpuAbi() { return mCpuAbi != null ? mCpuAbi : Constants.EMPTY_STRING; }
     public int getCpuCores() { return mCpuCores; }
     @NonNull public List<String> getSensorList() { return mSensorList != null ? mSensorList : new ArrayList<>(); }
 
-    @NonNull public String getWifiStatus() { return mWifiStatus != null ? mWifiStatus : ""; }
-    @NonNull public String getIpV4() { return mIpV4 != null ? mIpV4 : ""; }
-    @NonNull public String getIpV6() { return mIpV6 != null ? mIpV6 : ""; }
+    @NonNull public String getWifiStatus() { return mWifiStatus != null ? mWifiStatus : Constants.EMPTY_STRING; }
+    @NonNull public String getIpV4() { return mIpV4 != null ? mIpV4 : Constants.EMPTY_STRING; }
+    @NonNull public String getIpV6() { return mIpV6 != null ? mIpV6 : Constants.EMPTY_STRING; }
     public int getWifiRssi() { return mWifiRssi; }
     public int getWifiLinkSpeed() { return mWifiLinkSpeed; }
     public int getWifiFrequency() { return mWifiFrequency; }
-    @NonNull public String getCarrierName() { return mCarrierName != null ? mCarrierName : ""; }
-    @NonNull public String getNetworkType() { return mNetworkType != null ? mNetworkType : ""; }
-    @NonNull public String getSimStatus() { return mSimStatus != null ? mSimStatus : ""; }
+    @NonNull public String getCarrierName() { return mCarrierName != null ? mCarrierName : Constants.EMPTY_STRING; }
+    @NonNull public String getNetworkType() { return mNetworkType != null ? mNetworkType : Constants.EMPTY_STRING; }
+    @NonNull public String getSimStatus() { return mSimStatus != null ? mSimStatus : Constants.EMPTY_STRING; }
     public boolean isBluetoothEnabled() { return mBluetoothEnabled; }
     public boolean isNfcEnabled() { return mNfcEnabled; }
 
@@ -285,9 +287,9 @@ public final class DeviceStateDto implements Parcelable {
      * Builder for DeviceStateDto.
      */
     public static final class Builder {
-        private String mCpuInfo = "";
-        private String mMemoryInfo = "";
-        private String mNetworkStatus = "";
+        private String mCpuInfo = Constants.EMPTY_STRING;
+        private String mMemoryInfo = Constants.EMPTY_STRING;
+        private String mNetworkStatus = Constants.EMPTY_STRING;
 
         private long mRamUsed = 0;
         private long mRamTotal = 0;
@@ -296,35 +298,35 @@ public final class DeviceStateDto implements Parcelable {
         private int mBatteryPct = 0;
         private int mBatteryTemp = 0;
         private int mBatteryVolt = 0;
-        private String mBatteryStatus = "";
-        private String mBatteryHealth = "";
+        private String mBatteryStatus = Constants.EMPTY_STRING;
+        private String mBatteryHealth = Constants.EMPTY_STRING;
         private long mUptime = 0;
 
-        private String mManufacturer = "";
-        private String mBrand = "";
-        private String mModel = "";
-        private String mCodename = "";
-        private String mScreenRes = "";
-        private String mScreenDpi = "";
-        private String mRefreshRate = "";
-        private String mOsVersion = "";
+        private String mManufacturer = Constants.EMPTY_STRING;
+        private String mBrand = Constants.EMPTY_STRING;
+        private String mModel = Constants.EMPTY_STRING;
+        private String mCodename = Constants.EMPTY_STRING;
+        private String mScreenRes = Constants.EMPTY_STRING;
+        private String mScreenDpi = Constants.EMPTY_STRING;
+        private String mRefreshRate = Constants.EMPTY_STRING;
+        private String mOsVersion = Constants.EMPTY_STRING;
         private int mSdkLevel = 0;
-        private String mSecurityPatch = "";
-        private String mKernelVersion = "";
-        private String mFingerprint = "";
-        private String mCpuAbi = "";
+        private String mSecurityPatch = Constants.EMPTY_STRING;
+        private String mKernelVersion = Constants.EMPTY_STRING;
+        private String mFingerprint = Constants.EMPTY_STRING;
+        private String mCpuAbi = Constants.EMPTY_STRING;
         private int mCpuCores = 0;
         private List<String> mSensorList = new ArrayList<>();
 
-        private String mWifiStatus = "";
-        private String mIpV4 = "";
-        private String mIpV6 = "";
+        private String mWifiStatus = Constants.EMPTY_STRING;
+        private String mIpV4 = Constants.EMPTY_STRING;
+        private String mIpV6 = Constants.EMPTY_STRING;
         private int mWifiRssi = 0;
         private int mWifiLinkSpeed = 0;
         private int mWifiFrequency = 0;
-        private String mCarrierName = "";
-        private String mNetworkType = "";
-        private String mSimStatus = "";
+        private String mCarrierName = Constants.EMPTY_STRING;
+        private String mNetworkType = Constants.EMPTY_STRING;
+        private String mSimStatus = Constants.EMPTY_STRING;
         private boolean mBluetoothEnabled = false;
         private boolean mNfcEnabled = false;
 

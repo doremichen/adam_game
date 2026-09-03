@@ -59,6 +59,12 @@ public final class MainActivity extends AppCompatActivity {
                 // Permissions handled
             });
 
+    /**
+     * Called when the activity is first created.
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in {@link #onSaveInstanceState}.  <b>Note: Otherwise it is null.</b>
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,9 @@ public final class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Checks if necessary permissions are granted and requests them if not.
+     */
     private void checkAndRequestPermissions() {
         String[] permissions = {
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -99,6 +108,9 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sets up the BottomNavigationView and NavController.
+     */
     private void setupNavigation() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host_fragment);
@@ -109,6 +121,12 @@ public final class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This method is called whenever the user chooses to navigate Up within your application's
+     * activity hierarchy from the action bar.
+     * @return true if Up navigation completed successfully and this Activity was finished, 
+     *         false otherwise.
+     */
     @Override
     public boolean onSupportNavigateUp() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager()

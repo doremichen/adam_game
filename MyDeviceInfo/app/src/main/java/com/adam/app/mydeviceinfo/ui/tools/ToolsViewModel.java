@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.adam.app.mydeviceinfo.R;
 import com.adam.app.mydeviceinfo.application.InfoUseCase;
+import com.adam.app.mydeviceinfo.common.Constants;
 import com.adam.app.mydeviceinfo.domain.model.DeviceInfo;
 import com.adam.app.mydeviceinfo.ui.SingleLiveEvent;
 
@@ -47,6 +48,10 @@ public final class ToolsViewModel extends ViewModel {
     private final SingleLiveEvent<Integer> mToastEvent = new SingleLiveEvent<>();
     private final ExecutorService mExecutor = Executors.newSingleThreadExecutor();
 
+    /**
+     * Constructs the ToolsViewModel.
+     * @param useCase The use case for device information.
+     */
     @Inject
     public ToolsViewModel(@NonNull InfoUseCase useCase) {
         this.mUseCase = useCase;
@@ -57,6 +62,9 @@ public final class ToolsViewModel extends ViewModel {
         return mToastEvent;
     }
 
+    /**
+     * Handles the click event for exporting the device report.
+     */
     public void onExportClicked() {
         mExecutor.execute(() -> {
             DeviceInfo info = mUseCase.execute(InfoUseCase.Action.FETCH_ALL_INFO, null);
@@ -67,12 +75,18 @@ public final class ToolsViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Handles the click event for running a vibration test.
+     */
     public void onVibrationTestClicked() {
         mExecutor.execute(() -> {
-            mUseCase.execute(InfoUseCase.Action.EXECUTE_HW_TEST, 1); // 1 = Vibration
+            mUseCase.execute(InfoUseCase.Action.EXECUTE_HW_TEST, Constants.TEST_TYPE_VIBRATION);
         });
     }
 
+    /**
+     * Called when the ViewModel is about to be cleared.
+     */
     @Override
     protected void onCleared() {
         super.onCleared();

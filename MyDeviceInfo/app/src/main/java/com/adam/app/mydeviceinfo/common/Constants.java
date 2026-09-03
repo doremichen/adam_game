@@ -26,6 +26,9 @@ package com.adam.app.mydeviceinfo.common;
  * Global constants for the project.
  */
 public final class Constants {
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private Constants() {
         // Prevent instantiation
     }
@@ -42,19 +45,38 @@ public final class Constants {
     public static final String EXPORT_FILE_NAME = "system_info.txt";
 
     // Service Status & Logs
-    public static final String MSG_SERVICE_DISCONNECTED = "Service disconnected";
     public static final String MSG_DEVICE_INFO_UPDATED = "Device info updated periodically";
     public static final String MSG_ON_BIND_PREFIX = "onBind: Active clients = ";
     public static final String MSG_ON_UNBIND_PREFIX = "onUnbind: Active clients = ";
 
     // Polling & Units
     public static final float BYTES_IN_MB = 1024.0f * 1024.0f;
+    public static final float BYTES_IN_GB = 1024.0f * 1024.0f * 1024.0f;
     public static final long POLLING_INTERVAL_MS = 1000L;
     public static final long INITIAL_DELAY_MS = 0L;
 
-    // Network Status
-    public static final String NETWORK_DISCONNECTED = "Disconnected";
-    public static final String NETWORK_WIFI = "WiFi";
-    public static final String NETWORK_CELLULAR = "Cellular";
-    public static final String NETWORK_OTHER = "Other";
+    // Common Strings
+    public static final String EMPTY_STRING = "";
+    public static final String DEFAULT_VAL_ZERO_STR = "0";
+    public static final String PERMISSION_DENIED = "Permission Denied";
+    public static final String VAL_UNKNOWN = "Unknown";
+
+    // Network Status Keys
+    public static final String NET_STATUS_WIFI = "wifi";
+    public static final String NET_STATUS_CELLULAR = "cellular";
+    public static final String NET_STATUS_DISCONNECTED = "disconnected";
+    public static final String NET_STATUS_OTHER = "other";
+
+    // SIM Status Keys
+    public static final String SIM_STATUS_READY = "ready";
+    public static final String SIM_STATUS_ABSENT = "absent";
+    public static final String SIM_STATUS_UNKNOWN = "unknown";
+
+    // Network Types
+    public static final String NET_TYPE_5G = "5G";
+    public static final String NET_TYPE_4G = "4G";
+    public static final String NET_TYPE_3G = "3G";
+
+    // Hardware Test Types
+    public static final int TEST_TYPE_VIBRATION = 1;
 }

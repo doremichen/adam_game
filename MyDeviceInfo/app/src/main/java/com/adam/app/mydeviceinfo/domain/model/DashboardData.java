@@ -43,22 +43,55 @@ public final class DashboardData {
     private final String mCpuInfo;
     private final String mMemoryInfo;
 
-    public DashboardData(long ramUsed, long ramTotal, long storageUsed, long storageTotal,
-                         int batteryPct, int batteryTemp, int batteryVolt,
-                         @NonNull String batteryStatus, @NonNull String batteryHealth,
-                         long uptime, @NonNull String cpuInfo, @NonNull String memoryInfo) {
-        this.mRamUsed = ramUsed;
-        this.mRamTotal = ramTotal;
-        this.mStorageUsed = storageUsed;
-        this.mStorageTotal = storageTotal;
-        this.mBatteryPct = batteryPct;
-        this.mBatteryTemp = batteryTemp;
-        this.mBatteryVolt = batteryVolt;
-        this.mBatteryStatus = batteryStatus;
-        this.mBatteryHealth = batteryHealth;
-        this.mUptime = uptime;
-        this.mCpuInfo = cpuInfo;
-        this.mMemoryInfo = memoryInfo;
+    private DashboardData(Builder builder) {
+        this.mRamUsed = builder.mRamUsed;
+        this.mRamTotal = builder.mRamTotal;
+        this.mStorageUsed = builder.mStorageUsed;
+        this.mStorageTotal = builder.mStorageTotal;
+        this.mBatteryPct = builder.mBatteryPct;
+        this.mBatteryTemp = builder.mBatteryTemp;
+        this.mBatteryVolt = builder.mBatteryVolt;
+        this.mBatteryStatus = builder.mBatteryStatus;
+        this.mBatteryHealth = builder.mBatteryHealth;
+        this.mUptime = builder.mUptime;
+        this.mCpuInfo = builder.mCpuInfo;
+        this.mMemoryInfo = builder.mMemoryInfo;
+    }
+
+    public static final class Builder {
+        private long mRamUsed;
+        private long mRamTotal;
+        private long mStorageUsed;
+        private long mStorageTotal;
+        private int mBatteryPct;
+        private int mBatteryTemp;
+        private int mBatteryVolt;
+        private String mBatteryStatus = "";
+        private String mBatteryHealth = "";
+        private long mUptime;
+        private String mCpuInfo = "";
+        private String mMemoryInfo = "";
+
+        public Builder setRamUsed(long ramUsed) { this.mRamUsed = ramUsed; return this; }
+        public Builder setRamTotal(long ramTotal) { this.mRamTotal = ramTotal; return this; }
+        public Builder setStorageUsed(long storageUsed) { this.mStorageUsed = storageUsed; return this; }
+        public Builder setStorageTotal(long storageTotal) { this.mStorageTotal = storageTotal; return this; }
+        public Builder setBatteryPct(int batteryPct) { this.mBatteryPct = batteryPct; return this; }
+        public Builder setBatteryTemp(int batteryTemp) { this.mBatteryTemp = batteryTemp; return this; }
+        public Builder setBatteryVolt(int batteryVolt) { this.mBatteryVolt = batteryVolt; return this; }
+        public Builder setBatteryStatus(@NonNull String batteryStatus) { this.mBatteryStatus = batteryStatus; return this; }
+        public Builder setBatteryHealth(@NonNull String batteryHealth) { this.mBatteryHealth = batteryHealth; return this; }
+        public Builder setUptime(long uptime) { this.mUptime = uptime; return this; }
+        public Builder setCpuInfo(@NonNull String cpuInfo) { this.mCpuInfo = cpuInfo; return this; }
+        public Builder setMemoryInfo(@NonNull String memoryInfo) { this.mMemoryInfo = memoryInfo; return this; }
+
+        /**
+         * Finalizes the building of DashboardData.
+         * @return A new DashboardData instance.
+         */
+        public DashboardData build() {
+            return new DashboardData(this);
+        }
     }
 
     public long getRamUsed() { return mRamUsed; }

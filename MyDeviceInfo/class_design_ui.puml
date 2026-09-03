@@ -2,52 +2,43 @@
 skinparam linetype ortho
 skinparam packageStyle rectangle
 
-package "UI Layer" {
+package "UI / Presentation Layer" #E8F5E9 {
+
     package "ui.main" {
-        class MainActivity {
-            - requestPermissions(): void
-        }
+        class MainActivity <<View>>
+        class MainViewModel <<ViewModel>>
     }
 
     package "ui.dashboard" {
-        class DashboardFragment
-        class DashboardViewModel {
-            + ramUsage: LiveData<String>
-            + storageUsage: LiveData<String>
-            + batteryState: LiveData<String>
-        }
+        class DashboardFragment <<View>>
+        class DashboardViewModel <<ViewModel>>
     }
 
     package "ui.system" {
-        class SystemFragment
-        class SystemViewModel {
-            + deviceSpecs: LiveData<List<SpecItem>>
-            + sensorList: LiveData<List<String>>
-        }
+        class SystemFragment <<View>>
+        class SystemViewModel <<ViewModel>>
     }
 
     package "ui.network" {
-        class NetworkFragment
-        class NetworkViewModel {
-            + wifiDetails: LiveData<String>
-            + cellularState: LiveData<String>
-        }
+        class NetworkFragment <<View>>
+        class NetworkViewModel <<ViewModel>>
+        class NetworkUiState <<State>>
+        NetworkViewModel +-- NetworkUiState
     }
 
     package "ui.tools" {
-        class ToolsFragment
-        class ToolsViewModel {
-            + onShareReport(): void
-            + startHardwareTest(testType: int): void
-        }
+        class ToolsFragment <<View>>
+        class ToolsViewModel <<ViewModel>>
     }
 
-    ' Relationships
+    ' View-ViewModel relationships
+    MainActivity --> MainViewModel
     DashboardFragment --> DashboardViewModel
     SystemFragment --> SystemViewModel
     NetworkFragment --> NetworkViewModel
     ToolsFragment --> ToolsViewModel
 
-    MainActivity --> DashboardFragment : "hosts"
+    ' Navigation relationship
+    MainActivity ..> DashboardFragment : "initially hosts"
 }
 @enduml

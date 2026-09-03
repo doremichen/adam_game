@@ -82,4 +82,17 @@
     <string name="state_off">OFF</string>
     <string name="state_na">N/A</string>
     <string name="state_ready">Ready</string>
+    <string name="label_ip_prefix">IP: %s</string>
+    <string name="label_type_prefix">Type: %s</string>
+    <string name="label_usage_gb">%.1f / %.1f GB</string>
+    <string name="label_uptime_format">%1$dd %2$02dh %3$02dm</string>
+    <string name="label_os_api_format">%1$s (API %2$d)</string>
+    <string name="label_cpu_cores_format">%1$s (%2$d Cores)</string>
+    <string name="export_header_dashboard">--- Dashboard ---</string>
+    <string name="export_header_system">--- System ---</string>
+    <string name="export_header_network">--- Network ---</string>
+    <string name="export_label_ram">RAM: %1$.2f / %2$.2f MB</string>
+    <string name="export_label_storage">Storage: %1$.2f / %2$.2f MB</string>
+    <string name="export_label_battery">Battery: %1$d%% (%2$s)</string>
+    <string name="export_label_uptime">Uptime: %d s</string>
 </resources>

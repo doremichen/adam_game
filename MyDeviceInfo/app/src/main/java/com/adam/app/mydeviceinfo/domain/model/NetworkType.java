@@ -20,27 +20,39 @@
  * SOFTWARE.
  */
 
-package com.adam.app.mydeviceinfo.di;
+package com.adam.app.mydeviceinfo.domain.model;
 
-import com.adam.app.mydeviceinfo.domain.repository.IDeviceRepository;
-import com.adam.app.mydeviceinfo.infrastructure.InfoRepositoryImpl;
+import androidx.annotation.NonNull;
 
-import dagger.Binds;
-import dagger.Module;
-import dagger.hilt.InstallIn;
-import dagger.hilt.components.SingletonComponent;
+import com.adam.app.mydeviceinfo.common.Constants;
 
 /**
- * Hilt module for repository bindings.
+ * Enum representing mobile network types.
  */
-@Module
-@InstallIn(SingletonComponent.class)
-public abstract class RepositoryModule {
+public enum NetworkType {
+    TYPE_5G(Constants.NET_TYPE_5G),
+    TYPE_4G(Constants.NET_TYPE_4G),
+    TYPE_3G(Constants.NET_TYPE_3G),
+    UNKNOWN(Constants.VAL_UNKNOWN);
+
+    private final String mValue;
+
+    NetworkType(String value) {
+        this.mValue = value;
+    }
+
+    @NonNull public String getValue() { return mValue; }
+
     /**
-     * Binds the repository implementation to its interface.
-     * @param impl The concrete implementation.
-     * @return The interface binding.
+     * Finds the enum instance associated with the given value.
+     * @param value The network type string value.
+     * @return Matching NetworkType or UNKNOWN if not found.
      */
-    @Binds
-    public abstract IDeviceRepository bindDeviceRepository(InfoRepositoryImpl impl);
+    @NonNull
+    public static NetworkType fromValue(String value) {
+        for (NetworkType type : values()) {
+            if (type.mValue.equals(value)) return type;
+        }
+        return UNKNOWN;
+    }
 }

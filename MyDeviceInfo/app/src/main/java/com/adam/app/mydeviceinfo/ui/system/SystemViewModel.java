@@ -22,6 +22,8 @@
 
 package com.adam.app.mydeviceinfo.ui.system;
 
+import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -29,6 +31,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.adam.app.mydeviceinfo.application.InfoUseCase;
+import com.adam.app.mydeviceinfo.common.Constants;
 import com.adam.app.mydeviceinfo.domain.model.DeviceInfo;
 import com.adam.app.mydeviceinfo.domain.model.SystemSpecs;
 
@@ -38,28 +41,41 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import dagger.hilt.android.qualifiers.ApplicationContext;
+
+import com.adam.app.mydeviceinfo.R;
 
 /**
  * ViewModel for the system information feature.
  */
 @HiltViewModel
 public final class SystemViewModel extends ViewModel {
+    private final Context mContext;
     private final InfoUseCase mUseCase;
     private final MediatorLiveData<DeviceInfo> mInfoSource = new MediatorLiveData<>();
     
-    private final MutableLiveData<String> mManufacturer = new MutableLiveData<>("");
-    private final MutableLiveData<String> mModel = new MutableLiveData<>("");
-    private final MutableLiveData<String> mCodename = new MutableLiveData<>("");
-    private final MutableLiveData<String> mOsInfo = new MutableLiveData<>("");
-    private final MutableLiveData<String> mCpuInfo = new MutableLiveData<>("");
+    private final MutableLiveData<String> mManufacturer = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mModel = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mCodename = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mOsInfo = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mCpuInfo = new MutableLiveData<>(Constants.EMPTY_STRING);
     private final MutableLiveData<List<String>> mSensorList = new MutableLiveData<>(new ArrayList<>());
 
+    /**
+     * Constructs the SystemViewModel.
+     * @param context Application context.
+     * @param useCase The use case for device information.
+     */
     @Inject
-    public SystemViewModel(@NonNull InfoUseCase useCase) {
+    public SystemViewModel(@ApplicationContext @NonNull Context context, @NonNull InfoUseCase useCase) {
+        this.mContext = context;
         this.mUseCase = useCase;
         setupSource();
     }
 
+    /**
+     * Initializes the reactive source for system information.
+     */
     private void setupSource() {
         LiveData<DeviceInfo> stream = mUseCase.execute(InfoUseCase.Action.SUBSCRIBE_INFO, null);
         if (stream != null) {
@@ -71,12 +87,16 @@ public final class SystemViewModel extends ViewModel {
         }
     }
 
-    private void updateSystem(SystemSpecs specs) {
+    /**
+     * Updates system LiveData with fresh specs.
+     * @param specs System specifications entity.
+     */
+    private void updateSystem(@NonNull SystemSpecs specs) {
         mManufacturer.postValue(specs.getManufacturer());
         mModel.postValue(specs.getModel());
         mCodename.postValue(specs.getCodename());
-        mOsInfo.postValue(String.format("%s (API %d)", specs.getOsVersion(), specs.getSdkLevel()));
-        mCpuInfo.postValue(String.format("%s (%d Cores)", specs.getCpuAbi(), specs.getCpuCores()));
+        mOsInfo.postValue(mContext.getString(R.string.label_os_api_format, specs.getOsVersion(), specs.getSdkLevel()));
+        mCpuInfo.postValue(mContext.getString(R.string.label_cpu_cores_format, specs.getCpuAbi(), specs.getCpuCores()));
         mSensorList.postValue(specs.getSensorList());
     }
 
@@ -88,7 +108,4 @@ public final class SystemViewModel extends ViewModel {
     @NonNull public LiveData<List<String>> getSensorList() { return mSensorList; }
     @NonNull public LiveData<DeviceInfo> getInfoSource() { return mInfoSource; }
 
-    public void refreshData() {
-        // Auto-updated
-    }
 }

@@ -83,4 +83,17 @@
     <string name="state_off">關閉</string>
     <string name="state_na">不支援</string>
     <string name="state_ready">就緒</string>
+    <string name="label_ip_prefix">IP位址: %s</string>
+    <string name="label_type_prefix">網路類型: %s</string>
+    <string name="label_usage_gb">%.1f / %.1f GB</string>
+    <string name="label_uptime_format">%1$d天 %2$02d時 %3$02d分</string>
+    <string name="label_os_api_format">%1$s (API %2$d)</string>
+    <string name="label_cpu_cores_format">%1$s (%2$d 核心)</string>
+    <string name="export_header_dashboard">--- 儀表板 ---</string>
+    <string name="export_header_system">--- 系統資訊 ---</string>
+    <string name="export_header_network">--- 網路狀態 ---</string>
+    <string name="export_label_ram">記憶體: %1$.2f / %2$.2f MB</string>
+    <string name="export_label_storage">儲存空間: %1$.2f / %2$.2f MB</string>
+    <string name="export_label_battery">電池: %1$d%% (%2$s)</string>
+    <string name="export_label_uptime">運行時間: %d 秒</string>
 </resources>

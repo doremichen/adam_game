@@ -69,6 +69,10 @@ public final class TaskScheduler {
         }
     };
 
+    /**
+     * Constructs the TaskScheduler.
+     * @param context Application context.
+     */
     @Inject
     public TaskScheduler(@ApplicationContext @NonNull Context context) {
         this.mContext = context;
@@ -189,12 +193,34 @@ public final class TaskScheduler {
             }
         };
 
+        /**
+         * Starts the task execution or transition to RUNNING state.
+         * @param context TaskScheduler context.
+         */
         abstract void start(TaskScheduler context);
+
+        /**
+         * Stops the task execution and releases resources.
+         * @param context TaskScheduler context.
+         */
         abstract void stop(TaskScheduler context);
+
+        /**
+         * Pauses the task execution.
+         * @param context TaskScheduler context.
+         */
         abstract void pause(TaskScheduler context);
+
+        /**
+         * Resumes the task execution.
+         * @param context TaskScheduler context.
+         */
         abstract void resume(TaskScheduler context);
     }
 
+    /**
+     * Schedules the task for periodic execution.
+     */
     private void scheduleTask() {
         if (mExecutor != null && mTask != null) {
             mFuture = mExecutor.scheduleWithFixedDelay(
@@ -206,6 +232,9 @@ public final class TaskScheduler {
         }
     }
 
+    /**
+     * Cancels the currently scheduled task.
+     */
     private void cancelTask() {
         if (mFuture != null) {
             mFuture.cancel(false);
@@ -213,6 +242,9 @@ public final class TaskScheduler {
         }
     }
 
+    /**
+     * Shuts down the internal executor service.
+     */
     private void shutdownExecutor() {
         if (mExecutor != null) {
             mExecutor.shutdown();
@@ -220,6 +252,9 @@ public final class TaskScheduler {
         }
     }
 
+    /**
+     * Registers the screen state broadcast receiver.
+     */
     private void registerReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_SCREEN_ON);
@@ -227,6 +262,9 @@ public final class TaskScheduler {
         mContext.registerReceiver(mScreenReceiver, filter);
     }
 
+    /**
+     * Unregisters the screen state broadcast receiver.
+     */
     private void unregisterReceiver() {
         try {
             mContext.unregisterReceiver(mScreenReceiver);

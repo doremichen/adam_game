@@ -23,7 +23,6 @@
 package com.adam.app.mydeviceinfo.ui.dashboard;
 
 import android.content.Context;
-import android.os.BatteryManager;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
@@ -33,10 +32,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.adam.app.mydeviceinfo.R;
 import com.adam.app.mydeviceinfo.application.InfoUseCase;
+import com.adam.app.mydeviceinfo.common.Constants;
+import com.adam.app.mydeviceinfo.domain.model.BatteryHealth;
+import com.adam.app.mydeviceinfo.domain.model.BatteryStatus;
 import com.adam.app.mydeviceinfo.domain.model.DashboardData;
 import com.adam.app.mydeviceinfo.domain.model.DeviceInfo;
-
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -52,16 +52,21 @@ public final class DashboardViewModel extends ViewModel {
     private final InfoUseCase mUseCase;
     private final MediatorLiveData<DeviceInfo> mInfoSource = new MediatorLiveData<>();
     
-    private final MutableLiveData<String> mRamUsage = new MutableLiveData<>("");
+    private final MutableLiveData<String> mRamUsage = new MutableLiveData<>(Constants.EMPTY_STRING);
     private final MutableLiveData<Integer> mRamPct = new MutableLiveData<>(0);
-    private final MutableLiveData<String> mStorageUsage = new MutableLiveData<>("");
+    private final MutableLiveData<String> mStorageUsage = new MutableLiveData<>(Constants.EMPTY_STRING);
     private final MutableLiveData<Integer> mStoragePct = new MutableLiveData<>(0);
-    private final MutableLiveData<String> mBatteryPct = new MutableLiveData<>("0");
-    private final MutableLiveData<String> mBatteryStatus = new MutableLiveData<>("");
-    private final MutableLiveData<String> mBatteryHealth = new MutableLiveData<>("");
-    private final MutableLiveData<String> mBatteryDetails = new MutableLiveData<>("");
-    private final MutableLiveData<String> mUptime = new MutableLiveData<>("");
+    private final MutableLiveData<String> mBatteryPct = new MutableLiveData<>(Constants.DEFAULT_VAL_ZERO_STR);
+    private final MutableLiveData<String> mBatteryStatus = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mBatteryHealth = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mBatteryDetails = new MutableLiveData<>(Constants.EMPTY_STRING);
+    private final MutableLiveData<String> mUptime = new MutableLiveData<>(Constants.EMPTY_STRING);
 
+    /**
+     * Constructs the DashboardViewModel.
+     * @param context Application context.
+     * @param useCase The use case for device information.
+     */
     @Inject
     public DashboardViewModel(@ApplicationContext @NonNull Context context, @NonNull InfoUseCase useCase) {
         this.mContext = context;
@@ -69,6 +74,9 @@ public final class DashboardViewModel extends ViewModel {
         setupSource();
     }
 
+    /**
+     * Initializes the reactive source for device information.
+     */
     private void setupSource() {
         LiveData<DeviceInfo> stream = mUseCase.execute(InfoUseCase.Action.SUBSCRIBE_INFO, null);
         if (stream != null) {
@@ -80,17 +88,21 @@ public final class DashboardViewModel extends ViewModel {
         }
     }
 
-    private void updateDashboard(DashboardData data) {
+    /**
+     * Updates the dashboard LiveData with fresh data.
+     * @param data Dashboard data entity.
+     */
+    private void updateDashboard(@NonNull DashboardData data) {
         // RAM
-        float ramUsedGb = data.getRamUsed() / (1024.0f * 1024.0f * 1024.0f);
-        float ramTotalGb = data.getRamTotal() / (1024.0f * 1024.0f * 1024.0f);
-        mRamUsage.postValue(String.format(Locale.getDefault(), "%.1f / %.1f GB", ramUsedGb, ramTotalGb));
+        float ramUsedGb = data.getRamUsed() / Constants.BYTES_IN_GB;
+        float ramTotalGb = data.getRamTotal() / Constants.BYTES_IN_GB;
+        mRamUsage.postValue(mContext.getString(R.string.label_usage_gb, ramUsedGb, ramTotalGb));
         mRamPct.postValue((int) (data.getRamUsed() * 100 / (float) Math.max(1, data.getRamTotal())));
 
         // Storage
-        float storeUsedGb = data.getStorageUsed() / (1024.0f * 1024.0f * 1024.0f);
-        float storeTotalGb = data.getStorageTotal() / (1024.0f * 1024.0f * 1024.0f);
-        mStorageUsage.postValue(String.format(Locale.getDefault(), "%.1f / %.1f GB", storeUsedGb, storeTotalGb));
+        float storeUsedGb = data.getStorageUsed() / Constants.BYTES_IN_GB;
+        float storeTotalGb = data.getStorageTotal() / Constants.BYTES_IN_GB;
+        mStorageUsage.postValue(mContext.getString(R.string.label_usage_gb, storeUsedGb, storeTotalGb));
         mStoragePct.postValue((int) (data.getStorageUsed() * 100 / (float) Math.max(1, data.getStorageTotal())));
 
         // Battery
@@ -105,38 +117,25 @@ public final class DashboardViewModel extends ViewModel {
         long days = seconds / (24 * 3600);
         long hours = (seconds % (24 * 3600)) / 3600;
         long minutes = (seconds % 3600) / 60;
-        mUptime.postValue(String.format(Locale.getDefault(), "%dd %02dh %02dm", days, hours, minutes));
+        mUptime.postValue(mContext.getString(R.string.label_uptime_format, days, hours, minutes));
     }
 
+    /**
+     * Returns the localized battery status string.
+     * @param status String representation of battery status code.
+     * @return Localized status string.
+     */
     private String getLocalizedBatteryStatus(String status) {
-        try {
-            int s = Integer.parseInt(status);
-            switch (s) {
-                case BatteryManager.BATTERY_STATUS_CHARGING: return mContext.getString(R.string.battery_status_charging);
-                case BatteryManager.BATTERY_STATUS_DISCHARGING: return mContext.getString(R.string.battery_status_discharging);
-                case BatteryManager.BATTERY_STATUS_NOT_CHARGING: return mContext.getString(R.string.battery_status_not_charging);
-                case BatteryManager.BATTERY_STATUS_FULL: return mContext.getString(R.string.battery_status_full);
-                default: return mContext.getString(R.string.battery_status_unknown);
-            }
-        } catch (NumberFormatException e) {
-            return mContext.getString(R.string.battery_status_unknown);
-        }
+        return mContext.getString(BatteryStatus.fromString(status).getResId());
     }
 
+    /**
+     * Returns the localized battery health string.
+     * @param health String representation of battery health code.
+     * @return Localized health string.
+     */
     private String getLocalizedBatteryHealth(String health) {
-        try {
-            int h = Integer.parseInt(health);
-            switch (h) {
-                case BatteryManager.BATTERY_HEALTH_GOOD: return mContext.getString(R.string.battery_health_good);
-                case BatteryManager.BATTERY_HEALTH_OVERHEAT: return mContext.getString(R.string.battery_health_overheat);
-                case BatteryManager.BATTERY_HEALTH_DEAD: return mContext.getString(R.string.battery_health_dead);
-                case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE: return mContext.getString(R.string.battery_health_over_voltage);
-                case BatteryManager.BATTERY_HEALTH_COLD: return mContext.getString(R.string.battery_health_cold);
-                default: return mContext.getString(R.string.battery_health_unknown);
-            }
-        } catch (NumberFormatException e) {
-            return mContext.getString(R.string.battery_health_unknown);
-        }
+        return mContext.getString(BatteryHealth.fromString(health).getResId());
     }
 
     @NonNull public LiveData<String> getRamUsage() { return mRamUsage; }
@@ -150,7 +149,4 @@ public final class DashboardViewModel extends ViewModel {
     @NonNull public LiveData<String> getUptime() { return mUptime; }
     @NonNull public LiveData<DeviceInfo> getInfoSource() { return mInfoSource; }
 
-    public void refreshData() {
-        // Auto-updated
-    }
 }
