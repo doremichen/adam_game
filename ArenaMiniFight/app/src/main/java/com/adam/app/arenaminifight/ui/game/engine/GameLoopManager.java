@@ -1,13 +1,28 @@
-/**
- * Copyright (C) 2021 Adam. All rights reserved.
- * <p>
- * Description: This class handles the game loop.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * @author Adam chen
- * @version 1.0.0 - 2026/03/04
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.ui.game.engine;
 
+import com.adam.app.arenaminifight.utils.GameConstants;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
 import java.util.concurrent.Executors;
@@ -15,15 +30,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class GameLoopManager {
-    // TAG
-    private static final String TAG = "GameLoopManager";
 
+    private static final String TAG = "GameLoopManager";
     private static final int FRAME_PERIOD_MS = 1000 / 60;
+
     private final Runnable mGameTask;
     private ScheduledExecutorService mExecutor;
     private boolean mIsRunning;
 
-    // constructor
     public GameLoopManager(Runnable gameTask) {
         mGameTask = gameTask;
     }
@@ -34,12 +48,10 @@ public class GameLoopManager {
             return;
         }
 
-        // check if executor service is null
         if (mExecutor == null || mExecutor.isShutdown()) {
             mExecutor = Executors.newSingleThreadScheduledExecutor();
         }
 
-        // schedule the game loop
         mExecutor.scheduleWithFixedDelay(mGameTask, 0, FRAME_PERIOD_MS, TimeUnit.MILLISECONDS);
         mIsRunning = true;
     }
@@ -51,10 +63,9 @@ public class GameLoopManager {
         }
         mIsRunning = false;
         if (mExecutor != null) {
-            // stop the game loop
             mExecutor.shutdown();
             try {
-                if (!mExecutor.awaitTermination(500, TimeUnit.SECONDS)) {
+                if (!mExecutor.awaitTermination(GameConstants.SERVICE_TERMINATION_TIMEOUT_MS, TimeUnit.MILLISECONDS)) {
                     mExecutor.shutdownNow();
                 }
             } catch (InterruptedException e) {
@@ -63,11 +74,9 @@ public class GameLoopManager {
             }
             mExecutor = null;
         }
-
     }
 
     public boolean isRunning() {
         return mIsRunning;
     }
-
 }

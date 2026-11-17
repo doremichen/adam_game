@@ -1,15 +1,28 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * Description: This class is the chat adapter of list view
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/04
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.ui.lobby;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -22,9 +35,7 @@ import com.adam.app.arenaminifight.domain.model.ChatMessage;
 
 public class ChatAdapter extends ListAdapter<ChatMessage, ChatAdapter.ChatViewHolder> {
 
-
     private static final DiffUtil.ItemCallback<ChatMessage> DIFF_CALLBACK = new DiffUtil.ItemCallback<>() {
-
         @Override
         public boolean areItemsTheSame(@NonNull ChatMessage oldItem, @NonNull ChatMessage newItem) {
             return oldItem.getTimestamp() == newItem.getTimestamp() &&
@@ -55,7 +66,6 @@ public class ChatAdapter extends ListAdapter<ChatMessage, ChatAdapter.ChatViewHo
     }
 
     protected static class ChatViewHolder extends RecyclerView.ViewHolder {
-        // view binding
         private final ItemChatMessageBinding mBinding;
 
         public ChatViewHolder(@NonNull ItemChatMessageBinding itemView) {
@@ -65,9 +75,7 @@ public class ChatAdapter extends ListAdapter<ChatMessage, ChatAdapter.ChatViewHo
 
         public void bind(ChatMessage chatMessage) {
             mBinding.setChatMessage(chatMessage);
-            mBinding.executePendingBindings(); // update view
+            mBinding.executePendingBindings();
         }
-
     }
-
 }

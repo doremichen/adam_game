@@ -1,113 +1,160 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * Description: This is the game view model of the application.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/02
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.ui.game;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.adam.app.arenaminifight.data.repository.GameRepository;
+import com.adam.app.arenaminifight.domain.gateway.IGameGateway;
 import com.adam.app.arenaminifight.domain.model.Player;
+import com.adam.app.arenaminifight.domain.usecase.GameUseCase;
 import com.adam.app.arenaminifight.utils.GameConstants;
 import com.adam.app.arenaminifight.utils.GameUtil;
+import com.adam.app.arenaminifight.utils.SingleLiveEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.lifecycle.HiltViewModel;
+
+/**
+ * Trace: UC-04 (Spawn), UC-05 (Movement), UC-06 (Physics/Sync), UC-07 (Reset), UC-10 (Combat)
+ */
+@HiltViewModel
 public class GameViewModel extends ViewModel {
-    // TAG
+
     private static final String TAG = GameViewModel.class.getSimpleName();
 
-    // live data: player status
     private final MutableLiveData<String> mPlayerStatus = new MutableLiveData<>("");
+    private final MutableLiveData<List<Player>> mPlayers = new MutableLiveData<>(new ArrayList<>());
+    private final SingleLiveEvent<Boolean> mExitEvent = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Boolean> mNavigateToResult = new SingleLiveEvent<>();
+
+    private final GameUseCase mGameUseCase;
+    private String mMainPlayerId = "";
+
+    @Inject
+    public GameViewModel(IGameGateway gateway) {
+        mGameUseCase = new GameUseCase(gateway);
+    }
+
     public LiveData<String> getPlayerStatus() {
         return mPlayerStatus;
     }
 
-    // live data: players
-    private final MutableLiveData<List<Player>> mPlayers = new MutableLiveData<>(new ArrayList<>());
     public LiveData<List<Player>> getPlayers() {
         return mPlayers;
     }
 
-    private final MutableLiveData<Boolean> mExitEvent = new MutableLiveData<>(false);
-    public LiveData<Boolean> getExitEvent() {
+    public SingleLiveEvent<Boolean> getExitEvent() {
         return mExitEvent;
     }
 
-    private final GameRepository mRepository = GameRepository.getInstance();
-
-    private String mMainPlayerId = "";
+    public SingleLiveEvent<Boolean> getNavigateToResult() {
+        return mNavigateToResult;
+    }
 
     public void onExitClicked() {
         GameUtil.log(TAG + ": onExitClicked()");
         mExitEvent.setValue(true);
     }
 
-    public void onAddAIClicked() {
-        String aiName = "AI_" + (int)(Math.random() * 1000);
-        GameUtil.log(TAG + ": onAddAIClicked -> " + aiName);
-        mRepository.spawnPlayer(aiName, this::onPlayerSpawned);
+    // Trace: UC-10
+    public void onAttackClicked() {
+        GameUtil.log(TAG + ": onAttackClicked()");
+        setPlayerStatus("Action: ATTACK!");
     }
 
+    // Trace: UC-10
+    public void onSkillClicked() {
+        GameUtil.log(TAG + ": onSkillClicked()");
+        setPlayerStatus("Action: SKILL CAST!");
+    }
+
+    // Trace: UC-04
+    public void onAddAIClicked() {
+        String aiName = "AI_" + (int) (Math.random() * 1000);
+        GameUtil.log(TAG + ": onAddAIClicked -> " + aiName);
+        GameUseCase.SpawnParams params = new GameUseCase.SpawnParams(aiName, this::onPlayerSpawned);
+        mGameUseCase.execute(GameUseCase.Action.SPAWN_PLAYER, params);
+    }
+
+    // Trace: UC-05
     public void updatePlayerMove(float x, float y) {
-        GameUtil.log(TAG + ": updatePlayerMove(" + x + ", " + y + ")");
         if (mMainPlayerId.isEmpty()) {
             return;
         }
 
         mPlayerStatus.setValue(String.format("(%.1f, %.1f)", x, y));
-        mRepository.movePlayer(mMainPlayerId, x, y);
+        GameUseCase.MoveParams params = new GameUseCase.MoveParams(mMainPlayerId, x, y);
+        mGameUseCase.execute(GameUseCase.Action.MOVE_PLAYER, params);
     }
 
     public void setPlayerStatus(String status) {
-        GameUtil.log(TAG + ": setPlayerStatus(" + status + ")");
         mPlayerStatus.setValue(status);
     }
 
+    // Trace: UC-04
     public void initPlayerFromJni(String playerName) {
         GameUtil.log(TAG + ": initPlayerFromJni(" + playerName + ")");
-        mRepository.spawnPlayer(playerName, this::onPlayerSpawned);
+        GameUseCase.SpawnParams params = new GameUseCase.SpawnParams(playerName, this::onPlayerSpawned);
+        mGameUseCase.execute(GameUseCase.Action.SPAWN_PLAYER, params);
     }
 
+    // Trace: UC-06
     public void startGame() {
         GameUtil.log(TAG + ": startGame");
-        mRepository.startGame(this::onPlayersData);
+        IGameGateway.Callback<List<Player>> callback = this::onPlayersData;
+        mGameUseCase.execute(GameUseCase.Action.START_GAME, callback);
     }
 
+    // Trace: UC-06
     private void onPlayersData(List<Player> players) {
-        GameUtil.log(TAG + ": onPlayersData");
         if (players == null || players.isEmpty()) {
-            GameUtil.log(TAG + ": players is null or empty");
             return;
         }
-
-        // update ui
         mPlayers.setValue(players);
     }
 
+    // Trace: UC-07
     public void stopGame() {
         GameUtil.log(TAG + ": stopGame");
-        mRepository.stopGame();
-        // reset player status
+        mGameUseCase.execute(GameUseCase.Action.STOP_GAME, null);
         setPlayerStatus("");
         mPlayers.setValue(new ArrayList<>());
     }
 
-
+    // Trace: UC-04
     private void onPlayerSpawned(Player player) {
         if (player == null) return;
         GameUtil.log(TAG + ": onPlayerSpawned(" + player.getName() + " @ " + player.getPlayerId() + ")");
         if (GameConstants.DefaultPlayerName.equals(player.getName())) {
             mMainPlayerId = player.getPlayerId();
         }
-        // update players
+
         List<Player> currentList = mPlayers.getValue();
         if (currentList == null) {
             currentList = new ArrayList<>();
@@ -115,15 +162,13 @@ public class GameViewModel extends ViewModel {
         currentList.add(player);
         mPlayers.setValue(currentList);
 
-        // update player status
-        setPlayerStatus(String.format("(%.1f, .1%f)", player.getX(), player.getY()));
+        setPlayerStatus(String.format("(%.1f, %.1f)", player.getX(), player.getY()));
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        GameUtil.log(TAG + ": onClear");
-        // stop game
+        GameUtil.log(TAG + ": onCleared");
         stopGame();
     }
 }

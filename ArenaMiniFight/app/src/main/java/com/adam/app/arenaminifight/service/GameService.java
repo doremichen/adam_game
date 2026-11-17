@@ -1,11 +1,25 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
- * <p>
- * Description: This is the game bound service of the application.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/03
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.service;
 
 import android.app.Service;
@@ -29,8 +43,12 @@ import com.adam.app.arenaminifight.utils.GameUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * GameService bound service handling IPC requests and physics loop.
+ * Trace: UC-02, UC-04, UC-05, UC-06, UC-07
+ */
 public class GameService extends Service {
-    // request
+
     public static final int UC_SPAWN_PLAYER = 0;
     public static final int UC_NEW_PLAYER = 1;
     public static final int UC_SEND_CHAT = 2;
@@ -40,11 +58,8 @@ public class GameService extends Service {
     public static final int UC_STOP_GAME = 6;
     public static final int UC_GAME_STATE_UPDATE = 7;
 
-
-
-    // TAG
     private static final String TAG = "GameService";
-    private final Messenger mInComingHandler = new Messenger(new SvrHandler());
+    private final Messenger mIncomingHandler = new Messenger(new SvrHandler());
 
     @Override
     public void onCreate() {
@@ -55,7 +70,7 @@ public class GameService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         GameUtil.log(TAG + ": onBind");
-        return mInComingHandler.getBinder();
+        return mIncomingHandler.getBinder();
     }
 
     @Override
@@ -70,37 +85,27 @@ public class GameService extends Service {
         GameUtil.log(TAG + ": onDestroy");
     }
 
-    /**
-     * inComing handler
-     * Handle the request from client
-     */
     private static class SvrHandler extends Handler {
-        // HANDLER_TAG
+
         private static final String HANDLER_TAG = "SvrHandler";
 
-        // Network service
         private final NetworkService mNetworkService = NetworkService.getInstance();
         private Messenger mClientMessenger;
 
-        // native engine
-        private NativeEngine mNativeEngine;
-        // engine loop manager
-        private EngineLoopManager mEngineLoopManager;
-        // last frame time
+        private final NativeEngine mNativeEngine;
+        private final EngineLoopManager mEngineLoopManager;
         private long mLastFrameTime;
 
-        // list of client messenger
-        List<Messenger> mClientMessengerList = new ArrayList<>();
+        private final List<Messenger> mClientMessengerList = new ArrayList<>();
 
         public SvrHandler() {
             super(Looper.getMainLooper());
             mNativeEngine = NativeEngine.getInstance();
-            // initial engine loop manager
             mEngineLoopManager = new EngineLoopManager(this::loopTask);
         }
 
+        // Trace: UC-06 (Native Physics Loop)
         private void loopTask() {
-            //GameUtil.log(TAG + ": run game task!!!");
             try {
                 long currentTime = System.currentTimeMillis();
                 if (mLastFrameTime == 0) {
@@ -110,17 +115,14 @@ public class GameService extends Service {
                 float deltaTime = (currentTime - mLastFrameTime) / 1000f;
                 mLastFrameTime = currentTime;
 
-                // update engine
                 mNativeEngine.updateEngine(deltaTime);
-
-                // broadcast client
                 broadcastGameState();
             } catch (Exception e) {
-                GameUtil.log(TAG + "loop exception!!!");
+                GameUtil.log(TAG + ": loop exception: " + e.getMessage());
             }
-
         }
 
+        // Trace: UC-06 (State Synchronization)
         private void broadcastGameState() {
             String state = mNativeEngine.getGameState();
             if (state == null || state.isEmpty()) {
@@ -133,34 +135,29 @@ public class GameService extends Service {
             data.putString("game_state_str", state);
             msg.setData(data);
 
-            // broadcast all client
-            for (Messenger messenger : mClientMessengerList) {
+            for (int i = mClientMessengerList.size() - 1; i >= 0; i--) {
+                Messenger messenger = mClientMessengerList.get(i);
                 try {
                     messenger.send(msg);
                 } catch (RemoteException e) {
-                    mClientMessengerList.remove(messenger); // 移除失效的連線
+                    mClientMessengerList.remove(i);
                 }
             }
-
         }
-
 
         @Override
         public void handleMessage(@NonNull Message msg) {
             GameUtil.log(HANDLER_TAG + ": handleMessage");
 
             switch (msg.what) {
-                case UC_SPAWN_PLAYER:
-                    // update client messenger list
-                    if (!mClientMessengerList.contains(msg.replyTo))
+                case UC_SPAWN_PLAYER: // Trace: UC-04
+                    if (!mClientMessengerList.contains(msg.replyTo)) {
                         mClientMessengerList.add(msg.replyTo);
+                    }
 
                     String name = msg.getData().getString("name");
-                    // JNI
                     Player player = mNativeEngine.nativeInitializePlayer(name);
-                    // reply to repository
                     Message reply = Message.obtain(null, UC_NEW_PLAYER);
-                    // build bundle
                     Bundle data = new Bundle();
                     data.putParcelable("player_data", player);
                     reply.setData(data);
@@ -170,9 +167,8 @@ public class GameService extends Service {
                         throw new RuntimeException(e);
                     }
                     break;
-                case UC_SEND_CHAT:
+                case UC_SEND_CHAT: // Trace: UC-02
                     mClientMessenger = msg.replyTo;
-                    // get data from bundle
                     ChatMessage chat = msg.getData().getParcelable("chat", ChatMessage.class);
                     if (chat == null) {
                         GameUtil.log(HANDLER_TAG + ": no chat!!!");
@@ -180,20 +176,18 @@ public class GameService extends Service {
                     }
                     mNetworkService.sentChatToServer(chat, this::onMessageReceived);
                     break;
-                case UC_MOVE_PLAYER:
+                case UC_MOVE_PLAYER: // Trace: UC-05
                     Bundle moveData = msg.getData();
                     String id = moveData.getString("id");
                     float targetX = moveData.getFloat("x");
                     float targetY = moveData.getFloat("y");
-                    // Call JNI Engine for collision detection and location update
                     mNativeEngine.updatePlayerPosition(id, targetX, targetY);
                     break;
-                case UC_START_GAME:
+                case UC_START_GAME: // Trace: UC-06
                     mEngineLoopManager.start();
                     break;
-                case UC_STOP_GAME:
+                case UC_STOP_GAME: // Trace: UC-07
                     mEngineLoopManager.stop();
-                    // reset engine
                     mNativeEngine.resetEngine();
                     break;
                 default:
@@ -201,9 +195,11 @@ public class GameService extends Service {
             }
         }
 
+        // Trace: UC-02
         private void onMessageReceived(ChatMessage chat) {
             if (mClientMessenger == null) {
                 GameUtil.log(HANDLER_TAG + ": no client messenger!!!");
+                return;
             }
 
             try {
@@ -213,9 +209,6 @@ public class GameService extends Service {
             } catch (RemoteException e) {
                 throw new RuntimeException(e);
             }
-
         }
     }
-
-
 }

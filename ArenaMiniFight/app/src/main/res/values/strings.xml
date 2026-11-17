@@ -13,4 +13,52 @@
     <string name="arenaminifight_game_exit">Exit</string>
     <string name="add_ai_btn">add AI Player</string>
     <string name="arenaminifight_game_exit_btn">Exit</string>
+
+    <string name="game_btn_attack">ATK</string>
+    <string name="game_btn_skill">SKILL</string>
+
+    <string name="dialog_exit_title">Exit Game</string>
+    <string name="dialog_exit_message">Are you sure you want to exit the match?</string>
+
+    <string name="settings_audio_category">Audio Settings</string>
+    <string name="settings_bgm_title">Background Music (BGM)</string>
+    <string name="settings_bgm_summary">Enable background music</string>
+    <string name="settings_sfx_title">Sound Effects (SFX)</string>
+    <string name="settings_sfx_summary">Enable in-game sound effects</string>
+    <string name="settings_graphics_category">Graphics Settings</string>
+    <string name="settings_fps_title">Target Frame Rate</string>
+    <string name="settings_fps_summary">Select target FPS for rendering</string>
+
+    <string name="settings_activity_title">Game Settings</string>
+    <string name="dialog_send_message_title">Send Message</string>
+    <string name="dialog_input_hint">Enter message</string>
+    <string name="dialog_ok">Ok</string>
+    <string name="dialog_cancel">Cancel</string>
+
+    <string name="room_title">Match Room &amp; Character Selection</string>
+    <string name="room_status_waiting">Status: Waiting for players (1/3)</string>
+    <string name="room_select_character">Select Character Class:</string>
+    <string name="character_warrior">Warrior - High HP &amp; Balance</string>
+    <string name="character_assassin">Assassin - Fast Speed &amp; Agility</string>
+    <string name="room_ready_btn">Ready &amp; Start Match</string>
+    <string name="room_leave_btn">Leave Room</string>
+
+    <string name="result_victory">VICTORY!</string>
+    <string name="result_stats_title">Match Statistics:</string>
+    <string name="result_stat_kills">• Kills: 3</string>
+    <string name="result_stat_damage">• Damage Dealt: 1,450</string>
+    <string name="result_stat_score">• Score: +25</string>
+    <string name="result_stat_rewards">• Rewards: 100 Gold</string>
+    <string name="result_back_to_lobby">Back to Lobby</string>
+
+    <string name="btn_settings">Settings</string>
+
+    <string-array name="fps_entries">
+        <item>60 FPS (High Performance)</item>
+        <item>30 FPS (Power Saving)</item>
+    </string-array>
+    <string-array name="fps_values">
+        <item>60</item>
+        <item>30</item>
+    </string-array>
 </resources>

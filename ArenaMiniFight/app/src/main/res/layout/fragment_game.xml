@@ -72,29 +72,13 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnExitGame"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="24dp"
-            android:text="@string/arenaminifight_game_exit_btn"
-            android:textColor="#BB86FC"
-            android:textSize="12sp"
-            android:onClick="@{() -> vm.onExitClicked()}"
-            app:cornerRadius="20dp"
-            app:strokeColor="#BB86FC"
-            app:strokeWidth="1dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
+        <!-- Add AI Player moved to top-right corner -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddAI"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/add_ai_btn"
             android:textColor="#03DAC5"
             android:textSize="12sp"
@@ -102,9 +86,43 @@
             app:cornerRadius="20dp"
             app:strokeColor="#03DAC5"
             app:strokeWidth="1dp"
-            app:layout_constraintBottom_toBottomOf="@id/btnExitGame"
-            app:layout_constraintEnd_toStartOf="@id/btnExitGame"
-            app:layout_constraintTop_toTopOf="@id/btnExitGame" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideHUD" />
+
+        <!-- Bottom combat action buttons without overlapping -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_attack"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/game_btn_attack"
+            android:textColor="#FF5722"
+            android:textSize="14sp"
+            android:onClick="@{() -> vm.onAttackClicked()}"
+            app:cornerRadius="24dp"
+            app:strokeColor="#FF5722"
+            app:strokeWidth="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_skill"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/game_btn_skill"
+            android:textColor="#2196F3"
+            android:textSize="14sp"
+            android:onClick="@{() -> vm.onSkillClicked()}"
+            app:cornerRadius="24dp"
+            app:strokeColor="#2196F3"
+            app:strokeWidth="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

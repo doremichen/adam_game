@@ -16,12 +16,26 @@
 
     <fragment
         android:id="@+id/lobbyFragment"
-        android:name="com.adam.app.arenaminifight.ui.lobby.LoobyFragment"
+        android:name="com.adam.app.arenaminifight.ui.lobby.LobbyFragment"
         android:label="Lobby">
         <action
             android:id="@+id/action_lobby_to_game"
             app:destination="@id/gameFragment"
             app:popUpTo="@id/lobbyFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_lobby_to_room"
+            app:destination="@id/roomFragment"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/roomFragment"
+        android:name="com.adam.app.arenaminifight.ui.room.RoomFragment"
+        android:label="Room">
+        <action
+            android:id="@+id/action_room_to_game"
+            app:destination="@id/gameFragment"
+            app:popUpTo="@id/roomFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
@@ -29,17 +43,21 @@
         android:id="@+id/gameFragment"
         android:name="com.adam.app.arenaminifight.ui.game.GameFragment"
         android:label="Game">
+        <action
+            android:id="@+id/action_game_to_result"
+            app:destination="@id/resultFragment"
+            app:popUpTo="@id/gameFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
         android:id="@+id/resultFragment"
         android:name="com.adam.app.arenaminifight.ui.result.ResultFragment"
         android:label="Result">
-    </fragment>
-
-    <fragment
-        android:id="@+id/roomFragment"
-        android:name="com.adam.app.arenaminifight.ui.room.RoomFragment"
-        android:label="Room">
+        <action
+            android:id="@+id/action_result_to_lobby"
+            app:destination="@id/lobbyFragment"
+            app:popUpTo="@id/resultFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 </navigation>

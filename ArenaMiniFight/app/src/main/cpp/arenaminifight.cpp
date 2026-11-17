@@ -1,29 +1,33 @@
-/**
- * Copyright 2026 Adam Chen
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * Description: Game JNI
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/04
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
-// Write C++ code here.
-//
-// Do not forget to dynamically load the C++ library into your application.
-//
-// For instance,
-//
-// In MainActivity.java:
-//    static {
-//       System.loadLibrary("arenaminifight_jni");
-//    }
-//
-// Or, in MainActivity.kt:
-//    companion object {
-//      init {
-//         System.loadLibrary("_jni")
-//      }
-//    }
+/**
+ * Description: Game JNI Native Engine
+ * Trace: UC-04, UC-05, UC-06, UC-07
+ *
+ * @author Adam Chen
+ * @version 1.0.3 - 2026/03/05
+ */
+
 #define LOG_TAG "NativeEngine"
 
 #include <jni.h>
@@ -50,8 +54,20 @@
 #define LOGE(...)
 #endif
 
+// Engine Constants (Google C++ Style: kConstantName)
+constexpr float kWorldMinX = 0.0f;
+constexpr float kWorldMaxX = 1080.0f;
+constexpr float kWorldMinY = 0.0f;
+constexpr float kWorldMaxY = 1920.0f;
+constexpr float kSpawnRangeX = 800.0f;
+constexpr float kSpawnOffsetX = 100.0f;
+constexpr float kSpawnRangeY = 1200.0f;
+constexpr float kSpawnOffsetY = 100.0f;
+constexpr int kInitialHp = 100;
+constexpr float kDefaultSpeed = 150.0f;
+
 /**
- * Entity player
+ * Entity player object in native memory
  */
 struct PlayerObject {
     std::string id;
@@ -59,163 +75,126 @@ struct PlayerObject {
     float x;
     float y;
     int hp;
-    float speedX;
-    float speedY;
+    float speed_x;
+    float speed_y;
 };
 
-// Global variable
+// Global native player map
 static std::map<std::string, PlayerObject> g_players;
-
-/**
- * java data context
- */
-struct javadata_t {
-    jclass class_Player;
-    jmethodID mid_PlayerInit;
-    jclass class_PointF;
-    jmethodID mid_PointFInit;
-} javadata;
-
-// The java class path
-static const char *const classPath = "com/adam/app/arenaminifight/data/service/NativeEngine";
-
 static int g_player_count = 0;
 
-// native function
-static
-jobject _nativeInitializePlayer(JNIEnv *env, jobject thiz, jstring name)
-{
-    const char *pName = (name == NULL) ? "UnknownPlayer" : env->GetStringUTFChars(name, nullptr);
-    std::string playerId = "P_" + std::to_string(g_player_count++);
-    // 模擬 C++ 引擎計算隨機初始位置
-    float randomX = static_cast<float>(rand() % 800 + 100);
-    float randomY = static_cast<float>(rand() % 1200 + 100);
+// The java class path
+static const char *const kClassPath = "com/adam/app/arenaminifight/data/service/NativeEngine";
 
-    // build new player
-    PlayerObject newPlayer = {
-            .id = playerId,
-            .name = pName,
-            .x = randomX,
-            .y = randomY,
-            .hp = 100,
-            .speedX = 150.0f,
-            .speedY = 150.0f,
+// Trace: UC-04 (Spawn Player & AI Bots)
+static jobject NativeInitializePlayer(JNIEnv *env, jobject thiz, jstring name) {
+    const char *p_name = (name == NULL) ? "UnknownPlayer" : env->GetStringUTFChars(name, nullptr);
+    std::string player_id = "P_" + std::to_string(g_player_count++);
+    float random_x = static_cast<float>(rand() % static_cast<int>(kSpawnRangeX) + static_cast<int>(kSpawnOffsetX));
+    float random_y = static_cast<float>(rand() % static_cast<int>(kSpawnRangeY) + static_cast<int>(kSpawnOffsetY));
+
+    PlayerObject new_player = {
+            .id = player_id,
+            .name = p_name,
+            .x = random_x,
+            .y = random_y,
+            .hp = kInitialHp,
+            .speed_x = kDefaultSpeed,
+            .speed_y = kDefaultSpeed,
     };
 
-    // add to g_players
-    g_players[playerId] = newPlayer;
+    g_players[player_id] = new_player;
 
-    if (name != nullptr && pName != nullptr) env->ReleaseStringUTFChars(name, pName); // avoid to memory leak
+    if (name != nullptr && p_name != nullptr) {
+        env->ReleaseStringUTFChars(name, p_name);
+    }
 
-    // new pointF
-    jclass pointClass = env->FindClass("android/graphics/PointF");
-    jmethodID pointInit = env->GetMethodID(pointClass, "<init>", "(FF)V");
-    jobject pointObj = env->NewObject(pointClass, pointInit, randomX, randomY);
+    jclass point_class = env->FindClass("android/graphics/PointF");
+    jmethodID point_init = env->GetMethodID(point_class, "<init>", "(FF)V");
+    jobject point_obj = env->NewObject(point_class, point_init, random_x, random_y);
 
-    // new player
-    jclass playerClass = env->FindClass("com/adam/app/arenaminifight/domain/model/Player");
-    jmethodID playerInit = env->GetMethodID(playerClass, "<init>", "(Ljava/lang/String;Ljava/lang/String;Landroid/graphics/PointF;FI)V");
+    jclass player_class = env->FindClass("com/adam/app/arenaminifight/domain/model/Player");
+    jmethodID player_init = env->GetMethodID(player_class, "<init>", "(Ljava/lang/String;Ljava/lang/String;Landroid/graphics/PointF;FI)V");
 
-    return env->NewObject(playerClass,
-            playerInit,
-            env->NewStringUTF(newPlayer.name.c_str()),
-            env->NewStringUTF(newPlayer.id.c_str()), pointObj, 0.0f, newPlayer.hp);
+    return env->NewObject(player_class,
+            player_init,
+            env->NewStringUTF(new_player.name.c_str()),
+            env->NewStringUTF(new_player.id.c_str()), point_obj, 0.0f, new_player.hp);
 }
 
-static
-void _updateEngine(JNIEnv *env, jobject thiz, jfloat deltaTime)
-{
-    LOGD("Engine: Update with deltaTime: %.2f", deltaTime);
-    // look up all players in g_players
-    for (auto &player : g_players) {
-        PlayerObject& p = player.second;
+// Trace: UC-06 (Native Physics Loop)
+static void NativeUpdateEngine(JNIEnv *env, jobject thiz, jfloat delta_time) {
+    LOGD("Engine: Update with deltaTime: %.2f", delta_time);
+    for (auto &pair : g_players) {
+        PlayerObject& p = pair.second;
 
-        p.x += p.speedX * deltaTime;
-        p.y += p.speedY * deltaTime;
+        p.x += p.speed_x * delta_time;
+        p.y += p.speed_y * delta_time;
 
-        // bounce logic
-        if (p.x < 0 || p.x > 1080) {
-            p.speedX *= -1;
-            p.x = (p.x < 0) ? 0 : 1080;
+        if (p.x < kWorldMinX || p.x > kWorldMaxX) {
+            p.speed_x *= -1;
+            p.x = (p.x < kWorldMinX) ? kWorldMinX : kWorldMaxX;
         }
-        if (p.y < 0 || p.y > 1920) {
-            p.speedY *= -1;
-            p.y = (p.y < 0) ? 0 : 1920;
+        if (p.y < kWorldMinY || p.y > kWorldMaxY) {
+            p.speed_y *= -1;
+            p.y = (p.y < kWorldMinY) ? kWorldMinY : kWorldMaxY;
         }
     }
-    LOGD("Engine: Update complete");
 }
 
-static
-void _updatePlayerPosition(JNIEnv *env, jobject thiz, jstring id, jfloat x, jfloat y)
-{
+// Trace: UC-05 (Player Movement & Control)
+static void NativeUpdatePlayerPosition(JNIEnv *env, jobject thiz, jstring id, jfloat x, jfloat y) {
     LOGD("Engine: Update player position (%.f, %.f)", x, y);
 
-    const char *pId = env->GetStringUTFChars(id, nullptr);
-    std::string player_id(pId);
+    const char *p_id = env->GetStringUTFChars(id, nullptr);
+    std::string player_id(p_id);
 
-    // 如果玩家存在於引擎中，更新其座標（通常用於玩家手動拖曳/點擊）
-    if (g_players.find(player_id) != g_players.end()) {
-        g_players[player_id].x = x;
-        g_players[player_id].y = y;
-        LOGD("Engine: Player %s moved to (%.f, %.f)", pId, x, y);
+    auto it = g_players.find(player_id);
+    if (it != g_players.end()) {
+        it->second.x = x;
+        it->second.y = y;
     }
 
-    env->ReleaseStringUTFChars(id, pId);
-    LOGD("Engine: Update player position complete");
+    env->ReleaseStringUTFChars(id, p_id);
 }
 
-// UC-06: 同步所有玩家狀態
-static
-jstring _getGameState(JNIEnv *env, jobject thiz)
-{
-    LOGD("Engine: Get game state");
-    // 將所有玩家狀態拼接成字串格式: "ID:Name:X:Y:HP|..."
+// Trace: UC-06 (State Synchronization)
+static jstring NativeGetGameState(JNIEnv *env, jobject thiz) {
     std::stringstream ss;
     for (auto it = g_players.begin(); it != g_players.end(); ++it) {
         PlayerObject& p = it->second;
-        ss << p.id << ":" << p.name << ":" << (int)p.x << ":" << (int)p.y << ":" << p.hp;
+        ss << p.id << ":" << p.name << ":" << static_cast<int>(p.x) << ":" << static_cast<int>(p.y) << ":" << p.hp;
         if (std::next(it) != g_players.end()) {
             ss << "|";
         }
     }
-    LOGD("Engine: Game state: %s", ss.str().c_str());
     return env->NewStringUTF(ss.str().c_str());
 }
 
-static
-void _resetEngine(JNIEnv *env, jobject thiz)
-{
+// Trace: UC-07 (Stop Game & Engine Reset)
+static void NativeResetEngine(JNIEnv *env, jobject thiz) {
     LOGD("Engine: Reset engine");
     g_players.clear();
     g_player_count = 0;
-    LOGD("Engine: Reset engine complete");
 }
 
-/**
- * jni native method
- */
-static const JNINativeMethod gMethods[] = {
-        // name                  // signature                         // fnPtr
-        {"nativeInitializePlayer", "(Ljava/lang/String;)Lcom/adam/app/arenaminifight/domain/model/Player;", (void *) _nativeInitializePlayer},
-        {"updateEngine", "(F)V", (void *) _updateEngine},
-        {"updatePlayerPosition", "(Ljava/lang/String;FF)V", (void *) _updatePlayerPosition},
-        {"getGameState", "()Ljava/lang/String;", (void *) _getGameState},
-        {"resetEngine", "()V", (void *) _resetEngine},
+static const JNINativeMethod g_methods[] = {
+        {"nativeInitializePlayer", "(Ljava/lang/String;)Lcom/adam/app/arenaminifight/domain/model/Player;", (void *) NativeInitializePlayer},
+        {"updateEngine", "(F)V", (void *) NativeUpdateEngine},
+        {"updatePlayerPosition", "(Ljava/lang/String;FF)V", (void *) NativeUpdatePlayerPosition},
+        {"getGameState", "()Ljava/lang/String;", (void *) NativeGetGameState},
+        {"resetEngine", "()V", (void *) NativeResetEngine},
 };
 
-static
-int registerNative(JNIEnv *env) {
+static int RegisterNative(JNIEnv *env) {
     LOGI("[%s] enter\n", __FUNCTION__);
-    jclass clazz = env->FindClass(classPath);
-    // null check
+    jclass clazz = env->FindClass(kClassPath);
     if (clazz == nullptr) {
         LOGE("Can not find class");
         return JNI_ERR;
     }
 
-    // register native method
-    if (env->RegisterNatives(clazz, gMethods, sizeof(gMethods)/ sizeof(gMethods[0])) != JNI_OK) {
+    if (env->RegisterNatives(clazz, g_methods, sizeof(g_methods) / sizeof(g_methods[0])) != JNI_OK) {
         LOGE("Can not register native method");
         return JNI_ERR;
     }
@@ -224,9 +203,6 @@ int registerNative(JNIEnv *env) {
     return JNI_OK;
 }
 
-/**
- * The load function of jni
- */
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     JNIEnv* env;
     if (vm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) == JNI_ERR) {
@@ -234,9 +210,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
         return JNI_ERR;
     }
 
-    // Get jclass with env->FindClass.
-    // Register methods with env->RegisterNatives.
-    if (registerNative(env) == JNI_ERR) {
+    if (RegisterNative(env) == JNI_ERR) {
         LOGE("Can not register native method in jni_onload");
         return JNI_ERR;
     }

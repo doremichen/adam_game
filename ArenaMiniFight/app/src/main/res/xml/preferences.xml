@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/settings_audio_category">
+        <SwitchPreferenceCompat
+            android:key="pref_key_bgm"
+            android:title="@string/settings_bgm_title"
+            android:summary="@string/settings_bgm_summary"
+            android:defaultValue="true" />
+
+        <SwitchPreferenceCompat
+            android:key="pref_key_sfx"
+            android:title="@string/settings_sfx_title"
+            android:summary="@string/settings_sfx_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/settings_graphics_category">
+        <ListPreference
+            android:key="pref_key_fps"
+            android:title="@string/settings_fps_title"
+            android:summary="@string/settings_fps_summary"
+            android:entries="@array/fps_entries"
+            android:entryValues="@array/fps_values"
+            android:defaultValue="60" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

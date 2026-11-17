@@ -1,11 +1,25 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * Description: This is the game util of the application.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/03
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.utils;
 
 import android.content.Context;
@@ -20,7 +34,6 @@ import java.util.List;
 
 public final class GameUtil {
 
-    // TAG
     private static final String TAG = "DebugGame";
 
     private GameUtil() {
@@ -31,7 +44,6 @@ public final class GameUtil {
         Log.d(TAG, msg);
     }
 
-
     public static void dumpList(String title, List<?> list) {
         log(title + " size: " + list.size());
         for (Object item : list) {
@@ -39,13 +51,8 @@ public final class GameUtil {
         }
     }
 
-    /**
-     * show toast
-     */
     public static void showToast(Context context, String msg) {
-        // check main looper
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            // switch to main queue
             new Handler(Looper.getMainLooper()).post(() -> executeShow(context, msg));
             return;
         }
@@ -54,20 +61,13 @@ public final class GameUtil {
     }
 
     private static void executeShow(Context context, String msg) {
-        // avoid race condition
         synchronized (GameUtil.class) {
-            // get application context
             context = context.getApplicationContext();
-            // show toast
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * show unimplemented toast
-     */
     public static void showUnImplementedToast(Context context) {
         showToast(context, context.getString(R.string.arenaminifight_game_unimplemented_info));
     }
-
 }

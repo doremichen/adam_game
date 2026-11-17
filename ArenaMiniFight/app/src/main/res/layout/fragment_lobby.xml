@@ -6,7 +6,7 @@
     <data>
         <variable
             name="vm"
-            type="com.adam.app.arenaminifight.ui.lobby.LoobyViewModel" />
+            type="com.adam.app.arenaminifight.ui.lobby.LobbyViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -14,10 +14,10 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:padding="16dp"
-        tools:context=".ui.lobby.LoobyFragment">
+        tools:context=".ui.lobby.LobbyFragment">
 
         <TextView
-            android:id="@+id/tvTitle"
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/arenaminifight_game_lobby_title"
@@ -27,7 +27,17 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/btnStartGame"
+            android:id="@+id/btn_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_settings"
+            android:onClick="@{() -> vm.onSettingsClicked()}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btn_start_game"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_start_game"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/arenaminifight_game_start_game"
@@ -36,33 +46,33 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvChat"
+            android:id="@+id/rv_chat"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
             android:background="?android:attr/colorBackground"
-            app:layout_constraintBottom_toTopOf="@+id/etChatMessage"
+            app:layout_constraintBottom_toTopOf="@+id/et_chat_message"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
             tools:listitem="@android:layout/simple_list_item_1" />
 
         <EditText
-            android:id="@+id/etChatMessage"
+            android:id="@+id/et_chat_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="@string/arenaminifight_game_hint_edit"
-            android:text="@={vm.mInputMessage}"
+            android:text="@={vm.inputMessage}"
             android:focusable="false"
             android:clickable="true"
             android:onClick="@{() -> vm.onInputAreaClicked()}"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnSendChat"
+            app:layout_constraintBottom_toTopOf="@+id/btn_send_chat"
+            app:layout_constraintEnd_toStartOf="@+id/btn_send_chat"
             app:layout_constraintStart_toStartOf="parent" />
 
         <Button
-            android:id="@+id/btnSendChat"
+            android:id="@+id/btn_send_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/arenaminifight_game_send_btn"

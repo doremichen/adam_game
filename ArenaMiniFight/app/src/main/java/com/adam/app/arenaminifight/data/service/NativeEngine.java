@@ -1,25 +1,35 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * Description: This is the native engine service.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/04
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.data.service;
 
 import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
-/**
- * JNI native engine service
- */
 public class NativeEngine {
-    // TAG
+
     private static final String TAG = "NativeEngine";
 
-    // static initializer
-    static{
+    static {
         try {
             System.loadLibrary("game_engine");
             GameUtil.log(TAG + ": load library success.");
@@ -27,49 +37,26 @@ public class NativeEngine {
             GameUtil.log(TAG + ": load library failed.");
             e.printStackTrace();
         }
-
     }
 
-    /**
-     * Singleton
-     */
-
     private NativeEngine() {
-        // singleton
     }
 
     private static class Helper {
-        private static final NativeEngine INSTANCE = new NativeEngine();
+        private static final NativeEngine sInstance = new NativeEngine();
     }
 
     public static NativeEngine getInstance() {
-        return Helper.INSTANCE;
+        return Helper.sInstance;
     }
-
 
     public native Player nativeInitializePlayer(String name);
 
-    /**
-     * 更新引擎狀態 (UC-15)
-     * @param deltaTime 兩幀之間的時間差 (秒)，用於精確計算位移
-     */
     public native void updateEngine(float deltaTime);
 
-    /**
-     * 更新玩家目標位置 (UC-06)
-     * C++ 層會在此處進行邊界檢查與碰撞判斷
-     * @param id 玩家唯一的 PlayerID
-     */
     public native void updatePlayerPosition(String id, float x, float y);
 
-    /**
-     * 獲取當前所有玩家與物件的狀態 (UC-07)
-     * 建議回傳格式： "ID:X:Y:HP|ID:X:Y:HP"
-     */
     public native String getGameState();
 
-    /**
-     * 重置引擎狀態 (UC-05)
-     */
     public native void resetEngine();
 }

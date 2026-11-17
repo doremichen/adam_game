@@ -1,0 +1,145 @@
+@startuml
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+title ArenaMiniFight - Clean Architecture + MVVM Class Design
+
+package "1. Presentation Layer (UI / ViewModel)" {
+    class WelcomeViewModel {
+        - mWelcomeUseCase: WelcomeUseCase
+        + getIsLoginSuccess(): LiveData<Boolean>
+    }
+
+    class LobbyViewModel {
+        - mLobbyUseCase: LobbyUseCase
+        - mChatMessages: MutableLiveData<List<ChatMessage>>
+        + onSendClicked(): void
+        + onStartClicked(): void
+        + onSettingsClicked(): void
+    }
+
+    class GameViewModel {
+        - mGameUseCase: GameUseCase
+        + startGame(): void
+        + stopGame(): void
+        + updatePlayerMove(x: float, y: float): void
+        + onAttackClicked(): void
+        + onSkillClicked(): void
+    }
+
+    class RoomViewModel {
+        + onReadyClicked(): void
+        + onLeaveClicked(): void
+    }
+
+    class ResultViewModel {
+        + onBackToLobbyClicked(): void
+    }
+
+    class WelcomeFragment
+    class LobbyFragment
+    class GameFragment
+    class RoomFragment
+    class ResultFragment
+    class SettingsActivity
+    class SettingsFragment
+
+    WelcomeFragment --> WelcomeViewModel : "observes / triggers"
+    LobbyFragment --> LobbyViewModel : "observes / triggers"
+    GameFragment --> GameViewModel : "observes / triggers"
+    RoomFragment --> RoomViewModel : "observes / triggers"
+    ResultFragment --> ResultViewModel : "observes / triggers"
+    LobbyFragment --> SettingsActivity : "starts"
+    SettingsActivity --> SettingsFragment : "hosts"
+}
+
+package "2. Application Layer (UseCases)" {
+    class GameUseCase {
+        - mGateway: IGameGateway
+        + execute(action: Action, data: Object): T
+    }
+
+    class LobbyUseCase {
+        - mGateway: IGameGateway
+        + execute(action: Action, data: Object): T
+    }
+
+    class WelcomeUseCase {
+        - mGateway: IGameGateway
+        + execute(action: Action, data: Object): T
+    }
+
+    WelcomeViewModel --> WelcomeUseCase : "uses"
+    LobbyViewModel --> LobbyUseCase : "uses"
+    GameViewModel --> GameUseCase : "uses"
+}
+
+package "3. Domain Layer (Core Business Entities & Interfaces)" {
+    interface IGameGateway {
+        + isReady(): LiveData<Boolean>
+        + bindGameService(): void
+        + unbindGameService(): void
+        + sendChat(chat: ChatMessage, callback: Callback): void
+        + spawnPlayer(name: String, callback: Callback): void
+        + startGame(callback: Callback): void
+        + stopGame(): void
+        + movePlayer(id: String, x: float, y: float): void
+    }
+
+    class Player {
+        - mName: String
+        - mPlayerId: String
+        - mPosition: PointF
+        - mHp: int
+        + getName(): String
+        + getPosition(): PointF
+        + getHp(): int
+    }
+
+    class ChatMessage {
+        - mSenderId: String
+        - mSenderName: String
+        - mMessage: String
+        - mTimestamp: long
+        + getSenderId(): String
+        + getMessage(): String
+    }
+
+    GameUseCase --> IGameGateway : "depends on"
+    LobbyUseCase --> IGameGateway : "depends on"
+    WelcomeUseCase --> IGameGateway : "depends on"
+    LobbyViewModel --> ChatMessage : "handles"
+}
+
+package "4. Infrastructure Layer (Data Sources, IPC & JNI C++ Engine)" {
+    class GameGatewayImpl {
+        - mContext: Context
+        - mIsBind: MutableLiveData<Boolean>
+        + getInstance(): GameGatewayImpl
+        + bindGameService(): void
+        + sendChat(chat: ChatMessage, callback: Callback): void
+        + spawnPlayer(...): void
+        + startGame(...): void
+        + stopGame(): void
+    }
+
+    class GameService {
+        - mIncomingHandler: Messenger
+    }
+
+    class NativeEngine {
+        + nativeInitializePlayer(name: String): Player
+        + updateEngine(deltaTime: float): void
+        + updatePlayerPosition(id: String, x: float, y: float): void
+        + getGameState(): String
+        + resetEngine(): void
+    }
+
+    IGameGateway <|.. GameGatewayImpl : "implements"
+    GameGatewayImpl --> GameService : "IPC Messenger"
+    GameService --> NativeEngine : "JNI C++ Calls"
+    GameGatewayImpl --> ChatMessage : "transfers"
+    GameGatewayImpl --> Player : "transfers"
+}
+
+@enduml

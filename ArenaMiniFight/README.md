@@ -1,136 +1,101 @@
-# ArenaMiniFight (JNI & IPC Architecture Lab)
+# ArenaMiniFight (JNI, IPC & Clean Architecture Lab)
 
-ArenaMiniFight is an Android development project focused on the integration of **Cross-Process Communication (IPC)**, **Native C++ Game Engines (JNI)**, and modern **MVVM architecture**.  
-The project demonstrates how to decouple game logic, physics calculation, and UI rendering across different layers and processes for optimal stability and performance.
-
----
-
-# 🏗 Technical Core Implementations
-
-## 1. JNI (C++) Game Engine Integration
-
-### Native Entity Management
-Utilizes C++ `std::map` to maintain all player entities (**Player Objects**) in native memory, bypassing Java GC overhead for high-frequency logic updates.
-
-### Dynamic Coordinate Allocation
-The C++ engine determines initial spawn points and unique ID generation (e.g., `P_0`, `P_1`), which are then encapsulated into Java objects via a **JNI Bridge**.
-
-### State Synchronization
-Implements high-performance native interfaces for the Android Service to fetch real-time positional data at **60 FPS**.
+ArenaMiniFight is an advanced Android development project demonstrating the integration of **Clean Architecture + MVVM**, **Google Hilt Dependency Injection**, **Inter-Process Communication (IPC)**, and a **Native C++ Game Engine (JNI)**.  
+The project showcases how to decouple core game logic, physics calculation, and UI rendering across layers and processes for optimal stability, performance, and testability.
 
 ---
 
-## 2. IPC (Inter-Process Communication)
+# 🏗 Technical & Architectural Core
 
-### Messenger & Handler
-Establishes a communication bridge between the UI and the `GameService` using the **Messenger pattern**.
+## 1. Clean Architecture + MVVM & Google Hilt
+- **Domain Layer**: Contains pure business entities (`Player`, `ChatMessage`) and Gateway contracts (`IGameGateway`) with zero framework dependencies.
+- **Application Layer**: Houses highly cohesive, Enum-based UseCases (`GameUseCase`, `LobbyUseCase`, `WelcomeUseCase`).
+- **Infrastructure Layer**: Concrete `GameGatewayImpl` communicating via Android `Messenger` IPC.
+- **Presentation Layer**: Activities and Fragments observing ViewModels powered by Google Hilt (`@HiltViewModel`, `@AndroidEntryPoint`).
+- **One-Time Events**: Utilizes `SingleLiveEvent` to prevent duplicate event triggers on configuration changes.
 
-- UI sends control commands (`UC_MOVE_PLAYER`)
-- Service broadcasts world states (`UC_SYNC_PLAYERS`)
+## 2. JNI (C++) Game Engine Integration
+- **Native Entity Management**: Utilizes C++ `std::map` in `arenaminifight.cpp` to maintain player entities (`PlayerObject`), bypassing Java GC overhead.
+- **60 FPS Physics Simulation**: Background `EngineLoopManager` ticks at 16ms intervals, updating movement and wall-bounding physics.
+- **State Synchronization**: High-performance JNI state formatting (`getGameState()`) broadcasted to clients over IPC.
 
-### Service Encapsulation
-Encapsulates the physics loop (`EngineLoopManager`) within a background **Service**, ensuring that game logic and AI calculations remain stable even when:
-
-- the UI thread is under heavy load
-- Fragment transitions occur
-
-### Thread-Safe Lifecycle Management
-Implements synchronized protection and `ExecutorService` restart mechanisms within the start/stop cycles to prevent `NullPointerException` during process restarts.
-
----
-
-## 3. MVVM with Data & View Binding
-
-### ViewModel & Repository
-Follows the **MVVM pattern** to isolate the UI from data sources.
-
-- `GameViewModel` observes `LiveData` and handles UI events
-- `GameRepository` manages the IPC connection with `GameService`
-
-### Data Binding
-Leverages **Data Binding** to bind the `PlayerStatus` (real-time coordinates) directly to the XML layout, eliminating the need for manual UI updates and reducing boilerplate code.
-
-### View Binding
-Utilizes **View Binding** in `GameFragment` to ensure type-safe and null-safe references to UI components such as:
-
-- `SurfaceView`
-- `MaterialButtons`
+## 3. IPC (Inter-Process Communication) & Game Services
+- **Messenger Pattern**: Bi-directional communication bridge between UI process and background `GameService`.
+- **Lifecycle Protection**: Thread-safe start/stop cycles preventing memory leaks and process crashes.
 
 ---
 
 # 🏛 System Architecture
 
 ```text
-+-----------------------------------+
-|          UI Layer (View)          |
-|  - GameFragment (View Binding)    |
-|  - GameSurfaceView (Canvas)       |
-+-----------------+-----------------+
-                  | (Data Binding / Observer)
-                  v
-+-----------------------------------+
-|        ViewModel Layer            |
-|  - GameViewModel (LiveData)       |
-+-----------------+-----------------+
-                  | (Repository Pattern)
-                  v
-+-----------------------------------+       +---------------------------+
-|      Repository Layer             |  IPC  |      GameService          |
-|  - Service Connection Manager     | <===> |  - EngineLoopManager      |
-|  - Messenger Client               | (Msg) |  - JNI Native Interface   |
-+-----------------------------------+       +-------------+-------------+
-                                                          |
-                                                          v
-                                            +---------------------------+
-                                            |      JNI C++ Engine       |
-                                            |  - std::map<ID, Player>   |
-                                            |  - Native State Logic     |
-+-------------------------------------------+---------------------------+  
++-----------------------------------------------------------------------------------+
+|                           UI LAYER (Presentation)                                 |
+|  - WelcomeFragment, LobbyFragment, GameFragment, RoomFragment, ResultFragment     |
+|  - GameSurfaceView (Canvas rendering at 60 FPS), SettingsActivity                 |
++-----------------------------------------+-----------------------------------------+
+                                          |
+                                          v (Data Binding / SingleLiveEvent)
++-----------------------------------------------------------------------------------+
+|                             PRESENTATION (ViewModel)                              |
+|  - WelcomeViewModel, LobbyViewModel, GameViewModel, RoomViewModel, ResultViewModel|
++-----------------------------------------+-----------------------------------------+
+                                          |
+                                          v (Invokes Enum-based UseCases)
++-----------------------------------------------------------------------------------+
+|                             APPLICATION & DOMAIN LAYER                            |
+|  - UseCases: WelcomeUseCase, LobbyUseCase, GameUseCase                           |
+|  - Entities: Player, ChatMessage                                                  |
+|  - Gateway Interface: IGameGateway                                                |
++-----------------------------------------+-----------------------------------------+
+                                          |
+                                          v (Implements IGameGateway)
++-----------------------------------------------------------------------------------+
+|                           INFRASTRUCTURE (Gateway)                                |
+|  - GameGatewayImpl (Manages ServiceConnection & Messenger IPC Client)             |
++-----------------------------------------+-----------------------------------------+
+                                          | (IPC via Messenger / Messages)
+                                          v
++-----------------------------------------------------------------------------------+
+|                            BACKGROUND GAME SERVICE                                |
+|  - GameService (Bound Service running in background)                              |
+|  - EngineLoopManager (16ms ScheduledExecutorService)                              |
++-----------------------------------------+-----------------------------------------+
+                                          |
+                                          v (JNI C++ Native Bridge)
++-----------------------------------------------------------------------------------+
+|                           NATIVE C++ GAME ENGINE                                  |
+|  - NativeEngine (JNI Wrapper)                                                     |
+|  - arenaminifight.cpp (std::map<string, PlayerObject>, 60FPS physics & constants)  |
++-----------------------------------------------------------------------------------+
 ```
 
+---
 
-## 🧠 Implementation Highlights
+# 🧩 Game Use Cases (UC-01 to UC-14)
 
-### Adaptive HUD Layout
-Uses the `layout_constrainedWidth="true"` attribute in **ConstraintLayout** to ensure that long coordinate strings received from JNI do not overlap with control buttons in the HUD.
-
-### Native Memory Reset
-Handles Android process persistence by implementing a **JNI cleanup function** during the `stopGame` flow.  
-This guarantees that the native C++ `std::map` container is cleared, preventing **"ghost players"** from appearing in subsequent game sessions.
-
-### Lifecycle Guard
-Improves the stability of the `GameLoopManager` by verifying the **Executor state** during the `start()` process.  
-This ensures the rendering engine restarts safely when users navigate between screens or fragments.
+| Use Case ID | Category | Description | Status |
+| :--- | :--- | :--- | :--- |
+| **UC-01** | Welcome & Init | User welcome and background service binding | Implemented ✅ |
+| **UC-02** | Lobby & Social | Lobby chat messaging with server echo simulation | Implemented ✅ |
+| **UC-03** | Navigation | Enter game arena / transition flows | Implemented ✅ |
+| **UC-04** | Spawning | Spawn main player and AI bots via JNI | Implemented ✅ |
+| **UC-05** | Controls | Player touch movement and position updating | Implemented ✅ |
+| **UC-06** | Physics & Sync | 60 FPS C++ physics loop and state broadcasting | Implemented ✅ |
+| **UC-07** | Lifecycle | Stop game and reset native C++ memory map | Implemented ✅ |
+| **UC-08** | Matchmaking | Room creation and player slot management | Implemented ✅ |
+| **UC-09** | Customization | Character class selection (Warrior / Assassin) | Implemented ✅ |
+| **UC-10** | Combat | In-game action buttons (ATK / SKILL) | Implemented ✅ |
+| **UC-11** | Settlement | Match results screen, stats, and rewards | Implemented ✅ |
+| **UC-12** | Social | Friends and direct messaging | Roadmap ⏳ |
+| **UC-13** | Economy | In-App purchases and Battle Pass | Roadmap ⏳ |
+| **UC-14** | Settings | Audio (BGM/SFX) & FPS (60/30) Preferences | Implemented ✅ |
 
 ---
 
-## 🧩 Domain Entities
+# 🧠 Implementation Highlights
 
-### Player (Java / JNI Bridge)
-
-The `Player` entity acts as the primary **data transfer object (DTO)** between the **JNI layer** and the **Android UI layer**.
-
-| Field | Description |
-|------|-------------|
-| `playerId` | Unique identifier generated by the native engine |
-| `name` | Player display name |
-| `x` | X coordinate in the game world |
-| `y` | Y coordinate in the game world |
-| `hp` | Player health points |
-
----
-
-### GameMessage Protocol
-
-The system uses a predefined **IPC message protocol** to coordinate actions between the **UI process** and the **GameService**.
-
-Supported commands include:
-
-- **Player Movement**  
-  Sends player input to update position in the native engine.
-
-- **AI Spawning**  
-  Requests the engine to spawn AI-controlled players.
-
-- **Engine State Reset**  
-  Clears the native game state and restarts the simulation.
+- **Google Hilt DI**: Strict dependency injection across all ViewModels, Activities, and Fragments.
+- **Gateway Pattern (`IGameGateway`)**: Clean separation between domain logic and IPC communication details.
+- **PreferenceFragmentCompat**: Standard Android settings UI with `SharedPreferences` persistence.
+- **Zero Magic Values (CQ-01)**: All configuration constants centralized in `GameConstants.java` and C++ `constexpr`.
+- **MIT License Compliance (GP-03)**: Every source file includes the standard MIT License header.

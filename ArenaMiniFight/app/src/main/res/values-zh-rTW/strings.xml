@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">競技小對決</string>
+    <string name="arenaminifight_game_unimplemented_info">尚未實作</string>
+    <string name="arenaminifight">競技小對決</string>
+    <string name="arenaminifight_game_synching_data">同步資料中...</string>
+    <string name="arenaminifight_game_lobby_title">大廳</string>
+    <string name="arenaminifight_game_start_game">開始遊戲</string>
+    <string name="arenaminifight_game_hint_edit">輸入訊息...</string>
+    <string name="arenaminifight_game_send_btn">發送</string>
+    <string name="arenaminifight_game_connecting_to_arena_service">正在連線至競技場服務...</string>
+    <string name="arenaminifight_game_login_failed">Login failed</string>
+    <string name="arenaminifight_game_login_success">Login success</string>
+    <string name="arenaminifight_game_exit">Exit</string>
+    <string name="add_ai_btn">新增 AI 玩家</string>
+    <string name="arenaminifight_game_exit_btn">Exit</string>
+
+    <string name="game_btn_attack">普攻</string>
+    <string name="game_btn_skill">技能</string>
+
+    <string name="dialog_exit_title">離開遊戲</string>
+    <string name="dialog_exit_message">確定要離開當前對局嗎？</string>
+
+    <string name="settings_audio_category">音效設定</string>
+    <string name="settings_bgm_title">背景音樂 (BGM)</string>
+    <string name="settings_bgm_summary">啟用背景音樂</string>
+    <string name="settings_sfx_title">遊戲音效 (SFX)</string>
+    <string name="settings_sfx_summary">啟用遊戲音效</string>
+    <string name="settings_graphics_category">畫質設定</string>
+    <string name="settings_fps_title">目標幀率</string>
+    <string name="settings_fps_summary">Select target FPS for rendering</string>
+
+    <string name="settings_activity_title">遊戲設定</string>
+    <string name="dialog_send_message_title">發送訊息</string>
+    <string name="dialog_input_hint">輸入訊息</string>
+    <string name="dialog_ok">確定</string>
+    <string name="dialog_cancel">取消</string>
+
+    <string name="room_title">對戰房間與角色選擇</string>
+    <string name="room_status_waiting">狀態：等待玩家加入 (1/3)</string>
+    <string name="room_select_character">選擇角色職業：</string>
+    <string name="character_warrior">戰士 - 高生命值與平衡</string>
+    <string name="character_assassin">刺客 - High Speed &amp; Agility</string>
+    <string name="room_ready_btn">準備並開始對戰</string>
+    <string name="room_leave_btn">離開房間</string>
+
+    <string name="result_victory">勝利！</string>
+    <string name="result_stats_title">對局統計：</string>
+    <string name="result_stat_kills">• 擊殺數：3</string>
+    <string name="result_stat_damage">• 造成傷害：1,450</string>
+    <string name="result_stat_score">• 獲得積分：+25</string>
+    <string name="result_stat_rewards">• 獲得金幣：100 Gold</string>
+    <string name="result_back_to_lobby">返回大廳</string>
+
+    <string name="btn_settings">設定</string>
+
+    <string-array name="fps_entries">
+        <item>60 FPS (高效能)</item>
+        <item>30 FPS (省電模式)</item>
+    </string-array>
+    <string-array name="fps_values">
+        <item>60</item>
+        <item>30</item>
+    </string-array>
+</resources>

@@ -1,24 +1,42 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
- * <p>
- * Description: This is the game fragment of the application.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/02
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.ui.game;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
+import com.adam.app.arenaminifight.R;
 import com.adam.app.arenaminifight.databinding.FragmentGameBinding;
 import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.utils.GameConstants;
@@ -26,15 +44,14 @@ import com.adam.app.arenaminifight.utils.GameUtil;
 
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class GameFragment extends Fragment {
 
-    // TAG
     private static final String TAG = "GameFragment";
 
-    // view biding
     private FragmentGameBinding mBinding;
-
-    // view model
     private GameViewModel mViewModel;
 
     public static GameFragment newInstance() {
@@ -44,7 +61,6 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        GameUtil.log(TAG + ": onCreateView");
         mBinding = FragmentGameBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
@@ -52,68 +68,66 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        GameUtil.log(TAG + ": onViewCreated");
 
-        // init view model
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
-        // data binding
         mBinding.setVm(mViewModel);
-        mBinding.setLifecycleOwner(this);
+        mBinding.setLifecycleOwner(getViewLifecycleOwner());
 
-        // init player
         mViewModel.initPlayerFromJni(GameConstants.DefaultPlayerName);
-        // start game
         mViewModel.startGame();
 
-        // observer players
         mViewModel.getPlayers().observe(getViewLifecycleOwner(), this::onPlayers);
-
-
-        // set touch listener
         mBinding.gameSurfaceView.setOnTouchListener(this::onTouch);
-
-        // observer exit event
         mViewModel.getExitEvent().observe(getViewLifecycleOwner(), this::onExit);
 
+        // Handle system back button with confirmation dialog
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                showExitConfirmationDialog();
+            }
+        });
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        GameUtil.log(TAG + ": onResume");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        GameUtil.log(TAG + ": onPause");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        GameUtil.log(TAG + ":onDestroy");
+    private void showExitConfirmationDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle(getString(R.string.dialog_exit_title))
+                .setMessage(getString(R.string.dialog_exit_message))
+                .setPositiveButton(getString(R.string.dialog_ok), (dialog, which) -> {
+                    mViewModel.stopGame();
+                    if (getView() != null) {
+                        Navigation.findNavController(requireView()).navigateUp();
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_cancel), (dialog, which) -> dialog.dismiss())
+                .show();
     }
 
     private void onPlayers(List<Player> players) {
-        // update players
         mBinding.gameSurfaceView.updatePlayers(players);
     }
 
     private void onExit(Boolean isExit) {
-        if (isExit) {
+        if (Boolean.TRUE.equals(isExit) && getActivity() != null) {
             GameUtil.log(TAG + ": onExit");
-            getActivity().finish();
+            mViewModel.stopGame();
+            if (getView() != null) {
+                Navigation.findNavController(requireView()).navigateUp();
+            }
         }
     }
 
     private boolean onTouch(View view, MotionEvent event) {
-        GameUtil.log(TAG + ": onTouch");
-        if (event.getAction() == MotionEvent.ACTION_MOVE ||
-                event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
             mViewModel.updatePlayerMove(event.getX(), event.getY());
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mBinding = null;
     }
 }

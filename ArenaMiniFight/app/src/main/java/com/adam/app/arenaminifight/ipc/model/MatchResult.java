@@ -1,16 +1,33 @@
-/**
- * Copyright 2023 Adam Chen. All rights reserved.
+/*
+ * Copyright (c) 2026 Adam Chen
  *
- * Description: This is the match result model of the application.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * @author Adam Chen
- * @version 1.0.0 - 2026/03/03
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
+
 package com.adam.app.arenaminifight.ipc.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * Match result model for IPC communication.
+ */
 public class MatchResult implements Parcelable {
 
     private boolean mMatched;
@@ -18,7 +35,14 @@ public class MatchResult implements Parcelable {
     private String mOpponentNickname;
     private int mArenaId;
 
-
+    /**
+     * Constructs a MatchResult instance.
+     *
+     * @param matched          whether match succeeded
+     * @param opponentId       opponent ID
+     * @param opponentNickname opponent nickname
+     * @param arenaId          arena ID
+     */
     public MatchResult(boolean matched,
                        String opponentId,
                        String opponentNickname,
@@ -28,7 +52,6 @@ public class MatchResult implements Parcelable {
         mOpponentNickname = opponentNickname;
         mArenaId = arenaId;
     }
-
 
     protected MatchResult(Parcel in) {
         mMatched = in.readByte() != 0;
@@ -62,19 +85,38 @@ public class MatchResult implements Parcelable {
         }
     };
 
-    // -- getter --
+    /**
+     * Returns whether matched.
+     *
+     * @return boolean match status
+     */
     public boolean isMatched() {
         return mMatched;
     }
 
+    /**
+     * Returns the opponent ID.
+     *
+     * @return opponent ID
+     */
     public String getOpponentId() {
         return mOpponentId;
     }
 
+    /**
+     * Returns the opponent nickname.
+     *
+     * @return opponent nickname
+     */
     public String getOpponentNickname() {
         return mOpponentNickname;
     }
 
+    /**
+     * Returns the arena ID.
+     *
+     * @return arena ID
+     */
     public int getArenaId() {
         return mArenaId;
     }
