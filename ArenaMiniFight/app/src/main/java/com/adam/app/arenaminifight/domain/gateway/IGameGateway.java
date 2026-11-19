@@ -101,4 +101,20 @@ public interface IGameGateway {
      * @param y        target Y coordinate
      */
     void movePlayer(String playerId, float x, float y);
+
+    /**
+     * Stops player movement.
+     *
+     * @param playerId the unique player identifier
+     */
+    void stopPlayerMove(String playerId);
+
+    /**
+     * Performs a player attack or skill.
+     *
+     * @param playerId the unique player identifier
+     * @param isSkill  true if casting skill, false if normal attack
+     * @param callback the result callback
+     */
+    void playerAttack(String playerId, boolean isSkill, Callback<String> callback);
 }

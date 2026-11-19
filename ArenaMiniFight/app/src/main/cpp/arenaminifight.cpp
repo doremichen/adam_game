@@ -22,10 +22,10 @@
 
 /**
  * Description: Game JNI Native Engine
- * Trace: UC-04, UC-05, UC-06, UC-07
+ * Trace: UC-04, UC-05, UC-06, UC-07, UC-10
  *
  * @author Adam Chen
- * @version 1.0.3 - 2026/03/05
+ * @version 1.0.5 - 2026/03/05
  */
 
 #define LOG_TAG "NativeEngine"
@@ -36,6 +36,7 @@
 #include <map>
 #include <sstream>
 #include <cstdlib>
+#include <cmath>
 #include <android/log.h>
 
 #define __DEBUG__
@@ -54,17 +55,17 @@
 #define LOGE(...)
 #endif
 
-// Engine Constants (Google C++ Style: kConstantName)
-constexpr float kWorldMinX = 0.0f;
-constexpr float kWorldMaxX = 1080.0f;
-constexpr float kWorldMinY = 0.0f;
-constexpr float kWorldMaxY = 1920.0f;
+// Engine Constants
+constexpr float kWorldMinX = 50.0f;
+constexpr float kWorldMaxX = 1030.0f;
+constexpr float kWorldMinY = 100.0f;
+constexpr float kWorldMaxY = 1820.0f;
 constexpr float kSpawnRangeX = 800.0f;
 constexpr float kSpawnOffsetX = 100.0f;
 constexpr float kSpawnRangeY = 1200.0f;
 constexpr float kSpawnOffsetY = 100.0f;
 constexpr int kInitialHp = 100;
-constexpr float kDefaultSpeed = 150.0f;
+constexpr float kDefaultSpeed = 180.0f;
 
 /**
  * Entity player object in native memory
@@ -77,6 +78,11 @@ struct PlayerObject {
     int hp;
     float speed_x;
     float speed_y;
+    int attack_type; // 0: none, 1: attack, 2: skill
+    float attack_timer;
+    float target_x;
+    float target_y;
+    bool is_moving;
 };
 
 // Global native player map
@@ -101,6 +107,11 @@ static jobject NativeInitializePlayer(JNIEnv *env, jobject thiz, jstring name) {
             .hp = kInitialHp,
             .speed_x = kDefaultSpeed,
             .speed_y = kDefaultSpeed,
+            .attack_type = 0,
+            .attack_timer = 0.0f,
+            .target_x = random_x,
+            .target_y = random_y,
+            .is_moving = false,
     };
 
     g_players[player_id] = new_player;
@@ -114,45 +125,114 @@ static jobject NativeInitializePlayer(JNIEnv *env, jobject thiz, jstring name) {
     jobject point_obj = env->NewObject(point_class, point_init, random_x, random_y);
 
     jclass player_class = env->FindClass("com/adam/app/arenaminifight/domain/model/Player");
-    jmethodID player_init = env->GetMethodID(player_class, "<init>", "(Ljava/lang/String;Ljava/lang/String;Landroid/graphics/PointF;FI)V");
+    jmethodID player_init = env->GetMethodID(player_class, "<init>", "(Ljava/lang/String;Ljava/lang/String;Landroid/graphics/PointF;FII)V");
 
     return env->NewObject(player_class,
             player_init,
             env->NewStringUTF(new_player.name.c_str()),
-            env->NewStringUTF(new_player.id.c_str()), point_obj, 0.0f, new_player.hp);
+            env->NewStringUTF(new_player.id.c_str()), point_obj, 0.0f, new_player.hp, 0);
 }
 
-// Trace: UC-06 (Native Physics Loop)
+// Trace: UC-06 (Native Physics Loop & Smooth Movement & AI Combat)
 static void NativeUpdateEngine(JNIEnv *env, jobject thiz, jfloat delta_time) {
     LOGD("Engine: Update with deltaTime: %.2f", delta_time);
+
+    // Find main player P_0 position for AI tracking
+    float main_x = 540.0f;
+    float main_y = 960.0f;
+    auto p0_it = g_players.find("P_0");
+    if (p0_it != g_players.end()) {
+        main_x = p0_it->second.x;
+        main_y = p0_it->second.y;
+    }
+
     for (auto &pair : g_players) {
         PlayerObject& p = pair.second;
 
-        p.x += p.speed_x * delta_time;
-        p.y += p.speed_y * delta_time;
+        // Update attack timer
+        if (p.attack_timer > 0.0f) {
+            p.attack_timer -= delta_time;
+            if (p.attack_timer <= 0.0f) {
+                p.attack_timer = 0.0f;
+                p.attack_type = 0;
+            }
+        }
 
-        if (p.x < kWorldMinX || p.x > kWorldMaxX) {
-            p.speed_x *= -1;
-            p.x = (p.x < kWorldMinX) ? kWorldMinX : kWorldMaxX;
+        // Smooth Movement towards target destination when moving
+        if (p.is_moving) {
+            float dx = p.target_x - p.x;
+            float dy = p.target_y - p.y;
+            float dist = std::sqrt(dx * dx + dy * dy);
+
+            if (dist > 8.0f) {
+                float move_speed = kDefaultSpeed * 1.4f;
+                p.x += (dx / dist) * move_speed * delta_time;
+                p.y += (dy / dist) * move_speed * delta_time;
+            } else {
+                if (p.id == "P_0") {
+                    p.is_moving = false;
+                }
+            }
         }
-        if (p.y < kWorldMinY || p.y > kWorldMaxY) {
-            p.speed_y *= -1;
-            p.y = (p.y < kWorldMinY) ? kWorldMinY : kWorldMaxY;
+
+        // AI behavior: AI bots track and chase player P_0 when not player-controlled
+        if (p.id != "P_0" && p.name.rfind("AI_", 0) == 0 && !p.is_moving) {
+            float dx = main_x - p.x;
+            float dy = main_y - p.y;
+            float dist = std::sqrt(dx * dx + dy * dy);
+
+            if (dist > 70.0f) {
+                float vx = (dx / dist) * 130.0f;
+                float vy = (dy / dist) * 130.0f;
+                p.x += vx * delta_time;
+                p.y += vy * delta_time;
+            } else {
+                // AI attacks main player when in close range
+                if (p.attack_timer <= 0.0f && p0_it != g_players.end()) {
+                    p0_it->second.hp -= 10;
+                    p.attack_type = 1;
+                    p.attack_timer = 0.4f;
+                    LOGD("AI Combat: %s attacked player P_0 for 10 damage! HP: %d", p.name.c_str(), p0_it->second.hp);
+                    if (p0_it->second.hp <= 0) {
+                        p0_it->second.hp = kInitialHp;
+                        p0_it->second.x = 540.0f;
+                        p0_it->second.y = 960.0f;
+                    }
+                }
+            }
         }
+
+        // Boundary collision check & clamping
+        if (p.x < kWorldMinX) p.x = kWorldMinX;
+        if (p.x > kWorldMaxX) p.x = kWorldMaxX;
+        if (p.y < kWorldMinY) p.y = kWorldMinY;
+        if (p.y > kWorldMaxY) p.y = kWorldMaxY;
     }
 }
 
-// Trace: UC-05 (Player Movement & Control)
+// Trace: UC-05 (Player Smooth Movement Target)
 static void NativeUpdatePlayerPosition(JNIEnv *env, jobject thiz, jstring id, jfloat x, jfloat y) {
-    LOGD("Engine: Update player position (%.f, %.f)", x, y);
-
     const char *p_id = env->GetStringUTFChars(id, nullptr);
     std::string player_id(p_id);
 
     auto it = g_players.find(player_id);
     if (it != g_players.end()) {
-        it->second.x = x;
-        it->second.y = y;
+        it->second.target_x = x;
+        it->second.target_y = y;
+        it->second.is_moving = true;
+    }
+
+    env->ReleaseStringUTFChars(id, p_id);
+}
+
+// Trace: UC-05 (Stop Player Movement)
+static void NativeStopPlayerMove(JNIEnv *env, jobject thiz, jstring id) {
+    const char *p_id = env->GetStringUTFChars(id, nullptr);
+    std::string player_id(p_id);
+
+    auto it = g_players.find(player_id);
+    if (it != g_players.end()) {
+        it->second.is_moving = false;
     }
 
     env->ReleaseStringUTFChars(id, p_id);
@@ -163,7 +243,7 @@ static jstring NativeGetGameState(JNIEnv *env, jobject thiz) {
     std::stringstream ss;
     for (auto it = g_players.begin(); it != g_players.end(); ++it) {
         PlayerObject& p = it->second;
-        ss << p.id << ":" << p.name << ":" << static_cast<int>(p.x) << ":" << static_cast<int>(p.y) << ":" << p.hp;
+        ss << p.id << ":" << p.name << ":" << static_cast<int>(p.x) << ":" << static_cast<int>(p.y) << ":" << p.hp << ":" << p.attack_type;
         if (std::next(it) != g_players.end()) {
             ss << "|";
         }
@@ -178,12 +258,93 @@ static void NativeResetEngine(JNIEnv *env, jobject thiz) {
     g_player_count = 0;
 }
 
+// Trace: UC-10 (Player Attack & Combat)
+static jstring NativePlayerAttack(JNIEnv *env, jobject thiz, jstring id, jboolean is_skill) {
+    const char *p_id = env->GetStringUTFChars(id, nullptr);
+    std::string attacker_id(p_id);
+    env->ReleaseStringUTFChars(id, p_id);
+
+    auto it = g_players.find(attacker_id);
+    if (it == g_players.end()) {
+        return env->NewStringUTF("Attacker not found!");
+    }
+
+    PlayerObject& attacker = it->second;
+    float range = is_skill ? 600.0f : 400.0f;
+    int damage = is_skill ? 45 : 20;
+    int hits = 0;
+    std::string hit_target = "";
+
+    attacker.attack_type = is_skill ? 2 : 1;
+    attacker.attack_timer = 0.5f;
+
+    for (auto &pair : g_players) {
+        if (pair.first == attacker_id) continue;
+        PlayerObject& target = pair.second;
+        float dx = target.x - attacker.x;
+        float dy = target.y - attacker.y;
+        float dist = std::sqrt(dx * dx + dy * dy);
+
+        if (dist <= range) {
+            target.hp -= damage;
+            hits++;
+            hit_target = target.name;
+            LOGD("Combat: %s hit %s for %d damage (HP: %d)", attacker.name.c_str(), target.name.c_str(), damage, target.hp);
+
+            if (target.hp <= 0) {
+                target.hp = kInitialHp;
+                target.x = static_cast<float>(rand() % static_cast<int>(kSpawnRangeX) + static_cast<int>(kSpawnOffsetX));
+                target.y = static_cast<float>(rand() % static_cast<int>(kSpawnRangeY) + static_cast<int>(kSpawnOffsetY));
+                LOGD("Combat: %s defeated and respawned!", target.name.c_str());
+            }
+        }
+    }
+
+    // Auto-target nearest enemy if none in range
+    if (hits == 0 && g_players.size() > 1) {
+        PlayerObject* nearest = nullptr;
+        float min_dist = 99999.0f;
+        for (auto &pair : g_players) {
+            if (pair.first == attacker_id) continue;
+            PlayerObject& target = pair.second;
+            float dx = target.x - attacker.x;
+            float dy = target.y - attacker.y;
+            float dist = std::sqrt(dx * dx + dy * dy);
+            if (dist < min_dist) {
+                min_dist = dist;
+                nearest = &target;
+            }
+        }
+        if (nearest != nullptr) {
+            nearest->hp -= damage;
+            hits++;
+            hit_target = nearest->name;
+            if (nearest->hp <= 0) {
+                nearest->hp = kInitialHp;
+                nearest->x = static_cast<float>(rand() % static_cast<int>(kSpawnRangeX) + static_cast<int>(kSpawnOffsetX));
+                nearest->y = static_cast<float>(rand() % static_cast<int>(kSpawnRangeY) + static_cast<int>(kSpawnOffsetY));
+            }
+        }
+    }
+
+    std::stringstream result_ss;
+    if (hits > 0) {
+        result_ss << (is_skill ? "技能施放！命中 " : "攻擊！命中 ") << hit_target << " (-" << damage << " 生命)";
+    } else {
+        result_ss << (is_skill ? "技能施放！全場清空。" : "攻擊！揮擊命中。");
+    }
+
+    return env->NewStringUTF(result_ss.str().c_str());
+}
+
 static const JNINativeMethod g_methods[] = {
         {"nativeInitializePlayer", "(Ljava/lang/String;)Lcom/adam/app/arenaminifight/domain/model/Player;", (void *) NativeInitializePlayer},
         {"updateEngine", "(F)V", (void *) NativeUpdateEngine},
         {"updatePlayerPosition", "(Ljava/lang/String;FF)V", (void *) NativeUpdatePlayerPosition},
+        {"nativeStopPlayerMove", "(Ljava/lang/String;)V", (void *) NativeStopPlayerMove},
         {"getGameState", "()Ljava/lang/String;", (void *) NativeGetGameState},
         {"resetEngine", "()V", (void *) NativeResetEngine},
+        {"nativePlayerAttack", "(Ljava/lang/String;Z)Ljava/lang/String;", (void *) NativePlayerAttack},
 };
 
 static int RegisterNative(JNIEnv *env) {

@@ -71,6 +71,23 @@ public final class GameUseCase {
                 gw.movePlayer(params.mPlayerId, params.mX, params.mY);
                 return null;
             }
+        },
+        PLAYER_ATTACK {
+            @Override
+            @SuppressWarnings("unchecked")
+            <T> T handle(IGameGateway gw, Object data) {
+                AttackParams params = (AttackParams) data;
+                gw.playerAttack(params.mPlayerId, params.mIsSkill, params.mCallback);
+                return null;
+            }
+        },
+        STOP_MOVE_PLAYER {
+            @Override
+            <T> T handle(IGameGateway gw, Object data) {
+                StopMoveParams params = (StopMoveParams) data;
+                gw.stopPlayerMove(params.mPlayerId);
+                return null;
+            }
         };
 
         abstract <T> T handle(IGameGateway gw, Object data);
@@ -99,6 +116,26 @@ public final class GameUseCase {
             mPlayerId = playerId;
             mX = x;
             mY = y;
+        }
+    }
+
+    public static class AttackParams {
+        public final String mPlayerId;
+        public final boolean mIsSkill;
+        public final IGameGateway.Callback<String> mCallback;
+
+        public AttackParams(String playerId, boolean isSkill, IGameGateway.Callback<String> callback) {
+            mPlayerId = playerId;
+            mIsSkill = isSkill;
+            mCallback = callback;
+        }
+    }
+
+    public static class StopMoveParams {
+        public final String mPlayerId;
+
+        public StopMoveParams(String playerId) {
+            mPlayerId = playerId;
         }
     }
 }

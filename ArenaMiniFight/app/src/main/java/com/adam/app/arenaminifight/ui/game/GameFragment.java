@@ -118,9 +118,15 @@ public class GameFragment extends Fragment {
     }
 
     private boolean onTouch(View view, MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_MOVE || event.getAction() == MotionEvent.ACTION_DOWN) {
-            mViewModel.updatePlayerMove(event.getX(), event.getY());
-            return true;
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_MOVE:
+                mViewModel.updatePlayerMove(event.getX(), event.getY());
+                return true;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                mViewModel.stopPlayerMove();
+                return true;
         }
         return false;
     }

@@ -56,7 +56,11 @@ public class NativeEngine {
 
     public native void updatePlayerPosition(String id, float x, float y);
 
+    public native void nativeStopPlayerMove(String id);
+
     public native String getGameState();
 
     public native void resetEngine();
+
+    public native String nativePlayerAttack(String id, boolean isSkill);
 }

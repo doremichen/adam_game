@@ -9,11 +9,11 @@
     <string name="arenaminifight_game_hint_edit">輸入訊息...</string>
     <string name="arenaminifight_game_send_btn">發送</string>
     <string name="arenaminifight_game_connecting_to_arena_service">正在連線至競技場服務...</string>
-    <string name="arenaminifight_game_login_failed">Login failed</string>
-    <string name="arenaminifight_game_login_success">Login success</string>
-    <string name="arenaminifight_game_exit">Exit</string>
+    <string name="arenaminifight_game_login_failed">登入失敗</string>
+    <string name="arenaminifight_game_login_success">登入成功</string>
+    <string name="arenaminifight_game_exit">離開</string>
     <string name="add_ai_btn">新增 AI 玩家</string>
-    <string name="arenaminifight_game_exit_btn">Exit</string>
+    <string name="arenaminifight_game_exit_btn">離開</string>
 
     <string name="game_btn_attack">普攻</string>
     <string name="game_btn_skill">技能</string>
@@ -28,7 +28,7 @@
     <string name="settings_sfx_summary">啟用遊戲音效</string>
     <string name="settings_graphics_category">畫質設定</string>
     <string name="settings_fps_title">目標幀率</string>
-    <string name="settings_fps_summary">Select target FPS for rendering</string>
+    <string name="settings_fps_summary">選擇渲染的目標幀率</string>
 
     <string name="settings_activity_title">遊戲設定</string>
     <string name="dialog_send_message_title">發送訊息</string>
@@ -40,7 +40,7 @@
     <string name="room_status_waiting">狀態：等待玩家加入 (1/3)</string>
     <string name="room_select_character">選擇角色職業：</string>
     <string name="character_warrior">戰士 - 高生命值與平衡</string>
-    <string name="character_assassin">刺客 - High Speed &amp; Agility</string>
+    <string name="character_assassin">刺客 - 高速度與敏捷</string>
     <string name="room_ready_btn">準備並開始對戰</string>
     <string name="room_leave_btn">離開房間</string>
 

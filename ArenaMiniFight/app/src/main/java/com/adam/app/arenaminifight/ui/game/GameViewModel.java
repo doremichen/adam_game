@@ -85,13 +85,29 @@ public class GameViewModel extends ViewModel {
     // Trace: UC-10
     public void onAttackClicked() {
         GameUtil.log(TAG + ": onAttackClicked()");
-        setPlayerStatus("Action: ATTACK!");
+        if (mMainPlayerId.isEmpty()) {
+            setPlayerStatus("No active player!");
+            return;
+        }
+        GameUseCase.AttackParams params = new GameUseCase.AttackParams(mMainPlayerId, false, this::onAttackResult);
+        mGameUseCase.execute(GameUseCase.Action.PLAYER_ATTACK, params);
     }
 
     // Trace: UC-10
     public void onSkillClicked() {
         GameUtil.log(TAG + ": onSkillClicked()");
-        setPlayerStatus("Action: SKILL CAST!");
+        if (mMainPlayerId.isEmpty()) {
+            setPlayerStatus("No active player!");
+            return;
+        }
+        GameUseCase.AttackParams params = new GameUseCase.AttackParams(mMainPlayerId, true, this::onAttackResult);
+        mGameUseCase.execute(GameUseCase.Action.PLAYER_ATTACK, params);
+    }
+
+    private void onAttackResult(String result) {
+        if (result != null) {
+            setPlayerStatus(result);
+        }
     }
 
     // Trace: UC-04
@@ -111,6 +127,15 @@ public class GameViewModel extends ViewModel {
         mPlayerStatus.setValue(String.format("(%.1f, %.1f)", x, y));
         GameUseCase.MoveParams params = new GameUseCase.MoveParams(mMainPlayerId, x, y);
         mGameUseCase.execute(GameUseCase.Action.MOVE_PLAYER, params);
+    }
+
+    // Trace: UC-05
+    public void stopPlayerMove() {
+        if (mMainPlayerId.isEmpty()) {
+            return;
+        }
+        GameUseCase.StopMoveParams params = new GameUseCase.StopMoveParams(mMainPlayerId);
+        mGameUseCase.execute(GameUseCase.Action.STOP_MOVE_PLAYER, params);
     }
 
     public void setPlayerStatus(String status) {

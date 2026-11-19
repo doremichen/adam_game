@@ -63,6 +63,7 @@ public class GameGatewayImpl implements IGameGateway {
     private Callback<Player> mSpawnCallback;
     private Callback<ChatMessage> mChatCallback;
     private Callback<List<Player>> mGameStateCallback;
+    private Callback<String> mAttackCallback;
 
     private Messenger mSvrMessenger;
     private final Messenger mClientMessenger = new Messenger(new Handler(Looper.getMainLooper()) {
@@ -104,6 +105,12 @@ public class GameGatewayImpl implements IGameGateway {
                     List<Player> updatedPlayers = parseStateString(stateStr);
                     mGameStateCallback.onResult(updatedPlayers);
                     break;
+                case GameService.UC_SYNC_ATTACK_RESULT: // Trace: UC-10
+                    if (mAttackCallback != null) {
+                        String res = msg.getData().getString("result");
+                        mAttackCallback.onResult(res);
+                    }
+                    break;
                 default:
                     super.handleMessage(msg);
             }
@@ -115,9 +122,10 @@ public class GameGatewayImpl implements IGameGateway {
             for (String p : players) {
                 String[] attrs = p.split(":");
                 if (attrs.length >= 5) {
+                    int attackType = attrs.length >= 6 ? Integer.parseInt(attrs[5]) : 0;
                     list.add(new Player(attrs[1], attrs[0],
                             new PointF(Float.parseFloat(attrs[2]), Float.parseFloat(attrs[3])),
-                            0f, Integer.parseInt(attrs[4])));
+                            0f, Integer.parseInt(attrs[4]), attackType));
                 }
             }
             return list;
@@ -263,6 +271,46 @@ public class GameGatewayImpl implements IGameGateway {
             mSvrMessenger.send(msg);
         } catch (RemoteException e) {
             GameUtil.log(TAG + ": move player failed");
+        }
+    }
+
+    // Trace: UC-05
+    @Override
+    public void stopPlayerMove(String playerId) {
+        if (Boolean.FALSE.equals(mIsBind.getValue())) {
+            return;
+        }
+
+        try {
+            Message msg = Message.obtain(null, GameService.UC_STOP_MOVE_PLAYER);
+            Bundle data = new Bundle();
+            data.putString("id", playerId);
+            msg.setData(data);
+            mSvrMessenger.send(msg);
+        } catch (RemoteException e) {
+            GameUtil.log(TAG + ": stop player move failed");
+        }
+    }
+
+    // Trace: UC-10
+    @Override
+    public void playerAttack(String playerId, boolean isSkill, Callback<String> callback) {
+        if (Boolean.FALSE.equals(mIsBind.getValue())) {
+            throw new IllegalStateException("Service not connected");
+        }
+
+        mAttackCallback = callback;
+
+        try {
+            Message msg = Message.obtain(null, GameService.UC_PLAYER_ATTACK);
+            Bundle data = new Bundle();
+            data.putString("id", playerId);
+            data.putBoolean("is_skill", isSkill);
+            msg.setData(data);
+            msg.replyTo = mClientMessenger;
+            mSvrMessenger.send(msg);
+        } catch (RemoteException e) {
+            GameUtil.log(TAG + ": player attack failed");
         }
     }
 }

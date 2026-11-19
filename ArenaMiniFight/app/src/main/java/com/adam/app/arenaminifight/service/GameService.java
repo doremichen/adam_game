@@ -57,6 +57,9 @@ public class GameService extends Service {
     public static final int UC_START_GAME = 5;
     public static final int UC_STOP_GAME = 6;
     public static final int UC_GAME_STATE_UPDATE = 7;
+    public static final int UC_PLAYER_ATTACK = 8;
+    public static final int UC_SYNC_ATTACK_RESULT = 9;
+    public static final int UC_STOP_MOVE_PLAYER = 10;
 
     private static final String TAG = "GameService";
     private final Messenger mIncomingHandler = new Messenger(new SvrHandler());
@@ -189,6 +192,31 @@ public class GameService extends Service {
                 case UC_STOP_GAME: // Trace: UC-07
                     mEngineLoopManager.stop();
                     mNativeEngine.resetEngine();
+                    break;
+                case UC_STOP_MOVE_PLAYER: // Trace: UC-05
+                    Bundle stopData = msg.getData();
+                    String stopId = stopData.getString("id");
+                    if (stopId != null) {
+                        mNativeEngine.nativeStopPlayerMove(stopId);
+                    }
+                    break;
+                case UC_PLAYER_ATTACK: // Trace: UC-10
+                    Bundle attackData = msg.getData();
+                    String attackerId = attackData.getString("id");
+                    boolean isSkill = attackData.getBoolean("is_skill", false);
+                    String attackResult = mNativeEngine.nativePlayerAttack(attackerId, isSkill);
+
+                    if (msg.replyTo != null) {
+                        Message attackReply = Message.obtain(null, UC_SYNC_ATTACK_RESULT);
+                        Bundle replyBundle = new Bundle();
+                        replyBundle.putString("result", attackResult);
+                        attackReply.setData(replyBundle);
+                        try {
+                            msg.replyTo.send(attackReply);
+                        } catch (RemoteException e) {
+                            GameUtil.log(HANDLER_TAG + ": send attack reply failed");
+                        }
+                    }
                     break;
                 default:
                     super.handleMessage(msg);

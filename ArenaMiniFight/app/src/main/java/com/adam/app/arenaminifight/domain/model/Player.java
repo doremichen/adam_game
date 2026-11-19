@@ -36,6 +36,7 @@ public class Player implements Parcelable {
     private final PointF mPosition;
     private final float mDirection;
     private final int mHp;
+    private final int mAttackType;
 
     /**
      * Constructs a Player instance.
@@ -45,13 +46,19 @@ public class Player implements Parcelable {
      * @param position  2D position coordinates
      * @param direction orientation angle
      * @param hp        health points
+     * @param attackType attack action type
      */
-    public Player(String name, String playerId, PointF position, float direction, int hp) {
+    public Player(String name, String playerId, PointF position, float direction, int hp, int attackType) {
         mName = name;
         mPlayerId = playerId;
         mPosition = position;
         mDirection = direction;
         mHp = hp;
+        mAttackType = attackType;
+    }
+
+    public Player(String name, String playerId, PointF position, float direction, int hp) {
+        this(name, playerId, position, direction, hp, 0);
     }
 
     protected Player(Parcel in) {
@@ -60,6 +67,7 @@ public class Player implements Parcelable {
         mPosition = in.readParcelable(PointF.class.getClassLoader(), PointF.class);
         mDirection = in.readFloat();
         mHp = in.readInt();
+        mAttackType = in.readInt();
     }
 
     @Override
@@ -69,6 +77,7 @@ public class Player implements Parcelable {
         dest.writeParcelable(mPosition, flags);
         dest.writeFloat(mDirection);
         dest.writeInt(mHp);
+        dest.writeInt(mAttackType);
     }
 
     @Override
@@ -149,5 +158,14 @@ public class Player implements Parcelable {
      */
     public Float getY() {
         return mPosition != null ? mPosition.y : 0f;
+    }
+
+    /**
+     * Returns the attack type.
+     *
+     * @return attack type int
+     */
+    public int getAttackType() {
+        return mAttackType;
     }
 }

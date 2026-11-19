@@ -151,6 +151,15 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 // Draw player circle
                 canvas.drawCircle(pos.x, pos.y, GameConstants.PLAYER_RADIUS, mPlayerPaint);
 
+                // Draw combat attack / skill visual effect ring
+                if (player.getAttackType() > 0) {
+                    mPlayerPaint.setColor(player.getAttackType() == 2 ? Color.CYAN : Color.YELLOW);
+                    mPlayerPaint.setStyle(Paint.Style.STROKE);
+                    mPlayerPaint.setStrokeWidth(8f);
+                    canvas.drawCircle(pos.x, pos.y, GameConstants.PLAYER_RADIUS + 24f, mPlayerPaint);
+                    mPlayerPaint.setStyle(Paint.Style.FILL);
+                }
+
                 // Draw player name
                 mTextPaint.setTextAlign(Paint.Align.CENTER);
                 canvas.drawText(name, pos.x, pos.y - GameConstants.NAME_OFFSET_Y, mTextPaint);
