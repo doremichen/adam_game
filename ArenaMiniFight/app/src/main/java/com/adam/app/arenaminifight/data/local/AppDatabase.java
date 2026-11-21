@@ -20,37 +20,34 @@
  * SOFTWARE.
  */
 
-package com.adam.app.arenaminifight.ui.welcome;
+package com.adam.app.arenaminifight.data.local;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
+import android.content.Context;
 
-import com.adam.app.arenaminifight.domain.gateway.IGameGateway;
-import com.adam.app.arenaminifight.domain.usecase.WelcomeUseCase;
-
-import javax.inject.Inject;
-
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
 /**
- * Trace: UC-01 (User Welcome & Service Initialization)
+ * Room Database for Arena Mini Fight.
+ * Trace: UC-MENU-04, REQ-MENU-04, REQ-NFR-04
  */
-@HiltViewModel
-public class WelcomeViewModel extends ViewModel {
+@Database(entities = {ScoreEntity.class}, version = 1, exportSchema = false)
+public abstract class AppDatabase extends RoomDatabase {
 
-    private static final String TAG = "WelcomeViewModel";
+    private static final String DATABASE_NAME = "arena_mini_fight.db";
+    private static volatile AppDatabase sInstance;
 
-    private final WelcomeUseCase mWelcomeUseCase;
+    public abstract ScoreDao scoreDao();
 
-    @Inject
-    public WelcomeViewModel(IGameGateway gateway) {
-        mWelcomeUseCase = new WelcomeUseCase(gateway);
-        // Trace: UC-01
-        mWelcomeUseCase.execute(WelcomeUseCase.Action.BIND_SERVICE, null);
-    }
-
-    public LiveData<Boolean> getIsLoginSuccess() {
-        // Trace: UC-01
-        return mWelcomeUseCase.execute(WelcomeUseCase.Action.IS_READY, null);
+    public static synchronized AppDatabase getInstance(Context context) {
+        if (sInstance == null) {
+            sInstance = Room.databaseBuilder(
+                    context.getApplicationContext(),
+                    AppDatabase.class,
+                    DATABASE_NAME
+            ).build();
+        }
+        return sInstance;
     }
 }

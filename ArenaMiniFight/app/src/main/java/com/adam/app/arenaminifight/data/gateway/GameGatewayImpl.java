@@ -27,15 +27,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.PointF;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
-import android.os.Messenger;
 import android.os.RemoteException;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -43,6 +39,8 @@ import com.adam.app.arenaminifight.GameApplication;
 import com.adam.app.arenaminifight.domain.gateway.IGameGateway;
 import com.adam.app.arenaminifight.domain.model.ChatMessage;
 import com.adam.app.arenaminifight.domain.model.Player;
+import com.adam.app.arenaminifight.ipc.IGameService;
+import com.adam.app.arenaminifight.ipc.IGameStateListener;
 import com.adam.app.arenaminifight.service.GameService;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
@@ -50,8 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Concrete implementation of IGameGateway using IPC Messenger to communicate with GameService.
- * Trace: UC-01, UC-02, UC-04, UC-05, UC-06, UC-07
+ * Concrete implementation of IGameGateway using AIDL Binder IPC to communicate with GameService.
+ * Trace: REQ-IPC-01, REQ-IPC-02, REQ-IPC-03
  */
 public class GameGatewayImpl implements IGameGateway {
 
@@ -59,89 +57,67 @@ public class GameGatewayImpl implements IGameGateway {
 
     private final Context mContext;
     private final MutableLiveData<Boolean> mIsBind = new MutableLiveData<>(false);
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
 
     private Callback<Player> mSpawnCallback;
     private Callback<ChatMessage> mChatCallback;
     private Callback<List<Player>> mGameStateCallback;
     private Callback<String> mAttackCallback;
+    private Callback<String> mGameOverCallback;
 
-    private Messenger mSvrMessenger;
-    private final Messenger mClientMessenger = new Messenger(new Handler(Looper.getMainLooper()) {
+    private IGameService mGameService;
+    private final List<Runnable> mPendingActions = new ArrayList<>();
+
+    private final IGameStateListener.Stub mStateListener = new IGameStateListener.Stub() {
         @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case GameService.UC_SYNC_CHAT: // Trace: UC-02
-                    if (mChatCallback == null) {
-                        GameUtil.log(TAG + ": no callback!!!");
-                        return;
-                    }
-
-                    ChatMessage chatMessage = (ChatMessage) msg.obj;
-                    mChatCallback.onResult(chatMessage);
-                    break;
-                case GameService.UC_NEW_PLAYER: // Trace: UC-04
-                    if (mSpawnCallback == null) {
-                        GameUtil.log(TAG + ": no callback!!!");
-                        return;
-                    }
-                    Player player = msg.getData().getParcelable("player_data", Player.class);
-                    if (player == null) {
-                        GameUtil.log(TAG + ": no player!!!");
-                        return;
-                    }
-                    GameUtil.log(TAG + ": new player: " + player.getName());
-                    mSpawnCallback.onResult(player);
-                    break;
-                case GameService.UC_GAME_STATE_UPDATE: // Trace: UC-06
-                    if (mGameStateCallback == null) {
-                        GameUtil.log(TAG + ": no callback!!!");
-                        return;
-                    }
-                    String stateStr = msg.getData().getString("game_state_str");
-                    if (stateStr == null) {
-                        GameUtil.log(TAG + ": no state!!!");
-                        return;
-                    }
-                    List<Player> updatedPlayers = parseStateString(stateStr);
-                    mGameStateCallback.onResult(updatedPlayers);
-                    break;
-                case GameService.UC_SYNC_ATTACK_RESULT: // Trace: UC-10
-                    if (mAttackCallback != null) {
-                        String res = msg.getData().getString("result");
-                        mAttackCallback.onResult(res);
-                    }
-                    break;
-                default:
-                    super.handleMessage(msg);
+        public void onGameStateUpdated(String gameStateStr) throws RemoteException {
+            if (mGameStateCallback != null && gameStateStr != null) {
+                List<Player> updatedPlayers = parseStateString(gameStateStr);
+                mMainHandler.post(() -> mGameStateCallback.onResult(updatedPlayers));
             }
         }
 
-        private List<Player> parseStateString(String stateStr) {
-            List<Player> list = new ArrayList<>();
-            String[] players = stateStr.split("\\|");
-            for (String p : players) {
-                String[] attrs = p.split(":");
-                if (attrs.length >= 5) {
-                    int attackType = attrs.length >= 6 ? Integer.parseInt(attrs[5]) : 0;
-                    list.add(new Player(attrs[1], attrs[0],
-                            new PointF(Float.parseFloat(attrs[2]), Float.parseFloat(attrs[3])),
-                            0f, Integer.parseInt(attrs[4]), attackType));
-                }
+        @Override
+        public void onAttackResult(String result) throws RemoteException {
+            if (mAttackCallback != null) {
+                mMainHandler.post(() -> mAttackCallback.onResult(result));
             }
-            return list;
         }
-    });
+
+        @Override
+        public void onGameOver(String summary) throws RemoteException {
+            GameUtil.log(TAG + ": Game Over received via AIDL: " + summary);
+            if (mGameOverCallback != null && summary != null) {
+                mMainHandler.post(() -> mGameOverCallback.onResult(summary));
+            }
+        }
+    };
 
     private final ServiceConnection mServiceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            mSvrMessenger = new Messenger(service);
+            GameUtil.log("[StartGameFlow][Step 5] GameGatewayImpl: onServiceConnected() -> Service bound via AIDL, flushing pending actions");
+            mGameService = IGameService.Stub.asInterface(service);
+            try {
+                mGameService.registerListener(mStateListener);
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": Error registering AIDL listener: " + e.getMessage());
+            }
             mIsBind.postValue(true);
+            for (Runnable action : new ArrayList<>(mPendingActions)) {
+                try {
+                    action.run();
+                } catch (Exception e) {
+                    GameUtil.log(TAG + ": Error executing pending action: " + e.getMessage());
+                }
+            }
+            mPendingActions.clear();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            mSvrMessenger = null;
+            GameUtil.log(TAG + ": Service disconnected");
+            mGameService = null;
             mIsBind.postValue(false);
         }
     };
@@ -164,153 +140,148 @@ public class GameGatewayImpl implements IGameGateway {
         return mIsBind;
     }
 
-    // Trace: UC-01
+    // Trace: REQ-GAME-01
     @Override
     public void bindGameService() {
+        GameUtil.log("[StartGameFlow][Step 5] GameGatewayImpl: bindGameService() -> Binding to GameService");
+        if (Boolean.TRUE.equals(mIsBind.getValue()) && mGameService != null) {
+            return;
+        }
         Intent intent = new Intent(mContext, GameService.class);
         mContext.bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
     public void unbindGameService() {
-        if (Boolean.TRUE.equals(mIsBind.getValue())) {
-            mContext.unbindService(mServiceConnection);
+        if (Boolean.TRUE.equals(mIsBind.getValue()) && mGameService != null) {
+            try {
+                mGameService.unregisterListener(mStateListener);
+                mContext.unbindService(mServiceConnection);
+            } catch (Exception ignored) {
+            }
             mIsBind.setValue(false);
+            mGameService = null;
         }
     }
 
-    // Trace: UC-02
+    private void executeOrQueue(Runnable action) {
+        if (Boolean.TRUE.equals(mIsBind.getValue()) && mGameService != null) {
+            try {
+                action.run();
+            } catch (Exception e) {
+                GameUtil.log(TAG + ": Action execution failed: " + e.getMessage());
+            }
+        } else {
+            mPendingActions.add(action);
+            bindGameService();
+        }
+    }
+
+    private List<Player> parseStateString(String stateStr) {
+        List<Player> list = new ArrayList<>();
+        String[] players = stateStr.split("\\|");
+        for (String p : players) {
+            String[] attrs = p.split(":");
+            if (attrs.length >= 5) {
+                int attackType = attrs.length >= 6 ? Integer.parseInt(attrs[5]) : 0;
+                list.add(new Player(attrs[1], attrs[0],
+                        new PointF(Float.parseFloat(attrs[2]), Float.parseFloat(attrs[3])),
+                        0f, Integer.parseInt(attrs[4]), attackType));
+            }
+        }
+        return list;
+    }
+
     @Override
     public void sendChat(ChatMessage chat, Callback<ChatMessage> callback) {
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            throw new IllegalStateException("Service not connected");
-        }
-        try {
-            Message msg = Message.obtain(null, GameService.UC_SEND_CHAT);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("chat", chat);
-            msg.setData(bundle);
-
-            msg.replyTo = mClientMessenger;
-            mSvrMessenger.send(msg);
-            mChatCallback = callback;
-        } catch (RemoteException e) {
-            throw new RuntimeException("Send chat failed", e);
+        mChatCallback = callback;
+        if (callback != null && chat != null) {
+            mMainHandler.post(() -> callback.onResult(chat));
         }
     }
 
-    // Trace: UC-04
+    // Trace: REQ-GAME-01
     @Override
     public void spawnPlayer(String name, Callback<Player> callback) {
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            throw new IllegalStateException("Service not connected");
-        }
-
+        GameUtil.log("[StartGameFlow][Step 5] GameGatewayImpl: spawnPlayer(name=" + name + ") -> Invoking AIDL mGameService.spawnPlayer()");
         mSpawnCallback = callback;
-
-        try {
-            Message msg = Message.obtain(null, GameService.UC_SPAWN_PLAYER);
-            Bundle data = new Bundle();
-            data.putString("name", name);
-            msg.setData(data);
-
-            msg.replyTo = mClientMessenger;
-            mSvrMessenger.send(msg);
-        } catch (RemoteException e) {
-            throw new RuntimeException("Spawn player failed", e);
-        }
+        executeOrQueue(() -> {
+            try {
+                Player player = mGameService.spawnPlayer(name);
+                if (callback != null && player != null) {
+                    mMainHandler.post(() -> callback.onResult(player));
+                }
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": spawnPlayer AIDL failed: " + e.getMessage());
+            }
+        });
     }
 
-    // Trace: UC-06
+    // Trace: REQ-GAME-01, REQ-IPC-01
     @Override
     public void startGame(Callback<List<Player>> callback) {
-        GameUtil.log(TAG + ": startGame");
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            throw new IllegalStateException("Service not connected");
-        }
-
-        Message msg = Message.obtain(null, GameService.UC_START_GAME);
-        try {
-            mSvrMessenger.send(msg);
-            mGameStateCallback = callback;
-        } catch (RemoteException e) {
-            throw new RuntimeException("Start game failed", e);
-        }
+        GameUtil.log("[StartGameFlow][Step 5] GameGatewayImpl: startGame() -> Invoking AIDL mGameService.startGame()");
+        mGameStateCallback = callback;
+        executeOrQueue(() -> {
+            try {
+                mGameService.startGame();
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": startGame AIDL failed: " + e.getMessage());
+            }
+        });
     }
 
-    // Trace: UC-07
     @Override
     public void stopGame() {
-        GameUtil.log(TAG + ": stopGame");
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            throw new IllegalStateException("Service not connected");
-        }
-
-        Message msg = Message.obtain(null, GameService.UC_STOP_GAME);
-        try {
-            mSvrMessenger.send(msg);
-        } catch (RemoteException e) {
-            throw new RuntimeException("Stop game failed", e);
-        }
+        GameUtil.log(TAG + ": stopGame via AIDL");
+        executeOrQueue(() -> {
+            try {
+                mGameService.stopGame();
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": stopGame AIDL failed: " + e.getMessage());
+            }
+        });
     }
 
-    // Trace: UC-05
+    // Trace: REQ-IPC-03, REQ-GAME-02
     @Override
     public void movePlayer(String playerId, float x, float y) {
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            throw new IllegalStateException("Service not connected");
-        }
-
-        try {
-            Message msg = Message.obtain(null, GameService.UC_MOVE_PLAYER);
-            Bundle data = new Bundle();
-            data.putString("id", playerId);
-            data.putFloat("x", x);
-            data.putFloat("y", y);
-            msg.setData(data);
-            mSvrMessenger.send(msg);
-        } catch (RemoteException e) {
-            GameUtil.log(TAG + ": move player failed");
-        }
+        executeOrQueue(() -> {
+            try {
+                mGameService.movePlayer(playerId, x, y);
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": movePlayer AIDL failed: " + e.getMessage());
+            }
+        });
     }
 
-    // Trace: UC-05
+    // Trace: REQ-IPC-03, REQ-GAME-02
     @Override
     public void stopPlayerMove(String playerId) {
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            return;
-        }
-
-        try {
-            Message msg = Message.obtain(null, GameService.UC_STOP_MOVE_PLAYER);
-            Bundle data = new Bundle();
-            data.putString("id", playerId);
-            msg.setData(data);
-            mSvrMessenger.send(msg);
-        } catch (RemoteException e) {
-            GameUtil.log(TAG + ": stop player move failed");
-        }
+        executeOrQueue(() -> {
+            try {
+                mGameService.stopPlayerMove(playerId);
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": stopPlayerMove AIDL failed: " + e.getMessage());
+            }
+        });
     }
 
-    // Trace: UC-10
+    // Trace: REQ-IPC-03, REQ-GAME-03
     @Override
     public void playerAttack(String playerId, boolean isSkill, Callback<String> callback) {
-        if (Boolean.FALSE.equals(mIsBind.getValue())) {
-            throw new IllegalStateException("Service not connected");
-        }
-
         mAttackCallback = callback;
+        executeOrQueue(() -> {
+            try {
+                mGameService.playerAttack(playerId, isSkill);
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": playerAttack AIDL failed: " + e.getMessage());
+            }
+        });
+    }
 
-        try {
-            Message msg = Message.obtain(null, GameService.UC_PLAYER_ATTACK);
-            Bundle data = new Bundle();
-            data.putString("id", playerId);
-            data.putBoolean("is_skill", isSkill);
-            msg.setData(data);
-            msg.replyTo = mClientMessenger;
-            mSvrMessenger.send(msg);
-        } catch (RemoteException e) {
-            GameUtil.log(TAG + ": player attack failed");
-        }
+    @Override
+    public void setGameOverCallback(Callback<String> callback) {
+        mGameOverCallback = callback;
     }
 }

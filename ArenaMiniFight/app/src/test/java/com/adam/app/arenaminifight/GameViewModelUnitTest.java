@@ -20,48 +20,46 @@
  * SOFTWARE.
  */
 
-package com.adam.app.arenaminifight.ui.room;
+package com.adam.app.arenaminifight;
 
-import androidx.lifecycle.ViewModel;
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 
 import com.adam.app.arenaminifight.domain.gateway.IGameGateway;
-import com.adam.app.arenaminifight.utils.GameUtil;
-import com.adam.app.arenaminifight.utils.SingleLiveEvent;
+import com.adam.app.arenaminifight.ui.game.GameViewModel;
 
-import javax.inject.Inject;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-import dagger.hilt.android.lifecycle.HiltViewModel;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-@HiltViewModel
-public class RoomViewModel extends ViewModel {
+/**
+ * Unit Test for GameViewModel.
+ * Trace: UT-01, UC-GAME-12
+ */
+public class GameViewModelUnitTest {
 
-    private static final String TAG = "RoomViewModel";
+    @Rule
+    public TestRule mInstantTaskExecutorRule = new InstantTaskExecutorRule();
 
-    private final SingleLiveEvent<Boolean> mNavigateToGame = new SingleLiveEvent<>();
-    private final SingleLiveEvent<Boolean> mExitRoomEvent = new SingleLiveEvent<>();
+    @Mock
+    private IGameGateway mGatewayMock;
 
-    private final IGameGateway mGateway;
+    private GameViewModel mViewModel;
 
-    @Inject
-    public RoomViewModel(IGameGateway gateway) {
-        mGateway = gateway;
+    @Before
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+        mViewModel = new GameViewModel(mGatewayMock);
     }
 
-    public SingleLiveEvent<Boolean> getNavigateToGame() {
-        return mNavigateToGame;
-    }
-
-    public SingleLiveEvent<Boolean> getExitRoomEvent() {
-        return mExitRoomEvent;
-    }
-
-    public void onReadyClicked() {
-        GameUtil.log(TAG + ": onReadyClicked - Starting Match");
-        mNavigateToGame.setValue(true);
-    }
-
-    public void onLeaveClicked() {
-        GameUtil.log(TAG + ": onLeaveClicked - Leaving Room");
-        mExitRoomEvent.setValue(true);
+    @Test
+    public void testInitialPlayerStatus() {
+        assertNotNull("Player status LiveData should not be null", mViewModel.getPlayerStatus());
+        assertEquals("Initial status should be empty", "", mViewModel.getPlayerStatus().getValue());
     }
 }

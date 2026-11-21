@@ -20,11 +20,9 @@
  * SOFTWARE.
  */
 
-package com.adam.app.arenaminifight.ui.welcome;
+package com.adam.app.arenaminifight.ui.settings;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,31 +30,29 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.adam.app.arenaminifight.R;
-import com.adam.app.arenaminifight.databinding.FragmentWelcomeBinding;
+import com.adam.app.arenaminifight.databinding.FragmentSettingsBinding;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * Container Fragment for Settings with a Back button and PreferenceFragmentCompat.
+ * Trace: UC-MENU-03, UI-003
+ */
 @AndroidEntryPoint
-public class WelcomeFragment extends Fragment {
+public class SettingsFragmentContainer extends Fragment {
 
-    private static final String TAG = "WelcomeFragment";
+    private static final String TAG = SettingsFragmentContainer.class.getSimpleName();
+    private FragmentSettingsBinding mBinding;
 
-    private FragmentWelcomeBinding mBinding;
-    private WelcomeViewModel mViewModel;
-
-    public static WelcomeFragment newInstance() {
-        return new WelcomeFragment();
-    }
-
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        mBinding = FragmentWelcomeBinding.inflate(inflater, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        GameUtil.log(TAG + ": onCreateView()");
+        mBinding = FragmentSettingsBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
@@ -64,27 +60,17 @@ public class WelcomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(WelcomeViewModel.class);
-        mBinding.setVm(mViewModel);
-        mBinding.setLifecycleOwner(getViewLifecycleOwner());
-
-        mViewModel.getIsLoginSuccess().observe(getViewLifecycleOwner(), status -> {
-            GameUtil.log(TAG + " login status: " + status);
-            if (Boolean.TRUE.equals(status)) {
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    if (isAdded()) {
-                        GameUtil.showToast(requireContext(), getString(R.string.arenaminifight_game_login_success));
-                        navigateToLobby();
-                    }
-                }, 500L);
-            }
-        });
-    }
-
-    private void navigateToLobby() {
-        if (getView() != null) {
-            Navigation.findNavController(requireView()).navigate(R.id.action_welcome_to_lobby);
+        if (savedInstanceState == null) {
+            getChildFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.settings_container, new SettingsFragment())
+                    .commit();
         }
+
+        mBinding.btnBack.setOnClickListener(v -> {
+            GameUtil.log(TAG + ": Back clicked");
+            Navigation.findNavController(v).navigateUp();
+        });
     }
 
     @Override

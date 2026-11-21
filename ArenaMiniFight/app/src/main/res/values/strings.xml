@@ -1,8 +1,40 @@
 <resources>
-    <string name="app_name">ArenaMiniFight</string>
+    <string name="app_name">Arena Mini Fight</string>
+    <string name="splash_subtitle">Neon Sci-Fi Arena Survival</string>
+    <string name="splash_loading">Initializing Game Engine...</string>
+
+    <string name="menu_start_game">START GAME</string>
+    <string name="menu_setting">SETTING</string>
+    <string name="menu_leaderboard">LEADERBOARD</string>
+    <string name="menu_about">ABOUT</string>
+
+    <string name="setting_title">SETTINGS</string>
+    <string name="setting_sound_volume">Sound Volume</string>
+    <string name="setting_graphics">Graphics Quality</string>
+    <string name="setting_back">BACK TO MENU</string>
+
+    <string name="leaderboard_title">LEADERBOARD</string>
+    <string name="leaderboard_empty">No records yet. Play a game!</string>
+    <string name="leaderboard_back">BACK TO MENU</string>
+
+    <string name="about_title">ABOUT GAME</string>
+    <string name="about_app_name">Arena Mini Fight</string>
+    <string name="about_version">Version 1.0.0</string>
+    <string name="about_description">Top-down arena survival game powered by C++ Native Engine, Android IPC (Binder), and Clean Architecture + MVVM.</string>
+    <string name="about_back">BACK TO MENU</string>
+
+    <string name="settings_audio_category">Audio Settings</string>
+    <string name="settings_bgm_title">Background Music (BGM)</string>
+    <string name="settings_bgm_summary">Enable background music</string>
+    <string name="settings_sfx_title">Sound Effects (SFX)</string>
+    <string name="settings_sfx_summary">Enable in-game sound effects</string>
+    <string name="settings_graphics_category">Graphics Settings</string>
+    <string name="settings_fps_title">Target Frame Rate</string>
+    <string name="settings_fps_summary">Select target FPS for rendering</string>
+
     <string name="arenaminifight_game_unimplemented_info">Unimplemented</string>
     <string name="arenaminifight">ArenaMiniFight</string>
-    <string name="arenaminifight_game_synching_data">Sych Data ...</string>
+    <string name="arenaminifight_game_synching_data">Sync Data ...</string>
     <string name="arenaminifight_game_lobby_title">Lobby</string>
     <string name="arenaminifight_game_start_game">Start Game</string>
     <string name="arenaminifight_game_hint_edit">Type a message...</string>
@@ -19,15 +51,6 @@
 
     <string name="dialog_exit_title">Exit Game</string>
     <string name="dialog_exit_message">Are you sure you want to exit the match?</string>
-
-    <string name="settings_audio_category">Audio Settings</string>
-    <string name="settings_bgm_title">Background Music (BGM)</string>
-    <string name="settings_bgm_summary">Enable background music</string>
-    <string name="settings_sfx_title">Sound Effects (SFX)</string>
-    <string name="settings_sfx_summary">Enable in-game sound effects</string>
-    <string name="settings_graphics_category">Graphics Settings</string>
-    <string name="settings_fps_title">Target Frame Rate</string>
-    <string name="settings_fps_summary">Select target FPS for rendering</string>
 
     <string name="settings_activity_title">Game Settings</string>
     <string name="dialog_send_message_title">Send Message</string>
@@ -49,7 +72,7 @@
     <string name="result_stat_damage">• Damage Dealt: 1,450</string>
     <string name="result_stat_score">• Score: +25</string>
     <string name="result_stat_rewards">• Rewards: 100 Gold</string>
-    <string name="result_back_to_lobby">Back to Lobby</string>
+    <string name="result_back_to_menu">BACK TO MENU</string>
 
     <string name="btn_settings">Settings</string>
 

@@ -117,4 +117,11 @@ public interface IGameGateway {
      * @param callback the result callback
      */
     void playerAttack(String playerId, boolean isSkill, Callback<String> callback);
+
+    /**
+     * Sets callback for game over event.
+     *
+     * @param callback the result callback
+     */
+    void setGameOverCallback(Callback<String> callback);
 }

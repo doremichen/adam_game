@@ -37,7 +37,7 @@ public class ResultViewModel extends ViewModel {
 
     private static final String TAG = "ResultViewModel";
 
-    private final SingleLiveEvent<Boolean> mNavigateToLobby = new SingleLiveEvent<>();
+    private final SingleLiveEvent<Boolean> mNavigateToMenu = new SingleLiveEvent<>();
     private final IGameGateway mGateway;
 
     @Inject
@@ -45,12 +45,12 @@ public class ResultViewModel extends ViewModel {
         mGateway = gateway;
     }
 
-    public SingleLiveEvent<Boolean> getNavigateToLobby() {
-        return mNavigateToLobby;
+    public SingleLiveEvent<Boolean> getNavigateToMenu() {
+        return mNavigateToMenu;
     }
 
-    public void onBackToLobbyClicked() {
-        GameUtil.log(TAG + ": onBackToLobbyClicked");
-        mNavigateToLobby.setValue(true);
+    public void onBackToMenuClicked() {
+        GameUtil.log(TAG + ": onBackToMenuClicked");
+        mNavigateToMenu.setValue(true);
     }
 }

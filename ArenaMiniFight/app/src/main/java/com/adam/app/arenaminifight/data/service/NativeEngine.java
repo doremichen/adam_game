@@ -25,6 +25,10 @@ package com.adam.app.arenaminifight.data.service;
 import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
+/**
+ * JNI Native Engine wrapper interfacing with the C++ physics, collision, and AI simulation engine.
+ * Trace: REQ-JNI-01, REQ-JNI-02, REQ-JNI-03
+ */
 public class NativeEngine {
 
     private static final String TAG = "NativeEngine";
@@ -33,9 +37,8 @@ public class NativeEngine {
         try {
             System.loadLibrary("game_engine");
             GameUtil.log(TAG + ": load library success.");
-        } catch (Exception e) {
-            GameUtil.log(TAG + ": load library failed.");
-            e.printStackTrace();
+        } catch (Throwable t) {
+            GameUtil.log(TAG + ": load library failed: " + t.getMessage());
         }
     }
 
@@ -54,6 +57,8 @@ public class NativeEngine {
 
     public native void updateEngine(float deltaTime);
 
+    public native void updateWorld(float deltaTime);
+
     public native void updatePlayerPosition(String id, float x, float y);
 
     public native void nativeStopPlayerMove(String id);
@@ -63,4 +68,10 @@ public class NativeEngine {
     public native void resetEngine();
 
     public native String nativePlayerAttack(String id, boolean isSkill);
+
+    public native boolean checkCollision(float x1, float y1, float r1, float x2, float y2, float r2);
+
+    public native float[] pathFind(float startX, float startY, float endX, float endY);
+
+    public native void spawnEnemy();
 }

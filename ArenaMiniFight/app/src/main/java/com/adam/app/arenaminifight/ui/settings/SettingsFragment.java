@@ -24,17 +24,32 @@ package com.adam.app.arenaminifight.ui.settings;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
+import androidx.navigation.Navigation;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.adam.app.arenaminifight.R;
+import com.adam.app.arenaminifight.utils.GameUtil;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * Settings Fragment allowing players to modify audio and graphics preferences (UC-MENU-03, UI-003).
+ */
 @AndroidEntryPoint
 public class SettingsFragment extends PreferenceFragmentCompat {
 
+    private static final String TAG = SettingsFragment.class.getSimpleName();
+
     @Override
-    public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+    public void onCreatePreferences(@Nullable Bundle savedInstanceState, @Nullable String rootKey) {
         setPreferencesFromResource(R.xml.preferences, rootKey);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        GameUtil.log(TAG + ": onStart()");
+        // If there is a back button in parent activity/layout, handle it here or via onBackPressed
     }
 }

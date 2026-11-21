@@ -42,6 +42,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * GameSurfaceView rendering game entities with relative world-to-screen coordinate mapping.
+ * Trace: UI-001, REQ-NFR-01
+ */
 public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
 
     private static final String TAG = "GameSurfaceView";
@@ -137,6 +141,9 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             return;
         }
 
+        float canvasWidth = canvas.getWidth();
+        float canvasHeight = canvas.getHeight();
+
         synchronized (mPlayers) {
             for (Player player : mPlayers) {
                 if (player == null) continue;
@@ -146,31 +153,34 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 if (pos == null) continue;
                 if (name == null) name = "Loading...";
 
+                float screenX = mapX(pos.x, canvasWidth);
+                float screenY = mapY(pos.y, canvasHeight);
+
                 mPlayerPaint.setColor(Color.BLUE);
 
                 // Draw player circle
-                canvas.drawCircle(pos.x, pos.y, GameConstants.PLAYER_RADIUS, mPlayerPaint);
+                canvas.drawCircle(screenX, screenY, GameConstants.PLAYER_RADIUS, mPlayerPaint);
 
                 // Draw combat attack / skill visual effect ring
                 if (player.getAttackType() > 0) {
                     mPlayerPaint.setColor(player.getAttackType() == 2 ? Color.CYAN : Color.YELLOW);
                     mPlayerPaint.setStyle(Paint.Style.STROKE);
                     mPlayerPaint.setStrokeWidth(8f);
-                    canvas.drawCircle(pos.x, pos.y, GameConstants.PLAYER_RADIUS + 24f, mPlayerPaint);
+                    canvas.drawCircle(screenX, screenY, GameConstants.PLAYER_RADIUS + 24f, mPlayerPaint);
                     mPlayerPaint.setStyle(Paint.Style.FILL);
                 }
 
                 // Draw player name
                 mTextPaint.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText(name, pos.x, pos.y - GameConstants.NAME_OFFSET_Y, mTextPaint);
+                canvas.drawText(name, screenX, screenY - GameConstants.NAME_OFFSET_Y, mTextPaint);
 
                 // Blood bar background
                 mPlayerPaint.setColor(Color.DKGRAY);
                 canvas.drawRect(
-                        pos.x - (GameConstants.BLOOD_BAR_WIDTH / 2f),
-                        pos.y + GameConstants.BLOOD_BAR_OFFSET_Y,
-                        pos.x + (GameConstants.BLOOD_BAR_WIDTH / 2f),
-                        pos.y + GameConstants.BLOOD_BAR_OFFSET_Y + GameConstants.BLOOD_BAR_HEIGHT,
+                        screenX - (GameConstants.BLOOD_BAR_WIDTH / 2f),
+                        screenY + GameConstants.BLOOD_BAR_OFFSET_Y,
+                        screenX + (GameConstants.BLOOD_BAR_WIDTH / 2f),
+                        screenY + GameConstants.BLOOD_BAR_OFFSET_Y + GameConstants.BLOOD_BAR_HEIGHT,
                         mPlayerPaint
                 );
 
@@ -178,15 +188,23 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
                 mPlayerPaint.setColor(Color.RED);
                 float hpWidth = (player.getHp() / (float) GameConstants.PLAYER_MAX_HP) * GameConstants.BLOOD_BAR_WIDTH;
                 canvas.drawRect(
-                        pos.x - (GameConstants.BLOOD_BAR_WIDTH / 2f),
-                        pos.y + GameConstants.BLOOD_BAR_OFFSET_Y,
-                        pos.x - (GameConstants.BLOOD_BAR_WIDTH / 2f) + hpWidth,
-                        pos.y + GameConstants.BLOOD_BAR_OFFSET_Y + GameConstants.BLOOD_BAR_HEIGHT,
+                        screenX - (GameConstants.BLOOD_BAR_WIDTH / 2f),
+                        screenY + GameConstants.BLOOD_BAR_OFFSET_Y,
+                        screenX - (GameConstants.BLOOD_BAR_WIDTH / 2f) + hpWidth,
+                        screenY + GameConstants.BLOOD_BAR_OFFSET_Y + GameConstants.BLOOD_BAR_HEIGHT,
                         mPlayerPaint
                 );
 
                 mPlayerPaint.setColor(Color.BLUE);
             }
         }
+    }
+
+    private float mapX(float worldX, float canvasWidth) {
+        return (worldX - GameConstants.WORLD_MIN_X) / (GameConstants.WORLD_MAX_X - GameConstants.WORLD_MIN_X) * canvasWidth;
+    }
+
+    private float mapY(float worldY, float canvasHeight) {
+        return (worldY - GameConstants.WORLD_MIN_Y) / (GameConstants.WORLD_MAX_Y - GameConstants.WORLD_MIN_Y) * canvasHeight;
     }
 }

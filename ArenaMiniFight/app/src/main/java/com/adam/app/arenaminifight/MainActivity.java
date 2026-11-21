@@ -31,6 +31,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.adam.app.arenaminifight.databinding.ActivityMainBinding;
+import com.adam.app.arenaminifight.utils.GameUtil;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        GameUtil.log("[StartGameFlow][Step 2] MainActivity: onCreate() -> Hosting NavHostFragment");
         EdgeToEdge.enable(this);
 
         mBinding = ActivityMainBinding.inflate(getLayoutInflater());

@@ -26,6 +26,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.adam.app.arenaminifight.GameApplication;
+import com.adam.app.arenaminifight.data.local.AppDatabase;
+import com.adam.app.arenaminifight.data.local.ScoreEntity;
 import com.adam.app.arenaminifight.domain.gateway.IGameGateway;
 import com.adam.app.arenaminifight.domain.model.Player;
 import com.adam.app.arenaminifight.domain.usecase.GameUseCase;
@@ -59,6 +62,28 @@ public class GameViewModel extends ViewModel {
     @Inject
     public GameViewModel(IGameGateway gateway) {
         mGameUseCase = new GameUseCase(gateway);
+        gateway.setGameOverCallback(summary -> {
+            GameUtil.log(TAG + ": Game Over callback received: " + summary);
+            saveScoreToDatabase();
+            mNavigateToResult.setValue(true);
+        });
+    }
+
+    public void saveScoreToDatabase() {
+        new Thread(() -> {
+            try {
+                AppDatabase db =
+                        AppDatabase.getInstance(
+                                GameApplication.Helper.getInstance().get()
+                        );
+                db.scoreDao().insertScore(new ScoreEntity(
+                        "abb", 60L, 5, 1, System.currentTimeMillis()
+                ));
+                GameUtil.log(TAG + ": Score persisted to Room DB on game over successfully");
+            } catch (Exception e) {
+                GameUtil.log(TAG + ": Failed to persist score: " + e.getMessage());
+            }
+        }).start();
     }
 
     public LiveData<String> getPlayerStatus() {
@@ -144,14 +169,14 @@ public class GameViewModel extends ViewModel {
 
     // Trace: UC-04
     public void initPlayerFromJni(String playerName) {
-        GameUtil.log(TAG + ": initPlayerFromJni(" + playerName + ")");
+        GameUtil.log("[StartGameFlow][Step 4] GameViewModel: initPlayerFromJni(playerName=" + playerName + ") -> Executing SPAWN_PLAYER");
         GameUseCase.SpawnParams params = new GameUseCase.SpawnParams(playerName, this::onPlayerSpawned);
         mGameUseCase.execute(GameUseCase.Action.SPAWN_PLAYER, params);
     }
 
     // Trace: UC-06
     public void startGame() {
-        GameUtil.log(TAG + ": startGame");
+        GameUtil.log("[StartGameFlow][Step 4] GameViewModel: startGame() -> Executing START_GAME");
         IGameGateway.Callback<List<Player>> callback = this::onPlayersData;
         mGameUseCase.execute(GameUseCase.Action.START_GAME, callback);
     }
@@ -161,6 +186,20 @@ public class GameViewModel extends ViewModel {
         if (players == null || players.isEmpty()) {
             return;
         }
+        GameUtil.log("[StartGameFlow][Step 4] GameViewModel: onPlayersData(received " + players.size() + " players)");
+
+        if (mMainPlayerId.isEmpty() && !players.isEmpty()) {
+            for (Player p : players) {
+                if (p != null && p.getPlayerId() != null) {
+                    if (GameConstants.DefaultPlayerName.equals(p.getName()) || mMainPlayerId.isEmpty()) {
+                        mMainPlayerId = p.getPlayerId();
+                        GameUtil.log(TAG + ": Fallback assigned mMainPlayerId = " + mMainPlayerId + " (" + p.getName() + ")");
+                        break;
+                    }
+                }
+            }
+        }
+
         mPlayers.setValue(players);
     }
 
@@ -175,7 +214,7 @@ public class GameViewModel extends ViewModel {
     // Trace: UC-04
     private void onPlayerSpawned(Player player) {
         if (player == null) return;
-        GameUtil.log(TAG + ": onPlayerSpawned(" + player.getName() + " @ " + player.getPlayerId() + ")");
+        GameUtil.log("[StartGameFlow][Step 4] GameViewModel: onPlayerSpawned(id=" + player.getPlayerId() + ", name=" + player.getName() + ")");
         if (GameConstants.DefaultPlayerName.equals(player.getName())) {
             mMainPlayerId = player.getPlayerId();
         }

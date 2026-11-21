@@ -1,42 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/welcomeFragment">
+    app:startDestination="@id/gameFragment">
 
     <fragment
-        android:id="@+id/welcomeFragment"
-        android:name="com.adam.app.arenaminifight.ui.welcome.WelcomeFragment"
-        android:label="Welcome">
+        android:id="@+id/splashFragment"
+        android:name="com.adam.app.arenaminifight.ui.splash.SplashFragment"
+        android:label="Splash">
         <action
-            android:id="@+id/action_welcome_to_lobby"
-            app:destination="@id/lobbyFragment"
-            app:popUpTo="@id/welcomeFragment"
+            android:id="@+id/action_splash_to_menu"
+            app:destination="@id/menuFragment"
+            app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
-        android:id="@+id/lobbyFragment"
-        android:name="com.adam.app.arenaminifight.ui.lobby.LobbyFragment"
-        android:label="Lobby">
+        android:id="@+id/menuFragment"
+        android:name="com.adam.app.arenaminifight.ui.menu.MenuFragment"
+        android:label="Menu">
         <action
-            android:id="@+id/action_lobby_to_game"
-            app:destination="@id/gameFragment"
-            app:popUpTo="@id/lobbyFragment"
-            app:popUpToInclusive="true"/>
+            android:id="@+id/action_menu_to_game"
+            app:destination="@id/gameFragment"/>
         <action
-            android:id="@+id/action_lobby_to_room"
-            app:destination="@id/roomFragment"/>
+            android:id="@+id/action_menu_to_settings"
+            app:destination="@id/settingsFragment"/>
+        <action
+            android:id="@+id/action_menu_to_leaderboard"
+            app:destination="@id/leaderboardFragment"/>
+        <action
+            android:id="@+id/action_menu_to_about"
+            app:destination="@id/aboutFragment"/>
     </fragment>
 
     <fragment
-        android:id="@+id/roomFragment"
-        android:name="com.adam.app.arenaminifight.ui.room.RoomFragment"
-        android:label="Room">
-        <action
-            android:id="@+id/action_room_to_game"
-            app:destination="@id/gameFragment"
-            app:popUpTo="@id/roomFragment"
-            app:popUpToInclusive="true"/>
+        android:id="@+id/settingsFragment"
+        android:name="com.adam.app.arenaminifight.ui.settings.SettingsFragmentContainer"
+        android:label="Settings">
+    </fragment>
+
+    <fragment
+        android:id="@+id/leaderboardFragment"
+        android:name="com.adam.app.arenaminifight.ui.leaderboard.LeaderboardFragment"
+        android:label="Leaderboard">
+    </fragment>
+
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.adam.app.arenaminifight.ui.about.AboutFragment"
+        android:label="About">
     </fragment>
 
     <fragment
@@ -55,8 +66,8 @@
         android:name="com.adam.app.arenaminifight.ui.result.ResultFragment"
         android:label="Result">
         <action
-            android:id="@+id/action_result_to_lobby"
-            app:destination="@id/lobbyFragment"
+            android:id="@+id/action_result_to_menu"
+            app:destination="@id/menuFragment"
             app:popUpTo="@id/resultFragment"
             app:popUpToInclusive="true"/>
     </fragment>

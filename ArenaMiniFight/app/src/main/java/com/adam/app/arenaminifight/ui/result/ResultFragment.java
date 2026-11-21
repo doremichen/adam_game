@@ -31,9 +31,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
 
-import com.adam.app.arenaminifight.R;
 import com.adam.app.arenaminifight.databinding.FragmentResultBinding;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
@@ -43,17 +41,12 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class ResultFragment extends Fragment {
 
     private static final String TAG = "ResultFragment";
-
     private FragmentResultBinding mBinding;
     private ResultViewModel mViewModel;
 
-    public static ResultFragment newInstance() {
-        return new ResultFragment();
-    }
-
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mBinding = FragmentResultBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
@@ -61,19 +54,23 @@ public class ResultFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
         mViewModel = new ViewModelProvider(this).get(ResultViewModel.class);
         mBinding.setVm(mViewModel);
         mBinding.setLifecycleOwner(getViewLifecycleOwner());
 
-        mViewModel.getNavigateToLobby().observe(getViewLifecycleOwner(), this::navigateToLobby);
-    }
+        mViewModel.getNavigateToMenu().observe(getViewLifecycleOwner(), shouldNavigate -> {
+            if (Boolean.TRUE.equals(shouldNavigate) && getActivity() != null) {
+                GameUtil.log(TAG + ": Finishing MainActivity to return to MenuActivity");
+                getActivity().finish();
+            }
+        });
 
-    private void navigateToLobby(Boolean toLobby) {
-        if (Boolean.TRUE.equals(toLobby) && getView() != null) {
-            GameUtil.log(TAG + ": Navigate back to Lobby");
-            Navigation.findNavController(requireView()).navigate(R.id.action_result_to_lobby);
-        }
+        mBinding.btnBackToMenu.setOnClickListener(v -> {
+            GameUtil.log(TAG + ": Back to Menu clicked");
+            if (getActivity() != null) {
+                getActivity().finish();
+            }
+        });
     }
 
     @Override

@@ -40,4 +40,8 @@ public final class GameConstants {
     public static final float BLOOD_BAR_WIDTH = 80f;
     public static final float NAME_OFFSET_Y = 50f;
     public static final int PLAYER_MAX_HP = 100;
+    public static final float WORLD_MIN_X = 50.0f;
+    public static final float WORLD_MAX_X = 1030.0f;
+    public static final float WORLD_MIN_Y = 100.0f;
+    public static final float WORLD_MAX_Y = 1820.0f;
 }

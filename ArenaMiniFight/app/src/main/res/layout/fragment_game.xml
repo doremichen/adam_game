@@ -12,9 +12,11 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#000000"
+        android:background="#10141D"
+        android:fitsSystemWindows="true"
         tools:context=".ui.game.GameFragment">
 
+        <!-- Game Canvas / SurfaceView -->
         <com.adam.app.arenaminifight.ui.game.GameSurfaceView
             android:id="@+id/gameSurfaceView"
             android:layout_width="0dp"
@@ -29,18 +31,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="40dp" />
+            app:layout_constraintGuide_begin="16dp" />
 
+        <!-- Status Card (HP / EXP / Timer / Position) -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/statusCard"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="8dp"
-            app:cardBackgroundColor="#AA222222"
+            app:cardBackgroundColor="#CC10141D"
             app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#80BB86FC"
+            app:cardElevation="4dp"
+            app:strokeColor="#00E5FF"
             app:strokeWidth="1dp"
             app:layout_constraintEnd_toStartOf="@+id/btnAddAI"
             app:layout_constraintStart_toStartOf="parent"
@@ -52,32 +55,31 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp">
+                android:paddingVertical="8dp">
 
                 <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
                     android:src="@android:drawable/presence_online"
-                    app:tint="#BB86FC" />
+                    app:tint="#00E5FF" />
 
                 <TextView
                     android:id="@+id/tvPlayerStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="6dp"
+                    android:layout_marginStart="8dp"
                     android:ellipsize="end"
-                    android:fontFamily="monospace"
+                    android:fontFamily="sans-serif-medium"
                     android:maxLines="1"
                     android:singleLine="true"
                     android:text="@{vm.playerStatus}"
                     android:textColor="#FFFFFF"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    tools:text="POS: 100, 200" />
+                    android:textSize="14sp"
+                    tools:text="POS: (100.0, 200.0)" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Add AI Player moved to top-right corner -->
+        <!-- Add AI Player Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddAI"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
@@ -85,49 +87,102 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:text="@string/add_ai_btn"
-            android:textColor="#03DAC5"
+            android:textColor="#00E5FF"
             android:textSize="12sp"
             android:onClick="@{() -> vm.onAddAIClicked()}"
             app:cornerRadius="20dp"
-            app:strokeColor="#03DAC5"
-            app:strokeWidth="1dp"
+            app:strokeColor="#00E5FF"
+            app:strokeWidth="1.5dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/guideHUD" />
 
-        <!-- Bottom combat action buttons without overlapping -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_attack"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!-- Virtual D-Pad / Directional Controls Container (Bottom Left) -->
+        <GridLayout
+            android:id="@+id/dpadContainer"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginStart="24dp"
             android:layout_marginBottom="24dp"
-            android:text="@string/game_btn_attack"
-            android:textColor="#FF5722"
-            android:textSize="14sp"
-            android:onClick="@{() -> vm.onAttackClicked()}"
-            app:cornerRadius="24dp"
-            app:strokeColor="#FF5722"
-            app:strokeWidth="2dp"
+            android:columnCount="3"
+            android:rowCount="3"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_skill"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            <!-- Row 0 -->
+            <View android:layout_width="50dp" android:layout_height="50dp" />
+            <Button
+                android:id="@+id/btn_dpad_up"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:backgroundTint="#8C52FF"
+                android:text="▲"
+                android:textColor="#FFFFFF" />
+            <View android:layout_width="50dp" android:layout_height="50dp" />
+
+            <!-- Row 1 -->
+            <Button
+                android:id="@+id/btn_dpad_left"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:backgroundTint="#8C52FF"
+                android:text="◀"
+                android:textColor="#FFFFFF" />
+            <View android:layout_width="50dp" android:layout_height="50dp" />
+            <Button
+                android:id="@+id/btn_dpad_right"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:backgroundTint="#8C52FF"
+                android:text="▶"
+                android:textColor="#FFFFFF" />
+
+            <!-- Row 2 -->
+            <View android:layout_width="50dp" android:layout_height="50dp" />
+            <Button
+                android:id="@+id/btn_dpad_down"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:backgroundTint="#8C52FF"
+                android:text="▼"
+                android:textColor="#FFFFFF" />
+            <View android:layout_width="50dp" android:layout_height="50dp" />
+        </GridLayout>
+
+        <!-- Combat Action Buttons (BottomRight) -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="24dp"
-            android:text="@string/game_btn_skill"
-            android:textColor="#2196F3"
-            android:textSize="14sp"
-            android:onClick="@{() -> vm.onSkillClicked()}"
-            app:cornerRadius="24dp"
-            app:strokeColor="#2196F3"
-            app:strokeWidth="2dp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_attack"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="12dp"
+                android:backgroundTint="#FF3B5C"
+                android:text="@string/game_btn_attack"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:onClick="@{() -> vm.onAttackClicked()}"
+                app:cornerRadius="36dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_skill"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:backgroundTint="#8C52FF"
+                android:text="@string/game_btn_skill"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:onClick="@{() -> vm.onSkillClicked()}"
+                app:cornerRadius="36dp" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

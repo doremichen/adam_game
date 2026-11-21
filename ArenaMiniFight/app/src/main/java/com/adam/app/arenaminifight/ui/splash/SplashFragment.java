@@ -16,13 +16,15 @@
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OROTHER DEALINGS IN THE
  * SOFTWARE.
  */
 
-package com.adam.app.arenaminifight.ui.room;
+package com.adam.app.arenaminifight.ui.splash;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,31 +32,33 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.adam.app.arenaminifight.R;
-import com.adam.app.arenaminifight.databinding.FragmentRoomBinding;
+import com.adam.app.arenaminifight.databinding.FragmentSplashBinding;
 import com.adam.app.arenaminifight.utils.GameUtil;
+import com.adam.app.arenaminifight.data.gateway.GameGatewayImpl;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * Splash Screen Fragment displaying logo and navigating to Menu.
+ * Also binds the background GameService on startup.
+ * Trace: UC-MENU-01, UC-IPC-01, REQ-MENU-01, UI-001
+ */
 @AndroidEntryPoint
-public class RoomFragment extends Fragment {
+public class SplashFragment extends Fragment {
 
-    private static final String TAG = "RoomFragment";
+    private static final String TAG = SplashFragment.class.getSimpleName();
+    private static final long SPLASH_DELAY_MS = 2000L;
 
-    private FragmentRoomBinding mBinding;
-    private RoomViewModel mViewModel;
+    private FragmentSplashBinding mBinding;
 
-    public static RoomFragment newInstance() {
-        return new RoomFragment();
-    }
-
+    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        mBinding = FragmentRoomBinding.inflate(inflater, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        GameUtil.log(TAG + ": onCreateView()");
+        mBinding = FragmentSplashBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
 
@@ -62,26 +66,20 @@ public class RoomFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mViewModel = new ViewModelProvider(this).get(RoomViewModel.class);
-        mBinding.setVm(mViewModel);
-        mBinding.setLifecycleOwner(getViewLifecycleOwner());
-
-        mViewModel.getNavigateToGame().observe(getViewLifecycleOwner(), this::navigateToGame);
-        mViewModel.getExitRoomEvent().observe(getViewLifecycleOwner(), this::exitRoom);
-    }
-
-    private void navigateToGame(Boolean toGame) {
-        if (Boolean.TRUE.equals(toGame) && getView() != null) {
-            GameUtil.log(TAG + ": Navigate to Game");
-            Navigation.findNavController(requireView()).navigate(R.id.action_room_to_game);
+        // Pre-bind GameService on startup so IPC is ready when entering game
+        try {
+            GameGatewayImpl.getInstance().bindGameService();
+            GameUtil.log(TAG + ": Pre-bound GameService successfully");
+        } catch (Exception e) {
+            GameUtil.log(TAG + ": Failed to pre-bind GameService: " + e.getMessage());
         }
-    }
 
-    private void exitRoom(Boolean leave) {
-        if (Boolean.TRUE.equals(leave) && getView() != null) {
-            GameUtil.log(TAG + ": Leave Room");
-            Navigation.findNavController(requireView()).navigateUp();
-        }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (getView() != null) {
+                GameUtil.log(TAG + ": Navigating to MenuFragment");
+                Navigation.findNavController(view).navigate(R.id.action_splash_to_menu);
+            }
+        }, SPLASH_DELAY_MS);
     }
 
     @Override

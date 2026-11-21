@@ -20,41 +20,24 @@
  * SOFTWARE.
  */
 
-package com.adam.app.arenaminifight.domain.usecase;
+package com.adam.app.arenaminifight.data.local;
 
-import com.adam.app.arenaminifight.domain.gateway.IGameGateway;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+
+import java.util.List;
 
 /**
- * Highly cohesive Enum-based UseCase for Welcome operations.
+ * Data Access Object for Leaderboard scores.
+ * Trace: UC-MENU-04, REQ-MENU-04, REQ-NFR-04
  */
-public final class WelcomeUseCase {
+@Dao
+public interface ScoreDao {
 
-    private final IGameGateway mGateway;
+    @Query("SELECT * FROM scores ORDER BY survival_time DESC LIMIT 10")
+    List<ScoreEntity> getTopScores();
 
-    public WelcomeUseCase(IGameGateway gateway) {
-        mGateway = gateway;
-    }
-
-    public enum Action {
-        BIND_SERVICE {
-            @Override
-            <T> T handle(IGameGateway gw, Object data) {
-                gw.bindGameService();
-                return null;
-            }
-        },
-        IS_READY {
-            @Override
-            @SuppressWarnings("unchecked")
-            <T> T handle(IGameGateway gw, Object data) {
-                return (T) gw.isReady();
-            }
-        };
-
-        abstract <T> T handle(IGameGateway gw, Object data);
-    }
-
-    public <T> T execute(Action action, Object data) {
-        return action.handle(mGateway, data);
-    }
+    @Insert
+    void insertScore(ScoreEntity score);
 }

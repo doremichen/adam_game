@@ -12,22 +12,48 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ArenaMiniFight">
+
+        <!-- Background Game Service (Multi-process support) -->
         <service
             android:name=".service.GameService"
             android:enabled="true"
-            android:exported="false">
-        </service>
+            android:exported="false"
+            android:process=":game" />
+
+        <!-- Splash Screen Activity (Launcher) -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.ArenaMiniFight">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
+        <!-- Main Menu Activity -->
+        <activity
+            android:name=".ui.menu.MenuActivity"
+            android:exported="false" />
+
+        <!-- Core Gameplay Activity -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+        <!-- Settings Activity -->
         <activity
             android:name=".ui.settings.SettingsActivity"
+            android:exported="false" />
+
+        <!-- Leaderboard Activity -->
+        <activity
+            android:name=".ui.leaderboard.LeaderboardActivity"
+            android:exported="false" />
+
+        <!-- About Activity -->
+        <activity
+            android:name=".ui.about.AboutActivity"
             android:exported="false" />
 
     </application>

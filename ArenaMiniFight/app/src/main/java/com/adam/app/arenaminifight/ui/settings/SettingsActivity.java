@@ -27,29 +27,37 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.adam.app.arenaminifight.R;
+import com.adam.app.arenaminifight.databinding.ActivitySettingsBinding;
+import com.adam.app.arenaminifight.utils.GameUtil;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
+/**
+ * Settings Activity allowing players to modify audio and graphics preferences (UC-MENU-03, UI-003).
+ */
 @AndroidEntryPoint
 public class SettingsActivity extends AppCompatActivity {
+
+    private static final String TAG = SettingsActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
-                .commit();
+        GameUtil.log(TAG + ": onCreate()");
 
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(getString(R.string.settings_activity_title));
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActivitySettingsBinding binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.settings_container, new SettingsFragment())
+                    .commit();
         }
-    }
 
-    @Override
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
+        binding.btnBack.setOnClickListener(v -> {
+            GameUtil.log(TAG + ": Back clicked");
+            finish();
+        });
     }
 }

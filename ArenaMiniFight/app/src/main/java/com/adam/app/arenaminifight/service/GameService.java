@@ -24,56 +24,144 @@ package com.adam.app.arenaminifight.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.Message;
-import android.os.Messenger;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 
-import androidx.annotation.NonNull;
-
 import com.adam.app.arenaminifight.data.service.NativeEngine;
-import com.adam.app.arenaminifight.domain.model.ChatMessage;
 import com.adam.app.arenaminifight.domain.model.Player;
+import com.adam.app.arenaminifight.ipc.IGameService;
+import com.adam.app.arenaminifight.ipc.IGameStateListener;
 import com.adam.app.arenaminifight.service.engine.EngineLoopManager;
 import com.adam.app.arenaminifight.utils.GameUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * GameService bound service handling IPC requests and physics loop.
- * Trace: UC-02, UC-04, UC-05, UC-06, UC-07
+ * GameService remote bound service handling IPC requests and physics loop via AIDL.
+ * Trace: REQ-IPC-01, REQ-IPC-02, REQ-IPC-03, REQ-GAME-01, REQ-GAME-05, REQ-GAME-10, REQ-GAME-11, REQ-GAME-12
  */
 public class GameService extends Service {
 
-    public static final int UC_SPAWN_PLAYER = 0;
-    public static final int UC_NEW_PLAYER = 1;
-    public static final int UC_SEND_CHAT = 2;
-    public static final int UC_SYNC_CHAT = 3;
-    public static final int UC_MOVE_PLAYER = 4;
-    public static final int UC_START_GAME = 5;
-    public static final int UC_STOP_GAME = 6;
-    public static final int UC_GAME_STATE_UPDATE = 7;
-    public static final int UC_PLAYER_ATTACK = 8;
-    public static final int UC_SYNC_ATTACK_RESULT = 9;
-    public static final int UC_STOP_MOVE_PLAYER = 10;
-
     private static final String TAG = "GameService";
-    private final Messenger mIncomingHandler = new Messenger(new SvrHandler());
+    private static final long AI_SPAWN_INTERVAL_MS = 10000L; // 10 seconds (REQ-GAME-10)
+
+    private final NativeEngine mNativeEngine = NativeEngine.getInstance();
+    private final RemoteCallbackList<IGameStateListener> mCallbackList = new RemoteCallbackList<>();
+    private final Handler mMainHandler = new Handler(Looper.getMainLooper());
+
+    private EngineLoopManager mEngineLoopManager;
+    private long mLastFrameTime;
+    private int mAiBotCount = 0;
+    private boolean mIsGameRunning = false;
+
+    private final Runnable mAiSpawnRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mIsGameRunning) {
+                spawnEnemyInternal();
+                mMainHandler.postDelayed(this, AI_SPAWN_INTERVAL_MS);
+            }
+        }
+    };
+
+    private void spawnEnemyInternal() {
+        mAiBotCount++;
+        String botName = "AI_Bot_" + mAiBotCount;
+        GameUtil.log(TAG + ": Spawning auto AI enemy: " + botName);
+        mNativeEngine.nativeInitializePlayer(botName);
+    }
+
+    private final IGameService.Stub mBinder = new IGameService.Stub() {
+
+        @Override
+        public void registerListener(IGameStateListener listener) throws RemoteException {
+            if (listener != null) {
+                mCallbackList.register(listener);
+                GameUtil.log(TAG + ": Registered AIDL listener");
+            }
+        }
+
+        @Override
+        public void unregisterListener(IGameStateListener listener) throws RemoteException {
+            if (listener != null) {
+                mCallbackList.unregister(listener);
+                GameUtil.log(TAG + ": Unregistered AIDL listener");
+            }
+        }
+
+        @Override
+        public Player spawnPlayer(String name) throws RemoteException {
+            GameUtil.log("[StartGameFlow][Step 6] GameService: AIDL spawnPlayer(name=" + name + ") -> Calling NativeEngine.nativeInitializePlayer()");
+            Player player = mNativeEngine.nativeInitializePlayer(name);
+            GameUtil.log("[StartGameFlow][Step 6] GameService: Spawned player ID: " + (player != null ? player.getPlayerId() : "null"));
+            return player;
+        }
+
+        @Override
+        public void startGame() throws RemoteException {
+            GameUtil.log("[StartGameFlow][Step 6] GameService: AIDL startGame() -> Starting EngineLoopManager and AI 10s spawn timer");
+            mIsGameRunning = true;
+            mLastFrameTime = System.currentTimeMillis();
+            if (mEngineLoopManager != null) {
+                mEngineLoopManager.start();
+            }
+            mMainHandler.removeCallbacks(mAiSpawnRunnable);
+            mMainHandler.postDelayed(mAiSpawnRunnable, AI_SPAWN_INTERVAL_MS);
+        }
+
+        @Override
+        public void stopGame() throws RemoteException {
+            GameUtil.log(TAG + ": AIDL stopGame");
+            mIsGameRunning = false;
+            mMainHandler.removeCallbacks(mAiSpawnRunnable);
+            if (mEngineLoopManager != null) {
+                mEngineLoopManager.stop();
+            }
+            mNativeEngine.resetEngine();
+        }
+
+        @Override
+        public void movePlayer(String playerId, float x, float y) throws RemoteException {
+            mNativeEngine.updatePlayerPosition(playerId, x, y);
+        }
+
+        @Override
+        public void stopPlayerMove(String playerId) throws RemoteException {
+            if (playerId != null) {
+                mNativeEngine.nativeStopPlayerMove(playerId);
+            }
+        }
+
+        @Override
+        public void playerAttack(String playerId, boolean isSkill) throws RemoteException {
+            String result = mNativeEngine.nativePlayerAttack(playerId, isSkill);
+            notifyAttackResult(result);
+        }
+
+        @Override
+        public String getGameState() throws RemoteException {
+            return mNativeEngine.getGameState();
+        }
+
+        @Override
+        public void spawnEnemy() {
+            spawnEnemyInternal();
+        }
+    };
 
     @Override
     public void onCreate() {
         super.onCreate();
         GameUtil.log(TAG + ": onCreate");
+        mNativeEngine.resetEngine(); // Ensure clean slate on service creation
+        mEngineLoopManager = new EngineLoopManager(this::loopTask);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         GameUtil.log(TAG + ": onBind");
-        return mIncomingHandler.getBinder();
+        return mBinder;
     }
 
     @Override
@@ -86,157 +174,94 @@ public class GameService extends Service {
     public void onDestroy() {
         super.onDestroy();
         GameUtil.log(TAG + ": onDestroy");
+        mIsGameRunning = false;
+        mMainHandler.removeCallbacks(mAiSpawnRunnable);
+        if (mEngineLoopManager != null) {
+            mEngineLoopManager.stop();
+        }
+        mCallbackList.kill();
+        mNativeEngine.resetEngine();
     }
 
-    private static class SvrHandler extends Handler {
-
-        private static final String HANDLER_TAG = "SvrHandler";
-
-        private final NetworkService mNetworkService = NetworkService.getInstance();
-        private Messenger mClientMessenger;
-
-        private final NativeEngine mNativeEngine;
-        private final EngineLoopManager mEngineLoopManager;
-        private long mLastFrameTime;
-
-        private final List<Messenger> mClientMessengerList = new ArrayList<>();
-
-        public SvrHandler() {
-            super(Looper.getMainLooper());
-            mNativeEngine = NativeEngine.getInstance();
-            mEngineLoopManager = new EngineLoopManager(this::loopTask);
-        }
-
-        // Trace: UC-06 (Native Physics Loop)
-        private void loopTask() {
-            try {
-                long currentTime = System.currentTimeMillis();
-                if (mLastFrameTime == 0) {
-                    mLastFrameTime = currentTime;
-                }
-
-                float deltaTime = (currentTime - mLastFrameTime) / 1000f;
+    // Trace: REQ-NFR-01 (60 FPS Native Physics Loop)
+    private void loopTask() {
+        try {
+            long currentTime = System.currentTimeMillis();
+            if (mLastFrameTime == 0) {
                 mLastFrameTime = currentTime;
-
-                mNativeEngine.updateEngine(deltaTime);
-                broadcastGameState();
-            } catch (Exception e) {
-                GameUtil.log(TAG + ": loop exception: " + e.getMessage());
             }
-        }
 
-        // Trace: UC-06 (State Synchronization)
-        private void broadcastGameState() {
+            float deltaTime = (currentTime - mLastFrameTime) / 1000f;
+            mLastFrameTime = currentTime;
+
+            mNativeEngine.updateEngine(deltaTime);
             String state = mNativeEngine.getGameState();
-            if (state == null || state.isEmpty()) {
-                GameUtil.log(HANDLER_TAG + ": no state!!!");
-                return;
+            if (state != null && !state.isEmpty()) {
+                if (isPlayerDead(state)) {
+                    mIsGameRunning = false;
+                    if (mEngineLoopManager != null) {
+                        mEngineLoopManager.stop();
+                    }
+                    notifyGameOver("Game Over! You were defeated in battle.");
+                    return;
+                }
+                broadcastGameState(state);
             }
+        } catch (Exception e) {
+            GameUtil.log(TAG + ": loop exception: " + e.getMessage());
+        }
+    }
 
-            Message msg = Message.obtain(null, GameService.UC_GAME_STATE_UPDATE);
-            Bundle data = new Bundle();
-            data.putString("game_state_str", state);
-            msg.setData(data);
-
-            for (int i = mClientMessengerList.size() - 1; i >= 0; i--) {
-                Messenger messenger = mClientMessengerList.get(i);
+    private boolean isPlayerDead(String stateStr) {
+        String[] players = stateStr.split("\\|");
+        for (String p : players) {
+            String[] attrs = p.split(":");
+            if (attrs.length >= 5 && "P_0".equals(attrs[0])) {
                 try {
-                    messenger.send(msg);
-                } catch (RemoteException e) {
-                    mClientMessengerList.remove(i);
+                    int hp = Integer.parseInt(attrs[4]);
+                    return hp <= 0;
+                } catch (NumberFormatException ignored) {
                 }
             }
         }
+        return false;
+    }
 
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            GameUtil.log(HANDLER_TAG + ": handleMessage");
-
-            switch (msg.what) {
-                case UC_SPAWN_PLAYER: // Trace: UC-04
-                    if (!mClientMessengerList.contains(msg.replyTo)) {
-                        mClientMessengerList.add(msg.replyTo);
-                    }
-
-                    String name = msg.getData().getString("name");
-                    Player player = mNativeEngine.nativeInitializePlayer(name);
-                    Message reply = Message.obtain(null, UC_NEW_PLAYER);
-                    Bundle data = new Bundle();
-                    data.putParcelable("player_data", player);
-                    reply.setData(data);
-                    try {
-                        msg.replyTo.send(reply);
-                    } catch (RemoteException e) {
-                        throw new RuntimeException(e);
-                    }
-                    break;
-                case UC_SEND_CHAT: // Trace: UC-02
-                    mClientMessenger = msg.replyTo;
-                    ChatMessage chat = msg.getData().getParcelable("chat", ChatMessage.class);
-                    if (chat == null) {
-                        GameUtil.log(HANDLER_TAG + ": no chat!!!");
-                        return;
-                    }
-                    mNetworkService.sentChatToServer(chat, this::onMessageReceived);
-                    break;
-                case UC_MOVE_PLAYER: // Trace: UC-05
-                    Bundle moveData = msg.getData();
-                    String id = moveData.getString("id");
-                    float targetX = moveData.getFloat("x");
-                    float targetY = moveData.getFloat("y");
-                    mNativeEngine.updatePlayerPosition(id, targetX, targetY);
-                    break;
-                case UC_START_GAME: // Trace: UC-06
-                    mEngineLoopManager.start();
-                    break;
-                case UC_STOP_GAME: // Trace: UC-07
-                    mEngineLoopManager.stop();
-                    mNativeEngine.resetEngine();
-                    break;
-                case UC_STOP_MOVE_PLAYER: // Trace: UC-05
-                    Bundle stopData = msg.getData();
-                    String stopId = stopData.getString("id");
-                    if (stopId != null) {
-                        mNativeEngine.nativeStopPlayerMove(stopId);
-                    }
-                    break;
-                case UC_PLAYER_ATTACK: // Trace: UC-10
-                    Bundle attackData = msg.getData();
-                    String attackerId = attackData.getString("id");
-                    boolean isSkill = attackData.getBoolean("is_skill", false);
-                    String attackResult = mNativeEngine.nativePlayerAttack(attackerId, isSkill);
-
-                    if (msg.replyTo != null) {
-                        Message attackReply = Message.obtain(null, UC_SYNC_ATTACK_RESULT);
-                        Bundle replyBundle = new Bundle();
-                        replyBundle.putString("result", attackResult);
-                        attackReply.setData(replyBundle);
-                        try {
-                            msg.replyTo.send(attackReply);
-                        } catch (RemoteException e) {
-                            GameUtil.log(HANDLER_TAG + ": send attack reply failed");
-                        }
-                    }
-                    break;
-                default:
-                    super.handleMessage(msg);
-            }
-        }
-
-        // Trace: UC-02
-        private void onMessageReceived(ChatMessage chat) {
-            if (mClientMessenger == null) {
-                GameUtil.log(HANDLER_TAG + ": no client messenger!!!");
-                return;
-            }
-
+    private void notifyGameOver(String summary) {
+        int count = mCallbackList.beginBroadcast();
+        for (int i = 0; i < count; i++) {
             try {
-                Message reply = Message.obtain(null, UC_SYNC_CHAT, chat);
-                reply.obj = chat;
-                mClientMessenger.send(reply);
+                mCallbackList.getBroadcastItem(i).onGameOver(summary);
             } catch (RemoteException e) {
-                throw new RuntimeException(e);
+                GameUtil.log(TAG + ": RemoteException notifying game over: " + e.getMessage());
             }
         }
+        mCallbackList.finishBroadcast();
+    }
+
+    // Trace: REQ-IPC-02 (State Synchronization over Binder)
+    private void broadcastGameState(String state) {
+        int count = mCallbackList.beginBroadcast();
+        for (int i = 0; i < count; i++) {
+            try {
+                mCallbackList.getBroadcastItem(i).onGameStateUpdated(state);
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": RemoteException broadcasting state: " + e.getMessage());
+            }
+        }
+        mCallbackList.finishBroadcast();
+    }
+
+    private void notifyAttackResult(String result) {
+        if (result == null) return;
+        int count = mCallbackList.beginBroadcast();
+        for (int i = 0; i < count; i++) {
+            try {
+                mCallbackList.getBroadcastItem(i).onAttackResult(result);
+            } catch (RemoteException e) {
+                GameUtil.log(TAG + ": RemoteException notifying attack result: " + e.getMessage());
+            }
+        }
+        mCallbackList.finishBroadcast();
     }
 }

@@ -25,7 +25,6 @@ package com.adam.app.arenaminifight.ui.game;
 import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -61,6 +60,7 @@ public class GameFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+        GameUtil.log("[StartGameFlow][Step 3] GameFragment: onCreateView()");
         mBinding = FragmentGameBinding.inflate(inflater, container, false);
         return mBinding.getRoot();
     }
@@ -68,6 +68,7 @@ public class GameFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        GameUtil.log("[StartGameFlow][Step 3] GameFragment: onViewCreated() -> Initializing ViewModel & starting game");
 
         mViewModel = new ViewModelProvider(this).get(GameViewModel.class);
         mBinding.setVm(mViewModel);
@@ -77,10 +78,18 @@ public class GameFragment extends Fragment {
         mViewModel.startGame();
 
         mViewModel.getPlayers().observe(getViewLifecycleOwner(), this::onPlayers);
-        mBinding.gameSurfaceView.setOnTouchListener(this::onTouch);
         mViewModel.getExitEvent().observe(getViewLifecycleOwner(), this::onExit);
+        mViewModel.getNavigateToResult().observe(getViewLifecycleOwner(), shouldNavigate -> {
+            if (Boolean.TRUE.equals(shouldNavigate) && getView() != null) {
+                GameUtil.log(TAG + ": Navigating to ResultFragment on Game Over");
+                Navigation.findNavController(view).navigate(R.id.action_game_to_result);
+            }
+        });
 
-        // Handle system back button with confirmation dialog
+        // Setup D-Pad virtual directional buttons (UC-GAME-02)
+        setupVirtualDPad();
+
+        // Handle system back button with confirmation dialog (UC-GAME-12 Path B)
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -89,15 +98,25 @@ public class GameFragment extends Fragment {
         });
     }
 
+    private void setupVirtualDPad() {
+        // Move Up
+        mBinding.btnDpadUp.setOnClickListener(v -> mViewModel.updatePlayerMove(0, -10f));
+        // Move Down
+        mBinding.btnDpadDown.setOnClickListener(v -> mViewModel.updatePlayerMove(0, 10f));
+        // Move Left
+        mBinding.btnDpadLeft.setOnClickListener(v -> mViewModel.updatePlayerMove(-10f, 0));
+        // Move Right
+        mBinding.btnDpadRight.setOnClickListener(v -> mViewModel.updatePlayerMove(10f, 0));
+    }
+
     private void showExitConfirmationDialog() {
         new AlertDialog.Builder(requireContext())
                 .setTitle(getString(R.string.dialog_exit_title))
                 .setMessage(getString(R.string.dialog_exit_message))
                 .setPositiveButton(getString(R.string.dialog_ok), (dialog, which) -> {
                     mViewModel.stopGame();
-                    if (getView() != null) {
-                        Navigation.findNavController(requireView()).navigateUp();
-                    }
+                    mViewModel.saveScoreToDatabase();
+                    mViewModel.getNavigateToResult().setValue(true);
                 })
                 .setNegativeButton(getString(R.string.dialog_cancel), (dialog, which) -> dialog.dismiss())
                 .show();
@@ -111,24 +130,8 @@ public class GameFragment extends Fragment {
         if (Boolean.TRUE.equals(isExit) && getActivity() != null) {
             GameUtil.log(TAG + ": onExit");
             mViewModel.stopGame();
-            if (getView() != null) {
-                Navigation.findNavController(requireView()).navigateUp();
-            }
+            getActivity().finish();
         }
-    }
-
-    private boolean onTouch(View view, MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-                mViewModel.updatePlayerMove(event.getX(), event.getY());
-                return true;
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_CANCEL:
-                mViewModel.stopPlayerMove();
-                return true;
-        }
-        return false;
     }
 
     @Override
